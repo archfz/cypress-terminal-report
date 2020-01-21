@@ -4,7 +4,7 @@ Plugin for cypress that adds better terminal output when tests fail
 on the terminal for better debugging. Prints cy commands, console.warn 
 and console.error from the browser to terminal when a test fails. 
 
-![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/demo.png)
+![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
 ## Install
 
