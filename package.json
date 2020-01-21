@@ -1,0 +1,41 @@
+{
+  "name": "cypress-terminal-report",
+  "version": "0.1.0",
+  "description": "Better terminal output for failed cypress tests.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archfz/cypress-terminal-report.git"
+  },
+  "keywords": [
+    "terminal",
+    "cli",
+    "output",
+    "info",
+    "report",
+    "cypress",
+    "console",
+    "logs"
+  ],
+  "author": "Fodor Zoltan",
+  "standard": {
+    "globals": [
+      "cy",
+      "Cypress",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/archfz/cypress-terminal-report/issues"
+  },
+  "homepage": "https://github.com/archfz/cypress-terminal-report#readme",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "cypress": "^3.8.1"
+  }
+}
