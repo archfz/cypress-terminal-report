@@ -1,8 +1,8 @@
 # Cypress terminal report
 
 Plugin for cypress that adds better terminal output when tests fail
-on the terminal for better debugging. Prints cy commands, console.warn 
-and console.error from the browser to terminal when a test fails. 
+on the terminal for better debugging. Prints cy commands, console.warn, 
+console.error and request data captured with cy.route. 
 
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
@@ -28,3 +28,4 @@ and console.error from the browser to terminal when a test fails.
 The plugin install can receive some options: `.installPlugin(on, options)`:
 - `options.defaultTrimLength` - default: 200; max length of cy.log and console.warn/console.error.
 - `options.commandTrimLength` - default: 600; max length of cy commands.
+- `options.routeTrimLength` - default: 5000; max length of cy.route request data.

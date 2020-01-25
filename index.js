@@ -39,6 +39,31 @@ function pipeLogsToTerminal() {
     }
   });
 
+  Cypress.on('command:start', (command) => {
+    if (command.get('name') !== 'server') {
+      return;
+    }
+
+    const options = command.get('args')[0] || {};
+    if (options.onAnyResponse) {
+      return;
+    }
+
+    cy.server({
+      ...options,
+      onAnyResponse(route, xhr) {
+        if (!route) {
+          return;
+        }
+
+        xhr.response.body.text().then(body => {
+          logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
+            `Status: ${xhr.status} (${route.alias})\n\t\tUrl:${xhr.url}\n\t\tResponse: ${body}`]);
+        });
+      }
+    });
+  });
+
   Cypress.mocha.getRunner().on('test', () => {
     logs = [];
   });
@@ -77,6 +102,16 @@ function nodeAddLogsPrinter(on, options = {}) {
           color = 'green';
           icon = '✔';
           trim = options.commandTrimLength || 600;
+        } else if (type === 'cy:route:info') {
+          typeString = '        cy:route ';
+          color = 'green';
+          icon = '⛗';
+          trim = options.routeTrimLength || 5000;
+        } else if (type === 'cy:route:warn') {
+          typeString = '        cy:route ';
+          color = 'yellow';
+          icon = '⛗';
+          trim = options.routeTrimLength || 5000;
         }
 
         if (i === messages.length - 1) {
