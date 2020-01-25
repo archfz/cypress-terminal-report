@@ -58,7 +58,7 @@ function pipeLogsToTerminal() {
 
         xhr.response.body.text().then(body => {
           logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-            `Status: ${xhr.status} (${route.alias})\n\t\tUrl:${xhr.url}\n\t\tResponse: ${body}`]);
+            `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${body}`]);
         });
       }
     });
