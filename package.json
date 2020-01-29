@@ -1,6 +1,6 @@
 {
   "name": "cypress-terminal-report",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Better terminal output for failed cypress tests.",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,9 @@
   },
   "homepage": "https://github.com/archfz/cypress-terminal-report#readme",
   "dependencies": {
-    "chalk": "^3.0.0",
+    "chalk": "^3.0.0"
+  },
+  "peerDependencies": {
     "cypress": "^3.8.1"
   }
 }
