@@ -56,10 +56,12 @@ function pipeLogsToTerminal() {
           return;
         }
 
-        xhr.response.body.text().then(body => {
-          logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-            `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${body}`]);
-        });
+        if (typeof  xhr.response.body.text === 'function') {
+          xhr.response.body.text().then(body => {
+            logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
+              `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${body}`]);
+          });
+        }
       }
     });
   });
