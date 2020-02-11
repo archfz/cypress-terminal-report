@@ -51,17 +51,13 @@ function pipeLogsToTerminal() {
 
     cy.server({
       ...options,
-      onAnyResponse(route, xhr) {
+      async onAnyResponse(route, xhr) {
         if (!route) {
           return;
         }
-
-        if (typeof  xhr.response.body.text === 'function') {
-          xhr.response.body.text().then(body => {
-            logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-              `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${body}`]);
-          });
-        }
+        const response = xhr.response.body && typeof xhr.response.body.text === 'function' ? await xhr.response.body.text(): 'EMPTY BODY';
+        logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
+          `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${response}`]);
       }
     });
   });
