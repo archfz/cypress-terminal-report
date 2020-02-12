@@ -1,4 +1,4 @@
-function pipeLogsToTerminal() {
+function pipeLogsToTerminal({forcePrintLogs}) {
   let oldConsoleWarn;
   let oldConsoleError;
   let logs = [];
@@ -43,7 +43,7 @@ function pipeLogsToTerminal() {
       }
       const log =
         options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
-      logs.push(['cy:command', log]);
+      logs.push(['cy:command', log, options.state]);
     }
   });
 
@@ -78,7 +78,7 @@ function pipeLogsToTerminal() {
   });
 
   afterEach(function() {
-    if (this.currentTest.state !== 'passed') {
+    if (this.currentTest.state !== 'passed' || forcePrintLogs) {
       cy.task('terminalLogs', logs);
     }
   });
@@ -103,7 +103,7 @@ function nodeAddLogsPrinter(on, options = {}) {
 
   on('task', {
     terminalLogs: messages => {
-      messages.forEach(([type, message], i) => {
+      messages.forEach(([type, message, status], i) => {
         let color,
           typeString,
           processedMessage = message,
@@ -137,7 +137,7 @@ function nodeAddLogsPrinter(on, options = {}) {
           trim = options.routeTrimLength || 5000;
         }
 
-        if (i === messages.length - 1) {
+        if (status && status === 'failed') {
           color = 'red';
           icon = '✘';
         }
@@ -175,5 +175,5 @@ module.exports = {
    *
    * Needs to be added to support file.
    */
-  installSupport: () => pipeLogsToTerminal(),
+  installSupport: (...args) => pipeLogsToTerminal(...args),
 };
