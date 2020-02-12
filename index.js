@@ -55,9 +55,8 @@ function pipeLogsToTerminal() {
         if (!route) {
           return;
         }
-        const response = xhr.response.body && typeof xhr.response.body.text === 'function' ? await xhr.response.body.text(): 'EMPTY BODY';
         logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-          `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${response}`]);
+          `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`]);
       }
     });
   });
@@ -71,6 +70,20 @@ function pipeLogsToTerminal() {
       cy.task('terminalLogs', logs);
     }
   });
+}
+
+async function responseBodyParser(body) {
+  if (!body) {
+    return 'EMPTY_BODY';
+  } else if (typeof body === 'string') {
+    return body;
+  } else if (typeof body === 'object') {
+    if (typeof body.text === 'function') {
+      return await body.text();
+    }
+    return JSON.stringify(body);
+  }
+  return 'UNKNOWN_BODY';
 }
 
 function nodeAddLogsPrinter(on, options = {}) {
