@@ -1,0 +1,16 @@
+{
+  "name": "cypress-terminal-report-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./test.js"
+  },
+  "author": "Fodor Zoltan",
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "cypress": "^4.0.1",
+    "mocha": "^7.0.1"
+  }
+}
