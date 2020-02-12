@@ -27,19 +27,27 @@ function pipeLogsToTerminal() {
 
   Cypress.on('log:added', options => {
     if (options.instrument === 'command' && options.consoleProps) {
-      if (options.name === 'log' || (options.name === 'task' && options.message.match(/terminalLogs/))) {
+      if (
+        options.name === 'log' ||
+        (options.name === 'task' && options.message.match(/terminalLogs/))
+      ) {
         return;
       }
       let detailMessage = '';
       if (options.name === 'xhr') {
-        detailMessage = (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') + options.consoleProps.Method + ' ' + options.consoleProps.URL;
+        detailMessage =
+          (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
+          options.consoleProps.Method +
+          ' ' +
+          options.consoleProps.URL;
       }
-      const log = options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
-      logs.push(['cy:command', log])
+      const log =
+        options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
+      logs.push(['cy:command', log]);
     }
   });
 
-  Cypress.on('command:start', (command) => {
+  Cypress.on('command:start', command => {
     if (command.get('name') !== 'server') {
       return;
     }
@@ -51,16 +59,17 @@ function pipeLogsToTerminal() {
 
     cy.server({
       ...options,
-      onAnyResponse(route, xhr) {
+      async onAnyResponse(route, xhr) {
         if (!route) {
           return;
         }
-
-        xhr.response.body.text().then(body => {
-          logs.push([String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-            `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${xhr.url}\n\t\tResponse: ${body}`]);
-        });
-      }
+        logs.push([
+          String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
+          `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${
+            xhr.url
+          }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
+        ]);
+      },
     });
   });
 
@@ -68,18 +77,32 @@ function pipeLogsToTerminal() {
     logs = [];
   });
 
-  afterEach(function () {
+  afterEach(function() {
     if (this.currentTest.state !== 'passed') {
       cy.task('terminalLogs', logs);
     }
   });
 }
 
+async function responseBodyParser(body) {
+  if (!body) {
+    return 'EMPTY_BODY';
+  } else if (typeof body === 'string') {
+    return body;
+  } else if (typeof body === 'object') {
+    if (typeof body.text === 'function') {
+      return await body.text();
+    }
+    return JSON.stringify(body);
+  }
+  return 'UNKNOWN_BODY';
+}
+
 function nodeAddLogsPrinter(on, options = {}) {
   const chalk = require('chalk');
 
   on('task', {
-    terminalLogs: (messages) => {
+    terminalLogs: messages => {
       messages.forEach(([type, message], i) => {
         let color,
           typeString,
@@ -116,11 +139,11 @@ function nodeAddLogsPrinter(on, options = {}) {
 
         if (i === messages.length - 1) {
           color = 'red';
-          icon = '✘'
+          icon = '✘';
         }
 
         if (message.length > trim) {
-          processedMessage = message.substring(0, trim) + " ...";
+          processedMessage = message.substring(0, trim) + ' ...';
         }
 
         console.log(chalk[color](typeString + icon + ' '), processedMessage);
@@ -145,14 +168,12 @@ module.exports = {
    *      - defaultTrimLength?: Trim length for console and cy.log.
    *      - commandTrimLength?: Trim length for cy commands.
    */
-  installPlugin: (on, options= {}) =>
-    nodeAddLogsPrinter(on, options),
+  installPlugin: (on, options = {}) => nodeAddLogsPrinter(on, options),
 
   /**
    * Installs the logs collector for cypress.
    *
    * Needs to be added to support file.
    */
-  installSupport: () =>
-    pipeLogsToTerminal(),
+  installSupport: () => pipeLogsToTerminal(),
 };
