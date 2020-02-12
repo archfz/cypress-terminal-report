@@ -1,4 +1,4 @@
-function pipeLogsToTerminal({forcePrintLogs = false}) {
+function pipeLogsToTerminal(config) {
   let oldConsoleWarn;
   let oldConsoleError;
   let logs = [];
@@ -78,7 +78,7 @@ function pipeLogsToTerminal({forcePrintLogs = false}) {
   });
 
   afterEach(function() {
-    if (this.currentTest.state !== 'passed' || forcePrintLogs) {
+    if (this.currentTest.state !== 'passed' || config && config.forcePrintLogs) {
       cy.task('terminalLogs', logs);
     }
   });
@@ -175,5 +175,5 @@ module.exports = {
    *
    * Needs to be added to support file.
    */
-  installSupport: (...args) => pipeLogsToTerminal(...args),
+  installSupport: (config) => pipeLogsToTerminal(config),
 };
