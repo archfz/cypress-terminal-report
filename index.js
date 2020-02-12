@@ -78,7 +78,7 @@ function pipeLogsToTerminal(config) {
   });
 
   afterEach(function() {
-    if (this.currentTest.state !== 'passed' || config && config.forcePrintLogs) {
+    if (this.currentTest.state !== 'passed' || (config && config.printLogs)) {
       cy.task('terminalLogs', logs);
     }
   });
@@ -175,5 +175,5 @@ module.exports = {
    *
    * Needs to be added to support file.
    */
-  installSupport: (config) => pipeLogsToTerminal(config),
+  installSupport: config => pipeLogsToTerminal(config),
 };
