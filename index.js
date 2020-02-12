@@ -1,4 +1,4 @@
-function pipeLogsToTerminal({forcePrintLogs}) {
+function pipeLogsToTerminal({forcePrintLogs = false}) {
   let oldConsoleWarn;
   let oldConsoleError;
   let logs = [];
