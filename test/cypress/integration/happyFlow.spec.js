@@ -1,15 +1,17 @@
 describe("Happy flow", () => {
+  /**
+   * Covers:
+   * - printing of cy.commands
+   * - printing xhr with STUBBED
+   * - printing of console warn and console error
+   * - printing of cy.route in case of XMLHTTPREQUEST API
+   */
   it('Happy flow', () => {
     cy.visit('/commands/network-requests')
 
     let message = 'whoa, this comment does not exist'
 
-    cy.server({
-      onAnyResponse: (route) => {
-        console.log(route);
-      }
-    })
-
+    cy.server()
     cy.route('GET', 'comments/*').as('getComment')
 
     // we have code that gets a comment when

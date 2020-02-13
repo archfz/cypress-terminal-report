@@ -4,9 +4,9 @@ const { expect } = require('chai');
 const commandBase = 'node ./node_modules/.bin/cypress run --headless -s cypress/integration/';
 
 describe("cypress-terminal-report", () => {
-  it("Happy flow", async () => {
+  it("Logs happy flows.", async () => {
     await new Promise((resolve) => {
-      exec(commandBase + "happyflow.spec.ts", (error, stdout, stderr) => {
+      exec(commandBase + "happyFlow.spec.js", (error, stdout, stderr) => {
         // cy.command logs.
         expect(stdout).to.contain('cy:command ✔  visit\t/commands/network-requests\n');
         expect(stdout).to.contain('cy:command ✔  get\t.network-post\n');
@@ -22,6 +22,15 @@ describe("cypress-terminal-report", () => {
         expect(stdout).to.contain('cons.warn ⚠  This is a warning message\n');
         expect(stdout).to.contain('cons.error ⚠  Error: This is an error message\n');
 
+        resolve();
+      });
+    });
+  }).timeout(60000);
+
+  it("Logs FETCH API routes.", async () => {
+    await new Promise((resolve) => {
+      exec(commandBase + "fetchApiRoutes.spec.js", (error, stdout, stderr) => {
+        console.log(stdout);
         resolve();
       });
     });
