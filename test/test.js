@@ -29,8 +29,26 @@ describe("cypress-terminal-report", () => {
 
   it("Logs FETCH API routes.", async () => {
     await new Promise((resolve) => {
-      exec(commandBase + "fetchApiRoutes.spec.js", (error, stdout, stderr) => {
-        console.log(stdout);
+      exec(commandBase + "apiRoutes.spec.js", (error, stdout, stderr) => {
+        expect(stdout).to.contain('Method: PUT\n');
+        expect(stdout).to.contain('Url: https://example.cypress.io/comments/10\n');
+
+        // cy.route empty body.
+        expect(stdout).to.contain('cy:route ⛗  Status: 200 (getComment)\n');
+        expect(stdout).to.contain('Response: EMPTY_BODY\n');
+
+        // cy.route text.
+        expect(stdout).to.contain('cy:route ⛗  Status: 403 (putComment)\n');
+        expect(stdout).to.contain('Response: This is plain text data.\n');
+
+        // cy.route unknown.
+        expect(stdout).to.contain('cy:route ⛗  Status: 401 (putComment)\n');
+        expect(stdout).to.contain('Response: UNKNOWN_BODY\n');
+
+        // cy.route logs.
+        expect(stdout).to.contain('cy:route ⛗  Status: 404 (putComment)\n');
+        expect(stdout).to.contain('Response: {"error":"Test message."}\n');
+
         resolve();
       });
     });
