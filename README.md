@@ -35,6 +35,8 @@ The plugin install can receive some options: `.installPlugin(on, options)`:
 
 ## Release notes
 
+#### Next (unreleased)
+
 - Added tests and CI to repository.
 - Added support for showing logs even for successful tests. in [issue](https://github.com/archfz/cypress-terminal-report/issues/3) by [@zhex900](https://github.com/zhex900)
 - Fixed issue with incorrectly labeled failed commands. in [issue](https://github.com/archfz/cypress-terminal-report/issues/3) by [@zhex900](https://github.com/zhex900)
