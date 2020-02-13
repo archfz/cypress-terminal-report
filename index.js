@@ -47,30 +47,25 @@ function pipeLogsToTerminal() {
     }
   });
 
-  Cypress.on('command:start', command => {
-    if (command.get('name') !== 'server') {
-      return;
-    }
+  Cypress.Commands.overwrite("server", (originalFn, options = {}) => {
+    const prevCallback = options && options.onAnyResponse;
+    options.onAnyResponse = async (route, xhr) => {
+      if (prevCallback) {
+        prevCallback(route, xhr);
+      }
 
-    const options = command.get('args')[0] || {};
-    if (options.onAnyResponse) {
-      return;
-    }
+      if (!route) {
+        return;
+      }
+      logs.push([
+        String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
+        `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${
+          xhr.url
+        }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
+      ]);
+    };
 
-    cy.server({
-      ...options,
-      async onAnyResponse(route, xhr) {
-        if (!route) {
-          return;
-        }
-        logs.push([
-          String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-          `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${
-            xhr.url
-          }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
-        ]);
-      },
-    });
+    originalFn(options);
   });
 
   Cypress.mocha.getRunner().on('test', () => {
@@ -104,18 +99,20 @@ function nodeAddLogsPrinter(on, options = {}) {
   on('task', {
     terminalLogs: messages => {
       messages.forEach(([type, message], i) => {
-        let color,
-          typeString,
+        let color = 'white',
+          typeString = '       [unknown] ',
           processedMessage = message,
           trim = options.defaultTrimLength || 200,
-          icon = '⚠';
+          icon = '-';
 
         if (type === 'warn') {
           color = 'yellow';
           typeString = '       cons.warn ';
+          icon = '⚠';
         } else if (type === 'error') {
           color = 'red';
           typeString = '      cons.error ';
+          icon = '⚠';
         } else if (type === 'cy:log') {
           color = 'green';
           typeString = '          cy:log ';
