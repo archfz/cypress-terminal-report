@@ -47,7 +47,7 @@ function pipeLogsToTerminal(config) {
     }
   });
 
-  Cypress.Commands.overwrite("server", (originalFn, options = {}) => {
+  Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
     const prevCallback = options && options.onAnyResponse;
     options.onAnyResponse = async (route, xhr) => {
       if (prevCallback) {
@@ -99,9 +99,6 @@ function nodeAddLogsPrinter(on, options = {}) {
   on('task', {
     terminalLogs: messages => {
       messages.forEach(([type, message, status], i) => {
-        let color,
-          typeString,
-      messages.forEach(([type, message], i) => {
         let color = 'white',
           typeString = '       [unknown] ',
           processedMessage = message,
