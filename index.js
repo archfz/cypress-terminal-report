@@ -3,6 +3,13 @@ function pipeLogsToTerminal(config) {
   let oldConsoleError;
   let logs = [];
 
+  Cypress.on('fail', error => {
+    const [type, message] = logs[logs.length - 1];
+    logs[logs.length - 1] = [type, message, 'failed'];
+    logs.push(['cy:error', error.stack, 'failed']);
+    throw error;
+  });
+
   Cypress.on('window:before:load', () => {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
@@ -86,6 +93,7 @@ async function responseBodyParser(body) {
     return body;
   } else if (typeof body === 'object') {
     if (typeof body.text === 'function') {
+      console.log('await body.text');
       return await body.text();
     }
     return JSON.stringify(body);
@@ -121,6 +129,11 @@ function nodeAddLogsPrinter(on, options = {}) {
           typeString = '      cy:command ';
           color = 'green';
           icon = '✔';
+          trim = options.commandTrimLength || 600;
+        } else if (type === 'cy:error') {
+          typeString = '      cy:error   ';
+          color = 'red';
+          icon = '✘';
           trim = options.commandTrimLength || 600;
         } else if (type === 'cy:route:info') {
           typeString = '        cy:route ';

@@ -1,5 +1,6 @@
-import './commands'
-require('../../../index').installSupport();
+import './commands';
+
+require('../../../index').installSupport(Cypress.env());
 
 enableFetchWorkaround();
 function enableFetchWorkaround() {
@@ -7,12 +8,12 @@ function enableFetchWorkaround() {
 
   before(() => {
     console.info('Load fetch XHR polyfill.');
-    cy.request('https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js').then((response) => {
+    cy.request('https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js').then(response => {
       polyfill = response.body;
     });
   });
 
-  Cypress.on('window:before:load', (win) => {
+  Cypress.on('window:before:load', win => {
     delete win.fetch;
     win.eval(polyfill);
   });

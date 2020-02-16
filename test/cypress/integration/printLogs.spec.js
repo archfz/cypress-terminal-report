@@ -1,6 +1,6 @@
 import {happyFlow} from './happyFlow';
 
-describe('Happy flow', () => {
+describe('Print Logs', () => {
   /**
    * Covers:
    * - printing of cy.commands
@@ -8,8 +8,7 @@ describe('Happy flow', () => {
    * - printing of console warn and console error
    * - printing of cy.route in case of XMLHTTPREQUEST API
    */
-  it('Happy flow', () => {
+  it('Print Logs', () => {
     happyFlow();
-    cy.get('breaking-get');
   });
 });
