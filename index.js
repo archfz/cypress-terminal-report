@@ -6,7 +6,6 @@ function pipeLogsToTerminal(config) {
   Cypress.on('fail', error => {
     const [type, message] = logs[logs.length - 1];
     logs[logs.length - 1] = [type, message, 'failed'];
-    logs.push(['cy:error', error.stack, 'failed']);
     throw error;
   });
 
@@ -80,7 +79,7 @@ function pipeLogsToTerminal(config) {
   });
 
   afterEach(function() {
-    if (this.currentTest.state !== 'passed' || (config && config.printLogs)) {
+    if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
       cy.task('terminalLogs', logs);
     }
   });
