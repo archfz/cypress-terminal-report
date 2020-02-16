@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.com/archfz/cypress-terminal-report.svg?branch=master)](https://travis-ci.com/archfz/cypress-terminal-report)
 
-Plugin for cypress that adds better terminal output when tests fail
+Plugin for cypress that adds better terminal output __when tests fail__
 on the terminal for better debugging. Prints cy commands, console.warn, 
-console.error and request data captured with cy.route. 
+console.error and request response data captured with cy.route. 
 
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
