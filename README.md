@@ -1,5 +1,7 @@
 # Cypress terminal report
 
+[![Build Status](https://travis-ci.com/archfz/cypress-terminal-report.svg?branch=master)](https://travis-ci.com/archfz/cypress-terminal-report)
+
 Plugin for cypress that adds better terminal output when tests fail
 on the terminal for better debugging. Prints cy commands, console.warn, 
 console.error and request data captured with cy.route. 
@@ -34,3 +36,11 @@ To print logs for all tests add `{printLogs: true}` to `installSupport`:
     
     require('cypress-terminal-report').installSupport({printLogs: true});
     
+## Release notes
+
+#### Next (unreleased)
+
+- Added tests and CI to repository.
+- Added support for showing logs even for successful tests. in [issue](https://github.com/archfz/cypress-terminal-report/issues/3) by [@zhex900](https://github.com/zhex900)
+- Fixed issue with incorrectly labeled failed commands. in [issue](https://github.com/archfz/cypress-terminal-report/issues/3) by [@zhex900](https://github.com/zhex900)
+- Fixed issue with logs from cy.route breaking tests on XHR API type of requests. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/1) by [@zhex900](https://github.com/zhex900)
