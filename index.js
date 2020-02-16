@@ -93,7 +93,6 @@ async function responseBodyParser(body) {
     return body;
   } else if (typeof body === 'object') {
     if (typeof body.text === 'function') {
-      console.log('await body.text');
       return await body.text();
     }
     return JSON.stringify(body);
