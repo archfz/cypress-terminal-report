@@ -34,7 +34,7 @@ The plugin install can receive some options: `.installPlugin(on, options)`:
 
 To print logs for all tests add `{printLogs: always}` to `installSupport`:
     
-    require('cypress-terminal-report').installSupport({printLogs: true});
+    require('cypress-terminal-report').installSupport({printLogs: always});
     
 ## Release notes
 
