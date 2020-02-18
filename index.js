@@ -128,11 +128,6 @@ function nodeAddLogsPrinter(on, options = {}) {
           color = 'green';
           icon = '✔';
           trim = options.commandTrimLength || 600;
-        } else if (type === 'cy:error') {
-          typeString = '      cy:error   ';
-          color = 'red';
-          icon = '✘';
-          trim = options.commandTrimLength || 600;
         } else if (type === 'cy:route:info') {
           typeString = '        cy:route ';
           color = 'green';
