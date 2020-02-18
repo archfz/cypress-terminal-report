@@ -21,7 +21,7 @@ describe('cypress-terminal-report', () => {
         // cy.command logs.
         expect(stdout).to.contain('cy:command ✔  visit\t/\n');
         expect(stdout).to.contain('cy:command ✔  contains\tcypress\n');
-        expect(stdout).to.contain('√  All specs passed!');
+        expect(stdout).to.contain('All specs passed!');
         resolve();
       });
     });
