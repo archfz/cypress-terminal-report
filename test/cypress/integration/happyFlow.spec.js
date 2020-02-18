@@ -1,4 +1,4 @@
-describe("Happy flow", () => {
+describe('Happy flow', () => {
   /**
    * Covers:
    * - printing of cy.commands
@@ -18,28 +18,30 @@ describe("Happy flow", () => {
     // the button is clicked in scripts.js
     cy.get('.network-btn').click();
 
-    cy.wait('@getComment').its('status').should('eq', 200);
+    cy.wait('@getComment')
+      .its('status')
+      .should('eq', 200);
 
     cy.route('POST', '/comments').as('postComment');
 
     // we have code that posts a comment when
     // the button is clicked in scripts.js
     cy.get('.network-post').click();
-    cy.wait('@postComment').should((xhr) => {
+    cy.wait('@postComment').should(xhr => {
       expect(xhr.requestBody).to.include('email');
       expect(xhr.requestHeaders).to.have.property('Content-Type');
       expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.route()');
     });
 
-    cy.window().then((w) => w.console.warn('This is a warning message'));
-    cy.window().then((w) => w.console.error(new Error('This is an error message')));
+    cy.window().then(w => w.console.warn('This is a warning message'));
+    cy.window().then(w => w.console.error(new Error('This is an error message')));
 
     // Stub a response to PUT comments/ ****
     cy.route({
       method: 'PUT',
       url: 'comments/*',
       status: 404,
-      response: { error: message },
+      response: {error: message},
     }).as('putComment');
 
     // we have code that puts a comment when
@@ -50,7 +52,6 @@ describe("Happy flow", () => {
 
     // our 404 statusCode logic in scripts.js executed
     cy.get('.network-put-comment').should('contain', message);
-
     cy.get('breaking-get');
-  })
+  });
 });

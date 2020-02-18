@@ -1,7 +1,13 @@
-function pipeLogsToTerminal() {
+function pipeLogsToTerminal(config) {
   let oldConsoleWarn;
   let oldConsoleError;
   let logs = [];
+
+  Cypress.on('fail', error => {
+    const [type, message] = logs[logs.length - 1];
+    logs[logs.length - 1] = [type, message, 'failed'];
+    throw error;
+  });
 
   Cypress.on('window:before:load', () => {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
@@ -43,11 +49,11 @@ function pipeLogsToTerminal() {
       }
       const log =
         options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
-      logs.push(['cy:command', log]);
+      logs.push(['cy:command', log, options.state]);
     }
   });
 
-  Cypress.Commands.overwrite("server", (originalFn, options = {}) => {
+  Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
     const prevCallback = options && options.onAnyResponse;
     options.onAnyResponse = async (route, xhr) => {
       if (prevCallback) {
@@ -73,7 +79,7 @@ function pipeLogsToTerminal() {
   });
 
   afterEach(function() {
-    if (this.currentTest.state !== 'passed') {
+    if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
       cy.task('terminalLogs', logs);
     }
   });
@@ -98,7 +104,7 @@ function nodeAddLogsPrinter(on, options = {}) {
 
   on('task', {
     terminalLogs: messages => {
-      messages.forEach(([type, message], i) => {
+      messages.forEach(([type, message, status], i) => {
         let color = 'white',
           typeString = '       [unknown] ',
           processedMessage = message,
@@ -134,7 +140,7 @@ function nodeAddLogsPrinter(on, options = {}) {
           trim = options.routeTrimLength || 5000;
         }
 
-        if (i === messages.length - 1) {
+        if (status && status === 'failed') {
           color = 'red';
           icon = '✘';
         }
@@ -172,5 +178,5 @@ module.exports = {
    *
    * Needs to be added to support file.
    */
-  installSupport: () => pipeLogsToTerminal(),
+  installSupport: config => pipeLogsToTerminal(config),
 };

@@ -32,7 +32,10 @@ The plugin install can receive some options: `.installPlugin(on, options)`:
 - `options.commandTrimLength` - default: 600; max length of cy commands.
 - `options.routeTrimLength` - default: 5000; max length of cy.route request data.
 
-
+To print logs for all tests add `{printLogs: always}` to `installSupport`:
+    
+    require('cypress-terminal-report').installSupport({printLogs: always});
+    
 ## Release notes
 
 #### Next (unreleased)
