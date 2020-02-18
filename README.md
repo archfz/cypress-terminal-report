@@ -6,6 +6,9 @@ Plugin for cypress that adds better terminal output __when tests fail__
 on the terminal for better debugging. Prints cy commands, console.warn, 
 console.error and request response data captured with cy.route. 
 
+> Note: If you want to display the logs when test succeed as well then check the
+[options](#options) for the support install.
+
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
 ## Install
@@ -27,18 +30,18 @@ console.error and request response data captured with cy.route.
 
 ## Options
 
-The plugin install can receive some options: `.installPlugin(on, options)`:
+Options for the plugin install: `.installPlugin(on, options)`:
 - `options.defaultTrimLength` - default: 200; max length of cy.log and console.warn/console.error.
 - `options.commandTrimLength` - default: 600; max length of cy commands.
 - `options.routeTrimLength` - default: 5000; max length of cy.route request data.
 
-To print logs for all tests add `{printLogs: always}` to `installSupport`:
-    
-    require('cypress-terminal-report').installSupport({printLogs: always});
+Options for the support install: `.installSupport(options)`:
+- `options.printLogs` - default: null; possible values: null, 'always' - When set to always
+logs will be printed for successful test as well as failing ones.
     
 ## Release notes
 
-#### Next (unreleased)
+#### 1.0.0
 
 - Added tests and CI to repository.
 - Added support for showing logs even for successful tests. in [issue](https://github.com/archfz/cypress-terminal-report/issues/3) by [@zhex900](https://github.com/zhex900)

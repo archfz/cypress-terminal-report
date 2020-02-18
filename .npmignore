@@ -1,2 +1,5 @@
 demo.png
 test
+.idea
+.travis.yml
+.prettierrc.js
