@@ -102,11 +102,7 @@ describe('cypress-terminal-report', () => {
 
   it('Logs cy.requests', async () => {
     await new Promise(resolve => {
-      exec(commandBase() + 'requests.spec.js', (error, stdout, stderr) => {
-        if (stderr) {
-          console.error(stderr);
-        }
-
+      exec(commandBase('printLogs=always') + 'requests.spec.js', (error, stdout, stderr) => {
         expect(stdout).to.contain(
           'cy:command ✔  request\tGET https://jsonplaceholder.cypress.io/todos/1\n\t\t\t\tStatus: 200 \n\t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "userId": 1,\n\t\t\t\t  "id": 1,\n\t\t\t\t  "title": "delectus aut autem",\n\t\t\t\t  "completed": false\n\t\t\t\t}\n\n\n\n'
         );
