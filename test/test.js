@@ -3,8 +3,8 @@ const {expect} = require('chai');
 
 let commandPrefix = 'node ./node_modules/.bin/cypress';
 
-if (process.platform === "win32") {
-  commandPrefix = 'npx cypress'
+if (process.platform === 'win32') {
+  commandPrefix = 'npx cypress';
 }
 
 const commandBase = (env = '') =>
@@ -42,11 +42,12 @@ describe('cypress-terminal-report', () => {
         );
 
         // cy.route logs.
-        expect(stdout).to.contain('cy:route ⛗  Status: 200 (getComment)\n');
+        expect(stdout).to.contain('cy:route ⛗');
+        expect(stdout).to.contain('Status: 200 (getComment)\n');
         expect(stdout).to.contain('Method: GET\n');
         expect(stdout).to.contain('Url: https://jsonplaceholder.cypress.io/comments/1\n');
         expect(stdout).to.contain(
-          'Response: {"postId":1,"id":1,"name":"id labore ex et quam laborum","email":"Eliseo@gardner.biz"'
+          'Response: \n\t\t\t\t{\n\t\t\t\t  "postId": 1,\n\t\t\t\t  "id": 1,\n\t\t\t\t  "name": "id labore ex et quam laborum",\n\t\t\t\t  "email": "Eliseo@gardner.biz",\n\t\t\t\t  "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium"\n\t\t\t\t}\n'
         );
 
         // console.error and console.warn.
@@ -72,23 +73,52 @@ describe('cypress-terminal-report', () => {
         expect(stdout).to.contain('Url: https://example.cypress.io/comments/10\n');
 
         // cy.route empty body.
-        expect(stdout).to.contain('cy:route ⛗  Status: 200 (getComment)\n');
+        expect(stdout).to.contain('cy:route ⛗');
+        expect(stdout).to.contain('Status: 200 (getComment)\n');
         expect(stdout).to.contain('Response: EMPTY_BODY\n');
 
         // cy.route text.
-        expect(stdout).to.contain('cy:route ⛗  Status: 403 (putComment)\n');
+        expect(stdout).to.contain('cy:route ⛗');
+        expect(stdout).to.contain('Status: 403 (putComment)\n');
         expect(stdout).to.contain('Response: This is plain text data.\n');
 
         // cy.route unknown.
-        expect(stdout).to.contain('cy:route ⛗  Status: 401 (putComment)\n');
+        expect(stdout).to.contain('cy:route ⛗');
+        expect(stdout).to.contain('Status: 401 (putComment)\n');
         expect(stdout).to.contain('Response: UNKNOWN_BODY\n');
 
         // cy.route logs.
-        expect(stdout).to.contain('cy:route ⛗  Status: 404 (putComment)\n');
+        expect(stdout).to.contain('cy:route ⛗');
+        expect(stdout).to.contain('Status: 404 (putComment)\n');
         expect(stdout).to.contain('Response: {"error":"Test message."}\n');
 
         // log failed command
         expect(stdout).to.contain('cy:command ✘  get\tbreaking-get\n');
+
+        resolve();
+      });
+    });
+  }).timeout(60000);
+
+  it('Logs cy.requests', async () => {
+    await new Promise(resolve => {
+      exec(commandBase() + 'requests.spec.js', (error, stdout, stderr) => {
+        if (stderr) {
+          console.error(stderr);
+        }
+
+        expect(stdout).to.contain(
+          'cy:command ✔  request\tGET https://jsonplaceholder.cypress.io/todos/1\n\t\t\t\tStatus: 200 \n\t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "userId": 1,\n\t\t\t\t  "id": 1,\n\t\t\t\t  "title": "delectus aut autem",\n\t\t\t\t  "completed": false\n\t\t\t\t}\n\n\n\n'
+        );
+
+        expect(stdout).to.contain(
+          'cy:command ✔  request	POST https://jsonplaceholder.cypress.io/comments\n\t\t\t\tStatus: 201 \n\t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "id": 501\n\t\t\t\t}\n\n\n\n'
+        );
+
+        // log failed command
+        expect(stdout).to.contain(
+          'cy:command ✘  request	PUT https://jsonplaceholder.cypress.io/comments'
+        );
 
         resolve();
       });

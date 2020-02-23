@@ -31,7 +31,22 @@ function pipeLogsToTerminal(config) {
     subject(...args);
   });
 
-  Cypress.on('log:added', options => {
+  Cypress.on('command:end', async ({attributes}) => {
+    if (attributes.name === 'request') {
+      const {
+        subject: {status, body},
+      } = attributes;
+
+      const messageDetails = `\n\t\t\t\tStatus: ${status} \n\t\t\t\tResponse: ${await responseBodyParser(
+        body
+      )}`;
+
+      const [type, log] = logs[logs.length - 1];
+      logs[logs.length - 1] = [type, `${log}${messageDetails}`];
+    }
+  });
+
+  Cypress.on('log:added', async options => {
     if (options.instrument === 'command' && options.consoleProps) {
       if (
         options.name === 'log' ||
@@ -46,6 +61,9 @@ function pipeLogsToTerminal(config) {
           options.consoleProps.Method +
           ' ' +
           options.consoleProps.URL;
+      }
+      if (options.name === 'request') {
+        options.message = options.renderProps.message.replace(/---\ /, '');
       }
       const log =
         options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
@@ -70,7 +88,6 @@ function pipeLogsToTerminal(config) {
         }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
       ]);
     };
-
     originalFn(options);
   });
 
@@ -94,7 +111,8 @@ async function responseBodyParser(body) {
     if (typeof body.text === 'function') {
       return await body.text();
     }
-    return JSON.stringify(body);
+    const padding = '\n\t\t\t\t';
+    return `${padding}${JSON.stringify(body, null, 2).replace(/\n/g, padding)}`;
   }
   return 'UNKNOWN_BODY';
 }
