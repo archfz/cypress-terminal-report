@@ -104,16 +104,16 @@ describe('cypress-terminal-report', () => {
     await new Promise(resolve => {
       exec(commandBase('printLogs=always') + 'requests.spec.js', (error, stdout, stderr) => {
         expect(stdout).to.contain(
-          'cy:command ✔  request\tGET https://jsonplaceholder.cypress.io/todos/1\n\t\t\t\tStatus: 200 \n\t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "userId": 1,\n\t\t\t\t  "id": 1,\n\t\t\t\t  "title": "delectus aut autem",\n\t\t\t\t  "completed": false\n\t\t\t\t}\n\n\n\n'
+          'cy:command ✔  cy:request\thttps://jsonplaceholder.cypress.io/todos/1\n\t\t\t\tStatus: 200 \n      \t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "userId": 1,\n\t\t\t\t  "id": 1,\n\t\t\t\t  "title": "delectus aut autem",\n\t\t\t\t  "completed": false\n\t\t\t\t}'
         );
 
         expect(stdout).to.contain(
-          'cy:command ✔  request	POST https://jsonplaceholder.cypress.io/comments\n\t\t\t\tStatus: 201 \n\t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "id": 501\n\t\t\t\t}\n\n\n\n'
+          'cy:command ✔  cy:request\tPOST https://jsonplaceholder.cypress.io/comments\n\t\t\t\tStatus: 201 \n      \t\t\t\tResponse: \n\t\t\t\t{\n\t\t\t\t  "id": 501\n\t\t\t\t}'
         );
 
         // log failed command
         expect(stdout).to.contain(
-          'cy:command ✘  request	PUT https://jsonplaceholder.cypress.io/comments'
+          'cy:command ✘  cy:request\tPUT https://jsonplaceholder.cypress.io/comments\n\t\t\t\tStatus: 404 - Not Found'
         );
 
         resolve();

@@ -31,21 +31,6 @@ function pipeLogsToTerminal(config) {
     subject(...args);
   });
 
-  Cypress.on('command:end', async ({attributes}) => {
-    if (attributes.name === 'request') {
-      const {
-        subject: {status, body},
-      } = attributes;
-
-      const messageDetails = `\n\t\t\t\tStatus: ${status} \n\t\t\t\tResponse: ${await responseBodyParser(
-        body
-      )}`;
-
-      const [type, log] = logs[logs.length - 1];
-      logs[logs.length - 1] = [type, `${log}${messageDetails}`];
-    }
-  });
-
   Cypress.on('log:added', async options => {
     if (options.instrument === 'command' && options.consoleProps) {
       if (
@@ -63,11 +48,28 @@ function pipeLogsToTerminal(config) {
           options.consoleProps.URL;
       }
       if (options.name === 'request') {
-        options.message = options.renderProps.message.replace(/---\ /, '');
+        return;
       }
       const log =
         options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
       logs.push(['cy:command', log, options.state]);
+    }
+  });
+
+  Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
+    let log = `cy:request\t${options.method || ''}${options.url ? ` ${options.url}` : options}`;
+
+    try {
+      const response = await originalFn(options);
+      log += `\n\t\t\t\tStatus: ${response.status} 
+      \t\t\t\tResponse: ${await responseBodyParser(response.body)}`;
+
+      logs.push(['cy:command', log]);
+      return response;
+    } catch (e) {
+      log += `\n\t\t\t\t${e.message.match(/Status:.*\d*/g)} `;
+      logs.push(['cy:command', log]);
+      throw e;
     }
   });
 
@@ -122,7 +124,7 @@ function nodeAddLogsPrinter(on, options = {}) {
 
   on('task', {
     terminalLogs: messages => {
-      messages.forEach(([type, message, status], i) => {
+      messages.forEach(([type, message, status]) => {
         let color = 'white',
           typeString = '       [unknown] ',
           processedMessage = message,
@@ -166,7 +168,6 @@ function nodeAddLogsPrinter(on, options = {}) {
         if (message.length > trim) {
           processedMessage = message.substring(0, trim) + ' ...';
         }
-
         console.log(chalk[color](typeString + icon + ' '), processedMessage);
       });
 
