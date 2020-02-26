@@ -1,3 +1,6 @@
+const PADDING = {
+  LOG: '\t\t    ',
+};
 function pipeLogsToTerminal(config) {
   let oldConsoleWarn;
   let oldConsoleError;
@@ -57,20 +60,23 @@ function pipeLogsToTerminal(config) {
   });
 
   Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
-    let log = `cy:request\t${options.method || ''}${options.url ? ` ${options.url}` : options}`;
+    let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
 
-    try {
-      const response = await originalFn(options);
-      log += `\n\t\t\t\tStatus: ${response.status} 
-      \t\t\t\tResponse: ${await responseBodyParser(response.body)}`;
+    const response = await originalFn(options).catch(async e => {
+      const {body} = e.onFail().toJSON().consoleProps.Yielded;
 
-      logs.push(['cy:command', log]);
-      return response;
-    } catch (e) {
-      log += `\n\t\t\t\t${e.message.match(/Status:.*\d*/g)} `;
-      logs.push(['cy:command', log]);
+      log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
+      ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
+
+      logs.push(['cy:request', log]);
       throw e;
-    }
+    });
+
+    log += `\n${PADDING.LOG}Status: ${response.status} 
+      ${PADDING.LOG}Response: ${await responseBodyParser(response.body)}`;
+
+    logs.push(['cy:request', log]);
+    return response;
   });
 
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
@@ -85,9 +91,9 @@ function pipeLogsToTerminal(config) {
       }
       logs.push([
         String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-        `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${
-          xhr.url
-        }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
+        `Status: ${xhr.status} (${route.alias})\n${PADDING.LOG}Method: ${xhr.method}\n${
+          PADDING.LOG
+        }Url: ${xhr.url}\n${PADDING.LOG}Response: ${await responseBodyParser(xhr.response.body)}`,
       ]);
     };
     originalFn(options);
@@ -113,8 +119,8 @@ async function responseBodyParser(body) {
     if (typeof body.text === 'function') {
       return await body.text();
     }
-    const padding = '\n\t\t\t\t';
-    return `${padding}${JSON.stringify(body, null, 2).replace(/\n/g, padding)}`;
+    const padding = `\n${PADDING.LOG}`;
+    return `${JSON.stringify(body, null, 2).replace(/\n/g, padding)}`;
   }
   return 'UNKNOWN_BODY';
 }
@@ -158,6 +164,11 @@ function nodeAddLogsPrinter(on, options = {}) {
           color = 'yellow';
           icon = '⛗';
           trim = options.routeTrimLength || 5000;
+        } else if (type === 'cy:request') {
+          typeString = `      cy:request `;
+          color = 'green';
+          icon = '✔';
+          trim = options.routeTrimLength || 600;
         }
 
         if (status && status === 'failed') {
