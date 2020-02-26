@@ -63,7 +63,14 @@ function pipeLogsToTerminal(config) {
     let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
 
     const response = await originalFn(options).catch(async e => {
-      const {body} = e.onFail().toJSON().consoleProps.Yielded;
+      let body = {};
+      if (
+        // check the body is there
+        e.onFail().toJSON().consoleProps.Yielded &&
+        e.onFail().toJSON().consoleProps.Yielded.body
+      ) {
+        body = e.onFail().toJSON().consoleProps.Yielded.body;
+      }
 
       log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
       ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
