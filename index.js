@@ -31,7 +31,7 @@ function pipeLogsToTerminal(config) {
     subject(...args);
   });
 
-  Cypress.on('log:added', async options => {
+  Cypress.on('log:added', options => {
     if (options.instrument === 'command' && options.consoleProps) {
       if (
         options.name === 'log' ||
