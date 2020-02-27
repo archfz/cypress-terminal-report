@@ -1,9 +1,9 @@
 const PADDING = {
   LOG: '\t\t    ',
 };
-function pipeLogsToTerminal(config) {
-  let oldConsoleWarn;
-  let oldConsoleError;
+
+function pipeLogsToTerminal(config = {}) {
+  let oldConsoleMethods = {};
   let logs = [];
 
   Cypress.on('fail', error => {
@@ -16,17 +16,22 @@ function pipeLogsToTerminal(config) {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
 
-    oldConsoleWarn = appWindow.console.warn;
-    oldConsoleError = appWindow.console.error;
+    const createWrapper = (method, logType) => {
+      oldConsoleMethods[method] = appWindow.console[method];
 
-    appWindow.console.warn = (...args) => {
-      logs.push(['warn', args.join(' ')]);
-      oldConsoleWarn(...args);
+      appWindow.console[method] = (...args) => {
+        logs.push([logType, args.join(' ')]);
+        oldConsoleMethods[method](...args);
+      };
     };
-    appWindow.console.error = (...args) => {
-      logs.push(['error', args.join(' ')]);
-      oldConsoleError(...args);
-    };
+
+    createWrapper('warn', 'warn');
+    createWrapper('error', 'error');
+
+    if (config.printConsoleInfo) {
+      createWrapper('info', 'info');
+      createWrapper('log', 'log');
+    }
   });
 
   Cypress.Commands.overwrite('log', (subject, ...args) => {
@@ -155,6 +160,14 @@ function nodeAddLogsPrinter(on, options = {}) {
         } else if (type === 'cy:log') {
           color = 'green';
           typeString = '          cy:log ';
+          icon = 'ⓘ';
+        }else if (type === 'log') {
+          color = 'white';
+          typeString = '        cons:log ';
+          icon = 'ⓘ';
+        } else if (type === 'info') {
+          color = 'white';
+          typeString = '       cons:info ';
           icon = 'ⓘ';
         } else if (type === 'cy:command') {
           typeString = '      cy:command ';

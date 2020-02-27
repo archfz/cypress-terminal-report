@@ -9,6 +9,9 @@ console.error and request response data captured with cy.route.
 > Note: If you want to display the logs when test succeed as well then check the
 [options](#options) for the support install.
 
+> Note: Currently logs do not appear in the dashboard. If you want to see them go
+to your CI runner and check the pipeline logs there.
+
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
 ## Install
@@ -38,8 +41,16 @@ Options for the plugin install: `.installPlugin(on, options)`:
 Options for the support install: `.installSupport(options)`:
 - `options.printLogs` - default: null; possible values: null, 'always' - When set to always
 logs will be printed for successful test as well as failing ones.
+- `printConsoleInfo` - default: null; possible values: null, true - When true `console.log()` 
+and `console.info()` logs will also be printed to the terminal, besides warn and error.
     
 ## Release notes
+
+#### 1.1.0
+
+- Added notice for logs not appearing in dashboard. from [issue](https://github.com/archfz/cypress-terminal-report/issues/8)
+- Added [support for logging](#options) console.info and console.log. in [issue](https://github.com/archfz/cypress-terminal-report/issues/12) 
+- Added better logging of cy.requests. in [issue](https://github.com/archfz/cypress-terminal-report/issues/12) by [@zhex900](https://github.com/zhex900)
 
 #### 1.0.0
 
