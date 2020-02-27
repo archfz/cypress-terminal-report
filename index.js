@@ -1,3 +1,6 @@
+const PADDING = {
+  LOG: '\t\t    ',
+};
 function pipeLogsToTerminal(config) {
   let oldConsoleWarn;
   let oldConsoleError;
@@ -47,10 +50,40 @@ function pipeLogsToTerminal(config) {
           ' ' +
           options.consoleProps.URL;
       }
+      if (options.name === 'request') {
+        return;
+      }
       const log =
         options.name + '\t' + options.message + (detailMessage !== '' ? ' ' + detailMessage : '');
       logs.push(['cy:command', log, options.state]);
     }
+  });
+
+  Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
+    let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
+
+    const response = await originalFn(options).catch(async e => {
+      let body = {};
+      if (
+        // check the body is there
+        e.onFail().toJSON().consoleProps.Yielded &&
+        e.onFail().toJSON().consoleProps.Yielded.body
+      ) {
+        body = e.onFail().toJSON().consoleProps.Yielded.body;
+      }
+
+      log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
+      ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
+
+      logs.push(['cy:request', log]);
+      throw e;
+    });
+
+    log += `\n${PADDING.LOG}Status: ${response.status} 
+      ${PADDING.LOG}Response: ${await responseBodyParser(response.body)}`;
+
+    logs.push(['cy:request', log]);
+    return response;
   });
 
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
@@ -65,12 +98,11 @@ function pipeLogsToTerminal(config) {
       }
       logs.push([
         String(xhr.status).match(/^2[0-9]+$/) ? 'cy:route:info' : 'cy:route:warn',
-        `Status: ${xhr.status} (${route.alias})\n\t\tMethod: ${xhr.method}\n\t\tUrl: ${
-          xhr.url
-        }\n\t\tResponse: ${await responseBodyParser(xhr.response.body)}`,
+        `Status: ${xhr.status} (${route.alias})\n${PADDING.LOG}Method: ${xhr.method}\n${
+          PADDING.LOG
+        }Url: ${xhr.url}\n${PADDING.LOG}Response: ${await responseBodyParser(xhr.response.body)}`,
       ]);
     };
-
     originalFn(options);
   });
 
@@ -94,7 +126,8 @@ async function responseBodyParser(body) {
     if (typeof body.text === 'function') {
       return await body.text();
     }
-    return JSON.stringify(body);
+    const padding = `\n${PADDING.LOG}`;
+    return `${JSON.stringify(body, null, 2).replace(/\n/g, padding)}`;
   }
   return 'UNKNOWN_BODY';
 }
@@ -104,7 +137,7 @@ function nodeAddLogsPrinter(on, options = {}) {
 
   on('task', {
     terminalLogs: messages => {
-      messages.forEach(([type, message, status], i) => {
+      messages.forEach(([type, message, status]) => {
         let color = 'white',
           typeString = '       [unknown] ',
           processedMessage = message,
@@ -138,6 +171,11 @@ function nodeAddLogsPrinter(on, options = {}) {
           color = 'yellow';
           icon = '⛗';
           trim = options.routeTrimLength || 5000;
+        } else if (type === 'cy:request') {
+          typeString = `      cy:request `;
+          color = 'green';
+          icon = '✔';
+          trim = options.routeTrimLength || 600;
         }
 
         if (status && status === 'failed') {
@@ -148,7 +186,6 @@ function nodeAddLogsPrinter(on, options = {}) {
         if (message.length > trim) {
           processedMessage = message.substring(0, trim) + ' ...';
         }
-
         console.log(chalk[color](typeString + icon + ' '), processedMessage);
       });
 
