@@ -1,4 +1,4 @@
-describe('Happy flow', () => {
+describe('Happy flow.', () => {
   /**
    * Covers:
    * - printing of cy.commands
@@ -8,6 +8,8 @@ describe('Happy flow', () => {
    */
   it('Happy flow', () => {
     cy.visit('/commands/network-requests');
+
+    cy.window().then((w) => w.console.log('This console.log should not appear.'));
 
     let message = 'whoa, this comment does not exist';
 

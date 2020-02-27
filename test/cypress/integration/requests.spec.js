@@ -1,4 +1,5 @@
-describe('cy.request test runs', () => {
+describe('Requests.', () => {
+
   it('GET should pass', () => {
     cy.request('https://jsonplaceholder.cypress.io/todos/1');
   });
