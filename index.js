@@ -64,32 +64,32 @@ function pipeLogsToTerminal(config = {}) {
     }
   });
 
-  Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
-    let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
-
-    const response = await originalFn(options).catch(async e => {
-      let body = {};
-      if (
-        // check the body is there
-        e.onFail().toJSON().consoleProps.Yielded &&
-        e.onFail().toJSON().consoleProps.Yielded.body
-      ) {
-        body = e.onFail().toJSON().consoleProps.Yielded.body;
-      }
-
-      log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
-      ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
-
-      logs.push(['cy:request', log]);
-      throw e;
-    });
-
-    log += `\n${PADDING.LOG}Status: ${response.status} 
-      ${PADDING.LOG}Response: ${await responseBodyParser(response.body)}`;
-
-    logs.push(['cy:request', log]);
-    return response;
-  });
+  // Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
+  //   let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
+  //
+  //   const response = await originalFn(options).catch(async e => {
+  //     let body = {};
+  //     if (
+  //       // check the body is there
+  //       e.onFail().toJSON().consoleProps.Yielded &&
+  //       e.onFail().toJSON().consoleProps.Yielded.body
+  //     ) {
+  //       body = e.onFail().toJSON().consoleProps.Yielded.body;
+  //     }
+  //
+  //     log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
+  //     ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
+  //
+  //     logs.push(['cy:request', log]);
+  //     throw e;
+  //   });
+  //
+  //   log += `\n${PADDING.LOG}Status: ${response.status}
+  //     ${PADDING.LOG}Response: ${await responseBodyParser(response.body)}`;
+  //
+  //   logs.push(['cy:request', log]);
+  //   return response;
+  // });
 
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
     const prevCallback = options && options.onAnyResponse;
