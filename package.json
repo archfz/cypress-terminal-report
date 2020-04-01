@@ -35,7 +35,8 @@
   },
   "homepage": "https://github.com/archfz/cypress-terminal-report#readme",
   "dependencies": {
-    "chalk": "^3.0.0"
+    "chalk": "^3.0.0",
+    "methods": "^1.1.2"
   },
   "peerDependencies": {
     "cypress": "^3.8.1"
