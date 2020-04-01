@@ -77,7 +77,7 @@ function pipeLogsToTerminal(config = {}) {
       log = `${args[0]}`;
     }
 
-    const response = await originalFn(options).catch(async e => {
+    const response = await originalFn(...args).catch(async e => {
       let body = {};
       if (
         // check the body is there
