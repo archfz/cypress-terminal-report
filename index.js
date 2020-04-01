@@ -102,7 +102,7 @@ function pipeLogsToTerminal(config = {}) {
   });
 
   function isValidHttpMethod(str) {
-    return typeof str === 'string' && methods.some(s => str.includes(s));
+    return typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
   }
 
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {

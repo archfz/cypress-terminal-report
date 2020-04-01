@@ -2,6 +2,8 @@ describe('Requests.', () => {
 
   it('GET should pass', () => {
     cy.request('https://jsonplaceholder.cypress.io/todos/1');
+    cy.request('GET', 'https://jsonplaceholder.cypress.io/todos/2');
+    cy.request('GET', 'https://jsonplaceholder.cypress.io/todos/3', 'mock body');
   });
 
   it('POST should pass', () => {
