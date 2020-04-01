@@ -70,7 +70,7 @@ function pipeLogsToTerminal(config = {}) {
     // args can have up to 3 arguments
     // https://docs.cypress.io/api/commands/request.html#Syntax
     if (args[0].method) {
-      log = `${args[0].method} ${args[0].url}`;
+      log = `${args[0].method} ${args[0].url ? `${args[0].url}` : args[0]}`;
     } else if (isValidHttpMethod(args[0])) {
       log = `${args[0]} ${args[1]}`;
     } else {
