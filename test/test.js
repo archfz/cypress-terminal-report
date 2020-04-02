@@ -107,6 +107,12 @@ describe('cypress-terminal-report', () => {
         'cy:request ✔  https://jsonplaceholder.cypress.io/todos/1\n\t\t    Status: 200 \n      \t\t    Response: {\n\t\t      "userId": 1,\n\t\t      "id": 1,\n\t\t      "title": "delectus aut autem",\n\t\t      "completed": false\n\t\t    }'
       );
       expect(stdout).to.contain(
+        'cy:request ✔  GET https://jsonplaceholder.cypress.io/todos/2\n\t\t    Status: 200 \n      \t\t    Response: {\n\t\t      "userId": 1,\n\t\t      "id": 2,\n\t\t      "title": "quis ut nam facilis et officia qui",\n\t\t      "completed": false\n\t\t    }'
+      );
+      expect(stdout).to.contain(
+        'cy:request ✔  GET https://jsonplaceholder.cypress.io/todos/3\n\t\t    Status: 200 \n      \t\t    Response: {\n\t\t      "userId": 1,\n\t\t      "id": 3,\n\t\t      "title": "fugiat veniam minus",\n\t\t      "completed": false\n\t\t    }'
+      );
+      expect(stdout).to.contain(
         'cy:request ✔  POST https://jsonplaceholder.cypress.io/comments\n\t\t    Status: 201 \n      \t\t    Response: {\n\t\t      "id": 501\n\t\t    }\n\n\n\n\r'
       );
       // log failed command

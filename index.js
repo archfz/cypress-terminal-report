@@ -1,3 +1,4 @@
+const methods = require('methods');
 const PADDING = {
   LOG: '\t\t    ',
 };
@@ -64,10 +65,19 @@ function pipeLogsToTerminal(config = {}) {
     }
   });
 
-  Cypress.Commands.overwrite('request', async (originalFn, options = {}) => {
-    let log = `${options.method || ''}${options.url ? ` ${options.url}` : options}`;
+  Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
+    let log;
+    // args can have up to 3 arguments
+    // https://docs.cypress.io/api/commands/request.html#Syntax
+    if (args[0].method) {
+      log = `${args[0].method} ${args[0].url ? `${args[0].url}` : args[0]}`;
+    } else if (isValidHttpMethod(args[0])) {
+      log = `${args[0]} ${args[1]}`;
+    } else {
+      log = `${args[0]}`;
+    }
 
-    const response = await originalFn(options).catch(async e => {
+    const response = await originalFn(...args).catch(async e => {
       let body = {};
       if (
         // check the body is there
@@ -90,6 +100,10 @@ function pipeLogsToTerminal(config = {}) {
     logs.push(['cy:request', log]);
     return response;
   });
+
+  function isValidHttpMethod(str) {
+    return typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
+  }
 
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
     const prevCallback = options && options.onAnyResponse;
