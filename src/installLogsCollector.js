@@ -77,7 +77,33 @@ function validateConfig(config) {
 }
 
 function collectBrowserConsoleLogs(addLog, collectTypes) {
-  let oldConsoleMethods = {};
+  const oldConsoleMethods = {};
+  const processArg = (arg) => {
+    if (typeof arg === 'string' || typeof arg === 'number') {
+      return arg;
+    }
+
+    if (arg instanceof Error && typeof arg.stack === "string") {
+      let stack = arg.stack;
+      if (stack.indexOf(arg.message) !== -1) {
+        stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
+      }
+      return arg.toString() + '\n' + stack.split('\n')
+        .map((part) => PADDING.LOG + part)
+        .join('\n');
+    }
+
+    let json = '';
+    try {
+      json = JSON.stringify(arg, null, 2);
+    } catch (e) {
+      return '[unprocessable=' + arg + ']';
+    }
+
+    return '\n' + json.split('\n')
+      .map((part) => PADDING.LOG + part)
+      .join('\n');
+  };
 
   Cypress.on('window:before:load', () => {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
@@ -87,7 +113,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       oldConsoleMethods[method] = appWindow.console[method];
 
       appWindow.console[method] = (...args) => {
-        addLog([logType, args.join(' ')]);
+        addLog([logType, args.map(processArg).join('\n')]);
         oldConsoleMethods[method](...args);
       };
     };

@@ -34,8 +34,10 @@ describe('Happy flow.', () => {
     });
 
     cy.window().then(w => w.console.warn('This is a warning message'));
-    cy.window().then(w => w.console.error(new Error('This is an error message')));
+    cy.window().then(w => w.console.error('This is an error message'));
+    cy.window().then(w => w.console.error(new Error('This is an error message with stack.')));
     cy.window().then((w) => w.console.log('This should console.log appear.'));
+    cy.window().then((w) => w.console.log({this: 'Is an object', with: {keys: 12512}}));
     cy.window().then((w) => w.console.info('This should console.info appear.'));
 
     // Stub a response to PUT comments/ ****
