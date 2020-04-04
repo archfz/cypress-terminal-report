@@ -55,7 +55,7 @@ function installLogsCollector(config = {}) {
 
 function validateConfig(config) {
   if (config.collectTypes) {
-    if (Array.isArray(config.collectTypes)) {
+    if (!Array.isArray(config.collectTypes)) {
       throw new Error(`Collect types should be of type array. [cypress-terminal-report]`);
     }
 

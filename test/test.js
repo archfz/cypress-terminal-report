@@ -42,7 +42,7 @@ describe('cypress-terminal-report', () => {
     }
   });
 
-  it.only('Should run happy flow.', async () => {
+  it('Should run happy flow.', async () => {
     await runTest(commandBase() + 'happyFlow.spec.js', (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain('cy:command ✔  visit\t/commands/network-requests\n');
