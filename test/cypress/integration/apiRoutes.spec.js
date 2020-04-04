@@ -40,7 +40,7 @@ describe("API routes", () => {
     cy.get('.network-put').click();
     cy.wait('@putComment');
 
-    cy.get('breaking-get');
+    cy.get('.breaking-get', {timeout: 1});
   });
 
   /**
@@ -69,6 +69,6 @@ describe("API routes", () => {
 
     cy.wait('@putComment');
 
-    cy.get('breaking-get');
+    cy.get('.breaking-get', {timeout: 1});
   });
 });

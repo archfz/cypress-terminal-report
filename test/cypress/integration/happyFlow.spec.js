@@ -9,8 +9,6 @@ describe('Happy flow.', () => {
   it('Happy flow', () => {
     cy.visit('/commands/network-requests');
 
-    cy.window().then((w) => w.console.log('This console.log should not appear.'));
-
     let message = 'whoa, this comment does not exist';
 
     cy.server();
@@ -37,6 +35,8 @@ describe('Happy flow.', () => {
 
     cy.window().then(w => w.console.warn('This is a warning message'));
     cy.window().then(w => w.console.error(new Error('This is an error message')));
+    cy.window().then((w) => w.console.log('This should console.log appear.'));
+    cy.window().then((w) => w.console.info('This should console.info appear.'));
 
     // Stub a response to PUT comments/ ****
     cy.route({
@@ -54,6 +54,6 @@ describe('Happy flow.', () => {
 
     // our 404 statusCode logic in scripts.js executed
     cy.get('.network-put-comment').should('contain', message);
-    cy.get('breaking-get');
+    cy.get('.breaking-get', {timeout: 1});
   });
 });

@@ -9,7 +9,7 @@ if (process.platform === 'win32') {
 }
 
 const commandBase = (env = '') =>
-  `${commandPrefix} run --env ${env} --headless -s cypress/integration/`;
+  `${commandPrefix} run --env ${env} --headless --config video=false -s cypress/integration/`;
 
 let lastRunOutput = '';
 const runTest = async (command, callback) => {
@@ -42,21 +42,13 @@ describe('cypress-terminal-report', () => {
     }
   });
 
-  it('Always print logs happy flows with no errors.', async () => {
-    await runTest(commandBase('printLogs=always') + 'alwaysPrintLogs.spec.js', (error, stdout, stderr) => {
-      // cy.command logs.
-      expect(stdout).to.contain('cy:command ✔  visit\t/\n');
-      expect(stdout).to.contain('cy:command ✔  contains\tcypress\n');
-    });
-  }).timeout(60000);
-
-  it('Logs happy flows with errors.', async () => {
+  it('Should run happy flow.', async () => {
     await runTest(commandBase() + 'happyFlow.spec.js', (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain('cy:command ✔  visit\t/commands/network-requests\n');
       expect(stdout).to.contain('cy:command ✔  get\t.network-post\n');
       expect(stdout).to.contain(
-        'cy:command ✔  xhr\t STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n'
+        'cy:xhr ⓘ  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n'
       );
       // cy.route logs.
       expect(stdout).to.contain('cy:route ⛗');
@@ -66,13 +58,13 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(
         'Response: {\n\t\t      "postId": 1,\n\t\t      "id": 1,\n\t\t      "name": "id labore ex et quam laborum",\n\t\t      "email": "Eliseo@gardner.biz",\n\t\t      "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium"\n\t\t    }\n'
       );
-      // console.error and console.warn.
-      expect(stdout).to.contain('cons.warn ⚠  This is a warning message\n');
-      expect(stdout).to.contain('cons.error ⚠  Error: This is an error message\n');
+      // console
+      expect(stdout).to.contain('cons:warn ⚠  This is a warning message\n');
+      expect(stdout).to.contain('cons:error ⚠  Error: This is an error message\n');
+      expect(stdout).to.contain('cons:log ⓘ  This should console.log appear.');
+      expect(stdout).to.contain('cons:info ⓘ  This should console.info appear.');
       // log failed command
-      expect(stdout).to.contain('cy:command ✘  get\tbreaking-get\n');
-      // by default console.log should not be printed
-      expect(stdout).to.not.contain('This console.log should not appear.');
+      expect(stdout).to.contain('cy:command ✘  get\t.breaking-get\n');
     });
   }).timeout(60000);
 
@@ -97,12 +89,12 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain('Status: 404 (putComment)\n');
       expect(stdout).to.contain('Response: {"error":"Test message."}\n');
       // log failed command
-      expect(stdout).to.contain('cy:command ✘  get\tbreaking-get\n');
+      expect(stdout).to.contain('cy:command ✘  get\t.breaking-get\n');
     });
   }).timeout(60000);
 
   it('Logs cy.requests', async () => {
-    await runTest(commandBase('printLogs=always') + 'requests.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase() + 'requests.spec.js', (error, stdout, stderr) => {
       expect(stdout).to.contain(
         'cy:request ✔  https://jsonplaceholder.cypress.io/todos/1\n\t\t    Status: 200 \n      \t\t    Response: {\n\t\t      "userId": 1,\n\t\t      "id": 1,\n\t\t      "title": "delectus aut autem",\n\t\t      "completed": false\n\t\t    }'
       );
@@ -113,29 +105,56 @@ describe('cypress-terminal-report', () => {
         'cy:request ✔  GET https://jsonplaceholder.cypress.io/todos/3\n\t\t    Status: 200 \n      \t\t    Response: {\n\t\t      "userId": 1,\n\t\t      "id": 3,\n\t\t      "title": "fugiat veniam minus",\n\t\t      "completed": false\n\t\t    }'
       );
       expect(stdout).to.contain(
-        'cy:request ✔  POST https://jsonplaceholder.cypress.io/comments\n\t\t    Status: 201 \n      \t\t    Response: {\n\t\t      "id": 501\n\t\t    }\n\n\n\n\r'
+        'cy:request ✔  POST https://jsonplaceholder.cypress.io/comments\n\t\t    Status: 201 \n      \t\t    Response: {\n\t\t      "id": 501\n\t\t    }\n'
       );
       // log failed command
       expect(stdout).to.contain(
-        'cy:request ✘  PUT https://jsonplaceholder.cypress.io/comments\n\t\t    Status: 404 - Not Found\n      \t\t    Response: {}\n\n\n\n'
+        'cy:request ✘  PUT https://jsonplaceholder.cypress.io/comments\n\t\t    Status: 404 - Not Found\n      \t\t    Response: {}\n'
       );
 
       expect(stdout).to.contain(
-        'cy:request ✘  GET https://cypress.free.beeceptor.com/response500\n\t\t    Status: 500 - Server Error\n      \t\t    Response: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n\n\n\n\r'
+        'cy:request ✘  GET https://cypress.free.beeceptor.com/response500\n\t\t    Status: 500 - Server Error\n      \t\t    Response: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n'
       );
 
       expect(stdout).to.contain(
-        'cy:request ✘  POST https://cypress.free.beeceptor.com/create/object/fail\n\t\t    Status: 400 - Bad Request\n      \t\t    Response: {\n\t\t      "status": "Wrong!",\n\t\t      "data": {\n\t\t        "corpo": "corpo da resposta",\n\t\t        "titulo": "titulo da resposta"\n\t\t      }\n\t\t    }\n\n\n\n'
+        'cy:request ✘  POST https://cypress.free.beeceptor.com/create/object/fail\n\t\t    Status: 400 - Bad Request\n      \t\t    Response: {\n\t\t      "status": "Wrong!",\n\t\t      "data": {\n\t\t        "corpo": "corpo da resposta",\n\t\t        "titulo": "titulo da resposta"\n\t\t      }\n\t\t    }\n'
       );
     });
   }).timeout(60000);
 
-  it('Prints console.log and console.info when enabled.', async () => {
-    await runTest(commandBase('printConsoleInfo=true') + 'consoleLogs.spec.js', (error, stdout, stderr) => {
-      // console.log logs.
-      expect(stdout).to.contain('cons:log ⓘ  This text is for log.');
-      // console.info logs.
-      expect(stdout).to.contain('cons:info ⓘ  This text is for info.');
+  it('Should always print logs when configuration enabled.', async () => {
+    await runTest(commandBase('printLogsAlways=1') + 'alwaysPrintLogs.spec.js', (error, stdout, stderr) => {
+      // cy.command logs.
+      expect(stdout).to.contain('cy:command ✔  visit\t/\n');
+      expect(stdout).to.contain('cy:command ✔  contains\tcypress\n');
+    });
+  }).timeout(60000);
+
+  it('Should print only logs allowed if configuration added.', async () => {
+    await runTest(commandBase('setLogTypes=1') + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+      expect(stdout).to.contain('cy:request');
+      expect(stdout).to.contain('cy:log');
+      expect(stdout).to.contain('cons:warn');
+
+      expect(stdout).to.not.contain('cy:route');
+      expect(stdout).to.not.contain('cy:command');
+      expect(stdout).to.not.contain('cons:error');
+      expect(stdout).to.not.contain('cons:log');
+      expect(stdout).to.not.contain('cons:info');
+    });
+  }).timeout(60000);
+
+  it('Should filter logs if configuration added.', async () => {
+    await runTest(commandBase('setFilterLogs=1') + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+      expect(stdout).to.contain('This should console.log appear. [filter-out-string]');
+      expect(stdout).to.contain('This is a cypress log. [filter-out-string]');
+      expect(stdout).to.contain('.breaking-get [filter-out-string]');
+
+      expect(stdout).to.not.contain('cy:route');
+      expect(stdout).to.not.contain('cy:request');
+      expect(stdout).to.not.contain('cons:error');
+      expect(stdout).to.not.contain('cons:warn');
+      expect(stdout).to.not.contain('cons:info');
     });
   }).timeout(60000);
 });

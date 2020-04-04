@@ -1,6 +1,19 @@
 import './commands';
 
-require('../../../index').installSupport(Cypress.env());
+const env = Cypress.env();
+const config = {};
+
+if (env.setLogTypes == '1') {
+  config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
+}
+if (env.setFilterLogs == '1') {
+  config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
+}
+if (env.printLogsAlways == '1') {
+  config.printLogs = 'always';
+}
+
+require('../../../index').installSupport(config);
 
 enableFetchWorkaround();
 function enableFetchWorkaround() {

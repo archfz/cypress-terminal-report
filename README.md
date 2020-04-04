@@ -34,17 +34,22 @@ to your CI runner and check the pipeline logs there.
 ## Options
 
 Options for the plugin install: `.installPlugin(on, options)`:
-- `options.defaultTrimLength` - default: 200; max length of cy.log and console.warn/console.error.
-- `options.commandTrimLength` - default: 600; max length of cy commands.
-- `options.routeTrimLength` - default: 5000; max length of cy.route request data.
+- `options.defaultTrimLength` - integer; default: 200; max length of cy.log and console.warn/console.error.
+- `options.commandTrimLength` - integer; default: 600; max length of cy commands.
+- `options.routeTrimLength` - integer; default: 5000; max length of cy.route request data.
 
 Options for the support install: `.installSupport(options)`:
-- `options.printLogs` - default: null; possible values: null, 'always' - When set to always
+- `options.printLogs` - string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
 logs will be printed for successful test as well as failing ones.
-- `printConsoleInfo` - default: null; possible values: null, true - When true `console.log()` 
-and `console.info()` logs will also be printed to the terminal, besides warn and error.
-    
+- `options.collectTypes` - array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']
+What types of logs to collect and print. By default all types are enabled. The 'cy:command' is the general type that
+contain all types of commands that are not specially treated.
+- `options.filterLog` - undefined|([type, message, severity]) => boolean; default: undefined; Callback to filter logs manually.
+The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
+
 ## Release notes
+
+- Added support for filtering logs. See `collectTypes` and `filterLog` options for the support install. from [issue](https://github.com/archfz/cypress-terminal-report/issues/15).
 
 #### 1.1.0
 

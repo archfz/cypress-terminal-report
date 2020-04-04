@@ -1,16 +1,18 @@
 describe('Requests.', () => {
 
-  it('GET should pass', () => {
+  it('GET 200', () => {
     cy.request('https://jsonplaceholder.cypress.io/todos/1');
     cy.request('GET', 'https://jsonplaceholder.cypress.io/todos/2');
     cy.request('GET', 'https://jsonplaceholder.cypress.io/todos/3', 'mock body');
+    cy.get('.breaking-get', {timeout: 1});
   });
 
-  it('POST should pass', () => {
+  it('POST 200', () => {
     cy.request({
       method: 'POST',
       url: 'https://jsonplaceholder.cypress.io/comments',
     });
+    cy.get('.breaking-get', {timeout: 1});
   });
 
   it('GET should give 500 response status', () => {
