@@ -61,7 +61,7 @@ describe('cypress-terminal-report', () => {
       // console
       expect(stdout).to.contain('cons:warn ⚠  This is a warning message\n');
       expect(stdout).to.contain('cons:error ⚠  This is an error message\n');
-      expect(stdout).to.contain('cons:error ⚠  Error: This is an error message with stack.\n\t\t        at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress\\integration\\happyFlow.spec.js');
+      expect(stdout).to.contain('cons:error ⚠  Error: This is an error message with stack.\n\t\t        at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=');
       expect(stdout).to.contain('cons:log ⓘ  This should console.log appear.');
       expect(stdout).to.contain('cons:log ⓘ  \n\t\t    {\n\t\t      "this": "Is an object",\n\t\t      "with": {\n\t\t        "keys": 12512\n\t\t      }\n\t\t    }\n');
       expect(stdout).to.contain('cons:info ⓘ  This should console.info appear.');
