@@ -37,8 +37,10 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('fail', error => {
-    const [type, message] = logs[logs.length - 1];
-    logs[logs.length - 1] = [type, message, CONSTANTS.SEVERITY.ERROR];
+    if (logs.length !== 0) {
+      const [type, message] = logs[logs.length - 1];
+      logs[logs.length - 1] = [type, message, CONSTANTS.SEVERITY.ERROR];
+    }
     throw error;
   });
 
