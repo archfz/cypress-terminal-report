@@ -1,6 +1,7 @@
 # Cypress terminal report
 
 [![Build Status](https://travis-ci.com/archfz/cypress-terminal-report.svg?branch=master)](https://travis-ci.com/archfz/cypress-terminal-report)
+[![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
 Plugin for cypress that adds better terminal output __when tests fail__
 on the terminal for better debugging. Prints cy commands, console.warn, 
