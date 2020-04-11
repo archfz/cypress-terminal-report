@@ -12,6 +12,12 @@ console.error and request response data captured with cy.route.
 > Note: Currently logs do not appear in the dashboard. If you want to see them go
 to your CI runner and check the pipeline logs there.
 
+- [Install](#install)
+- [Options](#options)
+- [Development](#development)
+- [Release Notes](#release-notes)
+
+
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
 
 ## Install
@@ -47,7 +53,19 @@ contain all types of commands that are not specially treated.
 - `options.filterLog` - undefined|([type, message, severity]) => boolean; default: undefined; Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
-## Release notes
+## Development
+
+### Testing
+
+Tests can be found under `/test`. The primary expectations are run with mocha and these tests in fact
+start cypress run instances and assert on their output. So that means there is a cypress suite that
+is used to emulate the usage of the plugin, and a mocha suite to assert on those emulations.
+
+To add tests you need to first add a case to existing cypress spec or create a new one and then
+add the case as well in the `/test/test.js`. To run the tests you can use `npm test` in the test \
+directory. You should add `it.only` to the test case you are working on to speed up development.
+
+## Release Notes
 
 #### Next
 
