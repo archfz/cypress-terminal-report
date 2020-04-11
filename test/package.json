@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test.js"
+    "test": "mocha ./test.js",
+    "wsl-open-cypress": "cmd.exe /C npx cypress open"
   },
   "author": "Fodor Zoltan",
   "license": "MIT",
   "dependencies": {
     "chai": "^4.2.0",
-    "cypress": "^4.0.1",
+    "cypress": "^4.3.0",
     "mocha": "^7.0.1"
   }
 }

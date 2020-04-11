@@ -33,6 +33,8 @@ describe('Happy flow.', () => {
       expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.route()');
     });
 
+    cy.window().then(w => w.console.error(null, undefined, '', false, () => {}));
+    cy.window().then(w => w.console.log({a: 'b'}, {c: 'd'}, 10, 'string'));
     cy.window().then(w => w.console.warn('This is a warning message'));
     cy.window().then(w => w.console.error('This is an error message'));
     cy.window().then(w => w.console.error(new Error('This is an error message with stack.')));

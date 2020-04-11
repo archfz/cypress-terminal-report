@@ -34,8 +34,8 @@ to your CI runner and check the pipeline logs there.
 ## Options
 
 Options for the plugin install: `.installPlugin(on, options)`:
-- `options.defaultTrimLength` - integer; default: 200; max length of cy.log and console.warn/console.error.
-- `options.commandTrimLength` - integer; default: 600; max length of cy commands.
+- `options.defaultTrimLength` - integer; default: 800; max length of cy.log and console.warn/console.error.
+- `options.commandTrimLength` - integer; default: 800; max length of cy commands.
 - `options.routeTrimLength` - integer; default: 5000; max length of cy.route request data.
 
 Options for the support install: `.installSupport(options)`:
@@ -48,6 +48,18 @@ contain all types of commands that are not specially treated.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 ## Release notes
+
+#### Next
+
+- Fixed issue with incorrect command being marked as failing when there are additional logs after the actual failing one. [issue](https://github.com/archfz/cypress-terminal-report/issues/24)
+- Fixed issue where console would receive undefined and the plugin would break: split on undefined. [issue](https://github.com/archfz/cypress-terminal-report/issues/23)
+- Bumping default trim lengths for cy:command and cons:* log types.
+- Improvements on logging objects from console. 
+- Fix incorrect severity calculation for cy:route.
+- Fix yellow output on powershell.
+- Fix windows console icons with different set. [issue](https://github.com/archfz/cypress-terminal-report/issues/7)
+- Update cypress version for testing to 4.3.0.
+- Set peer version of cypress to >=3.8.1. [issue](https://github.com/archfz/cypress-terminal-report/issues/22)
 
 #### 1.2.0
 

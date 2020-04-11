@@ -10,9 +10,14 @@ function installLogsCollector(config = {}) {
   const collectTypes = config.collectTypes || Object.values(LOG_TYPE);
 
   let logs = [];
-  const addLog = (entry) => {
+  let logsChainId = {};
+  const addLog = (entry, id) => {
     if (config.filterLog && !config.filterLog(entry)) {
       return;
+    }
+
+    if (id) {
+      logsChainId[id] = logs.length;
     }
 
     logs.push(entry);
@@ -36,10 +41,10 @@ function installLogsCollector(config = {}) {
     collectCypressGeneralCommandLog(addLog);
   }
 
-  Cypress.on('fail', error => {
-    const [type, message] = logs[logs.length - 1];
-    logs[logs.length - 1] = [type, message, CONSTANTS.SEVERITY.ERROR];
-    throw error;
+  Cypress.on('log:changed', options => {
+    if (logsChainId[options.id] && options.state === 'failed') {
+      logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
+    }
   });
 
   Cypress.mocha.getRunner().on('test', () => {
@@ -48,7 +53,14 @@ function installLogsCollector(config = {}) {
 
   afterEach(function() {
     if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
-      cy.task(CONSTANTS.TASK_NAME, logs);
+      // Need to set a promise otherwise logs that just recently failed won't be marked as
+      // failing.
+      cy.wrap(new Promise((resolve) => {
+        setTimeout(() => {
+          cy.task(CONSTANTS.TASK_NAME, logs, {log: false});
+          resolve();
+        }, 1);
+      }), {log: false});
     }
   });
 }
@@ -79,8 +91,8 @@ function validateConfig(config) {
 function collectBrowserConsoleLogs(addLog, collectTypes) {
   const oldConsoleMethods = {};
   const processArg = (arg) => {
-    if (typeof arg === 'string' || typeof arg === 'number') {
-      return arg;
+    if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
+      return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
     }
 
     if (arg instanceof Error && typeof arg.stack === "string") {
@@ -100,9 +112,11 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       return '[unprocessable=' + arg + ']';
     }
 
-    return '\n' + json.split('\n')
-      .map((part) => PADDING.LOG + part)
-      .join('\n');
+    if (typeof json === 'undefined') {
+      return 'undefined';
+    }
+
+    return json.replace(/\n/g, '\n' + PADDING.LOG);
   };
 
   Cypress.on('window:before:load', () => {
@@ -113,7 +127,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       oldConsoleMethods[method] = appWindow.console[method];
 
       appWindow.console[method] = (...args) => {
-        addLog([logType, args.map(processArg).join('\n')]);
+        addLog([logType, args.map(processArg).join(`,\n${PADDING.LOG}`)]);
         oldConsoleMethods[method](...args);
       };
     };
@@ -147,7 +161,8 @@ function collectCypressXhrLog(addLog) {
         options.consoleProps.Method + ' ' + options.consoleProps.URL;
 
       const log = options.message + detailMessage;
-      addLog([LOG_TYPE.CYPRESS_XHR, log, options.state]);
+      const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
+      addLog([LOG_TYPE.CYPRESS_XHR, log, severity], options.id);
     }
   });
 }
@@ -181,7 +196,7 @@ function collectCypressRequestCommand(addLog) {
       log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
       ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
 
-      addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
+      addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
       throw e;
     });
 
@@ -205,7 +220,7 @@ function collectCypressRouteCommand(addLog) {
         return;
       }
 
-      const severity = String(xhr.status).match(/^2[0-9]+$/) ? CONSTANTS.SEVERITY.WARNING : '';
+      const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
       addLog([
         LOG_TYPE.CYPRESS_ROUTE,
         `Status: ${xhr.status} (${route.alias})\n${PADDING.LOG}Method: ${xhr.method}\n${
@@ -228,7 +243,7 @@ function collectCypressGeneralCommandLog(addLog) {
     ) {
       const log = options.name + '\t' + options.message;
       const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : '';
-      addLog([LOG_TYPE.CYPRESS_COMMAND, log, severity]);
+      addLog([LOG_TYPE.CYPRESS_COMMAND, log, severity], options.id);
     }
   });
 }
