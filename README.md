@@ -68,7 +68,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-#### Next
+#### 1.2.1
 
 - Fixed issue with incorrect command being marked as failing when there are additional logs after the actual failing one. [issue](https://github.com/archfz/cypress-terminal-report/issues/24)
 - Fixed issue where console would receive undefined and the plugin would break: split on undefined. [issue](https://github.com/archfz/cypress-terminal-report/issues/23)
