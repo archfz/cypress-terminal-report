@@ -53,6 +53,8 @@ What types of logs to collect and print. By default all types are enabled. The '
 contain all types of commands that are not specially treated.
 - `options.filterLog` - undefined|([type, message, severity]) => boolean; default: undefined; Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
+- `options.xhr.printHeaderData` - boolean; default false; Whether to print header data for XHR requests.
+- `options.xhr.printRequestData` - boolean; default false; Whether to print request data for XHR requests besides response data.
 
 ## Development
 
@@ -67,6 +69,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Added support for logging XHR request body and also headers for requests and responses. [issue](https://github.com/archfz/cypress-terminal-report/issues/25)
+- Reformatted the log message for route and request commands.
+- Replace all tab characters with spaces on console log.
 
 #### 1.2.1
 

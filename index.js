@@ -26,6 +26,9 @@ module.exports = {
    *      - printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
    *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
    *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
+   *      - xhr?:
+   *          - printHeaderData?: boolean; Defaults to false. Whether to write XHR header data.
+   *          - printRequestData?: boolean; Defaults to false. Whether to write XHR request data.
    */
   installSupport: config => installLogsCollector(config),
 };

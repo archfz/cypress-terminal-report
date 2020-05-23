@@ -18,8 +18,8 @@ const ICONS = (() => {
 
 const PADDING = '                    ';
 
-const commandBase = (env = '') =>
-  `${commandPrefix} run --env ${env} --headless --config video=false -s cypress/integration/`;
+const commandBase = (env = []) =>
+  `${commandPrefix} run --env "${env.join(',')}" --headless --config video=false -s cypress/integration/`;
 
 let lastRunOutput = '';
 const runTest = async (command, callback) => {
@@ -61,12 +61,10 @@ describe('cypress-terminal-report', () => {
         `cy:xhr ${ICONS.info}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n`
       );
       // cy.route logs.
-      expect(stdout).to.contain(`cy:route ${ICONS.route}`);
-      expect(stdout).to.contain(`Status: 200 (getComment)\n`);
-      expect(stdout).to.contain(`Method: GET\n`);
-      expect(stdout).to.contain(`Url: https://jsonplaceholder.cypress.io/comments/1\n`);
+      expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1\n`);
+      expect(stdout).to.contain(`Status: 200\n`);
       expect(stdout).to.contain(
-        `Response: {\n${PADDING}  "postId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "name": "id labore ex et quam laborum",\n${PADDING}  "email": "Eliseo@gardner.biz",\n${PADDING}  "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium"\n${PADDING}}\n`
+        `Response body: {\n${PADDING}  "postId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "name": "id labore ex et quam laborum",\n${PADDING}  "email": "Eliseo@gardner.biz",\n${PADDING}  "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium"\n${PADDING}}\n`
       );
       // console
       expect(stdout).to.contain(`cons:warn ${ICONS.warning}  This is a warning message\n`);
@@ -82,57 +80,65 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Logs FETCH API routes.', async () => {
+  it('Should logs FETCH API routes.', async () => {
     await runTest(commandBase() + 'apiRoutes.spec.js', (error, stdout, stderr) => {
-      expect(stdout).to.contain(`Method: PUT\n`);
-      expect(stdout).to.contain(`Url: https://example.cypress.io/comments/10\n`);
+      expect(stdout).to.contain(`(putComment) PUT https://example.cypress.io/comments/10\n`);
       // cy.route empty body.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
-      expect(stdout).to.contain(`Status: 200 (getComment)\n`);
-      expect(stdout).to.contain(`Response: EMPTY_BODY\n`);
+      expect(stdout).to.contain(`Status: 200\n`);
+      expect(stdout).to.contain(`Response body: <EMPTY>\n`);
       // cy.route text.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
-      expect(stdout).to.contain(`Status: 403 (putComment)\n`);
-      expect(stdout).to.contain(`Response: This is plain text data.\n`);
+      expect(stdout).to.contain(`Status: 403\n`);
+      expect(stdout).to.contain(`Response body: This is plain text data.\n`);
       // cy.route unknown.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
-      expect(stdout).to.contain(`Status: 401 (putComment)\n`);
-      expect(stdout).to.contain(`Response: UNKNOWN_BODY\n`);
+      expect(stdout).to.contain(`Status: 401\n`);
+      expect(stdout).to.contain(`Response body: <UNKNOWN>\n`);
       // cy.route logs.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
-      expect(stdout).to.contain(`Status: 404 (putComment)\n`);
-      expect(stdout).to.contain(`Response: {"error":"Test message."}\n`);
+      expect(stdout).to.contain(`Status: 404\n`);
+      expect(stdout).to.contain(`Response body: {"error":"Test message."}\n`);
       // log failed command
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get\n`);
     });
   }).timeout(60000);
 
-  it('Logs cy.requests', async () => {
+  it('Should log cy.requests', async () => {
     await runTest(commandBase() + `requests.spec.js`, (error, stdout, stderr) => {
       expect(stdout).to.contain(
-        `cy:request ${ICONS.success}  https://jsonplaceholder.cypress.io/todos/1\n${PADDING}Status: 200\n${PADDING}Response: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "title": "delectus aut autem",\n${PADDING}  "completed": false\n${PADDING}}`
+        `cy:request ${ICONS.success}  https://jsonplaceholder.cypress.io/todos/1\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "title": "delectus aut autem",\n${PADDING}  "completed": false\n${PADDING}}`
       );
       expect(stdout).to.contain(
-        `cy:request ${ICONS.success}  GET https://jsonplaceholder.cypress.io/todos/2\n${PADDING}Status: 200\n${PADDING}Response: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 2,\n${PADDING}  "title": "quis ut nam facilis et officia qui",\n${PADDING}  "completed": false\n${PADDING}}`
+        `cy:request ${ICONS.success}  GET https://jsonplaceholder.cypress.io/todos/2\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 2,\n${PADDING}  "title": "quis ut nam facilis et officia qui",\n${PADDING}  "completed": false\n${PADDING}}`
       );
       expect(stdout).to.contain(
-        `cy:request ${ICONS.success}  GET https://jsonplaceholder.cypress.io/todos/3\n${PADDING}Status: 200\n${PADDING}Response: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 3,\n${PADDING}  "title": "fugiat veniam minus",\n${PADDING}  "completed": false\n${PADDING}}`
+        `cy:request ${ICONS.success}  GET https://jsonplaceholder.cypress.io/todos/3\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 3,\n${PADDING}  "title": "fugiat veniam minus",\n${PADDING}  "completed": false\n${PADDING}}`
       );
       expect(stdout).to.contain(
-        `cy:request ${ICONS.success}  POST https://jsonplaceholder.cypress.io/comments\n${PADDING}Status: 201\n${PADDING}Response: {\n${PADDING}  "id": 501\n${PADDING}}\n`
+        `cy:request ${ICONS.success}  POST https://jsonplaceholder.cypress.io/comments\n${PADDING}Status: 201\n${PADDING}Response body: {\n${PADDING}  "id": 501\n${PADDING}}\n`
       );
       // log failed command
       expect(stdout).to.contain(
-        `cy:request ${ICONS.error}  PUT https://jsonplaceholder.cypress.io/comments\n${PADDING}Status: 404 - Not Found\n${PADDING}Response: {}\n`
+        `cy:request ${ICONS.error}  PUT https://jsonplaceholder.cypress.io/comments\n${PADDING}Status: 404\n${PADDING}Response body: {}\n`
       );
 
       expect(stdout).to.contain(
-        `cy:request ${ICONS.error}  GET https://cypress.free.beeceptor.com/response500\n${PADDING}Status: 500 - Server Error\n${PADDING}Response: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
+        `cy:request ${ICONS.error}  GET http://www.mocky.io/v2/5ec993353000007900a6ce1e\n${PADDING}Status: 500\n${PADDING}Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
       );
 
       expect(stdout).to.contain(
-        `cy:request ${ICONS.error}  POST https://cypress.free.beeceptor.com/create/object/fail\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
+        `cy:request ${ICONS.error}  POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
       );
+    });
+  }).timeout(60000);
+
+  it('Should log request data and response headers.', async () => {
+    await runTest(commandBase(['printHeaderData=1', 'printRequestData=1']) + `xhrTypes.spec.js`, (error, stdout, stderr) => {
+      expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",\n`);
+      expect(stdout).to.contain(`\n${PADDING}  "test-header": "data",\n${PADDING}  "vary": "Accept-Encoding"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
+      expect(stdout).to.contain(`POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "server": "Cowboy",\n${PADDING}  "connection": "keep-alive",\n${PADDING}  "vary": "Accept-Encoding",\n${PADDING}  "access-control-allow-origin": "*",\n`);
+      expect(stdout).to.contain(`\n${PADDING}  "content-type": "application/json",\n${PADDING}  "content-length": "96",\n${PADDING}  "via": "1.1 vegur"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
     });
   }).timeout(60000);
 
@@ -140,12 +146,12 @@ describe('cypress-terminal-report', () => {
     await runTest(commandBase() + `waitFail.spec.js`, (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
       expect(stdout).to.not.contain(`cy:route ${ICONS.error}`);
-      expect(stdout).to.contain(`cy:route ${ICONS.route}  Status: 200`);
+      expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1`);
     });
   }).timeout(60000);
 
   it('Should always print logs when configuration enabled.', async () => {
-    await runTest(commandBase('printLogsAlways=1') + 'alwaysPrintLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['printLogsAlways=1']) + 'alwaysPrintLogs.spec.js', (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
@@ -153,7 +159,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should print only logs allowed if configuration added.', async () => {
-    await runTest(commandBase('setLogTypes=1') + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['setLogTypes=1']) + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:request`);
       expect(stdout).to.contain(`cy:log`);
       expect(stdout).to.contain(`cons:warn`);
@@ -167,7 +173,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should filter logs if configuration added.', async () => {
-    await runTest(commandBase('setFilterLogs=1') + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['setFilterLogs=1']) + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
       expect(stdout).to.contain(`This should console.log appear. [filter-out-string]`);
       expect(stdout).to.contain(`This is a cypress log. [filter-out-string]`);
       expect(stdout).to.contain(`.breaking-get [filter-out-string]`);

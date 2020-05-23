@@ -1,6 +1,6 @@
 module.exports = async (body) => {
   if (!body) {
-    return 'EMPTY_BODY';
+    return '<EMPTY>';
   } else if (typeof body === 'string') {
     return body;
   } else if (typeof body === 'object') {
@@ -9,5 +9,5 @@ module.exports = async (body) => {
     }
     return `${JSON.stringify(body, null, 2)}`;
   }
-  return 'UNKNOWN_BODY';
+  return '<UNKNOWN>';
 };

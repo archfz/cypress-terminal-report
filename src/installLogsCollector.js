@@ -2,11 +2,13 @@ const methods = require('methods');
 
 const LOG_TYPE = require('./constants').LOG_TYPES;
 const CONSTANTS = require('./constants');
-const responseBodyParser = require('./requestReponseBodyParser.js');
+const xhrPartParse = require('./xhrPartParse');
 
 function installLogsCollector(config = {}) {
   validateConfig(config);
   const collectTypes = config.collectTypes || Object.values(LOG_TYPE);
+  const collectRequestData = config.xhr && config.xhr.printRequestData;
+  const collectHeaderData = config.xhr && config.xhr.printHeaderData;
 
   let logs = [];
   let logsChainId = {};
@@ -22,6 +24,21 @@ function installLogsCollector(config = {}) {
     logs.push(entry);
   };
 
+  const formatXhrLog = (status, reqHeaders, reqBody, respHeaders, respBody) => {
+    let logMessage = `Status: ${status}\n`;
+    if (collectRequestData) {
+      if (collectHeaderData) {
+        logMessage += `Request headers: ${reqHeaders}\n`;
+      }
+      logMessage += `Request body: ${reqBody}\n`;
+    }
+    if (collectHeaderData) {
+      logMessage += `Response headers: ${respHeaders}\n`;
+    }
+    logMessage += `Response body: ${respBody}`;
+    return logMessage;
+  };
+
   collectBrowserConsoleLogs(addLog, collectTypes);
 
   if (collectTypes.includes(LOG_TYPE.CYPRESS_LOG)) {
@@ -31,10 +48,10 @@ function installLogsCollector(config = {}) {
     collectCypressXhrLog(addLog);
   }
   if (collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
-    collectCypressRequestCommand(addLog);
+    collectCypressRequestCommand(addLog, formatXhrLog);
   }
   if (collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
-    collectCypressRouteCommand(addLog);
+    collectCypressRouteCommand(addLog, formatXhrLog);
   }
   if (collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
     collectCypressGeneralCommandLog(addLog);
@@ -164,46 +181,60 @@ function collectCypressXhrLog(addLog) {
   });
 }
 
-function collectCypressRequestCommand(addLog) {
+function collectCypressRequestCommand(addLog, formatXhrLog) {
   const isValidHttpMethod = (str) =>
     typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
 
   Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
     let log;
+    let requestBody;
+    let requestHeaders;
+
     // args can have up to 3 arguments
     // https://docs.cypress.io/api/commands/request.html#Syntax
     if (args[0].method) {
       log = `${args[0].method} ${args[0].url ? `${args[0].url}` : args[0]}`;
+      requestBody = args[0].body;
+      requestHeaders = args[0].headers;
     } else if (isValidHttpMethod(args[0])) {
       log = `${args[0]} ${args[1]}`;
+      requestBody = args[3];
     } else {
       log = `${args[0]}`;
     }
 
     const response = await originalFn(...args).catch(async e => {
-      let body = {};
-      if (
-        // check the body is there
-        e.onFail().toJSON().consoleProps.Yielded &&
-        e.onFail().toJSON().consoleProps.Yielded.body
-      ) {
-        body = e.onFail().toJSON().consoleProps.Yielded.body;
-      }
+      let xhr = e.onFail().toJSON().consoleProps.Yielded;
+      let body = xhr ? xhr.body : {};
+      let headers = xhr ? xhr.headers : {};
+      let status = xhr ? xhr.status : {};
 
-      log += `\n${e.message.match(/Status:.*\d*/g)}\nResponse: ${await responseBodyParser(body)}`;
+      log += `\n` + formatXhrLog(
+        status,
+        await xhrPartParse(requestHeaders),
+        await xhrPartParse(requestBody),
+        await xhrPartParse(headers),
+        await xhrPartParse(body),
+      );
 
       addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
       throw e;
     });
 
-    log += `\nStatus: ${response.status}\nResponse: ${await responseBodyParser(response.body)}`;
+    log += `\n` + formatXhrLog(
+      response.status,
+      await xhrPartParse(requestHeaders),
+      await xhrPartParse(requestBody),
+      await xhrPartParse(response.headers),
+      await xhrPartParse(response.body),
+    );
 
     addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
     return response;
   });
 }
 
-function collectCypressRouteCommand(addLog) {
+function collectCypressRouteCommand(addLog, formatXhrLog) {
   Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
     const prevCallback = options && options.onAnyResponse;
     options.onAnyResponse = async (route, xhr) => {
@@ -216,9 +247,18 @@ function collectCypressRouteCommand(addLog) {
       }
 
       const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
+      let logMessage = `(${route.alias}) ${xhr.method} ${xhr.url}\n`;
+      logMessage += formatXhrLog(
+        xhr.status,
+        await xhrPartParse(xhr.request.headers),
+        await xhrPartParse(xhr.request.body),
+        await xhrPartParse(xhr.response.headers),
+        await xhrPartParse(xhr.response.body),
+      );
+
       addLog([
         LOG_TYPE.CYPRESS_ROUTE,
-        `Status: ${xhr.status} (${route.alias})\nMethod: ${xhr.method}\nUrl: ${xhr.url}\nResponse: ${await responseBodyParser(xhr.response.body)}`,
+        logMessage,
         severity
       ]);
     };

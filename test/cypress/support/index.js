@@ -12,6 +12,14 @@ if (env.setFilterLogs == '1') {
 if (env.printLogsAlways == '1') {
   config.printLogs = 'always';
 }
+if (env.printHeaderData == '1') {
+  config.xhr = config.xhr || {};
+  config.xhr.printHeaderData = true;
+}
+if (env.printRequestData == '1') {
+  config.xhr = config.xhr || {};
+  config.xhr.printRequestData = true;
+}
 
 require('../../../index').installSupport(config);
 
