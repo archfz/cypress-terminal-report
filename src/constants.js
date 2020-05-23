@@ -20,6 +20,6 @@ module.exports = {
   },
 
   PADDING: {
-    LOG: '\t\t    ',
+    LOG: Array(21).join(' '),
   }
 };

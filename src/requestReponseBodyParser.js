@@ -1,5 +1,3 @@
-const PADDING = require('./constants').PADDING;
-
 module.exports = async (body) => {
   if (!body) {
     return 'EMPTY_BODY';
@@ -9,8 +7,7 @@ module.exports = async (body) => {
     if (typeof body.text === 'function') {
       return await body.text();
     }
-    const padding = `\n${PADDING.LOG}`;
-    return `${JSON.stringify(body, null, 2).replace(/\n/g, padding)}`;
+    return `${JSON.stringify(body, null, 2)}`;
   }
   return 'UNKNOWN_BODY';
 };

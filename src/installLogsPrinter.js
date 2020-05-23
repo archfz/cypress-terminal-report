@@ -34,7 +34,7 @@ function installLogsPrinter(on, options = {}) {
 
 function logToTerminal(messages, options) {
   const padType = (type) =>
-    new Array(Math.max(17 - type.length, 0)).join(' ') + type + ' ';
+    new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - 3, 0)).join(' ') + type + ' ';
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
@@ -91,7 +91,7 @@ function logToTerminal(messages, options) {
       chalk[color].bold(typeString + icon + ' ') :
       chalk[color](typeString + icon + ' ');
 
-    console.log(coloredTypeString, processedMessage);
+    console.log(coloredTypeString, processedMessage.replace(/\n/g, '\n' + CONSTANTS.PADDING.LOG));
   });
 
   console.log('\n\n');

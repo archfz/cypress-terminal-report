@@ -1,7 +1,6 @@
 const methods = require('methods');
 
 const LOG_TYPE = require('./constants').LOG_TYPES;
-const PADDING = require('./constants').PADDING;
 const CONSTANTS = require('./constants');
 const responseBodyParser = require('./requestReponseBodyParser.js');
 
@@ -100,9 +99,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       if (stack.indexOf(arg.message) !== -1) {
         stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
       }
-      return arg.toString() + '\n' + stack.split('\n')
-        .map((part) => PADDING.LOG + part)
-        .join('\n');
+      return arg.toString() + '\n' + stack;
     }
 
     let json = '';
@@ -116,7 +113,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       return 'undefined';
     }
 
-    return json.replace(/\n/g, '\n' + PADDING.LOG);
+    return json;
   };
 
   Cypress.on('window:before:load', () => {
@@ -127,7 +124,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
       oldConsoleMethods[method] = appWindow.console[method];
 
       appWindow.console[method] = (...args) => {
-        addLog([logType, args.map(processArg).join(`,\n${PADDING.LOG}`)]);
+        addLog([logType, args.map(processArg).join(`,\n`)]);
         oldConsoleMethods[method](...args);
       };
     };
@@ -193,15 +190,13 @@ function collectCypressRequestCommand(addLog) {
         body = e.onFail().toJSON().consoleProps.Yielded.body;
       }
 
-      log += `\n${PADDING.LOG}${e.message.match(/Status:.*\d*/g)}
-      ${PADDING.LOG}Response: ${await responseBodyParser(body)}`;
+      log += `\n${e.message.match(/Status:.*\d*/g)}\nResponse: ${await responseBodyParser(body)}`;
 
       addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
       throw e;
     });
 
-    log += `\n${PADDING.LOG}Status: ${response.status} 
-      ${PADDING.LOG}Response: ${await responseBodyParser(response.body)}`;
+    log += `\nStatus: ${response.status}\nResponse: ${await responseBodyParser(response.body)}`;
 
     addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
     return response;
@@ -223,9 +218,7 @@ function collectCypressRouteCommand(addLog) {
       const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
       addLog([
         LOG_TYPE.CYPRESS_ROUTE,
-        `Status: ${xhr.status} (${route.alias})\n${PADDING.LOG}Method: ${xhr.method}\n${
-          PADDING.LOG
-        }Url: ${xhr.url}\n${PADDING.LOG}Response: ${await responseBodyParser(xhr.response.body)}`,
+        `Status: ${xhr.status} (${route.alias})\nMethod: ${xhr.method}\nUrl: ${xhr.url}\nResponse: ${await responseBodyParser(xhr.response.body)}`,
         severity
       ]);
     };
