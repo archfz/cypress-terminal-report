@@ -13,6 +13,8 @@ module.exports = {
    *    Options for displaying output:
    *      - defaultTrimLength?: Trim length for console and cy.log.
    *      - commandTrimLength?: Trim length for cy commands.
+   *      - outputRoot?: The root path to output log files to.
+   *      - outputTarget?: Log output types. {[filePath: string]: string | function}
    */
   installPlugin: (on, options = {}) => installLogsPrinter(on, options),
 
