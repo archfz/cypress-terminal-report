@@ -136,6 +136,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 1.3.0
+
 - Added support for [logging to file](#writing-logs-to-files), with builtin support for json and text and possible custom processor. [issue](https://github.com/archfz/cypress-terminal-report/issues/17) 
 - Added support for logging XHR request body and also headers for requests and responses. [issue](https://github.com/archfz/cypress-terminal-report/issues/25)
 - Reformatted the log message for route and request commands.
