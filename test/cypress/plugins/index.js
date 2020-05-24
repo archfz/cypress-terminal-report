@@ -1,3 +1,17 @@
 module.exports = (on, config) => {
-  require('../../../index').installPlugin(on);
+  const options = {};
+
+  if (config.env.generateOutput == "1") {
+    options.outputRoot = config.projectRoot + '/output/';
+    options.outputTarget = {
+      'out.txt': 'txt',
+      'out.json': 'json',
+      'out.cst': function (messages) {
+        let data = Object.keys(messages).join('\n') + '\n';
+        this.writeChunk(data);
+      }
+    };
+  }
+
+  require('../../../index').installPlugin(on, options);
 };

@@ -1,7 +1,13 @@
 const chalk = require('chalk');
+const path = require('path');
 const CONSTANTS = require('./constants');
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
+const CUSTOM_OUTPUT_PROCESSOR = require('./outputProcessor/CustomOutputProcessor');
+const OUTPUT_PROCESSOR_TYPE = {
+  'json': require('./outputProcessor/JsonOutputProcessor'),
+  'txt': require('./outputProcessor/TextOutputProcessor'),
+};
 
 const LOG_SYMBOLS = (() => {
   if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
@@ -23,10 +29,54 @@ const LOG_SYMBOLS = (() => {
   }
 })();
 
+let allMessages = {};
+
 function installLogsPrinter(on, options = {}) {
   on('task', {
-    [CONSTANTS.TASK_NAME]: messages => {
-      logToTerminal(messages, options);
+    [CONSTANTS.TASK_NAME]: data => {
+      if (options.outputTarget) {
+        allMessages[data.spec] = allMessages[data.spec] || {};
+        allMessages[data.spec][data.test] = data.messages;
+      }
+
+      logToTerminal(data.messages, options);
+      return null;
+    }
+  });
+
+  if (!options.outputTarget) {
+    return;
+  }
+
+  installOutputProcessors(on, options.outputRoot, options.outputTarget);
+}
+
+function installOutputProcessors(on, root, outputTargets) {
+  if (!root) {
+    throw new Error(`cypress-terminal-report: Missing outputRoot configuration.`);
+  }
+
+  const outputProcessors = [];
+  Object.entries(outputTargets).forEach(([file, type]) => {
+    if (typeof type === 'string') {
+      if (!OUTPUT_PROCESSOR_TYPE[type]) {
+        throw new Error(`cypress-terminal-report: Unknown output format '${type}'.`);
+      }
+
+      outputProcessors.push(new OUTPUT_PROCESSOR_TYPE[type](path.join(root, file)));
+    } else if (typeof type === 'function') {
+      outputProcessors.push(new CUSTOM_OUTPUT_PROCESSOR(path.join(root, file), type));
+    } else {
+      throw new Error(`cypress-terminal-report: Output target type can only be string or function.`);
+    }
+  });
+
+  outputProcessors.forEach((processor) => processor.prepare());
+
+  on('task', {
+    [CONSTANTS.TASK_NAME_AFTER]: () => {
+      outputProcessors.forEach((processor) => processor.write(allMessages));
+      allMessages = {};
       return null;
     }
   });

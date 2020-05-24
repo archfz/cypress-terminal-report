@@ -44,6 +44,8 @@ Options for the plugin install: `.installPlugin(on, options)`:
 - `options.defaultTrimLength` - integer; default: 800; max length of cy.log and console.warn/console.error.
 - `options.commandTrimLength` - integer; default: 800; max length of cy commands.
 - `options.routeTrimLength` - integer; default: 5000; max length of cy.route request data.
+- `options.outputRoot` - string; default: null; Required if `options.outputTarget` provided. [More details](#writing-logs-to-files).
+- `options.outputTarget` - object; default: null; Output logs to files. [More details](#writing-logs-to-files).
 
 Options for the support install: `.installSupport(options)`:
 - `options.printLogs` - string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
@@ -55,6 +57,70 @@ contain all types of commands that are not specially treated.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 - `options.xhr.printHeaderData` - boolean; default false; Whether to print header data for XHR requests.
 - `options.xhr.printRequestData` - boolean; default false; Whether to print request data for XHR requests besides response data.
+
+## Writing logs to files
+
+To enable logging to file you must add the following configuration options to the
+`.installPlugin`.
+
+```js
+module.exports = (on, config) => {
+  // ...
+  const options = {
+    outputRoot: config.projectRoot + '/logs/',
+    outputTarget: {
+      'out.txt': 'txt',
+      'out.json': 'json',
+    }
+  };
+
+  require('../../../index').installPlugin(on, options);
+  // ...
+};
+```
+
+The `outputTarget` needs to be an object where the key is the relative path of the
+file from `outputRoot` and the value is the __type__ of format to output. 
+
+Supported types: `txt`, `json`.
+
+### Custom output log processor
+
+If you need to output in a custom format you can pass a function instead of a string
+to the `outputTarget` value. This function will be called with the list of messages
+per spec per test. Currently it is called right after one spec finishes, which means
+at one iteration will receive only for one spec the messages. See for example below.
+
+> NOTE: The chunks have to be written in a way that after every write the file is 
+> in a valid format. This has to be like this since we cannot detect when cypress
+> runs the last test.
+
+```js
+  // ...
+  const options = {
+    outputTarget: {
+      'custom.output': function (messages) {
+        // Process the messages object into your required output string.
+        // messages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}
+        let dataString = '';
+      
+        // this.size // Current char size of the output file.
+        // this.atChunk // The count of the chunk to be written.
+
+        // Insert chunk into file, by default at the end.
+        this.writeChunk(dataString);
+        // Or if you want to write into a different position.
+        let pos = 100; // If negative then this.size - pos will be the write position.
+        this.writeChunk(dataString, pos);
+      }
+    }
+  };
+  // ...
+```
+
+See [JsonOutputProcessor](./src/outputProcessor/JsonOutputProcessor.js) implementation as a
+good example demonstrating both conversion of data into string and chunk write position
+alternation.
 
 ## Development
 
@@ -70,6 +136,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Added support for [logging to file](#writing-logs-to-files), with builtin support for json and text and possible custom processor. [issue](https://github.com/archfz/cypress-terminal-report/issues/17) 
 - Added support for logging XHR request body and also headers for requests and responses. [issue](https://github.com/archfz/cypress-terminal-report/issues/25)
 - Reformatted the log message for route and request commands.
 - Replace all tab characters with spaces on console log.

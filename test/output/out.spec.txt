@@ -1,0 +1,141 @@
+cypress/integration/happyFlow.spec.js:
+    Happy flow
+        cy:command (K): visit	/commands/network-requests
+        cy:command (K): get	.network-btn
+        cy:command (K): click	
+            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1
+        cy:command (K): wait	@getComment
+          cy:route (K): (getComment) GET https://jsonplaceholder.cypress.io/comments/1
+                        Status: 200
+                        Response body: {
+                          "postId": 1,
+                          "id": 1,
+                          "name": "id labore ex et quam laborum",
+                          "email": "Eliseo@gardner.biz",
+                          "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo necessitatibus\ndolor quam autem quasi\nreiciendis et nam sapiente accusantium"
+                        }
+        cy:command (K): its	.status
+        cy:command (K): assert	expected **200** to equal **200**
+        cy:command (K): get	.network-post
+        cy:command (K): click	
+            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments
+        cy:command (K): wait	@postComment
+          cy:route (K): (postComment) POST https://jsonplaceholder.cypress.io/comments
+                        Status: 201
+                        Response body: {
+                          "name": "Using POST in cy.route()",
+                          "email": "hello@cypress.io",
+                          "body": "You can change the method used for cy.route() to be GET, POST, PUT, PATCH, or DELETE",
+                          "id": 501
+                        }
+        cy:command (K): assert	expected **name=Using+POST+in+cy.route()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.route()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**
+        cy:command (K): assert	expected **{ Object (Content-Type, Accept) }** to have property **Content-Type**
+        cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name**
+        cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.route()**
+        cy:command (K): window	
+        cons:error (K): null,
+                        undefined,
+                        ,
+                        false,
+                        function () {}
+        cy:command (K): window	
+          cons:log (K): {
+                          "a": "b"
+                        },
+                        {
+                          "c": "d"
+                        },
+                        10,
+                        string
+        cy:command (K): window	
+         cons:warn (K): This is a warning message
+        cy:command (K): window	
+        cons:error (K): This is an error message
+        cy:command (K): window	
+        cons:error (K): Error: This is an error message with stack.
+                            at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-034:47:30)
+        cy:command (K): window	
+          cons:log (K): This should console.log appear.
+        cy:command (K): window	
+          cons:log (K): {
+                          "this": "Is an object",
+                          "with": {
+                            "keys": 12512
+                          }
+                        }
+        cy:command (K): window	
+         cons:info (K): This should console.info appear.
+        cy:command (K): get	.network-put
+        cy:command (K): click	
+            cy:xhr (K): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+          cy:route (!): (putComment) PUT https://jsonplaceholder.cypress.io/comments/1
+                        Status: 404
+                        Response body: {
+                          "error": "whoa, this comment does not exist"
+                        }
+        cy:command (K): wait	@putComment
+        cy:command (K): get	.network-put-comment
+        cy:command (K): assert	expected **<div.network-put-comment>** to contain **whoa, this comment does not exist**
+        cy:command (X): get	.breaking-get
+
+
+
+cypress/integration/requests.spec.js:
+    GET 200
+        cy:request (K): https://jsonplaceholder.cypress.io/todos/1
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 1,
+                          "title": "delectus aut autem",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/2
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 2,
+                          "title": "quis ut nam facilis et officia qui",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/3
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 3,
+                          "title": "fugiat veniam minus",
+                          "completed": false
+                        }
+        cy:command (X): get	.breaking-get
+
+    POST 200
+        cy:request (K): POST https://jsonplaceholder.cypress.io/comments
+                        Status: 201
+                        Response body: {
+                          "id": 501
+                        }
+        cy:command (X): get	.breaking-get
+
+    GET should give 500 response status
+        cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
+                        Status: 500
+                        Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
+
+    POST should give 400 response status
+        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+                        Status: 400
+                        Response body: {
+                          "status": "Wrong!",
+                          "data": {
+                            "corpo": "corpo da resposta",
+                            "titulo": "titulo da resposta"
+                          }
+                        }
+
+    PUT should fail
+        cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
+                        Status: 404
+                        Response body: {}
+
+
+

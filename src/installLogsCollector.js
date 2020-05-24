@@ -13,6 +13,8 @@ function installLogsCollector(config = {}) {
   let logs = [];
   let logsChainId = {};
   const addLog = (entry, id) => {
+    entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
+
     if (config.filterLog && !config.filterLog(entry)) {
       return;
     }
@@ -73,11 +75,19 @@ function installLogsCollector(config = {}) {
       // failing.
       cy.wrap(new Promise((resolve) => {
         setTimeout(() => {
-          cy.task(CONSTANTS.TASK_NAME, logs, {log: false});
+          cy.task(CONSTANTS.TASK_NAME, {
+            spec: this.test.file,
+            test: this.currentTest.title,
+            messages: logs
+          }, {log: false});
           resolve();
         }, 1);
       }), {log: false});
     }
+  });
+
+  after(function () {
+    cy.task(CONSTANTS.TASK_NAME_AFTER, null, {log: false});
   });
 }
 
@@ -133,7 +143,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
     return json;
   };
 
-  Cypress.on('window:before:load', () => {
+  Cypress.on('window:before:load', function () {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
 

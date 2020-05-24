@@ -1,6 +1,7 @@
 const {exec} = require('child_process');
 const {expect} = require('chai');
 const chalk = require('chalk');
+const fs = require('fs');
 
 let commandPrefix = 'node ./node_modules/.bin/cypress';
 
@@ -18,8 +19,8 @@ const ICONS = (() => {
 
 const PADDING = '                    ';
 
-const commandBase = (env = []) =>
-  `${commandPrefix} run --env "${env.join(',')}" --headless --config video=false -s cypress/integration/`;
+const commandBase = (env = [], specs = []) =>
+  `${commandPrefix} run --env "${env.join(',')}" --headless --config video=false -s ${specs.map(s => `cypress/integration/${s}`)}`;
 
 let lastRunOutput = '';
 const runTest = async (command, callback) => {
@@ -53,7 +54,7 @@ describe('cypress-terminal-report', () => {
   });
 
   it('Should run happy flow.', async () => {
-    await runTest(commandBase() + 'happyFlow.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase([], ['happyFlow.spec.js']), (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/commands/network-requests\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  get\t.network-post\n`);
@@ -81,7 +82,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should logs FETCH API routes.', async () => {
-    await runTest(commandBase() + 'apiRoutes.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase([], ['apiRoutes.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`(putComment) PUT https://example.cypress.io/comments/10\n`);
       // cy.route empty body.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
@@ -105,7 +106,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should log cy.requests', async () => {
-    await runTest(commandBase() + `requests.spec.js`, (error, stdout, stderr) => {
+    await runTest(commandBase([], [`requests.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(
         `cy:request ${ICONS.success}  https://jsonplaceholder.cypress.io/todos/1\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "title": "delectus aut autem",\n${PADDING}  "completed": false\n${PADDING}}`
       );
@@ -134,7 +135,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should log request data and response headers.', async () => {
-    await runTest(commandBase(['printHeaderData=1', 'printRequestData=1']) + `xhrTypes.spec.js`, (error, stdout, stderr) => {
+    await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",\n`);
       expect(stdout).to.contain(`\n${PADDING}  "test-header": "data",\n${PADDING}  "vary": "Accept-Encoding"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
       expect(stdout).to.contain(`POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "server": "Cowboy",\n${PADDING}  "connection": "keep-alive",\n${PADDING}  "vary": "Accept-Encoding",\n${PADDING}  "access-control-allow-origin": "*",\n`);
@@ -143,7 +144,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should properly set the breaking command in logs.', async () => {
-    await runTest(commandBase() + `waitFail.spec.js`, (error, stdout, stderr) => {
+    await runTest(commandBase([], [`waitFail.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
       expect(stdout).to.not.contain(`cy:route ${ICONS.error}`);
       expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1`);
@@ -151,7 +152,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should always print logs when configuration enabled.', async () => {
-    await runTest(commandBase(['printLogsAlways=1']) + 'alwaysPrintLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['printLogsAlways=1'], ['alwaysPrintLogs.spec.js']), (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
@@ -159,7 +160,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should print only logs allowed if configuration added.', async () => {
-    await runTest(commandBase(['setLogTypes=1']) + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['setLogTypes=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:request`);
       expect(stdout).to.contain(`cy:log`);
       expect(stdout).to.contain(`cons:warn`);
@@ -173,7 +174,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should filter logs if configuration added.', async () => {
-    await runTest(commandBase(['setFilterLogs=1']) + 'allTypesOfLogs.spec.js', (error, stdout, stderr) => {
+    await runTest(commandBase(['setFilterLogs=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`This should console.log appear. [filter-out-string]`);
       expect(stdout).to.contain(`This is a cypress log. [filter-out-string]`);
       expect(stdout).to.contain(`.breaking-get [filter-out-string]`);
@@ -183,6 +184,31 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.not.contain(`cons:error`);
       expect(stdout).to.not.contain(`cons:warn`);
       expect(stdout).to.not.contain(`cons:info`);
+    });
+  }).timeout(60000);
+
+
+
+  it('Should generate proper log output files.', async () => {
+    const outRoot = __dirname + '/output';
+    const testOutputs = ['out.txt', 'out.json', 'out.cst'];
+    testOutputs.forEach((out) => {
+      if (fs.existsSync(outRoot + '/' + out)) {
+        fs.unlinkSync(outRoot + '/' + out);
+      }
+    });
+
+    const clean = (str) =>
+      // Clean error trace as it changes from test to test.
+      str.replace(/at [^(]+ \([^)]+\)/g, '');
+
+    await runTest(commandBase(['generateOutput=1'], ['requests.spec.js', 'happyFlow.spec.js']), (error, stdout, stderr) => {
+      testOutputs.forEach((out) => {
+        const expected = fs.readFileSync(outRoot + '/' + out.replace(/\.([a-z]+)$/, '.spec.$1'));
+        const value = fs.readFileSync(outRoot + '/' + out);
+
+        expect(clean(value.toString()), `Check ${out} matched spec.`).to.eq(clean(expected.toString()));
+      });
     });
   }).timeout(60000);
 });

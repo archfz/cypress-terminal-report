@@ -1,5 +1,7 @@
 module.exports = {
   TASK_NAME: 'ctrLogMessages',
+  TASK_NAME_BEFORE: 'ctrBefore',
+  TASK_NAME_AFTER: 'ctrAfter',
 
   LOG_TYPES: {
     BROWSER_CONSOLE_LOG: 'cons:log',
@@ -15,6 +17,7 @@ module.exports = {
   },
 
   SEVERITY: {
+    SUCCESS: 'success',
     ERROR: 'error',
     WARNING: 'warning',
   },
