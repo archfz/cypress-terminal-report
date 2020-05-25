@@ -1,4 +1,7 @@
 const fs = require('fs');
+const path = require('path');
+
+const CtrError = require('../CtrError');
 
 module.exports = class BaseOutputProcessor {
 
@@ -9,12 +12,17 @@ module.exports = class BaseOutputProcessor {
   }
 
   prepare() {
+    const basePath = path.dirname(this.file);
+    if (!fs.existsSync(basePath)) {
+      fs.mkdirSync(basePath, { recursive: true });
+    }
+
     fs.writeFileSync(this.file, '');
   }
 
   writeChunk(chunk, pos = null) {
     if (typeof chunk !== 'string') {
-      throw new Error(`cypress-terminal-report: Expected string for write chunk on log file.`);
+      throw new CtrError(`cypress-terminal-report: Expected string for write chunk on log file.`);
     }
 
     let fd = fs.openSync(this.file, 'r+');

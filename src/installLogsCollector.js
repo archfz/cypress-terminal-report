@@ -1,5 +1,6 @@
 const methods = require('methods');
 
+const CtrError = require('./CtrError');
 const LOG_TYPE = require('./constants').LOG_TYPES;
 const CONSTANTS = require('./constants');
 const xhrPartParse = require('./xhrPartParse');
@@ -87,30 +88,30 @@ function installLogsCollector(config = {}) {
   });
 
   after(function () {
-    cy.task(CONSTANTS.TASK_NAME_AFTER, null, {log: false});
+    cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
   });
 }
 
 function validateConfig(config) {
   if (config.collectTypes) {
     if (!Array.isArray(config.collectTypes)) {
-      throw new Error(`Collect types should be of type array. [cypress-terminal-report]`);
+      throw new CtrError(`Collect types should be of type array. [cypress-terminal-report]`);
     }
 
     const types = Object.values(LOG_TYPE);
     const unknownTypes = config.collectTypes.filter((t) => !types.includes(t));
 
     if (unknownTypes.length !== 0) {
-      throw new Error(`Invalid collect types: ${unknownTypes.join(', ')}. [cypress-terminal-report]`);
+      throw new CtrError(`Invalid collect types: ${unknownTypes.join(', ')}. [cypress-terminal-report]`);
     }
   }
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
-    throw new Error(`Filter log expected to be a function. [cypress-terminal-report]`);
+    throw new CtrError(`Filter log expected to be a function. [cypress-terminal-report]`);
   }
 
   if (config.printLogs && !(['always', 'onFail'].includes(config.printLogs))) {
-    throw new Error(`Print logs config can only be 'always' or 'onFail'. [cypress-terminal-report]`);
+    throw new CtrError(`Print logs config can only be 'always' or 'onFail'. [cypress-terminal-report]`);
   }
 }
 

@@ -1,5 +1,7 @@
 const chalk = require('chalk');
 const path = require('path');
+
+const CtrError = require('./CtrError');
 const CONSTANTS = require('./constants');
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
@@ -30,6 +32,7 @@ const LOG_SYMBOLS = (() => {
 })();
 
 let allMessages = {};
+let outputProcessors = [];
 
 function installLogsPrinter(on, options = {}) {
   on('task', {
@@ -41,45 +44,39 @@ function installLogsPrinter(on, options = {}) {
 
       logToTerminal(data.messages, options);
       return null;
+    },
+    [CONSTANTS.TASK_NAME_OUTPUT]: () => {
+      outputProcessors.forEach((processor) => processor.write(allMessages));
+      allMessages = {};
+      return null;
     }
   });
 
-  if (!options.outputTarget) {
-    return;
+  if (options.outputTarget) {
+    installOutputProcessors(on, options.outputRoot, options.outputTarget);
   }
-
-  installOutputProcessors(on, options.outputRoot, options.outputTarget);
 }
 
 function installOutputProcessors(on, root, outputTargets) {
   if (!root) {
-    throw new Error(`cypress-terminal-report: Missing outputRoot configuration.`);
+    throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  const outputProcessors = [];
   Object.entries(outputTargets).forEach(([file, type]) => {
     if (typeof type === 'string') {
       if (!OUTPUT_PROCESSOR_TYPE[type]) {
-        throw new Error(`cypress-terminal-report: Unknown output format '${type}'.`);
+        throw new CtrError(`Unknown output format '${type}'.`);
       }
 
       outputProcessors.push(new OUTPUT_PROCESSOR_TYPE[type](path.join(root, file)));
     } else if (typeof type === 'function') {
       outputProcessors.push(new CUSTOM_OUTPUT_PROCESSOR(path.join(root, file), type));
     } else {
-      throw new Error(`cypress-terminal-report: Output target type can only be string or function.`);
+      throw new CtrError(`Output target type can only be string or function.`);
     }
   });
 
   outputProcessors.forEach((processor) => processor.prepare());
-
-  on('task', {
-    [CONSTANTS.TASK_NAME_AFTER]: () => {
-      outputProcessors.forEach((processor) => processor.write(allMessages));
-      allMessages = {};
-      return null;
-    }
-  });
 }
 
 function logToTerminal(messages, options) {

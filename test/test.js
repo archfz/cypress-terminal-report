@@ -187,8 +187,6 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-
-
   it('Should generate proper log output files.', async () => {
     const outRoot = __dirname + '/output';
     const testOutputs = ['out.txt', 'out.json', 'out.cst'];
@@ -197,6 +195,10 @@ describe('cypress-terminal-report', () => {
         fs.unlinkSync(outRoot + '/' + out);
       }
     });
+
+    if (fs.existsSync(outRoot + '/not')) {
+      fs.rmdirSync(outRoot + '/not', { recursive: true });
+    }
 
     const clean = (str) =>
       // Clean error trace as it changes from test to test.
@@ -209,6 +211,14 @@ describe('cypress-terminal-report', () => {
 
         expect(clean(value.toString()), `Check ${out} matched spec.`).to.eq(clean(expected.toString()));
       });
+    });
+  }).timeout(60000);
+
+  it('Should not break normal execution.', async () => {
+    await runTest(commandBase([], ['successful.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.not.contain(`error`);
+      expect(stdout).to.not.contain(`CypressError`);
+      expect(stdout).to.contain(`1 passing`);
     });
   }).timeout(60000);
 });

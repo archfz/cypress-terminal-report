@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.com/archfz/cypress-terminal-report.svg?branch=master)](https://travis-ci.com/archfz/cypress-terminal-report)
 [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
-Plugin for cypress that adds better terminal output __when tests fail__
-on the terminal for better debugging. Prints cy commands, console.warn, 
-console.error and request response data captured with cy.route. 
+Plugin for cypress that adds better terminal output for easier debugging. 
+Prints cy commands, browser console logs, cy.request and cy.route data. By default
+outputs to terminal only, but can be configured to write to files as well. 
 
 > Note: If you want to display the logs when test succeed as well then check the
 [options](#options) for the support install.
@@ -15,6 +15,7 @@ to your CI runner and check the pipeline logs there.
 
 - [Install](#install)
 - [Options](#options)
+- [Logging to files](#logging-to-files)
 - [Development](#development)
 - [Release Notes](#release-notes)
 
@@ -58,7 +59,7 @@ The type is from the same list as for the `collectTypes` option. Severity can be
 - `options.xhr.printHeaderData` - boolean; default false; Whether to print header data for XHR requests.
 - `options.xhr.printRequestData` - boolean; default false; Whether to print request data for XHR requests besides response data.
 
-## Writing logs to files
+## Logging to files
 
 To enable logging to file you must add the following configuration options to the
 `.installPlugin`.
@@ -74,7 +75,7 @@ module.exports = (on, config) => {
     }
   };
 
-  require('../../../index').installPlugin(on, options);
+  require('cypress-terminal-report').installPlugin(on, options);
   // ...
 };
 ```
@@ -91,9 +92,11 @@ to the `outputTarget` value. This function will be called with the list of messa
 per spec per test. Currently it is called right after one spec finishes, which means
 at one iteration will receive only for one spec the messages. See for example below.
 
-> NOTE: The chunks have to be written in a way that after every write the file is 
-> in a valid format. This has to be like this since we cannot detect when cypress
-> runs the last test.
+NOTE: The chunks have to be written in a way that after every write the file is 
+in a valid format. This has to be like this since we cannot detect when cypress
+runs the last test. This way we also make the process faster because otherwise the
+more tests would execute the more RAM and processor time it would take to rewrite 
+all the logs to the file.
 
 ```js
   // ...
@@ -135,6 +138,11 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 1.3.1
+
+- Added creation of output path for outputTarget files if directory does not exist.
+- Fixed issue with ctrAfter task not being registered when outputTarget not configured. [issue](https://github.com/archfz/cypress-terminal-report/issues/26)
 
 #### 1.3.0
 
