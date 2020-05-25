@@ -8,4 +8,4 @@ cache:
     - ./npm
 
 script:
-  - docker run --rm -t -v $PWD:/app -w /app -e npm_config_cache=/app/.npm cypress/base:10 bash -c "npm ci && cd test && npm ci && npm run test"
+  - docker run --rm -t -v $PWD:/app -w /app -e npm_config_cache=/app/.npm cypress/base:12 bash -c "npm ci && cd test && npm ci && npm run test"
