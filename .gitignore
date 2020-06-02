@@ -5,4 +5,5 @@ test/cypress/videos
 test/cypress/fixtures
 test/output/out.json
 test/output/out.txt
+test/output/out.cst
 .idea
