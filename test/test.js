@@ -2,6 +2,8 @@ const {exec} = require('child_process');
 const {expect} = require('chai');
 const chalk = require('chalk');
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 let commandPrefix = 'node ./node_modules/.bin/cypress';
 
@@ -206,7 +208,7 @@ describe('cypress-terminal-report', () => {
 
     const osSpecificEol = (str) => 
       // Change line endings to win32 if needed
-      (EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str);
+      (os.EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str);
 
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js'];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
