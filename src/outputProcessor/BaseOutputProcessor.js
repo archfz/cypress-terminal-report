@@ -26,7 +26,7 @@ module.exports = class BaseOutputProcessor {
     }
 
     let fd = fs.openSync(this.file, 'r+');
-    let data = new Buffer(chunk, 'utf8');
+    let data = Buffer.from(chunk, 'utf8');
 
     if (pos === null) {
       pos = this.size;
@@ -39,7 +39,7 @@ module.exports = class BaseOutputProcessor {
     }
 
     if (pos !== this.size) {
-      let buffer = new Buffer(this.size - pos);
+      let buffer = Buffer.alloc(this.size - pos);
       fs.readSync(fd, buffer, 0, buffer.length, pos);
       data = Buffer.concat([data, buffer]);
     }
