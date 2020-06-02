@@ -46,7 +46,10 @@ function installLogsPrinter(on, options = {}) {
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
-      outputProcessors.forEach((processor) => processor.write(allMessages));
+      outputProcessors.forEach((processor) => {
+        processor.write(allMessages);
+        logOutputTarget(processor);
+      });
       allMessages = {};
       return null;
     }
@@ -55,6 +58,18 @@ function installLogsPrinter(on, options = {}) {
   if (options.outputTarget) {
     installOutputProcessors(on, options.outputRoot, options.outputTarget);
   }
+}
+
+function logOutputTarget(processor) {
+  let message;
+  if (processor instanceof OUTPUT_PROCESSOR_TYPE.txt) {
+    message = 'Wrote text logs to ' + processor.file;
+  } else if (processor instanceof OUTPUT_PROCESSOR_TYPE.json) {
+    message = 'Wrote json logs to ' + processor.file;
+  } else {
+    message = 'Wrote custom logs to ' + processor.file;
+  }
+  console.log('[cypress-terminal-report]', message);
 }
 
 function installOutputProcessors(on, root, outputTargets) {
