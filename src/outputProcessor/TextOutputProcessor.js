@@ -3,8 +3,9 @@ const BaseOutputProcessor = require('./BaseOutputProcessor');
 const CONSTANTS = require('../constants');
 const PADDING = '    ';
 const PADDING_LOGS = `${PADDING}`.repeat(6);
+const {EOL} = require('os');
 
-module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
+module.exports = class TextOutputProcessor extends BaseOutputProcessor {
 
   severityToFont(severity) {
     return {
@@ -23,16 +24,16 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
     let text = '';
 
     Object.entries(allMessages).forEach(([spec, tests]) => {
-      text += `${spec}:\n`;
+      text += `${spec}:${EOL}`;
       Object.entries(tests).forEach(([test, messages]) => {
-        text += `${PADDING}${test}\n`;
+        text += `${PADDING}${test}${EOL}`;
         messages.forEach(([type, message, severity]) => {
           text += this.padTypeText(`${type} (${this.severityToFont(severity)}): `) +
-            message.replace(/\n/g, `\n${PADDING_LOGS}`) + '\n';
+            message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL;
         });
-        text += '\n';
+        text += EOL;
       });
-      text += '\n\n';
+      text += EOL + EOL;
     });
 
     this.writeChunk(text);
