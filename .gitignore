@@ -8,3 +8,4 @@ test/output/out.txt
 test/output/not/existing/path/out.txt
 test/output/out.cst
 .idea
+.vscode
