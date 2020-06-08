@@ -14,5 +14,5 @@ module.exports = (on, config) => {
     };
   }
 
-  require('../../../index').installPlugin(on, options);
+  require('../../../src/installLogsPrinter')(on, options);
 };

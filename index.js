@@ -7,6 +7,7 @@ module.exports = {
    *
    * Needs to be added to plugins file.
    *
+   * @deprecated
    * @param {Function} on
    *    Cypress event listen handler.
    * @param {object} options
@@ -23,6 +24,7 @@ module.exports = {
    *
    * Needs to be added to support file.
    *
+   * @deprecated
    * @param {object} config
    *    Options for collection logs:
    *      - printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
