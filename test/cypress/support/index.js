@@ -20,8 +20,11 @@ if (env.printRequestData == '1') {
   config.xhr = config.xhr || {};
   config.xhr.printRequestData = true;
 }
+if (env.filterOutCyCommand == '1') {
+  config.filterLog = ([type]) => type !== 'cy:command';
+}
 
-require('../../../index').installSupport(config);
+require('../../../src/installLogsCollector')(config);
 
 enableFetchWorkaround();
 function enableFetchWorkaround() {

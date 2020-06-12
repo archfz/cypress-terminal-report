@@ -61,12 +61,13 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('log:changed', options => {
-    if (logsChainId[options.id] && options.state === 'failed') {
+    if ( options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
       logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
     }
   });
 
   Cypress.mocha.getRunner().on('test', () => {
+    logsChainId = {};
     logs = [];
   });
 

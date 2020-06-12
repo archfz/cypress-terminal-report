@@ -31,12 +31,12 @@ to your CI runner and check the pipeline logs there.
 2. Register the output plugin in `cypress/plugins/index.js`
     ```js
     module.exports = (on) => {
-       require('cypress-terminal-report').installPlugin(on);
+       require('cypress-terminal-report/src/installLogsCollector')(on);
     };
     ```
 3. Register the log collector support in `cypress/support/index.js`
     ```js
-    require('cypress-terminal-report').installSupport();
+    require('cypress-terminal-report/src/installLogsPrinter')();
     ```
 
 ## Options
@@ -75,7 +75,7 @@ module.exports = (on, config) => {
     }
   };
 
-  require('cypress-terminal-report').installPlugin(on, options);
+  require('cypress-terminal-report/src/installLogsCollector')(on, options);
   // ...
 };
 ```
@@ -138,6 +138,11 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Fixed issue with webpack compatibility caused by native includes getting in compilation files. For this please revise
+the installation documentation and change the requires for the install of this plugin. Deprecated require by index. [issue](https://github.com/archfz/cypress-terminal-report/issues/32)
+- Fixed issue with logsChainId not being reset and causing test failures and potentially live failures with error
+'Cannot set property '2' of undefined'. [issue](https://github.com/archfz/cypress-terminal-report/issues/31)
 
 #### 1.3.1
 
