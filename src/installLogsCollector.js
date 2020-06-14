@@ -144,20 +144,20 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
 
-    const createWrapper = (method, logType) => {
+    const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {
       oldConsoleMethods[method] = appWindow.console[method];
 
       appWindow.console[method] = (...args) => {
-        addLog([logType, args.map(processArg).join(`,\n`)]);
+        addLog([logType, args.map(processArg).join(`,\n`), type]);
         oldConsoleMethods[method](...args);
       };
     };
 
     if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_WARN)) {
-      createWrapper('warn', LOG_TYPE.BROWSER_CONSOLE_WARN);
+      createWrapper('warn', LOG_TYPE.BROWSER_CONSOLE_WARN, CONSTANTS.SEVERITY.WARNING);
     }
     if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_ERROR)) {
-      createWrapper('error', LOG_TYPE.BROWSER_CONSOLE_ERROR);
+      createWrapper('error', LOG_TYPE.BROWSER_CONSOLE_ERROR, CONSTANTS.SEVERITY.ERROR);
     }
     if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_INFO)) {
       createWrapper('info', LOG_TYPE.BROWSER_CONSOLE_INFO);

@@ -14,5 +14,9 @@ module.exports = (on, config) => {
     };
   }
 
+  if (config.env.compactLogs == "1") {
+    options.compactLogs = 1;
+  }
+
   require('../../../src/installLogsPrinter')(on, options);
 };

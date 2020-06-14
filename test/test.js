@@ -69,12 +69,12 @@ describe('cypress-terminal-report', () => {
       );
       // console
       expect(stdout).to.contain(`cons:warn ${ICONS.warning}  This is a warning message\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  This is an error message\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  Error: This is an error message with stack.\n${PADDING}    at Context.eval (`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  This is an error message\n`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  Error: This is an error message with stack.\n${PADDING}    at Context.eval (`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  This should console.log appear.`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "this": "Is an object",\n${PADDING}  "with": {\n${PADDING}    "keys": 12512\n${PADDING}  }\n${PADDING}}\n`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "a": "b"\n${PADDING}},\n${PADDING}{\n${PADDING}  "c": "d"\n${PADDING}},\n${PADDING}10,\n${PADDING}string\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
       expect(stdout).to.contain(`cons:info ${ICONS.info}  This should console.info appear.`);
       // log failed command
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get\n`);
@@ -206,10 +206,14 @@ describe('cypress-terminal-report', () => {
 
     await runTest(commandBase(['generateOutput=1'], ['requests.spec.js', 'happyFlow.spec.js']), (error, stdout, stderr) => {
       testOutputs.forEach((out) => {
-        const expected = fs.readFileSync(outRoot + '/' + out.replace(/\.([a-z]+)$/, '.spec.$1'));
-        const value = fs.readFileSync(outRoot + '/' + out);
+        const expected = fs.readFileSync(outRoot + '/' + out.replace(/\.([a-z]+)$/, '.spec.$1'))
+          .toString()
+          .replace(/\s+$/, '');
+        const value = fs.readFileSync(outRoot + '/' + out)
+          .toString()
+          .replace(/\s+$/, '');
 
-        expect(clean(value.toString()), `Check ${out} matched spec.`).to.eq(clean(expected.toString()));
+        expect(clean(value), `Check ${out} matched spec.`).to.eq(clean(expected));
       });
     });
   }).timeout(60000);
@@ -219,6 +223,21 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.not.contain(`error`);
       expect(stdout).to.not.contain(`CypressError`);
       expect(stdout).to.contain(`1 passing`);
+    });
+  }).timeout(60000);
+
+  it('Should compact logs when test fails.', async () => {
+    await runTest(commandBase(['compactLogs=1'], ['compactLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`ctr:info -  [ ... 17 omitted logs ... ]\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  null,`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  window\t\n        ctr:info -  [ ... 3 omitted logs ... ]\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  This is an error message\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  Error: This is an error message with stack.`);
+      expect(stdout).to.contain(`ctr:info -  [ ... 11 omitted logs ... ]`);
+      expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get`);
+    });
+  }).timeout(60000);
+
+  it('Should compact all logs when there is no failing test.', async () => {
+    await runTest(commandBase(['compactLogs=1', 'printLogsAlways=1'], ['successfulWithNoErrors.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`ctr:info -  [ ... 28 omitted logs ... ]`);
     });
   }).timeout(60000);
 });
