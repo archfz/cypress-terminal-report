@@ -73,18 +73,13 @@ function installLogsCollector(config = {}) {
 
   afterEach(function() {
     if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
-      // Need to set a promise otherwise logs that just recently failed won't be marked as
-      // failing.
-      cy.wrap(new Promise((resolve) => {
-        setTimeout(() => {
-          cy.task(CONSTANTS.TASK_NAME, {
-            spec: this.test.file,
-            test: this.currentTest.title,
-            messages: logs
-          }, {log: false});
-          resolve();
-        }, 1);
-      }), {log: false});
+      // Need to wait otherwise some last commands get omitted from logs.
+      cy.wait(1, {log: false});
+      cy.task(CONSTANTS.TASK_NAME, {
+        spec: this.test.file,
+        test: this.currentTest.title,
+        messages: logs
+      }, {log: false});
     }
   });
 

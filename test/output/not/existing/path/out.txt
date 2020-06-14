@@ -53,7 +53,7 @@ cypress/integration/happyFlow.spec.js:
         cons:error (K): This is an error message
         cy:command (K): window	
         cons:error (K): Error: This is an error message with stack.
-                            at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-347:47:30)
+                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:47:30)
         cy:command (K): window	
           cons:log (K): This should console.log appear.
         cy:command (K): window	
