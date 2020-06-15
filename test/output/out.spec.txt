@@ -33,7 +33,7 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name**
         cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.route()**
         cy:command (K): window	
-        cons:error (K): null,
+        cons:error (X): null,
                         undefined,
                         ,
                         false,
@@ -48,11 +48,11 @@ cypress/integration/happyFlow.spec.js:
                         10,
                         string
         cy:command (K): window	
-         cons:warn (K): This is a warning message
+         cons:warn (!): This is a warning message
         cy:command (K): window	
-        cons:error (K): This is an error message
+        cons:error (X): This is an error message
         cy:command (K): window	
-        cons:error (K): Error: This is an error message with stack.
+        cons:error (X): Error: This is an error message with stack.
                             at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-034:47:30)
         cy:command (K): window	
           cons:log (K): This should console.log appear.

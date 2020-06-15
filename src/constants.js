@@ -13,6 +13,8 @@ module.exports = {
     CYPRESS_REQUEST: 'cy:request',
     CYPRESS_ROUTE: 'cy:route',
     CYPRESS_COMMAND: 'cy:command',
+
+    PLUGIN_LOG_TYPE: 'ctr:info',
   },
 
   SEVERITY: {

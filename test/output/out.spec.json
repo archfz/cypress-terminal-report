@@ -93,7 +93,7 @@
       },
       {
         "type": "cons:error",
-        "severity": "success",
+        "severity": "error",
         "message": "null,\nundefined,\n,\nfalse,\nfunction () {}"
       },
       {
@@ -113,7 +113,7 @@
       },
       {
         "type": "cons:warn",
-        "severity": "success",
+        "severity": "warning",
         "message": "This is a warning message"
       },
       {
@@ -123,7 +123,7 @@
       },
       {
         "type": "cons:error",
-        "severity": "success",
+        "severity": "error",
         "message": "This is an error message"
       },
       {
@@ -133,7 +133,7 @@
       },
       {
         "type": "cons:error",
-        "severity": "success",
+        "severity": "error",
         "message": "Error: This is an error message with stack.\n    at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-034:47:30)"
       },
       {

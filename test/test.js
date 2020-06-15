@@ -71,12 +71,12 @@ describe('cypress-terminal-report', () => {
       );
       // console
       expect(stdout).to.contain(`cons:warn ${ICONS.warning}  This is a warning message\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  This is an error message\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  Error: This is an error message with stack.\n${PADDING}    at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  This is an error message\n`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  Error: This is an error message with stack.\n${PADDING}    at Context.eval (`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  This should console.log appear.`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "this": "Is an object",\n${PADDING}  "with": {\n${PADDING}    "keys": 12512\n${PADDING}  }\n${PADDING}}\n`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "a": "b"\n${PADDING}},\n${PADDING}{\n${PADDING}  "c": "d"\n${PADDING}},\n${PADDING}10,\n${PADDING}string\n`);
-      expect(stdout).to.contain(`cons:error ${ICONS.warning}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
+      expect(stdout).to.contain(`cons:error ${ICONS.error}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
       expect(stdout).to.contain(`cons:info ${ICONS.info}  This should console.info appear.`);
       // log failed command
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get\n`);
@@ -140,8 +140,8 @@ describe('cypress-terminal-report', () => {
     await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",\n`);
       expect(stdout).to.contain(`\n${PADDING}  "test-header": "data",\n${PADDING}  "vary": "Accept-Encoding"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
-      expect(stdout).to.contain(`POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "vary": "Accept-Encoding",\n${PADDING}  "access-control-allow-origin": "*",\n${PADDING}  "content-type": "application/json; charset=UTF-8",`);
-      expect(stdout).to.contain(`\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
+      expect(stdout).to.contain(`POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "vary": "Accept-Encoding",\n`);
+      expect(stdout).to.contain(`${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
     });
   }).timeout(60000);
 
@@ -217,7 +217,7 @@ describe('cypress-terminal-report', () => {
           path.join(outRoot, out.replace(/\.([a-z]+)$/, '.spec.$1'))
         );
         const valueBuffer = fs.readFileSync(path.join(outRoot, out));
-        let value = clean(valueBuffer.toString());
+        let value = clean(valueBuffer.toString().replace(/\s+$/, ''));
         if (path.sep === '\\') {
           specFiles.forEach((specFile) => {
             const expectPath = 'cypress/integration/' + specFile;
@@ -231,12 +231,12 @@ describe('cypress-terminal-report', () => {
           });
         }
 
-        let expected = clean(expectedBuffer.toString());
+        let expected = clean(expectedBuffer.toString().replace(/\s+$/, ''));
         if (out.endsWith('.txt')) {
           expected = osSpecificEol(expected);
         }
 
-        expect(value, `Check ${out} matched spec.`).to.eq(clean(expected.toString()));
+        expect(clean(value), `Check ${out} matched spec.`).to.eq(clean(expected));
       });
 
       expect(stdout).to.contain('[cypress-terminal-report] Wrote txt logs to ' + path.join(outRoot, 'not', 'existing', 'path', 'out.txt'));
@@ -251,6 +251,21 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.not.contain(`error`);
       expect(stdout).to.not.contain(`CypressError`);
       expect(stdout).to.contain(`1 passing`);
+    });
+  }).timeout(60000);
+
+  it('Should compact logs when test fails.', async () => {
+    await runTest(commandBase(['compactLogs=1'], ['compactLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`ctr:info -  [ ... 17 omitted logs ... ]\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  null,`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  window\t\n        ctr:info -  [ ... 3 omitted logs ... ]\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  This is an error message\n      cy:command ${ICONS.success}  window\t\n      cons:error ${ICONS.error}  Error: This is an error message with stack.`);
+      expect(stdout).to.contain(`ctr:info -  [ ... 11 omitted logs ... ]`);
+      expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get`);
+    });
+  }).timeout(60000);
+
+  it('Should compact all logs when there is no failing test.', async () => {
+    await runTest(commandBase(['compactLogs=1', 'printLogsAlways=1'], ['successfulWithNoErrors.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`ctr:info -  [ ... 28 omitted logs ... ]`);
     });
   }).timeout(60000);
 });
