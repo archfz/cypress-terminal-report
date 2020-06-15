@@ -37,12 +37,18 @@ let outputProcessors = [];
 function installLogsPrinter(on, options = {}) {
   on('task', {
     [CONSTANTS.TASK_NAME]: data => {
-      if (options.outputTarget) {
-        allMessages[data.spec] = allMessages[data.spec] || {};
-        allMessages[data.spec][data.test] = data.messages;
+      let messages = data.messages;
+
+      if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
+        messages = compactLogs(messages, options.compactLogs);
       }
 
-      logToTerminal(data.messages, options);
+      if (options.outputTarget) {
+        allMessages[data.spec] = allMessages[data.spec] || {};
+        allMessages[data.spec][data.test] = messages;
+      }
+
+      logToTerminal(messages, options);
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
@@ -93,6 +99,49 @@ function installOutputProcessors(on, root, outputTargets) {
   });
 
   outputProcessors.forEach((processor) => processor.prepare());
+}
+
+function compactLogs(logs, keepAroundCount) {
+  const failingIndexes = logs.filter((log) => log[2] === CONSTANTS.SEVERITY.ERROR)
+    .map((log) => logs.indexOf(log));
+
+  const includeIndexes = new Array(logs.length);
+
+  failingIndexes.forEach((index) => {
+    const from = Math.max(0, index - keepAroundCount);
+    const to = Math.min(logs.length, index + keepAroundCount);
+    for (let i = from; i <= to; i++) {
+      includeIndexes[i] = 1;
+    }
+  });
+
+  const compactedLogs = [];
+  const addOmittedLog = (count) =>
+    compactedLogs.push([
+      CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
+      `[ ... ${count} omitted logs ... ]`,
+      CONSTANTS.SEVERITY.SUCCESS
+    ]);
+
+  let excludeCount = 0;
+  for (let i = 0; i < includeIndexes.length; i++) {
+    if (includeIndexes[i]) {
+      if (excludeCount) {
+        addOmittedLog(excludeCount);
+        excludeCount = 0;
+      }
+
+      compactedLogs.push(logs[i]);
+    } else {
+      ++excludeCount;
+    }
+  }
+
+  if (excludeCount) {
+    addOmittedLog(excludeCount);
+  }
+
+  return compactedLogs;
 }
 
 function logToTerminal(messages, options) {

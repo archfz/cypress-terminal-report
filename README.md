@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/archfz/cypress-terminal-report.svg?branch=master)](https://travis-ci.com/archfz/cypress-terminal-report)
 [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
+[![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
 Plugin for cypress that adds better terminal output for easier debugging. 
 Prints cy commands, browser console logs, cy.request and cy.route data. By default
@@ -41,23 +42,50 @@ to your CI runner and check the pipeline logs there.
 
 ## Options
 
-Options for the plugin install: `.installPlugin(on, options)`:
-- `options.defaultTrimLength` - integer; default: 800; max length of cy.log and console.warn/console.error.
-- `options.commandTrimLength` - integer; default: 800; max length of cy commands.
-- `options.routeTrimLength` - integer; default: 5000; max length of cy.route request data.
-- `options.outputRoot` - string; default: null; Required if `options.outputTarget` provided. [More details](#writing-logs-to-files).
-- `options.outputTarget` - object; default: null; Output logs to files. [More details](#writing-logs-to-files).
+### Options for the plugin install `.installPlugin(on, options)`:
 
-Options for the support install: `.installSupport(options)`:
-- `options.printLogs` - string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
+#### `options.defaultTrimLength`
+integer; default: 800; Max length of cy.log and console.warn/console.error.
+
+#### `options.commandTrimLength` 
+integer; default: 800; Max length of cy commands.
+
+#### `options.routeTrimLength`
+integer; default: 5000; Max length of cy.route request data.
+
+#### `options.compactLogs` 
+integer?; default: null; If it is set to a number greater or equal to 0, this amount of logs 
+will be printed only around failing commands. Use this to have shorter output especially 
+for when there are a lot of commands in tests. When used with `options.printLogs=always` 
+for tests that don't have any `severity=error` logs nothing will be printed.
+
+#### `options.outputRoot` 
+string; default: null; Required if `options.outputTarget` provided. [More details](#logging-to-files).
+
+#### `options.outputTarget`
+object; default: null; Output logs to files. [More details](#logging-to-files).
+
+### Options for the support install `.installSupport(options)`:
+
+#### `options.printLogs`
+string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
 logs will be printed for successful test as well as failing ones.
-- `options.collectTypes` - array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']
+
+#### `options.collectTypes` 
+array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']
 What types of logs to collect and print. By default all types are enabled. The 'cy:command' is the general type that
 contain all types of commands that are not specially treated.
-- `options.filterLog` - undefined|([type, message, severity]) => boolean; default: undefined; Callback to filter logs manually.
+
+#### `options.filterLog` 
+null | ([type, message, severity]) => boolean; default: undefined; 
+Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
-- `options.xhr.printHeaderData` - boolean; default false; Whether to print header data for XHR requests.
-- `options.xhr.printRequestData` - boolean; default false; Whether to print request data for XHR requests besides response data.
+
+#### `options.xhr.printHeaderData` 
+boolean; default false; Whether to print header data for XHR requests.
+
+#### `options.xhr.printRequestData`
+boolean; default false; Whether to print request data for XHR requests besides response data.
 
 ## Logging to files
 
@@ -139,6 +167,13 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 1.4.0
+
+- Added new feature to compact output of logs, [see here](#optionscompactlogs). [issue](https://github.com/archfz/cypress-terminal-report/issues/27)
+- Fixed incorrect severity on cons:error an cons:warn.
+- Fixed compatibility with cypress 4.8. [issue-1](https://github.com/archfz/cypress-terminal-report/issues/35) 
+[issue-2](https://github.com/archfz/cypress-terminal-report/issues/34) 
+[issue-3](https://github.com/archfz/cypress-terminal-report/issues/33)
 - Fixed issue with webpack compatibility caused by native includes getting in compilation files. For this please revise
 the installation documentation and change the requires for the install of this plugin. Deprecated require by index. [issue](https://github.com/archfz/cypress-terminal-report/issues/32)
 - Fixed issue with logsChainId not being reset and causing test failures and potentially live failures with error
