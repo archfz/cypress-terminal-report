@@ -32,12 +32,12 @@ to your CI runner and check the pipeline logs there.
 2. Register the output plugin in `cypress/plugins/index.js`
     ```js
     module.exports = (on) => {
-       require('cypress-terminal-report/src/installLogsCollector')(on);
+       require('cypress-terminal-report/src/installLogsPrinter')(on);
     };
     ```
 3. Register the log collector support in `cypress/support/index.js`
     ```js
-    require('cypress-terminal-report/src/installLogsPrinter')();
+    require('cypress-terminal-report/src/installLogsCollector')();
     ```
 
 ## Options
@@ -103,7 +103,7 @@ module.exports = (on, config) => {
     }
   };
 
-  require('cypress-terminal-report/src/installLogsCollector')(on, options);
+  require('cypress-terminal-report/src/installLogsPrinter')(on, options);
   // ...
 };
 ```
