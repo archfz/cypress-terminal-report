@@ -62,12 +62,13 @@ function installLogsPrinter(on, options = {}) {
 
 function logOutputTarget(processor) {
   let message;
-  if (processor instanceof OUTPUT_PROCESSOR_TYPE.txt) {
-    message = 'Wrote text logs to ' + processor.file;
-  } else if (processor instanceof OUTPUT_PROCESSOR_TYPE.json) {
-    message = 'Wrote json logs to ' + processor.file;
+  let standardOutputType = Object.keys(OUTPUT_PROCESSOR_TYPE).find(
+    (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
+  );
+  if (standardOutputType) {
+    message = `Wrote ${standardOutputType} logs to ${processor.file}`;
   } else {
-    message = 'Wrote custom logs to ' + processor.file;
+    message = `Wrote custom logs to ${processor.file}`;
   }
   console.log('[cypress-terminal-report]', message);
 }

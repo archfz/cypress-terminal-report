@@ -239,8 +239,8 @@ describe('cypress-terminal-report', () => {
         expect(value, `Check ${out} matched spec.`).to.eq(clean(expected.toString()));
       });
 
-      expect(stdout).to.contain('[cypress-terminal-report] Wrote text logs to ' + path.join(outRoot, 'not', 'existing', 'path', 'out.txt'));
-      expect(stdout).to.contain('[cypress-terminal-report] Wrote text logs to ' + path.join(outRoot, 'out.txt'));
+      expect(stdout).to.contain('[cypress-terminal-report] Wrote txt logs to ' + path.join(outRoot, 'not', 'existing', 'path', 'out.txt'));
+      expect(stdout).to.contain('[cypress-terminal-report] Wrote txt logs to ' + path.join(outRoot, 'out.txt'));
       expect(stdout).to.contain('[cypress-terminal-report] Wrote json logs to ' + path.join(outRoot, 'out.json'));
       expect(stdout).to.contain('[cypress-terminal-report] Wrote custom logs to ' + path.join(outRoot, 'out.cst'));
     });
