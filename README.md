@@ -170,7 +170,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 #### 1.4.0
 
 - Added new feature to compact output of logs, [see here](#optionscompactlogs). [issue](https://github.com/archfz/cypress-terminal-report/issues/27)
-- Fixed incorrect severity on cons:error an cons:warn.
+- Fixed incorrect severity on cons:error and cons:warn.
 - Fixed compatibility with cypress 4.8. [issue-1](https://github.com/archfz/cypress-terminal-report/issues/35) 
 [issue-2](https://github.com/archfz/cypress-terminal-report/issues/34) 
 [issue-3](https://github.com/archfz/cypress-terminal-report/issues/33)
