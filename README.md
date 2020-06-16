@@ -167,6 +167,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 1.4.1
+
+- Added log to terminal of the list of generated output files. [merge-request](https://github.com/archfz/cypress-terminal-report/issues/29) by [@bjowes](https://github.com/bjowes)
+- Fixed line endings for output on windows. [merge-request](https://github.com/archfz/cypress-terminal-report/issues/29) by [@bjowes](https://github.com/bjowes)
+- Fixed incorrect readme with inverse installation requires for plugin and support. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/36) by [@zentby](https://github.com/zentby) 
+
 #### 1.4.0
 
 - Added new feature to compact output of logs, [see here](#optionscompactlogs). [issue](https://github.com/archfz/cypress-terminal-report/issues/27)
