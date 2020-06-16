@@ -42,7 +42,9 @@ to your CI runner and check the pipeline logs there.
 
 ## Options
 
-### Options for the plugin install `.installPlugin(on, options)`:
+### Options for the plugin install
+
+> require('cypress-terminal-report/src/installLogsPrinter')(on, options)
 
 #### `options.defaultTrimLength`
 integer; default: 800; Max length of cy.log and console.warn/console.error.
@@ -65,7 +67,9 @@ string; default: null; Required if `options.outputTarget` provided. [More detail
 #### `options.outputTarget`
 object; default: null; Output logs to files. [More details](#logging-to-files).
 
-### Options for the support install `.installSupport(options)`:
+### Options for the support install
+
+> require('cypress-terminal-report/src/installLogsCollector')(options);
 
 #### `options.printLogs`
 string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
