@@ -32,12 +32,12 @@ to your CI runner and check the pipeline logs there.
 2. Register the output plugin in `cypress/plugins/index.js`
     ```js
     module.exports = (on) => {
-       require('cypress-terminal-report/src/installLogsCollector')(on);
+       require('cypress-terminal-report/src/installLogsPrinter')(on);
     };
     ```
 3. Register the log collector support in `cypress/support/index.js`
     ```js
-    require('cypress-terminal-report/src/installLogsPrinter')();
+    require('cypress-terminal-report/src/installLogsCollector')();
     ```
 
 ## Options
@@ -103,7 +103,7 @@ module.exports = (on, config) => {
     }
   };
 
-  require('cypress-terminal-report/src/installLogsCollector')(on, options);
+  require('cypress-terminal-report/src/installLogsPrinter')(on, options);
   // ...
 };
 ```
@@ -170,7 +170,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 #### 1.4.0
 
 - Added new feature to compact output of logs, [see here](#optionscompactlogs). [issue](https://github.com/archfz/cypress-terminal-report/issues/27)
-- Fixed incorrect severity on cons:error an cons:warn.
+- Fixed incorrect severity on cons:error and cons:warn.
 - Fixed compatibility with cypress 4.8. [issue-1](https://github.com/archfz/cypress-terminal-report/issues/35) 
 [issue-2](https://github.com/archfz/cypress-terminal-report/issues/34) 
 [issue-3](https://github.com/archfz/cypress-terminal-report/issues/33)
