@@ -94,7 +94,7 @@ boolean; default false; Whether to print request data for XHR requests besides r
 ## Logging to files
 
 To enable logging to file you must add the following configuration options to the
-`.installPlugin`.
+plugin install.
 
 ```js
 module.exports = (on, config) => {
