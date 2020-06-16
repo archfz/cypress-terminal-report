@@ -1,0 +1,3 @@
+out.spec.txt    text eol=lf
+out.spec.json   text eol=lf
+out.spec.cst    text eol=lf

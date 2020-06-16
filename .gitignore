@@ -5,4 +5,7 @@ test/cypress/videos
 test/cypress/fixtures
 test/output/out.json
 test/output/out.txt
+test/output/not/existing/path/out.txt
+test/output/out.cst
 .idea
+.vscode
