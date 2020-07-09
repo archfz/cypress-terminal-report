@@ -8,6 +8,8 @@ Plugin for cypress that adds better terminal output for easier debugging.
 Prints cy commands, browser console logs, cy.request and cy.route data. By default
 outputs to terminal only, but can be configured to write to files as well. 
 
+Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
+
 > Note: If you want to display the logs when test succeed as well then check the
 [options](#options) for the support install.
 
