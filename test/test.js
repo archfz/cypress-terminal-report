@@ -38,7 +38,9 @@ const runTest = async (command, callback) => {
 
       lastRunOutput = stdout;
       // Normalize line endings for unix.
-      callback(error, stdout.replace(/\r\n/g, "\n"), stderr);
+      const normalizedStdout = stdout.replace(/\r\n/g, "\n");
+      callback(error, normalizedStdout , stderr);
+      expect(normalizedStdout).to.not.contain("CypressError: `cy.task('ctrLogMessages')` failed");
 
       resolve();
     });

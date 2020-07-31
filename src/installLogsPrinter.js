@@ -109,7 +109,7 @@ function compactLogs(logs, keepAroundCount) {
 
   failingIndexes.forEach((index) => {
     const from = Math.max(0, index - keepAroundCount);
-    const to = Math.min(logs.length, index + keepAroundCount);
+    const to = Math.min(logs.length - 1, index + keepAroundCount);
     for (let i = from; i <= to; i++) {
       includeIndexes[i] = 1;
     }
