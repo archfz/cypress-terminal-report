@@ -174,6 +174,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 ## Release Notes
 
 - Fixed issue with compact logs breaking after each hook with message `undefined is not iterable`. [issue](https://github.com/archfz/cypress-terminal-report/issues/39)
+- Update cypress to 4.11.0 in tests to confirm compatibility.
 
 #### 1.4.1
 
