@@ -1,6 +1,6 @@
 {
   "name": "cypress-terminal-report",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Better terminal output for failed cypress tests.",
   "main": "index.js",
   "scripts": {
