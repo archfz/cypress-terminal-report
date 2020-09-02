@@ -123,8 +123,8 @@ Supported types: `txt`, `json`.
 
 If you need to output in a custom format you can pass a function instead of a string
 to the `outputTarget` value. This function will be called with the list of messages
-per spec per test. Currently it is called right after one spec finishes, which means
-at one iteration will receive only for one spec the messages. See for example below.
+per spec per test. It is called right after one spec finishes, which means on each
+iteration it will receive for one spec the messages. See for example below.
 
 NOTE: The chunks have to be written in a way that after every write the file is 
 in a valid format. This has to be like this since we cannot detect when cypress
@@ -132,23 +132,33 @@ runs the last test. This way we also make the process faster because otherwise t
 more tests would execute the more RAM and processor time it would take to rewrite 
 all the logs to the file.
 
+Inside the function you will have access to the following API:
+
+- `this.size` - Current char size of the output file.
+- `this.atChunk` - The count of the chunk to be written.
+- `this.initialContent` - The initial content of the file. Defaults to ''. Set this
+before the first chunk write in order for it to work.
+- `this.chunkSeparator` - Chunk separator string. Defaults to ''. This string will 
+be written between each chunk. If you need a special separator between chunks use this 
+as it is internally handled to properly write and replace the chunks.
+- `this.writeSpecChunk(specPath, dataString, positionInFile?)` - Writes a chunk of 
+data in the output file.
+
 ```js
   // ...
   const options = {
     outputTarget: {
       'custom.output': function (messages) {
-        // Process the messages object into your required output string.
         // messages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}
-        let dataString = '';
-      
-        // this.size // Current char size of the output file.
-        // this.atChunk // The count of the chunk to be written.
 
-        // Insert chunk into file, by default at the end.
-        this.writeChunk(dataString);
-        // Or if you want to write into a different position.
-        let pos = 100; // If negative then this.size - pos will be the write position.
-        this.writeChunk(dataString, pos);
+        Object.entries(allMessages).forEach(([spec, tests]) => {
+            let dataString = '';
+            // .. Process the tests object into desired format ..
+            // Insert chunk into file, by default at the end.
+            this.writeSpecChunk(spec, dataString);
+            // Or before the last two characters.
+            this.writeSpecChunk(spec, dataString, -2);
+        });
       }
     }
   };
@@ -172,6 +182,13 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Fixed issue where output to file would insert at incorrect position for JSON when ran from GUI.
+- Reworked the file output processing code and thus the API changed as well. Custom output processors
+will have to be updated to current API when upgrading to this version. Check [readme section](#custom-output-log-processor).
+- Added printing to terminal of time spent in milliseconds for output files to be written.
+- Improved Error instanceof checking for console log arguments printing.
+- Update cypress to 5.0.0 in tests to confirm compatibility.
 
 #### 1.4.2
 

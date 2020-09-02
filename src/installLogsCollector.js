@@ -113,36 +113,37 @@ function validateConfig(config) {
 
 function collectBrowserConsoleLogs(addLog, collectTypes) {
   const oldConsoleMethods = {};
-  const processArg = (arg) => {
-    if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
-      return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
-    }
-
-    if (arg instanceof Error && typeof arg.stack === "string") {
-      let stack = arg.stack;
-      if (stack.indexOf(arg.message) !== -1) {
-        stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
-      }
-      return arg.toString() + '\n' + stack;
-    }
-
-    let json = '';
-    try {
-      json = JSON.stringify(arg, null, 2);
-    } catch (e) {
-      return '[unprocessable=' + arg + ']';
-    }
-
-    if (typeof json === 'undefined') {
-      return 'undefined';
-    }
-
-    return json;
-  };
 
   Cypress.on('window:before:load', function () {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
+
+    const processArg = (arg) => {
+      if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
+        return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
+      }
+
+      if ((arg instanceof appWindow.Error || arg instanceof Error) && typeof arg.stack === "string") {
+        let stack = arg.stack;
+        if (stack.indexOf(arg.message) !== -1) {
+          stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
+        }
+        return arg.toString() + '\n' + stack;
+      }
+
+      let json = '';
+      try {
+        json = JSON.stringify(arg, null, 2);
+      } catch (e) {
+        return '[unprocessable=' + arg + ']';
+      }
+
+      if (typeof json === 'undefined') {
+        return 'undefined';
+      }
+
+      return json;
+    };
 
     const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {
       oldConsoleMethods[method] = appWindow.console[method];

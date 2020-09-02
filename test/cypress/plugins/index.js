@@ -8,8 +8,11 @@ module.exports = (on, config) => {
       'out.txt': 'txt',
       'out.json': 'json',
       'out.cst': function (messages) {
-        let data = Object.keys(messages).join('\n') + '\n';
-        this.writeChunk(data);
+        this.initialContent = 'Failing specs:\n';
+        this.chunkSeparator = '\n';
+        Object.keys(messages).forEach((key) => {
+          this.writeSpecChunk(key, key);
+        });
       },
     };
   }

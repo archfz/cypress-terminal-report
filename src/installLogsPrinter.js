@@ -72,9 +72,9 @@ function logOutputTarget(processor) {
     (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
-    message = `Wrote ${standardOutputType} logs to ${processor.file}`;
+    message = `Wrote ${standardOutputType} logs to ${processor.file}. (${processor.writeSpendTime}ms)`;
   } else {
-    message = `Wrote custom logs to ${processor.file}`;
+    message = `Wrote custom logs to ${processor.file}. (${processor.writeSpendTime}ms)`;
   }
   console.log('[cypress-terminal-report]', message);
 }
@@ -98,7 +98,7 @@ function installOutputProcessors(on, root, outputTargets) {
     }
   });
 
-  outputProcessors.forEach((processor) => processor.prepare());
+  outputProcessors.forEach((processor) => processor.initialize());
 }
 
 function compactLogs(logs, keepAroundCount) {

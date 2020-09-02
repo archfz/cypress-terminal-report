@@ -7,48 +7,124 @@ module.exports = class BaseOutputProcessor {
 
   constructor(file) {
     this.file = file;
-    this.atChunk = 0;
-    this.size = 0;
+    this.initialContent = '';
+    this.chunkSeparator = '';
   }
 
-  prepare() {
+  initialize() {
+    // Unlink file on initialize to start clean. Also this is required for custom
+    // output processors provided as config to be able to define custom initial
+    // content.
+    if (fs.existsSync(this.file)) {
+      fs.unlinkSync(this.file);
+    }
+  }
+
+  prepareForWrite() {
+    this.atChunk = 0;
+    this.specChunksWritten = {};
+    this.size = this.initialContent.length;
+    this.writeSpendTime = 0;
+
     const basePath = path.dirname(this.file);
     if (!fs.existsSync(basePath)) {
       fs.mkdirSync(basePath, { recursive: true });
     }
 
-    fs.writeFileSync(this.file, '');
+    fs.writeFileSync(this.file, this.initialContent);
   }
 
-  writeChunk(chunk, pos = null) {
+  writeSpecChunk(spec, chunk, pos = null) {
+    const startTime = new Date().getTime();
+
     if (typeof chunk !== 'string') {
       throw new CtrError(`cypress-terminal-report: Expected string for write chunk on log file.`);
     }
 
-    let fd = fs.openSync(this.file, 'r+');
-    let data = Buffer.from(chunk, 'utf8');
+    if (!fs.existsSync(this.file)) {
+      this.prepareForWrite();
+    }
 
-    if (pos === null) {
-      pos = this.size;
+    if (this.hasSpecChunkWritten(spec)) {
+      this.replaceSpecChunk(spec, chunk);
+    } else {
+      if (this.atChunk > 0) {
+        this.appendSeparator(pos);
+      }
+
+      pos = this.getAbsolutePositionFromRelative(pos);
+      let writtenLength = this.writeAtPosition(chunk, pos);
+
+      this.specChunksWritten[spec] = [pos, pos + writtenLength];
+      this.atChunk++;
     }
-    else if (pos < 0) {
-      pos = Math.min(this.size, Math.max(0, this.size + pos));
+
+    this.writeSpendTime += new Date().getTime() - startTime;
+  }
+
+  replaceSpecChunk(spec, chunk) {
+    let oldChunkStart = this.specChunksWritten[spec][0];
+    let oldChunkEnd = this.specChunksWritten[spec][1];
+
+    let fd = fs.openSync(this.file, 'r+');
+    let buffer = Buffer.alloc(this.size - oldChunkEnd, null, 'utf-8');
+    fs.readSync(fd, buffer, 0, buffer.length, oldChunkEnd);
+
+    let chunkBuffer = Buffer.from(chunk, 'utf8');
+    let finalBuffer = Buffer.concat([chunkBuffer, buffer]);
+
+
+    fs.writeSync(fd, finalBuffer, 0, finalBuffer.length, oldChunkStart);
+    fs.closeSync(fd);
+
+    this.specChunksWritten[spec] = [oldChunkStart, oldChunkStart + chunkBuffer.length];
+
+    let sizeDiff = chunkBuffer.length - (oldChunkEnd - oldChunkStart);
+    this.size += sizeDiff;
+    console.log(sizeDiff);
+
+    if (0 > sizeDiff) {
+      fs.truncateSync(this.file, this.size);
     }
-    else {
-      pos = Math.max(this.size, pos);
-    }
+  }
+
+  appendSeparator(pos) {
+    this.writeAtPosition(this.chunkSeparator, pos)
+  }
+
+  writeAtPosition(data, pos) {
+    let dataBuffer = new Buffer(data, 'utf-8');
+    let finalBuffer = dataBuffer;
+    let fd = fs.openSync(this.file, 'r+');
+    pos = this.getAbsolutePositionFromRelative(pos);
 
     if (pos !== this.size) {
       let buffer = Buffer.alloc(this.size - pos);
       fs.readSync(fd, buffer, 0, buffer.length, pos);
-      data = Buffer.concat([data, buffer]);
+      finalBuffer = Buffer.concat([dataBuffer, buffer]);
     }
 
-    fs.writeSync(fd, data, 0, data.length, pos);
+    fs.writeSync(fd, finalBuffer, 0, finalBuffer.length, pos);
     fs.closeSync(fd);
+    this.size += dataBuffer.length;
 
-    this.size += chunk.length;
-    this.atChunk++;
+    return dataBuffer.length;
+  }
+
+  getAbsolutePositionFromRelative(pos) {
+    if (pos === null) {
+      return this.size;
+    }
+    else if (pos < 0) {
+      return Math.min(this.size, Math.max(0, this.size + pos));
+    }
+    else {
+      return Math.min(this.size, pos);
+    }
+  }
+
+  hasSpecChunkWritten(spec) {
+    return !!this.specChunksWritten[spec];
   }
 
 };
