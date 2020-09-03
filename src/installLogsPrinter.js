@@ -1,6 +1,9 @@
 const chalk = require('chalk');
 const path = require('path');
+const tv4 = require('tv4');
 
+const schema = require('./installLogsPrinter.schema.json');
+const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 const CtrError = require('./CtrError');
 const CONSTANTS = require('./constants');
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
@@ -35,6 +38,12 @@ let allMessages = {};
 let outputProcessors = [];
 
 function installLogsPrinter(on, options = {}) {
+  const result = tv4.validateMultiple(options, schema);
+
+  if (!result.valid) {
+    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
+  }
+
   on('task', {
     [CONSTANTS.TASK_NAME]: data => {
       let messages = data.messages;

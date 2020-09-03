@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "defaultTrimLength": {
+      "type": "string"
+    },
+    "commandTrimLength": {
+      "type": "string"
+    },
+    "routeTrimLength": {
+      "type": "string"
+    },
+    "compactLogs": {
+      "type": "number",
+      "minimum": 0
+    },
+    "outputRoot": {
+      "type": "string"
+    },
+    "outputTarget": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "type": ["string", "function"]
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "outputRoot": ["outputTarget"],
+    "outputTarget": ["outputRoot"]
+  },
+  "additionalProperties": false
+}

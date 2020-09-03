@@ -1,12 +1,16 @@
 const methods = require('methods');
+const tv4 = require('tv4');
 
+const schema = require('./installLogsCollector.schema.json');
 const CtrError = require('./CtrError');
 const LOG_TYPE = require('./constants').LOG_TYPES;
 const CONSTANTS = require('./constants');
 const xhrPartParse = require('./xhrPartParse');
+const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 
 function installLogsCollector(config = {}) {
   validateConfig(config);
+
   const collectTypes = config.collectTypes || Object.values(LOG_TYPE);
   const collectRequestData = config.xhr && config.xhr.printRequestData;
   const collectHeaderData = config.xhr && config.xhr.printHeaderData;
@@ -89,25 +93,14 @@ function installLogsCollector(config = {}) {
 }
 
 function validateConfig(config) {
-  if (config.collectTypes) {
-    if (!Array.isArray(config.collectTypes)) {
-      throw new CtrError(`Collect types should be of type array. [cypress-terminal-report]`);
-    }
+  const result = tv4.validateMultiple(config, schema);
 
-    const types = Object.values(LOG_TYPE);
-    const unknownTypes = config.collectTypes.filter((t) => !types.includes(t));
-
-    if (unknownTypes.length !== 0) {
-      throw new CtrError(`Invalid collect types: ${unknownTypes.join(', ')}. [cypress-terminal-report]`);
-    }
+  if (!result.valid) {
+    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
   }
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
-    throw new CtrError(`Filter log expected to be a function. [cypress-terminal-report]`);
-  }
-
-  if (config.printLogs && !(['always', 'onFail'].includes(config.printLogs))) {
-    throw new CtrError(`Print logs config can only be 'always' or 'onFail'. [cypress-terminal-report]`);
+    throw new CtrError(`[cypress-terminal-report] Filter log option expected to be a function.`);
   }
 }
 

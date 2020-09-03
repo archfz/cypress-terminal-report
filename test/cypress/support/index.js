@@ -1,7 +1,7 @@
 import './commands';
 
 const env = Cypress.env();
-const config = {};
+let config = {};
 
 if (env.setLogTypes == '1') {
   config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
@@ -22,6 +22,19 @@ if (env.printRequestData == '1') {
 }
 if (env.filterOutCyCommand == '1') {
   config.filterLog = ([type]) => type !== 'cy:command';
+}
+if (env.supportBadConfig == '1') {
+  config = {
+    collectTypes: 0,
+    filterLog: "string",
+    printLogs: false,
+    xhr: {
+      printRequestData: "",
+      printHeaderData: "",
+      shouldNotBeHere: ""
+    },
+    shouldNotBeHere: ""
+  };
 }
 
 require('../../../src/installLogsCollector')(config);

@@ -183,6 +183,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Added JSON schema validation for options to prevent invalid options and assumptions. [issue](https://github.com/archfz/cypress-terminal-report/issues/45)
 - Fixed issue where output to file would insert at incorrect position for JSON when ran from GUI.
 - Reworked the file output processing code and thus the API changed as well. Custom output processors
 will have to be updated to current API when upgrading to this version. Check [readme section](#custom-output-log-processor).

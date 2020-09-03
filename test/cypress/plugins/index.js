@@ -1,5 +1,5 @@
 module.exports = (on, config) => {
-  const options = {};
+  let options = {};
 
   if (config.env.generateOutput == "1") {
     options.outputRoot = config.projectRoot + '/output/';
@@ -16,9 +16,18 @@ module.exports = (on, config) => {
       },
     };
   }
-
   if (config.env.compactLogs == "1") {
     options.compactLogs = 1;
+  }
+  if (config.env.pluginBadConfig == '1') {
+    options = {
+      outputRoot: 0,
+      outputTarget: {
+        any: 100
+      },
+      compactLogs: false,
+      shouldNotBeHere: "",
+    };
   }
 
   require('../../../src/installLogsPrinter')(on, options);

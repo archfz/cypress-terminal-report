@@ -34,7 +34,9 @@ const runTest = async (command, callback) => {
 
       let from = stdout.indexOf('Running:  ');
       let to = stdout.lastIndexOf('(Results)');
-      stdout = stdout.slice(from, to);
+      if (from !== -1 && to !== -1) {
+        stdout = stdout.slice(from, to);
+      }
 
       lastRunOutput = stdout;
       // Normalize line endings for unix.
@@ -268,6 +270,29 @@ describe('cypress-terminal-report', () => {
   it('Should compact all logs when there is no failing test.', async () => {
     await runTest(commandBase(['compactLogs=1', 'printLogsAlways=1'], ['successfulWithNoErrors.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`ctr:info -  [ ... 28 omitted logs ... ]`);
+    });
+  }).timeout(60000);
+
+  it('Should print proper validation error on invalid plugin install options.', async () => {
+    await runTest(commandBase(['pluginBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`Error: [cypress-terminal-report] Invalid plugin install options:`);
+      expect(stdout).to.contain(`=> .outputRoot: Invalid type: number (expected string)`);
+      expect(stdout).to.contain(`=> .outputTarget/any: Invalid type: number (expected string/function)`);
+      expect(stdout).to.contain(`=> .compactLogs: Invalid type: boolean (expected number)`);
+      expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
+    });
+  }).timeout(60000);
+
+  it('Should print proper validation error on invalid support install options.', async () => {
+    await runTest(commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`[cypress-terminal-report] Invalid plugin install options:`);
+      expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
+      expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
+      expect(stdout).to.contain(`=> .printLogs: Invalid type: boolean (expected string)`);
+      expect(stdout).to.contain(`=> .xhr/printRequestData: Invalid type: string (expected boolean)`);
+      expect(stdout).to.contain(`=> .xhr/printHeaderData: Invalid type: string (expected boolean)`);
+      expect(stdout).to.contain(`=> .xhr/shouldNotBeHere: Additional properties not allowed`);
+      expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
     });
   }).timeout(60000);
 });
