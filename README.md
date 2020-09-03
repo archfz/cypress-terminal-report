@@ -4,6 +4,8 @@
 [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
+> ! 2.0.0 is out. Please read the [release notes](#2.0.0) for upgrade path from 1.x.x.
+
 Plugin for cypress that adds better terminal output for easier debugging. 
 Prints cy commands, browser console logs, cy.request and cy.route data. By default
 outputs to terminal only, but can be configured to write to files as well. 
@@ -182,6 +184,8 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 2.0.0
 
 - Removed deprecated exports from index.js. If you were still using require from index.js please
 see [installation](#install) for updating.
