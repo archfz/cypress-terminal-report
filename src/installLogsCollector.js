@@ -92,7 +92,7 @@ function installLogsCollector(config = {}) {
   afterEach(function() {
     if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
       // Need to wait otherwise some last commands get omitted from logs.
-      cy.wait(1, {log: false});
+      cy.wait(3, {log: false});
       cy.task(CONSTANTS.TASK_NAME, {
         spec: this.test.file,
         test: this.currentTest.title,
@@ -102,6 +102,7 @@ function installLogsCollector(config = {}) {
   });
 
   after(function () {
+    // Need to wait otherwise some last commands get omitted from logs.
     cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
   });
 }
