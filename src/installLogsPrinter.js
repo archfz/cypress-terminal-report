@@ -37,6 +37,21 @@ const LOG_SYMBOLS = (() => {
 let allMessages = {};
 let outputProcessors = [];
 
+/**
+ * Installs the cypress plugin for printing logs to terminal.
+ *
+ * Needs to be added to plugins file.
+ *
+ * @param {Function} on
+ *    Cypress event listen handler.
+ * @param {object} options
+ *    Options for displaying output:
+ *      - defaultTrimLength?: Trim length for console and cy.log.
+ *      - commandTrimLength?: Trim length for cy commands.
+ *      - outputRoot?: The root path to output log files to.
+ *      - outputTarget?: Log output types. {[filePath: string]: string | function}
+ *      - compactLogs?: Number of lines to compact around failing commands.
+ */
 function installLogsPrinter(on, options = {}) {
   const result = tv4.validateMultiple(options, schema);
 

@@ -8,6 +8,20 @@ const CONSTANTS = require('./constants');
 const xhrPartParse = require('./xhrPartParse');
 const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 
+/**
+ * Installs the logs collector for cypress.
+ *
+ * Needs to be added to support file.
+ *
+ * @param {object} config
+ *    Options for collection logs:
+ *      - printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
+ *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
+ *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
+ *      - xhr?:
+ *          - printHeaderData?: boolean; Defaults to false. Whether to write XHR header data.
+ *          - printRequestData?: boolean; Defaults to false. Whether to write XHR request data.
+ */
 function installLogsCollector(config = {}) {
   validateConfig(config);
 

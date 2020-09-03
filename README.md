@@ -183,12 +183,14 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Removed deprecated exports from index.js. If you were still using require from index.js please
+see [installation](#install) for updating.
 - Added JSON schema validation for options to prevent invalid options and assumptions. [issue](https://github.com/archfz/cypress-terminal-report/issues/45)
 - Fixed issue where output to file would insert at incorrect position for JSON when ran from GUI.
 - Reworked the file output processing code and thus the API changed as well. Custom output processors
 will have to be updated to current API when upgrading to this version. Check [readme section](#custom-output-log-processor).
 - Added printing to terminal of time spent in milliseconds for output files to be written.
-- Improved Error instanceof checking for console log arguments printing.
+- Improved Error instanceof checking for console log arguments printing. [issue](https://github.com/archfz/cypress-terminal-report/issues/41)
 - Update cypress to 5.0.0 in tests to confirm compatibility.
 
 #### 1.4.2
