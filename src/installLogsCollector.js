@@ -89,16 +89,16 @@ function installLogsCollector(config = {}) {
     logs = [];
   });
 
+  //if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always'))
   afterEach(function() {
-    if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
-      // Need to wait otherwise some last commands get omitted from logs.
-      cy.wait(3, {log: false});
-      cy.task(CONSTANTS.TASK_NAME, {
-        spec: this.test.file,
-        test: this.currentTest.title,
-        messages: logs
-      }, {log: false});
-    }
+    // Need to wait otherwise some last commands get omitted from logs.
+    cy.wait(3, {log: false});
+    cy.task(CONSTANTS.TASK_NAME, {
+      spec: this.test.file,
+      test: this.currentTest.title,
+      messages: logs,
+      state: this.currentTest.state
+    }, {log: false});
   });
 
   after(function () {
@@ -188,7 +188,7 @@ function collectCypressXhrLog(addLog) {
   Cypress.on('log:added', options => {
     if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
       let detailMessage = (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
-        options.consoleProps.Method + ' ' + options.consoleProps.URL;
+          options.consoleProps.Method + ' ' + options.consoleProps.URL;
 
       const log = options.message + detailMessage;
       const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
@@ -199,7 +199,7 @@ function collectCypressXhrLog(addLog) {
 
 function collectCypressRequestCommand(addLog, formatXhrLog) {
   const isValidHttpMethod = (str) =>
-    typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
+      typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
 
   Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
     let log;
@@ -226,11 +226,11 @@ function collectCypressRequestCommand(addLog, formatXhrLog) {
       let status = xhr ? xhr.status : {};
 
       log += `\n` + formatXhrLog(
-        status,
-        await xhrPartParse(requestHeaders),
-        await xhrPartParse(requestBody),
-        await xhrPartParse(headers),
-        await xhrPartParse(body),
+          status,
+          await xhrPartParse(requestHeaders),
+          await xhrPartParse(requestBody),
+          await xhrPartParse(headers),
+          await xhrPartParse(body),
       );
 
       addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
@@ -238,11 +238,11 @@ function collectCypressRequestCommand(addLog, formatXhrLog) {
     });
 
     log += `\n` + formatXhrLog(
-      response.status,
-      await xhrPartParse(requestHeaders),
-      await xhrPartParse(requestBody),
-      await xhrPartParse(response.headers),
-      await xhrPartParse(response.body),
+        response.status,
+        await xhrPartParse(requestHeaders),
+        await xhrPartParse(requestBody),
+        await xhrPartParse(response.headers),
+        await xhrPartParse(response.body),
     );
 
     addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
@@ -265,11 +265,11 @@ function collectCypressRouteCommand(addLog, formatXhrLog) {
       const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
       let logMessage = `(${route.alias}) ${xhr.method} ${xhr.url}\n`;
       logMessage += formatXhrLog(
-        xhr.status,
-        await xhrPartParse(xhr.request.headers),
-        await xhrPartParse(xhr.request.body),
-        await xhrPartParse(xhr.response.headers),
-        await xhrPartParse(xhr.response.body),
+          xhr.status,
+          await xhrPartParse(xhr.request.headers),
+          await xhrPartParse(xhr.request.body),
+          await xhrPartParse(xhr.response.headers),
+          await xhrPartParse(xhr.response.body),
       );
 
       addLog([
@@ -285,10 +285,10 @@ function collectCypressRouteCommand(addLog, formatXhrLog) {
 function collectCypressGeneralCommandLog(addLog) {
   Cypress.on('log:added', options => {
     if (
-      options.instrument === 'command' &&
-      options.consoleProps &&
-      !(['xhr', 'log', 'request'].includes(options.name)) &&
-      !(options.name === 'task' && options.message.match(/ctrLogMessages/))
+        options.instrument === 'command' &&
+        options.consoleProps &&
+        !(['xhr', 'log', 'request'].includes(options.name)) &&
+        !(options.name === 'task' && options.message.match(/ctrLogMessages/))
     ) {
       const log = options.name + '\t' + options.message;
       const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : '';

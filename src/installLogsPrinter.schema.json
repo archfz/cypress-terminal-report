@@ -1,6 +1,14 @@
 {
   "type": "object",
   "properties": {
+    "printLogsToConsole": {
+      "type": "string",
+      "enum": ["onFail", "always", "never"]
+    },
+    "printLogsToFile": {
+      "type": "string",
+      "enum": ["onFail", "always", "never"]
+    },
     "defaultTrimLength": {
       "type": "string"
     },

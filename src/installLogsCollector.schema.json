@@ -1,10 +1,6 @@
 {
   "type": "object",
   "properties": {
-    "printLogs": {
-      "type": "string",
-      "enum": ["onFail", "always"]
-    },
     "collectTypes": {
       "type": "array",
       "items": {

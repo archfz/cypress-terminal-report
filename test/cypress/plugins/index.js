@@ -30,5 +30,7 @@ module.exports = (on, config) => {
     };
   }
 
+  options.printLogsToConsole = 'always';
+
   require('../../../src/installLogsPrinter')(on, options);
 };
