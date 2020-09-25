@@ -35,6 +35,7 @@ const LOG_SYMBOLS = (() => {
 })();
 
 let allMessages = {};
+let state = null;
 let outputProcessors = [];
 
 /**
@@ -61,19 +62,21 @@ function installLogsPrinter(on, options = {}) {
 
   on('task', {
     [CONSTANTS.TASK_NAME]: data => {
+      let messages = data.messages;
+      state = data.state;
+
+      if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
+        messages = compactLogs(messages, options.compactLogs);
+      }
+
+      if (options.outputTarget) {
+        allMessages[data.spec] = allMessages[data.spec] || {};
+        allMessages[data.spec][data.test] = messages;
+      }
+
       if (options.printLogsToConsole === "always" ||
-          (options.printLogsToConsole === "onFail" && data.state !== "passed")){
-        let messages = data.messages;
-
-        if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
-          messages = compactLogs(messages, options.compactLogs);
-        }
-
-        if (options.outputTarget) {
-          allMessages[data.spec] = allMessages[data.spec] || {};
-          allMessages[data.spec][data.test] = messages;
-        }
-
+          ((options.printLogsToConsole === "onFail" || typeof options.printLogsToConsole === 'undefined')
+              && state !== "passed")){
         logToTerminal(messages, options);
       }
 
@@ -81,10 +84,15 @@ function installLogsPrinter(on, options = {}) {
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       outputProcessors.forEach((processor) => {
-        processor.write(allMessages);
-        logOutputTarget(processor);
+        if (options.printLogsToFile === "always" ||
+            ((options.printLogsToFile === "onFail" || typeof options.printLogsToFile === 'undefined')
+                && state !== "passed")){
+          processor.write(allMessages);
+          logOutputTarget(processor);
+        }
       });
       allMessages = {};
+      state = null;
       return null;
     }
   });
