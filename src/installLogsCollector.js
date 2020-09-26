@@ -108,7 +108,7 @@ function installLogsCollector(config = {}) {
 }
 
 function validateConfig(config) {
-  before(() => {
+  before(function () {
     if (typeof config.printLogs === 'string'){
       cy.log("printLogs configuration is no longer supported, consider using the new options within plugins: " +
           "printLogsToConsole and printLogsToFile");
