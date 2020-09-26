@@ -47,6 +47,8 @@ let outputProcessors = [];
  *    Cypress event listen handler.
  * @param {object} options
  *    Options for displaying output:
+ *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
+ *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
  *      - defaultTrimLength?: Trim length for console and cy.log.
  *      - commandTrimLength?: Trim length for cy commands.
  *      - outputRoot?: The root path to output log files to.

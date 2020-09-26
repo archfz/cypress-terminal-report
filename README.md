@@ -83,10 +83,9 @@ logs will be printed to file(s) for successful test as well as failing ones.
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
-#### `options.printLogs`
-~~string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
-logs will be printed for successful test as well as failing ones.~~
-Deprecated.
+#### `options.printLogs` **`NOTE: Deprecated`**
+string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
+logs will be printed for successful test as well as failing ones.
 
 #### `options.collectTypes` 
 array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']

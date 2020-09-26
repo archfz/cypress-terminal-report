@@ -15,8 +15,7 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
  *
  * @param {object} config
  *    Options for collection logs:
- *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
- *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
+ *      - (deprecated) printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
  *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
  *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
  *      - xhr?:
@@ -109,6 +108,13 @@ function installLogsCollector(config = {}) {
 }
 
 function validateConfig(config) {
+  before(() => {
+    if (typeof config.printLogs === 'string'){
+      cy.log("printLogs configuration is no longer supported, consider using the new options within plugins: " +
+          "printLogsToConsole and printLogsToFile");
+    }
+  });
+
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {
