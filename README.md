@@ -73,17 +73,17 @@ object; default: null; Output logs to files. [More details](#logging-to-files).
 
 #### `options.printLogsToConsole`
 string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never' - When set to always
-logs will be printed to console for successful test as well as failing ones.
+logs will be printed to console for successful tests as well as failing ones.
 
 #### `options.printLogsToFile`
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
-logs will be printed to file(s) for successful test as well as failing ones.
+logs will be printed to file(s) for successful tests as well as failing ones.
 
 ### Options for the support install
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
-#### `options.printLogs` **`NOTE: Deprecated`**
+#### `options.printLogs` **`NOTE: Obsolete, use printLogsToConsole instead`**
 string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
 logs will be printed for successful test as well as failing ones.
 
