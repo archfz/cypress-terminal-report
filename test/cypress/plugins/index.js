@@ -29,9 +29,18 @@ module.exports = (on, config) => {
       shouldNotBeHere: "",
     };
   }
-
-  options.printLogsToFile = 'never';
-  options.printLogsToConsole = 'always';
+  if (config.env.printLogsToConsoleAlways == '1') {
+    options.printLogsToConsole = 'always';
+  }
+  if (config.env.printLogsToConsoleNever == '1') {
+    options.printLogsToConsole = 'never';
+  }
+  if (config.env.printLogsToFileAlways == '1') {
+    options.printLogsToFile = 'always';
+  }
+  if (config.env.printLogsToFileNever == '1') {
+    options.printLogsToFile = 'never';
+  }
 
   require('../../../src/installLogsPrinter')(on, options);
 };

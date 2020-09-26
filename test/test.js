@@ -157,11 +157,19 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should always print logs when configuration enabled.', async () => {
-    await runTest(commandBase(['printLogsAlways=1'], ['alwaysPrintLogs.spec.js']), (error, stdout, stderr) => {
+  it('Should always print logs to console when configured so.', async () => {
+    await runTest(commandBase(['printLogsToConsoleAlways=1'], ['printLogs.spec.js']), (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
+    });
+  }).timeout(60000);
+
+  it('Should never print logs to console when configured so.', async () => {
+    await runTest(commandBase(['printLogsToConsoleNever=1'], ['printLogs.spec.js']), (error, stdout, stderr) => {
+      // cy.command logs.
+      expect(stdout).to.not.contain(`cy:command ${ICONS.success}  visit\t/\n`);
+      expect(stdout).to.not.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
     });
   }).timeout(60000);
 
@@ -250,6 +258,27 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should not generate/print to output files.', async () => {
+    const outRoot = path.join(__dirname, 'output');
+    const testOutputs = ['out.txt', 'out.json', 'out.cst'];
+    testOutputs.forEach((out) => {
+      if (fs.existsSync(path.join(outRoot, out))) {
+        fs.unlinkSync(path.join(outRoot, out));
+      }
+    });
+
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js'];
+    await runTest(commandBase(['generateOutput=1', 'printLogsToFileNever=1'], specFiles), (error, stdout, stderr) => {
+      testOutputs.forEach((out) => {
+        expect(fs.existsSync(path.join(outRoot, out))).false;
+      });
+
+      expect(stdout).to.not.contain('[cypress-terminal-report] Wrote txt logs to ' + path.join(outRoot, 'out.txt'));
+      expect(stdout).to.not.contain('[cypress-terminal-report] Wrote json logs to ' + path.join(outRoot, 'out.json'));
+      expect(stdout).to.not.contain('[cypress-terminal-report] Wrote custom logs to ' + path.join(outRoot, 'out.cst'));
+    });
+  }).timeout(60000);
+
   it('Should not break normal execution.', async () => {
     await runTest(commandBase([], ['successful.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.not.contain(`error`);
@@ -268,7 +297,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should compact all logs when there is no failing test.', async () => {
-    await runTest(commandBase(['compactLogs=1', 'printLogsAlways=1'], ['successfulWithNoErrors.spec.js']), (error, stdout, stderr) => {
+    await runTest(commandBase(['compactLogs=1', 'printLogsToConsoleAlways=1'], ['successfulWithNoErrors.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`ctr:info -  [ ... 28 omitted logs ... ]`);
     });
   }).timeout(60000);
@@ -288,7 +317,6 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`[cypress-terminal-report] Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
       expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
-      expect(stdout).to.contain(`=> .printLogs: Invalid type: boolean (expected string)`);
       expect(stdout).to.contain(`=> .xhr/printRequestData: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .xhr/printHeaderData: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .xhr/shouldNotBeHere: Additional properties not allowed`);

@@ -15,7 +15,8 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
  *
  * @param {object} config
  *    Options for collection logs:
- *      - printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
+ *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
+ *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
  *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
  *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
  *      - xhr?:

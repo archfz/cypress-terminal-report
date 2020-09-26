@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo 'mocha ./test.js' && npx cypress run",
+    "test": "mocha ./test.js",
     "wsl-open-cypress": "cmd.exe /C npx cypress open"
   },
   "author": "Fodor Zoltan",
