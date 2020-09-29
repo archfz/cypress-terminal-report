@@ -8,7 +8,7 @@ module.exports = (on, config) => {
       'out.txt': 'txt',
       'out.json': 'json',
       'out.cst': function (messages) {
-        this.initialContent = 'Failing specs:\n';
+        this.initialContent = 'Specs:\n';
         this.chunkSeparator = '\n';
         Object.keys(messages).forEach((key) => {
           this.writeSpecChunk(key, key);
@@ -26,6 +26,8 @@ module.exports = (on, config) => {
         any: 100
       },
       compactLogs: false,
+      printLogsToConsole: false,
+      printLogsToFile: true,
       shouldNotBeHere: "",
     };
   }

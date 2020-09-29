@@ -15,7 +15,6 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
  *
  * @param {object} config
  *    Options for collection logs:
- *      - (deprecated) printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
  *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
  *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
  *      - xhr?:
@@ -89,7 +88,6 @@ function installLogsCollector(config = {}) {
     logs = [];
   });
 
-  //if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always'))
   afterEach(function() {
     // Need to wait otherwise some last commands get omitted from logs.
     cy.wait(3, {log: false});
@@ -103,15 +101,15 @@ function installLogsCollector(config = {}) {
 
   after(function () {
     // Need to wait otherwise some last commands get omitted from logs.
-    cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
+    cy.task(CONSTANTS.TASK_NAME_OUTPUT, {state: this.currentTest.state}, {log: false});
   });
 }
 
 function validateConfig(config) {
   before(function () {
     if (typeof config.printLogs === 'string'){
-      cy.log("printLogs configuration is no longer supported, consider using the new options within plugins: " +
-          "printLogsToConsole and printLogsToFile");
+      cy.log("cypress-terminal-report: WARN! printLogs " +
+          "configuration has been removed. Please check changelog in readme.");
     }
   });
 

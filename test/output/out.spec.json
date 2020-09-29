@@ -134,7 +134,7 @@
       {
         "type": "cons:error",
         "severity": "error",
-        "message": "Error: This is an error message with stack.\n    at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-034:47:30)"
+        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)"
       },
       {
         "type": "cy:command",
@@ -205,6 +205,20 @@
         "type": "cy:command",
         "severity": "error",
         "message": "get\t.breaking-get"
+      }
+    ]
+  },
+  "cypress/integration/printLogsSuccess.spec.js": {
+    "Print Logs Success": [
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "visit\t/"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "contains\tcypress"
       }
     ]
   },

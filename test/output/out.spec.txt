@@ -53,7 +53,7 @@ cypress/integration/happyFlow.spec.js:
         cons:error (X): This is an error message
         cy:command (K): window	
         cons:error (X): Error: This is an error message with stack.
-                            at Context.<anonymous> (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js-034:47:30)
+                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)
         cy:command (K): window	
           cons:log (K): This should console.log appear.
         cy:command (K): window	
@@ -77,6 +77,13 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): get	.network-put-comment
         cy:command (K): assert	expected **<div.network-put-comment>** to contain **whoa, this comment does not exist**
         cy:command (X): get	.breaking-get
+
+
+
+cypress/integration/printLogsSuccess.spec.js:
+    Print Logs Success
+        cy:command (K): visit	/
+        cy:command (K): contains	cypress
 
 
 
@@ -136,6 +143,4 @@ cypress/integration/requests.spec.js:
         cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
                         Status: 404
                         Response body: {}
-
-
 

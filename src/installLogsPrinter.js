@@ -65,7 +65,6 @@ function installLogsPrinter(on, options = {}) {
   on('task', {
     [CONSTANTS.TASK_NAME]: data => {
       let messages = data.messages;
-      state = data.state;
 
       if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
         messages = compactLogs(messages, options.compactLogs);
@@ -76,25 +75,22 @@ function installLogsPrinter(on, options = {}) {
         allMessages[data.spec][data.test] = messages;
       }
 
-      if (options.printLogsToConsole === "always" ||
-          ((options.printLogsToConsole === "onFail" || typeof options.printLogsToConsole === 'undefined')
-              && state !== "passed")){
+      let printL2C = options.printLogsToConsole || "onFail";
+      if ((printL2C === "onFail" && data.state !== "passed") || printL2C === "always"){
         logToTerminal(messages, options);
       }
 
       return null;
     },
-    [CONSTANTS.TASK_NAME_OUTPUT]: () => {
+    [CONSTANTS.TASK_NAME_OUTPUT]: data => {
       outputProcessors.forEach((processor) => {
-        if (options.printLogsToFile === "always" ||
-            ((options.printLogsToFile === "onFail" || typeof options.printLogsToFile === 'undefined')
-                && state !== "passed")){
+        let printL2F = options.printLogsToFile || "onFail";
+        if ((printL2F === "onFail" && data.state !== "passed") || printL2F === "always"){
           processor.write(allMessages);
           logOutputTarget(processor);
         }
       });
       allMessages = {};
-      state = null;
       return null;
     }
   });

@@ -49,6 +49,14 @@ const runTest = async (command, callback) => {
   });
 };
 
+function outPutCleanUp(testOutputs, outRoot) {
+  testOutputs.forEach((out) => {
+    if (fs.existsSync(path.join(outRoot, out))) {
+      fs.unlinkSync(path.join(outRoot, out));
+    }
+  });
+}
+
 describe('cypress-terminal-report', () => {
 
   afterEach(function () {
@@ -158,18 +166,20 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should always print logs to console when configured so.', async () => {
-    await runTest(commandBase(['printLogsToConsoleAlways=1'], ['printLogs.spec.js']), (error, stdout, stderr) => {
+    await runTest(commandBase(['printLogsToConsoleAlways=1'], ['printLogsSuccess.spec.js', 'printLogsFail.spec.js']), (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
+      expect(stdout).to.contain(`cy:command ${ICONS.error}  contains\tsserpyc\n`);
     });
   }).timeout(60000);
 
   it('Should never print logs to console when configured so.', async () => {
-    await runTest(commandBase(['printLogsToConsoleNever=1'], ['printLogs.spec.js']), (error, stdout, stderr) => {
+    await runTest(commandBase(['printLogsToConsoleNever=1'], ['printLogsSuccess.spec.js', 'printLogsFail.spec.js']), (error, stdout, stderr) => {
       // cy.command logs.
       expect(stdout).to.not.contain(`cy:command ${ICONS.success}  visit\t/\n`);
       expect(stdout).to.not.contain(`cy:command ${ICONS.success}  contains\tcypress\n`);
+      expect(stdout).to.not.contain(`cy:command ${ICONS.error}  contains\tsserpyc\n`);
     });
   }).timeout(60000);
 
@@ -201,14 +211,10 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should generate proper log output files.', async () => {
+  it('Should generate proper log output files, and print everything if configured so.', async () => {
     const outRoot = path.join(__dirname, 'output');
     const testOutputs = ['out.txt', 'out.json', 'out.cst'];
-    testOutputs.forEach((out) => {
-      if (fs.existsSync(path.join(outRoot, out))) {
-        fs.unlinkSync(path.join(outRoot, out));
-      }
-    });
+    outPutCleanUp(testOutputs, outRoot);
 
     if (fs.existsSync(path.join(outRoot, 'not'))) {
       fs.rmdirSync(path.join(outRoot, 'not'), { recursive: true });
@@ -222,8 +228,8 @@ describe('cypress-terminal-report', () => {
       // Change line endings to win32 if needed
       (os.EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str);
 
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js'];
-    await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
+    await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       testOutputs.forEach((out) => {
         const expectedBuffer = fs.readFileSync(
           path.join(outRoot, out.replace(/\.([a-z]+)$/, '.spec.$1'))
@@ -258,16 +264,12 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should not generate/print to output files.', async () => {
+  it('Should not generate/print to output files when configured so.', async () => {
     const outRoot = path.join(__dirname, 'output');
     const testOutputs = ['out.txt', 'out.json', 'out.cst'];
-    testOutputs.forEach((out) => {
-      if (fs.existsSync(path.join(outRoot, out))) {
-        fs.unlinkSync(path.join(outRoot, out));
-      }
-    });
+    outPutCleanUp(testOutputs, outRoot);
 
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js'];
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileNever=1'], specFiles), (error, stdout, stderr) => {
       testOutputs.forEach((out) => {
         expect(fs.existsSync(path.join(outRoot, out))).false;
@@ -309,6 +311,8 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`=> .outputTarget/any: Invalid type: number (expected string/function)`);
       expect(stdout).to.contain(`=> .compactLogs: Invalid type: boolean (expected number)`);
       expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
+      expect(stdout).to.contain(`=> .printLogsToFile: Invalid type: boolean (expected string)`);
+      expect(stdout).to.contain(`=> .printLogsToConsole: Invalid type: boolean (expected string)`);
     });
   }).timeout(60000);
 
