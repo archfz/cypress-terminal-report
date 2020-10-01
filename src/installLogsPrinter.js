@@ -35,7 +35,6 @@ const LOG_SYMBOLS = (() => {
 })();
 
 let allMessages = {};
-let state = null;
 let outputProcessors = [];
 
 /**
@@ -56,6 +55,8 @@ let outputProcessors = [];
  *      - compactLogs?: Number of lines to compact around failing commands.
  */
 function installLogsPrinter(on, options = {}) {
+  options.printLogsToFile = options.printLogsToFile || "onFail";
+  options.printLogsToConsole = options.printLogsToConsole || "onFail";
   const result = tv4.validateMultiple(options, schema);
 
   if (!result.valid) {
@@ -71,21 +72,22 @@ function installLogsPrinter(on, options = {}) {
       }
 
       if (options.outputTarget) {
+        allMessages[0] = data.state;
         allMessages[data.spec] = allMessages[data.spec] || {};
         allMessages[data.spec][data.test] = messages;
       }
 
-      let printL2C = options.printLogsToConsole || "onFail";
-      if ((printL2C === "onFail" && data.state !== "passed") || printL2C === "always"){
+      if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
+        || options.printLogsToConsole === "always"){
         logToTerminal(messages, options);
       }
 
       return null;
     },
-    [CONSTANTS.TASK_NAME_OUTPUT]: data => {
+    [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       outputProcessors.forEach((processor) => {
-        let printL2F = options.printLogsToFile || "onFail";
-        if ((printL2F === "onFail" && data.state !== "passed") || printL2F === "always"){
+        if ((options.printLogsToFile === "onFail" && allMessages[0] !== "passed")
+          || options.printLogsToFile === "always"){
           processor.write(allMessages);
           logOutputTarget(processor);
         }

@@ -11,6 +11,7 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
 
   write(allMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {
+      if (spec === "0") return;
       let data = {[spec]: {}};
       Object.entries(tests).forEach(([test, messages]) => {
         data[spec][test] = messages.map(([type, message, severity]) => ({

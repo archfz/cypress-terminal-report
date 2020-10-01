@@ -26,7 +26,7 @@ module.exports = (on, config) => {
         any: 100
       },
       compactLogs: false,
-      printLogsToConsole: false,
+      printLogsToConsole: true,
       printLogsToFile: true,
       shouldNotBeHere: "",
     };
