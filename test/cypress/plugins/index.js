@@ -16,6 +16,10 @@ module.exports = (on, config) => {
       },
     };
   }
+  if (config.env.generateSimpleOutput == "1") {
+    options.outputRoot = config.projectRoot + '/output/';
+    options.outputTarget = {'out.txt': 'txt'};
+  }
   if (config.env.compactLogs == "1") {
     options.compactLogs = 1;
   }

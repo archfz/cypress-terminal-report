@@ -71,14 +71,15 @@ function installLogsPrinter(on, options = {}) {
         messages = compactLogs(messages, options.compactLogs);
       }
 
-      if (options.outputTarget) {
-        allMessages[0] = data.state;
-        allMessages[data.spec] = allMessages[data.spec] || {};
-        allMessages[data.spec][data.test] = messages;
+      if (options.outputTarget && options.printLogsToFile !== "never") {
+        if (data.state === "failed" || options.printLogsToFile === "always") {
+          allMessages[data.spec] = allMessages[data.spec] || {};
+          allMessages[data.spec][data.test] = messages;
+        }
       }
 
       if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
-        || options.printLogsToConsole === "always"){
+        || options.printLogsToConsole === "always") {
         logToTerminal(messages, options);
       }
 
@@ -86,8 +87,7 @@ function installLogsPrinter(on, options = {}) {
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       outputProcessors.forEach((processor) => {
-        if ((options.printLogsToFile === "onFail" && allMessages[0] !== "passed")
-          || options.printLogsToFile === "always"){
+        if (Object.entries(allMessages).length !== 0){
           processor.write(allMessages);
           logOutputTarget(processor);
         }
@@ -102,10 +102,11 @@ function installLogsPrinter(on, options = {}) {
   }
 }
 
+
 function logOutputTarget(processor) {
   let message;
   let standardOutputType = Object.keys(OUTPUT_PROCESSOR_TYPE).find(
-      (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
+    (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
     message = `Wrote ${standardOutputType} logs to ${processor.file}. (${processor.writeSpendTime}ms)`;
@@ -139,7 +140,7 @@ function installOutputProcessors(on, root, outputTargets) {
 
 function compactLogs(logs, keepAroundCount) {
   const failingIndexes = logs.filter((log) => log[2] === CONSTANTS.SEVERITY.ERROR)
-      .map((log) => logs.indexOf(log));
+    .map((log) => logs.indexOf(log));
 
   const includeIndexes = new Array(logs.length);
 
@@ -153,11 +154,11 @@ function compactLogs(logs, keepAroundCount) {
 
   const compactedLogs = [];
   const addOmittedLog = (count) =>
-      compactedLogs.push([
-        CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
-        `[ ... ${count} omitted logs ... ]`,
-        CONSTANTS.SEVERITY.SUCCESS
-      ]);
+    compactedLogs.push([
+      CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
+      `[ ... ${count} omitted logs ... ]`,
+      CONSTANTS.SEVERITY.SUCCESS
+    ]);
 
   let excludeCount = 0;
   for (let i = 0; i < includeIndexes.length; i++) {
@@ -182,14 +183,14 @@ function compactLogs(logs, keepAroundCount) {
 
 function logToTerminal(messages, options) {
   const padType = (type) =>
-      new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - 3, 0)).join(' ') + type + ' ';
+    new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - 3, 0)).join(' ') + type + ' ';
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
-        typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
-        processedMessage = message,
-        trim = options.defaultTrimLength || 800,
-        icon = '-';
+      typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
+      processedMessage = message,
+      trim = options.defaultTrimLength || 800,
+      icon = '-';
 
     if (type === LOG_TYPES.BROWSER_CONSOLE_WARN) {
       color = 'yellow';
@@ -236,8 +237,8 @@ function logToTerminal(messages, options) {
     }
 
     const coloredTypeString = ['red', 'yellow'].includes(color) ?
-        chalk[color].bold(typeString + icon + ' ') :
-        chalk[color](typeString + icon + ' ');
+      chalk[color].bold(typeString + icon + ' ') :
+      chalk[color](typeString + icon + ' ');
 
     console.log(coloredTypeString, processedMessage.replace(/\n/g, '\n' + CONSTANTS.PADDING.LOG));
   });

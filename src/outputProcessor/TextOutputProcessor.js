@@ -28,7 +28,6 @@ module.exports = class TextOutputProcessor extends BaseOutputProcessor {
   write(allMessages) {
 
     Object.entries(allMessages).forEach(([spec, tests]) => {
-      if (spec === "0") return;
       let text = `${spec}:${EOL}`;
       Object.entries(tests).forEach(([test, messages]) => {
         text += `${PADDING}${test}${EOL}`;

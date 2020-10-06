@@ -41,7 +41,7 @@ const runTest = async (command, callback) => {
       lastRunOutput = stdout;
       // Normalize line endings for unix.
       const normalizedStdout = stdout.replace(/\r\n/g, "\n");
-      callback(error, normalizedStdout , stderr);
+      callback(error, normalizedStdout, stderr);
       expect(normalizedStdout).to.not.contain("CypressError: `cy.task('ctrLogMessages')` failed");
 
       resolve();
@@ -67,10 +67,10 @@ const clean = (str) =>
   // Clean error trace as it changes from test to test.
   str.replace(/at [^(]+ \([^)]+\)/g, '');
 
-expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, onFailOrAlways) => {
+expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, specExtName) => {
   testOutputs.value.forEach((out) => {
     const expectedBuffer = fs.readFileSync(
-      path.join(outRoot.value, out.replace(/\.([a-z]+)$/, '.spec.' + onFailOrAlways + '.$1'))
+      path.join(outRoot.value, out.replace(/\.([a-z]+)$/, '.spec.' + specExtName + '.$1'))
     );
     const valueBuffer = fs.readFileSync(path.join(outRoot.value, out));
     let value = clean(valueBuffer.toString().replace(/\s+$/, ''));
@@ -99,16 +99,15 @@ expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, onFailOrAlways)
 expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
   fileNames.forEach((fileName) => {
     let ext = path.extname(fileName).substring(1);
-    if (!['json', 'txt'].includes(ext)){
+    if (!['json', 'txt'].includes(ext)) {
       ext = 'custom';
     }
     let logString = '[cypress-terminal-report] Wrote ' + ext +
       ' logs to ' + path.join(outRoot.value, fileName);
 
-    if (toNot){
+    if (toNot) {
       expect(stdout).to.not.contain(logString);
-    }
-    else{
+    } else {
       expect(stdout).to.contain(logString);
     }
   });
@@ -274,13 +273,14 @@ describe('cypress-terminal-report', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     if (fs.existsSync(path.join(outRoot.value, 'not'))) {
-      fs.rmdirSync(path.join(outRoot.value, 'not'), { recursive: true });
+      fs.rmdirSync(path.join(outRoot.value, 'not'), {recursive: true});
     }
 
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
-      expectConsoleLogForOutput(stdout, outRoot, ['out.txt', 'out.json', 'out.cst', path.join('not', 'existing', 'path', 'out.txt')]);
+      testOutputs.value.push(path.join('not', 'existing', 'path', 'out.txt'));
+      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
   }).timeout(60000);
 
@@ -292,7 +292,7 @@ describe('cypress-terminal-report', () => {
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
-      expectConsoleLogForOutput(stdout, outRoot, ['out.txt', 'out.json', 'out.cst']);
+      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
   }).timeout(60000);
 
@@ -306,7 +306,18 @@ describe('cypress-terminal-report', () => {
       testOutputs.value.forEach((out) => {
         expect(fs.existsSync(path.join(outRoot.value, out))).false;
       });
-      expectConsoleLogForOutput(stdout, outRoot, ['out.txt', 'out.json', 'out.cst'], true);
+      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value, true);
+    });
+  }).timeout(60000);
+
+  it('Should generate output only for failing tests if set to \'onFail\'.', async () => {
+    const outRoot = { value : path.join(__dirname, 'output') };
+    const testOutputs = { value : ["out.txt"] };
+
+    const specFiles = ['printLogsOnFail.spec.js'];
+    await runTest(commandBase(['generateSimpleOutput=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFailCheck');
+      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
   }).timeout(60000);
 

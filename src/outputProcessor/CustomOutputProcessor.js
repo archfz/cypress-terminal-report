@@ -8,9 +8,7 @@ module.exports = class CustomOutputProcessor extends BaseOutputProcessor {
   }
 
   write(allMessages) {
-    let allMessagesWithoutState = Object.assign({}, allMessages);
-    delete allMessagesWithoutState[0];
-    this.processorCallback.call(this, allMessagesWithoutState);
+    this.processorCallback.call(this, allMessages);
   }
 
 };
