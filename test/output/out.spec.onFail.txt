@@ -53,7 +53,7 @@ cypress/integration/happyFlow.spec.js:
         cons:error (X): This is an error message
         cy:command (K): window
         cons:error (X): Error: This is an error message with stack.
-                            
+                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)
         cy:command (K): window
           cons:log (K): This should console.log appear.
         cy:command (K): window
@@ -68,12 +68,12 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): get	.network-put
         cy:command (K): click
             cy:xhr (K): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+        cy:command (K): wait	@putComment
           cy:route (!): (putComment) PUT https://jsonplaceholder.cypress.io/comments/1
                         Status: 404
                         Response body: {
                           "error": "whoa, this comment does not exist"
                         }
-        cy:command (K): wait	@putComment
         cy:command (K): get	.network-put-comment
         cy:command (K): assert	expected **<div.network-put-comment>** to contain **whoa, this comment does not exist**
         cy:command (X): get	.breaking-get
@@ -103,7 +103,10 @@ cypress/integration/requests.spec.js:
                         Response body: {
                           "userId": 1,
                           "id": 3,
-                          "title": "fugi: get	.breaking-get
+                          "title": "fugiat veniam minus",
+                          "completed": false
+                        }
+        cy:command (X): get	.breaking-get
 
     POST 200
         cy:request (K): POST https://jsonplaceholder.cypress.io/comments
@@ -116,7 +119,10 @@ cypress/integration/requests.spec.js:
     GET should give 500 response status
         cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
                         Status: 500
-                        Response body: Hey ya! Gre: POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+                        Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
+
+    POST should give 400 response status
+        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
                         Status: 400
                         Response body: {
                           "status": "Wrong!",
@@ -130,3 +136,4 @@ cypress/integration/requests.spec.js:
         cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
                         Status: 404
                         Response body: {}
+
