@@ -282,7 +282,7 @@ describe('cypress-terminal-report', () => {
       testOutputs.value.push(path.join('not', 'existing', 'path', 'out.txt'));
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
-  }).timeout(60000);
+  }).timeout(90000);
 
   it('Should print all tests to output files when configured so.', async () => {
     const outRoot = {};
@@ -294,7 +294,7 @@ describe('cypress-terminal-report', () => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
-  }).timeout(60000);
+  }).timeout(90000);
 
   it('Should not generate and print to output files when configured so.', async () => {
     const outRoot = {};
@@ -308,7 +308,7 @@ describe('cypress-terminal-report', () => {
       });
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value, true);
     });
-  }).timeout(60000);
+  }).timeout(90000);
 
   it('Should generate output only for failing tests if set to \'onFail\'.', async () => {
     const outRoot = { value : path.join(__dirname, 'output') };
@@ -319,7 +319,7 @@ describe('cypress-terminal-report', () => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFailCheck');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
-  }).timeout(60000);
+  }).timeout(90000);
 
   it('Should not break normal execution.', async () => {
     await runTest(commandBase([], ['successful.spec.js']), (error, stdout, stderr) => {

@@ -48,6 +48,7 @@ describe('Happy flow.', () => {
       url: 'comments/*',
       status: 404,
       response: {error: message},
+      delay: 500,
     }).as('putComment');
 
     // we have code that puts a comment when

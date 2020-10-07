@@ -68,12 +68,12 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): get	.network-put
         cy:command (K): click
             cy:xhr (K): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+        cy:command (K): wait	@putComment
           cy:route (!): (putComment) PUT https://jsonplaceholder.cypress.io/comments/1
                         Status: 404
                         Response body: {
                           "error": "whoa, this comment does not exist"
                         }
-        cy:command (K): wait	@putComment
         cy:command (K): get	.network-put-comment
         cy:command (K): assert	expected **<div.network-put-comment>** to contain **whoa, this comment does not exist**
         cy:command (X): get	.breaking-get
@@ -143,3 +143,4 @@ cypress/integration/requests.spec.js:
         cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
                         Status: 404
                         Response body: {}
+

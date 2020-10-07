@@ -46,7 +46,7 @@ to your CI runner and check the pipeline logs there.
 
 ## Options
 
-### Options for the plugin install
+- ### Options for the plugin install
 
 > require('cypress-terminal-report/src/installLogsPrinter')(on, options)
 
@@ -78,8 +78,9 @@ logs will be printed to console for successful tests as well as failing ones.
 #### `options.printLogsToFile`
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to file(s) for successful tests as well as failing ones.
-
-### Options for the support install
+<br/>
+<br/>
+- ### Options for the support install
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 

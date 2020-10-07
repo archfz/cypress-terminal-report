@@ -182,14 +182,14 @@
         "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1"
       },
       {
-        "type": "cy:route",
-        "severity": "warning",
-        "message": "(putComment) PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}"
-      },
-      {
         "type": "cy:command",
         "severity": "success",
         "message": "wait\t@putComment"
+      },
+      {
+        "type": "cy:route",
+        "severity": "warning",
+        "message": "(putComment) PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}"
       },
       {
         "type": "cy:command",
