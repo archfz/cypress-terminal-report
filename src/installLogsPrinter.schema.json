@@ -1,6 +1,22 @@
 {
   "type": "object",
   "properties": {
+    "printLogsToConsole": {
+      "type": "string",
+      "enum": [
+        "onFail",
+        "always",
+        "never"
+      ]
+    },
+    "printLogsToFile": {
+      "type": "string",
+      "enum": [
+        "onFail",
+        "always",
+        "never"
+      ]
+    },
     "defaultTrimLength": {
       "type": "string"
     },
@@ -21,14 +37,21 @@
       "type": "object",
       "patternProperties": {
         ".*": {
-          "type": ["string", "function"]
+          "type": [
+            "string",
+            "function"
+          ]
         }
       }
     }
   },
   "dependencies": {
-    "outputRoot": ["outputTarget"],
-    "outputTarget": ["outputRoot"]
+    "outputRoot": [
+      "outputTarget"
+    ],
+    "outputTarget": [
+      "outputRoot"
+    ]
   },
   "additionalProperties": false
 }

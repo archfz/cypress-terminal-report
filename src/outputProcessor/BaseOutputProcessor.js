@@ -28,7 +28,7 @@ module.exports = class BaseOutputProcessor {
 
     const basePath = path.dirname(this.file);
     if (!fs.existsSync(basePath)) {
-      fs.mkdirSync(basePath, { recursive: true });
+      fs.mkdirSync(basePath, {recursive: true});
     }
 
     fs.writeFileSync(this.file, this.initialContent);
@@ -114,11 +114,9 @@ module.exports = class BaseOutputProcessor {
   getAbsolutePositionFromRelative(pos) {
     if (pos === null) {
       return this.size;
-    }
-    else if (pos < 0) {
+    } else if (pos < 0) {
       return Math.min(this.size, Math.max(0, this.size + pos));
-    }
-    else {
+    } else {
       return Math.min(this.size, pos);
     }
   }

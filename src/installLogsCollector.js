@@ -15,7 +15,6 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
  *
  * @param {object} config
  *    Options for collection logs:
- *      - printLogs?: string; Default: 'onFail'. When to print logs, possible values: 'always', 'onFail'.
  *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
  *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
  *      - xhr?:
@@ -79,7 +78,7 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('log:changed', options => {
-    if ( options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
+    if (options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
       logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
     }
   });
@@ -89,16 +88,15 @@ function installLogsCollector(config = {}) {
     logs = [];
   });
 
-  afterEach(function() {
-    if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
-      // Need to wait otherwise some last commands get omitted from logs.
-      cy.wait(3, {log: false});
-      cy.task(CONSTANTS.TASK_NAME, {
-        spec: this.test.file,
-        test: this.currentTest.title,
-        messages: logs
-      }, {log: false});
-    }
+  afterEach(function () {
+    // Need to wait otherwise some last commands get omitted from logs.
+    cy.wait(3, {log: false});
+    cy.task(CONSTANTS.TASK_NAME, {
+      spec: this.test.file,
+      test: this.currentTest.title,
+      messages: logs,
+      state: this.currentTest.state
+    }, {log: false});
   });
 
   after(function () {
@@ -108,6 +106,13 @@ function installLogsCollector(config = {}) {
 }
 
 function validateConfig(config) {
+  before(function () {
+    if (typeof config.printLogs === 'string') {
+      cy.log("cypress-terminal-report: WARN! printLogs " +
+        "configuration has been removed. Please check changelog in readme.");
+    }
+  });
+
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {

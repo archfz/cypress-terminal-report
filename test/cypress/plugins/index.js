@@ -8,13 +8,17 @@ module.exports = (on, config) => {
       'out.txt': 'txt',
       'out.json': 'json',
       'out.cst': function (messages) {
-        this.initialContent = 'Failing specs:\n';
+        this.initialContent = 'Specs:\n';
         this.chunkSeparator = '\n';
         Object.keys(messages).forEach((key) => {
           this.writeSpecChunk(key, key);
         });
       },
     };
+  }
+  if (config.env.generateSimpleOutput == "1") {
+    options.outputRoot = config.projectRoot + '/output/';
+    options.outputTarget = {'out.txt': 'txt'};
   }
   if (config.env.compactLogs == "1") {
     options.compactLogs = 1;
@@ -26,8 +30,22 @@ module.exports = (on, config) => {
         any: 100
       },
       compactLogs: false,
+      printLogsToConsole: true,
+      printLogsToFile: true,
       shouldNotBeHere: "",
     };
+  }
+  if (config.env.printLogsToConsoleAlways == '1') {
+    options.printLogsToConsole = 'always';
+  }
+  if (config.env.printLogsToConsoleNever == '1') {
+    options.printLogsToConsole = 'never';
+  }
+  if (config.env.printLogsToFileAlways == '1') {
+    options.printLogsToFile = 'always';
+  }
+  if (config.env.printLogsToFileNever == '1') {
+    options.printLogsToFile = 'never';
   }
 
   require('../../../src/installLogsPrinter')(on, options);

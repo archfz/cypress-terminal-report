@@ -32,8 +32,8 @@ module.exports = class TextOutputProcessor extends BaseOutputProcessor {
       Object.entries(tests).forEach(([test, messages]) => {
         text += `${PADDING}${test}${EOL}`;
         messages.forEach(([type, message, severity]) => {
-          text += this.padTypeText(`${type} (${this.severityToFont(severity)}): `) +
-            message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL;
+          text += (this.padTypeText(`${type} (${this.severityToFont(severity)}): `) +
+            message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL).replace(/\s+\n/, '\n');
         });
         text += EOL;
       });

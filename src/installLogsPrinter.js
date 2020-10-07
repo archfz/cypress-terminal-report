@@ -46,6 +46,8 @@ let outputProcessors = [];
  *    Cypress event listen handler.
  * @param {object} options
  *    Options for displaying output:
+ *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
+ *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
  *      - defaultTrimLength?: Trim length for console and cy.log.
  *      - commandTrimLength?: Trim length for cy commands.
  *      - outputRoot?: The root path to output log files to.
@@ -53,6 +55,8 @@ let outputProcessors = [];
  *      - compactLogs?: Number of lines to compact around failing commands.
  */
 function installLogsPrinter(on, options = {}) {
+  options.printLogsToFile = options.printLogsToFile || "onFail";
+  options.printLogsToConsole = options.printLogsToConsole || "onFail";
   const result = tv4.validateMultiple(options, schema);
 
   if (!result.valid) {
@@ -67,18 +71,26 @@ function installLogsPrinter(on, options = {}) {
         messages = compactLogs(messages, options.compactLogs);
       }
 
-      if (options.outputTarget) {
-        allMessages[data.spec] = allMessages[data.spec] || {};
-        allMessages[data.spec][data.test] = messages;
+      if (options.outputTarget && options.printLogsToFile !== "never") {
+        if (data.state === "failed" || options.printLogsToFile === "always") {
+          allMessages[data.spec] = allMessages[data.spec] || {};
+          allMessages[data.spec][data.test] = messages;
+        }
       }
 
-      logToTerminal(messages, options);
+      if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
+        || options.printLogsToConsole === "always") {
+        logToTerminal(messages, options);
+      }
+
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       outputProcessors.forEach((processor) => {
-        processor.write(allMessages);
-        logOutputTarget(processor);
+        if (Object.entries(allMessages).length !== 0){
+          processor.write(allMessages);
+          logOutputTarget(processor);
+        }
       });
       allMessages = {};
       return null;
@@ -89,6 +101,7 @@ function installLogsPrinter(on, options = {}) {
     installOutputProcessors(on, options.outputRoot, options.outputTarget);
   }
 }
+
 
 function logOutputTarget(processor) {
   let message;

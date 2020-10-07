@@ -62,7 +62,7 @@ integer; default: 5000; Max length of cy.route request data.
 #### `options.compactLogs` 
 integer?; default: null; If it is set to a number greater or equal to 0, this amount of logs 
 will be printed only around failing commands. Use this to have shorter output especially 
-for when there are a lot of commands in tests. When used with `options.printLogs=always` 
+for when there are a lot of commands in tests. When used with `options.printLogsToConsole=always` 
 for tests that don't have any `severity=error` logs nothing will be printed.
 
 #### `options.outputRoot` 
@@ -71,13 +71,17 @@ string; default: null; Required if `options.outputTarget` provided. [More detail
 #### `options.outputTarget`
 object; default: null; Output logs to files. [More details](#logging-to-files).
 
+#### `options.printLogsToConsole`
+string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never' - When set to always
+logs will be printed to console for successful tests as well as failing ones.
+
+#### `options.printLogsToFile`
+string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
+logs will be printed to file(s) for successful tests as well as failing ones.
+
 ### Options for the support install
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
-
-#### `options.printLogs`
-string; default: 'onFail'; possible values: 'onFail', 'always' - When set to always
-logs will be printed for successful test as well as failing ones.
 
 #### `options.collectTypes` 
 array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']
