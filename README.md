@@ -190,6 +190,13 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 2.1.0
+
+- ! Separated option `printLogs` to [`printLogsToConsole`](#optionsprintlogstoconsole) and [`printLogsToFile`](#optionsprintlogstofile).
+`printLogs` won't work anymore and will print a warning in the cypress logs. Read documentation on how to
+upgrade. [issue](https://github.com/archfz/cypress-terminal-report/issues/47) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/51) by [FLevent29](https://github.com/FLevent29)
+- Typescript typings support added. [issue](https://github.com/archfz/cypress-terminal-report/issues/37) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/52) by [bengry](https://github.com/bengry)
+
 #### 2.0.0
 
 - Removed deprecated exports from index.js. If you were still using require from index.js please

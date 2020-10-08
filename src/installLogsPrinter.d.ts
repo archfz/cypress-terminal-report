@@ -43,6 +43,18 @@ interface PluginOptions {
     | 'txt'
     | ((messages: Record<string, Record<string, [string, string, Severity]>>) => string)
   >;
+
+  /**
+   * When set to always logs will be printed for console for successful test as well as failing ones.
+   * @default 'onFail'
+   */
+  printLogsToConsole?: 'onFail' | 'always' | 'never';
+
+  /**
+   * When set to always logs will be printed to file for successful test as well as failing ones.
+   * @default 'onFail'
+   */
+  printLogsToFile?: 'onFail' | 'always' | 'never';
 }
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: PluginOptions): void;

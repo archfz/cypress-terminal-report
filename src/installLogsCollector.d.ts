@@ -2,12 +2,6 @@ type Severity = '' | 'error' | 'warning';
 
 interface SupportOptions {
   /**
-   * When set to always logs will be printed for successful test as well as failing ones.
-   * @default 'onFail'
-   */
-  printLogs?: 'onFail' | 'always';
-
-  /**
    * What types of logs to collect and print.
    * By default all types are enabled.
    * The 'cy:command' is the general type that contain all types of commands that are not specially treated.
