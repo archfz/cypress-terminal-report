@@ -1,6 +1,6 @@
 {
   "name": "cypress-terminal-report",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Better terminal and file logging for cypress tests.",
   "main": "index.js",
   "scripts": {
