@@ -45,6 +45,12 @@ interface PluginOptions {
   >;
 
   /**
+   * Cypress specs root relative to package json. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).
+   * @default null
+   */
+  specRoot?: string | null;
+
+  /**
    * When set to always logs will be printed for console for successful test as well as failing ones.
    * @default 'onFail'
    */

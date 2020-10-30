@@ -8,10 +8,10 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
     this.chunkSeparator = ',\n';
   }
 
-
   write(allMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {
       let data = {[spec]: {}};
+
       Object.entries(tests).forEach(([test, messages]) => {
         data[spec][test] = messages.map(([type, message, severity]) => ({
           type: type,

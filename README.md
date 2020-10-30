@@ -46,7 +46,9 @@ to your CI runner and check the pipeline logs there.
 
 ## Options
 
-- ### Options for the plugin install
+<br/>
+
+### _Options for the plugin install_
 
 > require('cypress-terminal-report/src/installLogsPrinter')(on, options)
 
@@ -68,6 +70,9 @@ for tests that don't have any `severity=error` logs nothing will be printed.
 #### `options.outputRoot` 
 string; default: null; Required if `options.outputTarget` provided. [More details](#logging-to-files).
 
+#### `options.specRoot` 
+string; default: null; Cypress specs root relative to package json. [More details](#log-specs-in-separate-files ).
+
 #### `options.outputTarget`
 object; default: null; Output logs to files. [More details](#logging-to-files).
 
@@ -78,9 +83,10 @@ logs will be printed to console for successful tests as well as failing ones.
 #### `options.printLogsToFile`
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to file(s) for successful tests as well as failing ones.
+
 <br/>
-<br/>
-- ### Options for the support install
+
+### _Options for the support install_
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
@@ -126,6 +132,30 @@ file from `outputRoot` and the value is the __type__ of format to output.
 
 Supported types: `txt`, `json`.
 
+### Log specs in separate files
+
+To create log output files per spec file instead of one single file change the
+key in the `outputTarget` to the format `{directory}|{extension}`, where
+`{directory}` the root directory where to generate the files and `{extension}`
+is the file extension for the log files. The generated output will have the
+same structure as in the cypress specs root directory.
+
+```js
+const path = require('path');
+
+module.exports = (on, config) => {
+  const options = {
+    outputRoot: config.projectRoot + '/logs/',
+    // Used to trim the base path of specs and reduce nesting in the
+    // generated output directory.
+    specRoot: path.relative(config.fileServerFolder, config.integrationFolder),
+    outputTarget: {
+      'cypress-logs|json': 'json',
+    }
+  };
+};
+```
+
 ### Custom output log processor
 
 If you need to output in a custom format you can pass a function instead of a string
@@ -133,7 +163,7 @@ to the `outputTarget` value. This function will be called with the list of messa
 per spec per test. It is called right after one spec finishes, which means on each
 iteration it will receive for one spec the messages. See for example below.
 
-NOTE: The chunks have to be written in a way that after every write the file is 
+> NOTE: The chunks have to be written in a way that after every write the file is 
 in a valid format. This has to be like this since we cannot detect when cypress
 runs the last test. This way we also make the process faster because otherwise the
 more tests would execute the more RAM and processor time it would take to rewrite 
@@ -189,6 +219,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 2.2.0
+
+- Added support for [logging each spec to its own file](#log-specs-in-separate-files). [issue](https://github.com/archfz/cypress-terminal-report/issues/49)
 
 #### 2.1.0
 

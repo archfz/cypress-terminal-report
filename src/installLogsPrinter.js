@@ -8,7 +8,8 @@ const CtrError = require('./CtrError');
 const CONSTANTS = require('./constants');
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
-const CUSTOM_OUTPUT_PROCESSOR = require('./outputProcessor/CustomOutputProcessor');
+const CustomOutputProcessor = require('./outputProcessor/CustomOutputProcessor');
+const NestedOutputProcessorDecorator = require('./outputProcessor/NestedOutputProcessorDecorator');
 const OUTPUT_PROCESSOR_TYPE = {
   'json': require('./outputProcessor/JsonOutputProcessor'),
   'txt': require('./outputProcessor/TextOutputProcessor'),
@@ -98,7 +99,7 @@ function installLogsPrinter(on, options = {}) {
   });
 
   if (options.outputTarget) {
-    installOutputProcessors(on, options.outputRoot, options.outputTarget);
+    installOutputProcessors(on, options);
   }
 }
 
@@ -109,29 +110,47 @@ function logOutputTarget(processor) {
     (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
-    message = `Wrote ${standardOutputType} logs to ${processor.file}. (${processor.writeSpendTime}ms)`;
+    message = `Wrote ${standardOutputType} logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   } else {
-    message = `Wrote custom logs to ${processor.file}. (${processor.writeSpendTime}ms)`;
+    message = `Wrote custom logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   }
   console.log('[cypress-terminal-report]', message);
 }
 
-function installOutputProcessors(on, root, outputTargets) {
-  if (!root) {
+function installOutputProcessors(on, options) {
+  if (!options.outputRoot) {
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  Object.entries(outputTargets).forEach(([file, type]) => {
+  const createProcessorFromType = (file, type) => {
     if (typeof type === 'string') {
-      if (!OUTPUT_PROCESSOR_TYPE[type]) {
-        throw new CtrError(`Unknown output format '${type}'.`);
-      }
+      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot, file));
+    }
 
-      outputProcessors.push(new OUTPUT_PROCESSOR_TYPE[type](path.join(root, file)));
-    } else if (typeof type === 'function') {
-      outputProcessors.push(new CUSTOM_OUTPUT_PROCESSOR(path.join(root, file), type));
+    if (typeof type === 'function') {
+      return new CustomOutputProcessor(path.join(options.outputRoot, file), type);
+    }
+  };
+
+  Object.entries(options.outputTarget).forEach(([file, type]) => {
+    const requiresNested = file.match(/^[^|]+\|.*$/);
+
+    if (typeof type === 'string' && !OUTPUT_PROCESSOR_TYPE[type]) {
+      throw new CtrError(`Unknown output format '${type}'.`);
+    }
+    if (!['function', 'string'].includes(typeof type)) {
+      throw new CtrError(`[cypress-terminal-report] Output target type can only be string or function.`);
+    }
+
+    if (requiresNested) {
+      const parts = file.split('|');
+      const root = parts[0];
+      const ext = parts[1];
+      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot, ext, (nestedFile) => {
+        return createProcessorFromType(nestedFile, type);
+      }));
     } else {
-      throw new CtrError(`Output target type can only be string or function.`);
+      outputProcessors.push(createProcessorFromType(file, type));
     }
   });
 

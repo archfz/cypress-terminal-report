@@ -11,6 +11,14 @@ module.exports = class BaseOutputProcessor {
     this.chunkSeparator = '';
   }
 
+  getTarget() {
+    return this.file;
+  }
+
+  getSpentTime() {
+    return this.writeSpendTime;
+  }
+
   initialize() {
     // Unlink file on initialize to start clean. Also this is required for custom
     // output processors provided as config to be able to define custom initial

@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const glob = require('glob');
 
 let commandPrefix = 'node ./node_modules/.bin/cypress';
 
@@ -49,7 +50,7 @@ const runTest = async (command, callback) => {
   });
 };
 
-outputCleanUpAndInitialization = (testOutputs, outRoot) => {
+const outputCleanUpAndInitialization = (testOutputs, outRoot) => {
   outRoot.value = path.join(__dirname, 'output');
   testOutputs.value = ['out.txt', 'out.json', 'out.cst'];
   testOutputs.value.forEach((out) => {
@@ -67,36 +68,36 @@ const clean = (str) =>
   // Clean error trace as it changes from test to test.
   str.replace(/at [^(]+ \([^)]+\)/g, '');
 
-expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, specExtName) => {
+const expectOutFilesMatch = (outputPath, specPath) => {
+  const expectedBuffer = fs.readFileSync(specPath);
+  const valueBuffer = fs.readFileSync(outputPath);
+  let value = clean(valueBuffer.toString().replace(/\s+$/, ''));
+  if (path.sep === '\\') {
+    if (outputPath.endsWith('json')) {
+      value = value.replace('cypress\\\\integration\\\\', 'cypress/integration/');
+    } else {
+      value = value.replace('cypress\\integration\\', 'cypress/integration/');
+    }
+  }
+
+  let expected = clean(expectedBuffer.toString().replace(/\s+$/, ''));
+  if (outputPath.endsWith('.txt')) {
+    expected = osSpecificEol(expected);
+  }
+
+  expect(clean(value), `Check ${outputPath} matched spec.`).to.eq(clean(expected));
+}
+
+const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, specExtName) => {
   testOutputs.value.forEach((out) => {
-    const expectedBuffer = fs.readFileSync(
+    expectOutFilesMatch(
+      path.join(outRoot.value, out),
       path.join(outRoot.value, out.replace(/\.([a-z]+)$/, '.spec.' + specExtName + '.$1'))
     );
-    const valueBuffer = fs.readFileSync(path.join(outRoot.value, out));
-    let value = clean(valueBuffer.toString().replace(/\s+$/, ''));
-    if (path.sep === '\\') {
-      specFiles.forEach((specFile) => {
-        const expectPath = 'cypress/integration/' + specFile;
-        if (out.endsWith('json')) {
-          const osJsonPath = 'cypress\\\\integration\\\\' + specFile;
-          value = value.replace(osJsonPath, expectPath);
-        } else {
-          const osPath = 'cypress\\integration\\' + specFile;
-          value = value.replace(osPath, expectPath);
-        }
-      });
-    }
-
-    let expected = clean(expectedBuffer.toString().replace(/\s+$/, ''));
-    if (out.endsWith('.txt')) {
-      expected = osSpecificEol(expected);
-    }
-
-    expect(clean(value), `Check ${out} matched spec.`).to.eq(clean(expected));
   });
 }
 
-expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
+const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
   fileNames.forEach((fileName) => {
     let ext = path.extname(fileName).substring(1);
     if (!['json', 'txt'].includes(ext)) {
@@ -367,4 +368,17 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
     });
   }).timeout(60000);
+
+
+  it('Should generate proper nested log output files.', async () => {
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
+    await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
+      const specs = glob.sync('./output_nested_spec/**/*', { nodir: true });
+      specs.forEach(specFile => {
+        const actualFile = specFile.replace('output_nested_spec', 'output_nested');
+        expect(fs.existsSync(actualFile), `Expected output file ${actualFile} to exist.`).to.be.true;
+        expectOutFilesMatch(actualFile, specFile);
+      });
+    });
+  }).timeout(90000);
 });

@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = (on, config) => {
   let options = {};
 
@@ -8,6 +10,21 @@ module.exports = (on, config) => {
       'out.txt': 'txt',
       'out.json': 'json',
       'out.cst': function (messages) {
+        this.initialContent = 'Specs:\n';
+        this.chunkSeparator = '\n';
+        Object.keys(messages).forEach((key) => {
+          this.writeSpecChunk(key, key);
+        });
+      },
+    };
+  }
+  if (config.env.generateNestedOutput == "1") {
+    options.outputRoot = config.projectRoot + '/output_nested/';
+    options.specRoot = path.relative(config.fileServerFolder, config.integrationFolder);
+    options.outputTarget = {
+      'txt|txt': 'txt',
+      'json|json': 'json',
+      'custom|cst': function (messages) {
         this.initialContent = 'Specs:\n';
         this.chunkSeparator = '\n';
         Object.keys(messages).forEach((key) => {
