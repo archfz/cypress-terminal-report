@@ -100,6 +100,12 @@ null | ([type, message, severity]) => boolean; default: undefined;
 Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
+#### `options.collectTestLogs`
+(context, [type, message, severity][]) => void; default: undefined;
+Callback to collect each test case's logs after its run.
+The context is Mocha's `this` value in its `afterEach` hook, containing `test`, `currentTest` etc. fields.
+The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
+
 #### `options.xhr.printHeaderData` 
 boolean; default false; Whether to print header data for XHR requests.
 

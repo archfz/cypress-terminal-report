@@ -28,6 +28,9 @@
     "filterLog": {
       "type": "function"
     },
+    "collectTestLogs": {
+      "type": "function"
+    },
     "xhr": {
       "type": "object",
       "properties": {

@@ -91,6 +91,9 @@ function installLogsCollector(config = {}) {
   afterEach(function () {
     // Need to wait otherwise some last commands get omitted from logs.
     cy.wait(3, {log: false});
+    if (config.collectTestLogs) {
+      config.collectTestLogs(this, logs);
+    }
     cy.task(CONSTANTS.TASK_NAME, {
       spec: this.test.file,
       test: this.currentTest.title,
@@ -121,6 +124,9 @@ function validateConfig(config) {
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
     throw new CtrError(`[cypress-terminal-report] Filter log option expected to be a function.`);
+  }
+  if (config.collectTestLogs && typeof config.collectTestLogs !== 'function') {
+    throw new CtrError(`[cypress-terminal-report] Collect test logs option expected to be a function.`);
   }
 }
 

@@ -9,6 +9,10 @@ if (env.setLogTypes == '1') {
 if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
 }
+if (env.setCollectTestLogs == '1') {
+  config.collectTestLogs = (context, logs) =>
+    cy.log(`Collected ${logs.length} logs for test "${context.currentTest.title}", last log: ${logs[logs.length - 1]}`);
+}
 if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};
   config.xhr.printHeaderData = true;
@@ -24,6 +28,7 @@ if (env.supportBadConfig == '1') {
   config = {
     collectTypes: 0,
     filterLog: "string",
+    collectTestLogs: "string",
     xhr: {
       printRequestData: "",
       printHeaderData: "",
