@@ -1,11 +1,15 @@
 const chalk = require('chalk');
 const path = require('path');
+const tv4 = require('tv4');
 
+const schema = require('./installLogsPrinter.schema.json');
+const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 const CtrError = require('./CtrError');
 const CONSTANTS = require('./constants');
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
-const CUSTOM_OUTPUT_PROCESSOR = require('./outputProcessor/CustomOutputProcessor');
+const CustomOutputProcessor = require('./outputProcessor/CustomOutputProcessor');
+const NestedOutputProcessorDecorator = require('./outputProcessor/NestedOutputProcessorDecorator');
 const OUTPUT_PROCESSOR_TYPE = {
   'json': require('./outputProcessor/JsonOutputProcessor'),
   'txt': require('./outputProcessor/TextOutputProcessor'),
@@ -34,7 +38,32 @@ const LOG_SYMBOLS = (() => {
 let allMessages = {};
 let outputProcessors = [];
 
+/**
+ * Installs the cypress plugin for printing logs to terminal.
+ *
+ * Needs to be added to plugins file.
+ *
+ * @param {Function} on
+ *    Cypress event listen handler.
+ * @param {object} options
+ *    Options for displaying output:
+ *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
+ *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
+ *      - defaultTrimLength?: Trim length for console and cy.log.
+ *      - commandTrimLength?: Trim length for cy commands.
+ *      - outputRoot?: The root path to output log files to.
+ *      - outputTarget?: Log output types. {[filePath: string]: string | function}
+ *      - compactLogs?: Number of lines to compact around failing commands.
+ */
 function installLogsPrinter(on, options = {}) {
+  options.printLogsToFile = options.printLogsToFile || "onFail";
+  options.printLogsToConsole = options.printLogsToConsole || "onFail";
+  const result = tv4.validateMultiple(options, schema);
+
+  if (!result.valid) {
+    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
+  }
+
   on('task', {
     [CONSTANTS.TASK_NAME]: data => {
       let messages = data.messages;
@@ -43,18 +72,26 @@ function installLogsPrinter(on, options = {}) {
         messages = compactLogs(messages, options.compactLogs);
       }
 
-      if (options.outputTarget) {
-        allMessages[data.spec] = allMessages[data.spec] || {};
-        allMessages[data.spec][data.test] = messages;
+      if (options.outputTarget && options.printLogsToFile !== "never") {
+        if (data.state === "failed" || options.printLogsToFile === "always") {
+          allMessages[data.spec] = allMessages[data.spec] || {};
+          allMessages[data.spec][data.test] = messages;
+        }
       }
 
-      logToTerminal(messages, options);
+      if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
+        || options.printLogsToConsole === "always") {
+        logToTerminal(messages, options);
+      }
+
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       outputProcessors.forEach((processor) => {
-        processor.write(allMessages);
-        logOutputTarget(processor);
+        if (Object.entries(allMessages).length !== 0){
+          processor.write(allMessages);
+          logOutputTarget(processor);
+        }
       });
       allMessages = {};
       return null;
@@ -62,9 +99,10 @@ function installLogsPrinter(on, options = {}) {
   });
 
   if (options.outputTarget) {
-    installOutputProcessors(on, options.outputRoot, options.outputTarget);
+    installOutputProcessors(on, options);
   }
 }
+
 
 function logOutputTarget(processor) {
   let message;
@@ -72,33 +110,51 @@ function logOutputTarget(processor) {
     (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
-    message = `Wrote ${standardOutputType} logs to ${processor.file}`;
+    message = `Wrote ${standardOutputType} logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   } else {
-    message = `Wrote custom logs to ${processor.file}`;
+    message = `Wrote custom logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   }
   console.log('[cypress-terminal-report]', message);
 }
 
-function installOutputProcessors(on, root, outputTargets) {
-  if (!root) {
+function installOutputProcessors(on, options) {
+  if (!options.outputRoot) {
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  Object.entries(outputTargets).forEach(([file, type]) => {
+  const createProcessorFromType = (file, type) => {
     if (typeof type === 'string') {
-      if (!OUTPUT_PROCESSOR_TYPE[type]) {
-        throw new CtrError(`Unknown output format '${type}'.`);
-      }
+      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot, file));
+    }
 
-      outputProcessors.push(new OUTPUT_PROCESSOR_TYPE[type](path.join(root, file)));
-    } else if (typeof type === 'function') {
-      outputProcessors.push(new CUSTOM_OUTPUT_PROCESSOR(path.join(root, file), type));
+    if (typeof type === 'function') {
+      return new CustomOutputProcessor(path.join(options.outputRoot, file), type);
+    }
+  };
+
+  Object.entries(options.outputTarget).forEach(([file, type]) => {
+    const requiresNested = file.match(/^[^|]+\|.*$/);
+
+    if (typeof type === 'string' && !OUTPUT_PROCESSOR_TYPE[type]) {
+      throw new CtrError(`Unknown output format '${type}'.`);
+    }
+    if (!['function', 'string'].includes(typeof type)) {
+      throw new CtrError(`[cypress-terminal-report] Output target type can only be string or function.`);
+    }
+
+    if (requiresNested) {
+      const parts = file.split('|');
+      const root = parts[0];
+      const ext = parts[1];
+      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot, ext, (nestedFile) => {
+        return createProcessorFromType(nestedFile, type);
+      }));
     } else {
-      throw new CtrError(`Output target type can only be string or function.`);
+      outputProcessors.push(createProcessorFromType(file, type));
     }
   });
 
-  outputProcessors.forEach((processor) => processor.prepare());
+  outputProcessors.forEach((processor) => processor.initialize());
 }
 
 function compactLogs(logs, keepAroundCount) {
@@ -109,7 +165,7 @@ function compactLogs(logs, keepAroundCount) {
 
   failingIndexes.forEach((index) => {
     const from = Math.max(0, index - keepAroundCount);
-    const to = Math.min(logs.length, index + keepAroundCount);
+    const to = Math.min(logs.length - 1, index + keepAroundCount);
     for (let i = from; i <= to; i++) {
       includeIndexes[i] = 1;
     }

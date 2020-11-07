@@ -1,0 +1,3 @@
+Specs:
+cypress/integration/happyFlow.spec.js
+cypress/integration/requests.spec.js

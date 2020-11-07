@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "chai": "^4.2.0",
-    "cypress": "^4.8.0",
+    "cypress": "^5.0.0",
+    "glob": "^7.1.6",
     "mocha": "^7.0.1"
   }
 }

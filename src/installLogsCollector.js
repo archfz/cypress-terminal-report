@@ -1,12 +1,29 @@
 const methods = require('methods');
+const tv4 = require('tv4');
 
+const schema = require('./installLogsCollector.schema.json');
 const CtrError = require('./CtrError');
 const LOG_TYPE = require('./constants').LOG_TYPES;
 const CONSTANTS = require('./constants');
 const xhrPartParse = require('./xhrPartParse');
+const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 
+/**
+ * Installs the logs collector for cypress.
+ *
+ * Needs to be added to support file.
+ *
+ * @param {object} config
+ *    Options for collection logs:
+ *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
+ *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
+ *      - xhr?:
+ *          - printHeaderData?: boolean; Defaults to false. Whether to write XHR header data.
+ *          - printRequestData?: boolean; Defaults to false. Whether to write XHR request data.
+ */
 function installLogsCollector(config = {}) {
   validateConfig(config);
+
   const collectTypes = config.collectTypes || Object.values(LOG_TYPE);
   const collectRequestData = config.xhr && config.xhr.printRequestData;
   const collectHeaderData = config.xhr && config.xhr.printHeaderData;
@@ -61,7 +78,7 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('log:changed', options => {
-    if ( options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
+    if (options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
       logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
     }
   });
@@ -71,78 +88,75 @@ function installLogsCollector(config = {}) {
     logs = [];
   });
 
-  afterEach(function() {
-    if (this.currentTest.state !== 'passed' || (config && config.printLogs === 'always')) {
-      // Need to wait otherwise some last commands get omitted from logs.
-      cy.wait(1, {log: false});
-      cy.task(CONSTANTS.TASK_NAME, {
-        spec: this.test.file,
-        test: this.currentTest.title,
-        messages: logs
-      }, {log: false});
-    }
+  afterEach(function () {
+    // Need to wait otherwise some last commands get omitted from logs.
+    cy.wait(3, {log: false});
+    cy.task(CONSTANTS.TASK_NAME, {
+      spec: this.test.file,
+      test: this.currentTest.title,
+      messages: logs,
+      state: this.currentTest.state
+    }, {log: false});
   });
 
   after(function () {
+    // Need to wait otherwise some last commands get omitted from logs.
     cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
   });
 }
 
 function validateConfig(config) {
-  if (config.collectTypes) {
-    if (!Array.isArray(config.collectTypes)) {
-      throw new CtrError(`Collect types should be of type array. [cypress-terminal-report]`);
+  before(function () {
+    if (typeof config.printLogs === 'string') {
+      cy.log("cypress-terminal-report: WARN! printLogs " +
+        "configuration has been removed. Please check changelog in readme.");
     }
+  });
 
-    const types = Object.values(LOG_TYPE);
-    const unknownTypes = config.collectTypes.filter((t) => !types.includes(t));
+  const result = tv4.validateMultiple(config, schema);
 
-    if (unknownTypes.length !== 0) {
-      throw new CtrError(`Invalid collect types: ${unknownTypes.join(', ')}. [cypress-terminal-report]`);
-    }
+  if (!result.valid) {
+    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
   }
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
-    throw new CtrError(`Filter log expected to be a function. [cypress-terminal-report]`);
-  }
-
-  if (config.printLogs && !(['always', 'onFail'].includes(config.printLogs))) {
-    throw new CtrError(`Print logs config can only be 'always' or 'onFail'. [cypress-terminal-report]`);
+    throw new CtrError(`[cypress-terminal-report] Filter log option expected to be a function.`);
   }
 }
 
 function collectBrowserConsoleLogs(addLog, collectTypes) {
   const oldConsoleMethods = {};
-  const processArg = (arg) => {
-    if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
-      return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
-    }
-
-    if (arg instanceof Error && typeof arg.stack === "string") {
-      let stack = arg.stack;
-      if (stack.indexOf(arg.message) !== -1) {
-        stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
-      }
-      return arg.toString() + '\n' + stack;
-    }
-
-    let json = '';
-    try {
-      json = JSON.stringify(arg, null, 2);
-    } catch (e) {
-      return '[unprocessable=' + arg + ']';
-    }
-
-    if (typeof json === 'undefined') {
-      return 'undefined';
-    }
-
-    return json;
-  };
 
   Cypress.on('window:before:load', function () {
     const docIframe = window.parent.document.querySelector("[id*='Your App']");
     const appWindow = docIframe.contentWindow;
+
+    const processArg = (arg) => {
+      if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
+        return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
+      }
+
+      if ((arg instanceof appWindow.Error || arg instanceof Error) && typeof arg.stack === "string") {
+        let stack = arg.stack;
+        if (stack.indexOf(arg.message) !== -1) {
+          stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
+        }
+        return arg.toString() + '\n' + stack;
+      }
+
+      let json = '';
+      try {
+        json = JSON.stringify(arg, null, 2);
+      } catch (e) {
+        return '[unprocessable=' + arg + ']';
+      }
+
+      if (typeof json === 'undefined') {
+        return 'undefined';
+      }
+
+      return json;
+    };
 
     const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {
       oldConsoleMethods[method] = appWindow.console[method];

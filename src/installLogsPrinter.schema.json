@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "properties": {
+    "printLogsToConsole": {
+      "type": "string",
+      "enum": [
+        "onFail",
+        "always",
+        "never"
+      ]
+    },
+    "printLogsToFile": {
+      "type": "string",
+      "enum": [
+        "onFail",
+        "always",
+        "never"
+      ]
+    },
+    "defaultTrimLength": {
+      "type": "string"
+    },
+    "commandTrimLength": {
+      "type": "string"
+    },
+    "routeTrimLength": {
+      "type": "string"
+    },
+    "compactLogs": {
+      "type": "number",
+      "minimum": 0
+    },
+    "outputRoot": {
+      "type": "string"
+    },
+    "specRoot": {
+      "type": "string"
+    },
+    "outputTarget": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "type": [
+            "string",
+            "function"
+          ]
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "outputRoot": [
+      "outputTarget"
+    ],
+    "outputTarget": [
+      "outputRoot"
+    ]
+  },
+  "additionalProperties": false
+}

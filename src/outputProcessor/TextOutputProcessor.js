@@ -7,6 +7,11 @@ const {EOL} = require('os');
 
 module.exports = class TextOutputProcessor extends BaseOutputProcessor {
 
+  constructor(file) {
+    super(file);
+    this.chunkSeparator = EOL + EOL;
+  }
+
   severityToFont(severity) {
     return {
       [CONSTANTS.SEVERITY.ERROR]: 'X',
@@ -21,22 +26,20 @@ module.exports = class TextOutputProcessor extends BaseOutputProcessor {
   }
 
   write(allMessages) {
-    let text = '';
 
     Object.entries(allMessages).forEach(([spec, tests]) => {
-      text += `${spec}:${EOL}`;
+      let text = `${spec}:${EOL}`;
       Object.entries(tests).forEach(([test, messages]) => {
         text += `${PADDING}${test}${EOL}`;
         messages.forEach(([type, message, severity]) => {
-          text += this.padTypeText(`${type} (${this.severityToFont(severity)}): `) +
-            message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL;
+          text += (this.padTypeText(`${type} (${this.severityToFont(severity)}): `) +
+            message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL).replace(/\s+\n/, '\n');
         });
         text += EOL;
       });
-      text += EOL + EOL;
-    });
 
-    this.writeChunk(text);
+      this.writeSpecChunk(spec, text);
+    });
   }
 
 };

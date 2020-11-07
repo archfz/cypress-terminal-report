@@ -1,16 +1,13 @@
 import './commands';
 
 const env = Cypress.env();
-const config = {};
+let config = {};
 
 if (env.setLogTypes == '1') {
   config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
 }
 if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
-}
-if (env.printLogsAlways == '1') {
-  config.printLogs = 'always';
 }
 if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};
@@ -22,6 +19,18 @@ if (env.printRequestData == '1') {
 }
 if (env.filterOutCyCommand == '1') {
   config.filterLog = ([type]) => type !== 'cy:command';
+}
+if (env.supportBadConfig == '1') {
+  config = {
+    collectTypes: 0,
+    filterLog: "string",
+    xhr: {
+      printRequestData: "",
+      printHeaderData: "",
+      shouldNotBeHere: ""
+    },
+    shouldNotBeHere: ""
+  };
 }
 
 require('../../../src/installLogsCollector')(config);
@@ -36,6 +45,8 @@ function enableFetchWorkaround() {
       polyfill = response.body;
     });
   });
+
+  console.log(Cypress);
 
   Cypress.on('window:before:load', win => {
     delete win.fetch;
