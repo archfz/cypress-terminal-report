@@ -54,6 +54,7 @@ let outputProcessors = [];
  *      - outputRoot?: The root path to output log files to.
  *      - outputTarget?: Log output types. {[filePath: string]: string | function}
  *      - compactLogs?: Number of lines to compact around failing commands.
+ *      - collectTestLogs?: Callback to collect each test case's logs after its run.
  */
 function installLogsPrinter(on, options = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
@@ -82,6 +83,10 @@ function installLogsPrinter(on, options = {}) {
       if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
         || options.printLogsToConsole === "always") {
         logToTerminal(messages, options);
+      }
+
+      if (options.collectTestLogs) {
+        options.collectTestLogs({ spec: data.spec, test: data.test, state: data.state }, messages);
       }
 
       return null;

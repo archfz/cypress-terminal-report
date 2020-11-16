@@ -50,6 +50,7 @@ module.exports = (on, config) => {
       printLogsToConsole: true,
       printLogsToFile: true,
       shouldNotBeHere: "",
+      collectTestLogs: "",
     };
   }
   if (config.env.printLogsToConsoleAlways == '1') {
@@ -63,6 +64,10 @@ module.exports = (on, config) => {
   }
   if (config.env.printLogsToFileNever == '1') {
     options.printLogsToFile = 'never';
+  }
+  if (config.env.collectTestLogs == '1') {
+    options.collectTestLogs = (context, logs) =>
+      console.log(`Collected ${logs.length} logs for test "${context.test}", last log: ${logs[logs.length - 1]}`);
   }
 
   require('../../../src/installLogsPrinter')(on, options);

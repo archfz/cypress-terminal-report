@@ -46,6 +46,9 @@
           ]
         }
       }
+    },
+    "collectTestLogs": {
+      "type": "function"
     }
   },
   "dependencies": {
