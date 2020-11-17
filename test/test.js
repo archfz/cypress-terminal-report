@@ -376,7 +376,6 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-
   it('Should generate proper nested log output files.', async () => {
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
     await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
