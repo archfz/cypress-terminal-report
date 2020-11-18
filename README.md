@@ -7,13 +7,14 @@
 > ! 2.0.0 is out. Please read the [release notes](#200) for upgrade path from 1.x.x.
 
 Plugin for cypress that adds better terminal output for easier debugging. 
-Prints cy commands, browser console logs, cy.request and cy.route data. By default
-outputs to terminal only, but can be configured to write to files as well. 
+Prints cy commands, browser console logs, cy.request and cy.route data.
+
+* looks pretty in console
+* supports logging to files
+* option between logging always or only on failure
+* options for trimming and compacting logs
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
-
-> Note: If you want to display the logs when test succeed as well then check the
-[options](#options) for the support install.
 
 > Note: Currently logs do not appear in the dashboard. If you want to see them go
 to your CI runner and check the pipeline logs there.
@@ -84,7 +85,7 @@ logs will be printed to console for successful tests as well as failing ones.
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to file(s) for successful tests as well as failing ones.
 
-#### `options.collectTestLogs`
+#### `options.collectTestLogs` *1
 ([spec, test, state], [type, message, severity][]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
 The first argument contains information about the test: the `spec` (test file), `test` (test title) and `state` (test state) fields.
@@ -106,7 +107,7 @@ null | ([type, message, severity]) => boolean; default: undefined;
 Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
-#### `options.collectTestLogs`
+#### `options.collectTestLogs` *2
 (context, [type, message, severity][]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
 The context is Mocha's `this` value in its `afterEach` hook, containing `test`, `currentTest` etc. fields.
@@ -231,6 +232,11 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 2.3.0
+
+- Added support for custom log collector function on both [nodejs](#optionscollecttestlogs-1) and [browser](#optionscollecttestlogs-2) sides. [issue](https://github.com/archfz/cypress-terminal-report/issues/56) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/59) by [peruukki](https://github.com/peruukki)
+- Improved cy.request logging when log set to false and when there are network errors. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/60) by [bjowes](https://github.com/bjowes) 
 
 #### 2.2.0
 
