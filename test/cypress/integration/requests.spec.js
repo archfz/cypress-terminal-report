@@ -1,5 +1,4 @@
 describe('Requests.', () => {
-
   it('GET 200', () => {
     cy.request('https://jsonplaceholder.cypress.io/todos/1');
     cy.request('GET', 'https://jsonplaceholder.cypress.io/todos/2');
@@ -33,6 +32,21 @@ describe('Requests.', () => {
     cy.request({
       method: 'PUT',
       url: 'https://jsonplaceholder.cypress.io/comments',
+    });
+  });
+
+  it('cypress logging is disabled in the request', () => {
+    cy.request({
+      method: 'POST',
+      url: 'http://www.mocky.io/v2/5ec993803000009700a6ce1f',
+      log: false,
+    });
+  });
+
+  it('Network error', () => {
+    cy.request({
+      method: 'POST',
+      url: 'http://this.does.not.exist',
     });
   });
 });
