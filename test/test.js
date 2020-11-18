@@ -275,6 +275,13 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should collect test logs if support configuration added.', async () => {
+    await runTest(commandBase(['setCollectTestLogs=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`Collected 17 logs for test "All types of logs."`);
+      expect(stdout).to.contain(`last log: cy:command,get\t.breaking-get [filter-out-string],error`);
+    });
+  }).timeout(60000);
+
   it('Should generate proper log output files, and print only failing ones if config is on default.', async () => {
     const outRoot = {};
     const testOutputs = {};
@@ -361,6 +368,7 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
       expect(stdout).to.contain(`=> .printLogsToFile: Invalid type: boolean (expected string)`);
       expect(stdout).to.contain(`=> .printLogsToConsole: Invalid type: boolean (expected string)`);
+      expect(stdout).to.contain(`=> .collectTestLogs: Invalid type: string (expected function)`);
     });
   }).timeout(60000);
 
@@ -369,6 +377,7 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`[cypress-terminal-report] Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
       expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
+      expect(stdout).to.contain(`=> .collectTestLogs: Invalid type: string (expected function)`);
       expect(stdout).to.contain(`=> .xhr/printRequestData: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .xhr/printHeaderData: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .xhr/shouldNotBeHere: Additional properties not allowed`);
@@ -387,4 +396,11 @@ describe('cypress-terminal-report', () => {
       });
     });
   }).timeout(90000);
+
+  it('Should collect test logs if plugin configuration added.', async () => {
+    await runTest(commandBase(['collectTestLogs=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`Collected 17 logs for test "All types of logs."`);
+      expect(stdout).to.contain(`last log: cy:command,get\t.breaking-get [filter-out-string],error`);
+    });
+  }).timeout(60000);
 });

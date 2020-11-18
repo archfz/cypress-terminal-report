@@ -84,6 +84,12 @@ logs will be printed to console for successful tests as well as failing ones.
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to file(s) for successful tests as well as failing ones.
 
+#### `options.collectTestLogs`
+([spec, test, state], [type, message, severity][]) => void; default: undefined;
+Callback to collect each test case's logs after its run.
+The first argument contains information about the test: the `spec` (test file), `test` (test title) and `state` (test state) fields.
+The second argument contains the test logs. 'type' is from the same list as for the `collectTypes` support install option (see below). Severity can be of ['', 'error', 'warning'].
+
 <br/>
 
 ### _Options for the support install_
@@ -98,6 +104,12 @@ contain all types of commands that are not specially treated.
 #### `options.filterLog` 
 null | ([type, message, severity]) => boolean; default: undefined; 
 Callback to filter logs manually.
+The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
+
+#### `options.collectTestLogs`
+(context, [type, message, severity][]) => void; default: undefined;
+Callback to collect each test case's logs after its run.
+The context is Mocha's `this` value in its `afterEach` hook, containing `test`, `currentTest` etc. fields.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.xhr.printHeaderData` 
