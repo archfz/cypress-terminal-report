@@ -19,6 +19,12 @@ interface SupportOptions {
     | NonNullable<SupportOptions['collectTypes']>[number]
     | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => boolean);
 
+  /**
+   * Callback to collect each test case's logs after its run.
+   * @default undefined
+   */
+  collectTestLogs?: (mochaInstance: any, messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]) => void;
+
   xhr?: {
     /**
      * Whether to print header data for XHR requests.

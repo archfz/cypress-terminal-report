@@ -61,6 +61,12 @@ interface PluginOptions {
    * @default 'onFail'
    */
   printLogsToFile?: 'onFail' | 'always' | 'never';
+
+  /**
+   * Callback to collect each test case's logs after its run.
+   * @default undefined
+   */
+  collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]) => void;
 }
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: PluginOptions): void;
