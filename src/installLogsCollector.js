@@ -44,19 +44,28 @@ function installLogsCollector(config = {}) {
     logs.push(entry);
   };
 
-  const formatXhrLog = (status, reqHeaders, reqBody, respHeaders, respBody) => {
-    let logMessage = `Status: ${status}\n`;
-    if (collectRequestData) {
-      if (collectHeaderData) {
-        logMessage += `Request headers: ${reqHeaders}\n`;
+  const formatXhrLog = (xhrLog) => {
+    let logMessage = '';
+    if (xhrLog.response) {
+      logMessage += `Status: ${xhrLog.response.status}\n`;
+    } else if (xhrLog.networkError) {
+      logMessage += `Network error: ${xhrLog.networkError}\n`;
+    }
+    if (xhrLog.request) {
+      if (collectRequestData) {
+        if (collectHeaderData) {
+          logMessage += `Request headers: ${xhrLog.request.headers}\n`;
+        }
+        logMessage += `Request body: ${xhrLog.request.body}\n`;
       }
-      logMessage += `Request body: ${reqBody}\n`;
     }
-    if (collectHeaderData) {
-      logMessage += `Response headers: ${respHeaders}\n`;
+    if (xhrLog.response) {
+      if (collectHeaderData) {
+        logMessage += `Response headers: ${xhrLog.response.headers}\n`;
+      }
+      logMessage += `Response body: ${xhrLog.response.body}`;
     }
-    logMessage += `Response body: ${respBody}`;
-    return logMessage;
+    return logMessage.trimEnd();
   };
 
   collectBrowserConsoleLogs(addLog, collectTypes);
@@ -77,7 +86,7 @@ function installLogsCollector(config = {}) {
     collectCypressGeneralCommandLog(addLog);
   }
 
-  Cypress.on('log:changed', options => {
+  Cypress.on('log:changed', (options) => {
     if (options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
       logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
     }
@@ -91,12 +100,16 @@ function installLogsCollector(config = {}) {
   afterEach(function () {
     // Need to wait otherwise some last commands get omitted from logs.
     cy.wait(3, {log: false});
-    cy.task(CONSTANTS.TASK_NAME, {
-      spec: this.test.file,
-      test: this.currentTest.title,
-      messages: logs,
-      state: this.currentTest.state
-    }, {log: false});
+    cy.task(
+      CONSTANTS.TASK_NAME,
+      {
+        spec: this.test.file,
+        test: this.currentTest.title,
+        messages: logs,
+        state: this.currentTest.state,
+      },
+      {log: false}
+    );
   });
 
   after(function () {
@@ -108,15 +121,21 @@ function installLogsCollector(config = {}) {
 function validateConfig(config) {
   before(function () {
     if (typeof config.printLogs === 'string') {
-      cy.log("cypress-terminal-report: WARN! printLogs " +
-        "configuration has been removed. Please check changelog in readme.");
+      cy.log(
+        'cypress-terminal-report: WARN! printLogs ' +
+          'configuration has been removed. Please check changelog in readme.'
+      );
     }
   });
 
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {
-    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
+    throw new Error(
+      `[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(
+        result.errors
+      )}`
+    );
   }
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
@@ -136,7 +155,10 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
         return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
       }
 
-      if ((arg instanceof appWindow.Error || arg instanceof Error) && typeof arg.stack === "string") {
+      if (
+        (arg instanceof appWindow.Error || arg instanceof Error) &&
+        typeof arg.stack === 'string'
+      ) {
         let stack = arg.stack;
         if (stack.indexOf(arg.message) !== -1) {
           stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
@@ -190,10 +212,13 @@ function collectCypressLogCommand(addLog) {
 }
 
 function collectCypressXhrLog(addLog) {
-  Cypress.on('log:added', options => {
+  Cypress.on('log:added', (options) => {
     if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
-      let detailMessage = (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
-        options.consoleProps.Method + ' ' + options.consoleProps.URL;
+      let detailMessage =
+        (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
+        options.consoleProps.Method +
+        ' ' +
+        options.consoleProps.URL;
 
       const log = options.message + detailMessage;
       const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
@@ -204,7 +229,52 @@ function collectCypressXhrLog(addLog) {
 
 function collectCypressRequestCommand(addLog, formatXhrLog) {
   const isValidHttpMethod = (str) =>
-    typeof str === 'string' && methods.some(s => str.toLowerCase().includes(s));
+    typeof str === 'string' && methods.some((s) => str.toLowerCase().includes(s));
+
+  const isNetworkError = (e) =>
+    e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+
+  const isStatusCodeFailure = (e) => e.message && e.message.startsWith('`cy.request()` failed on:');
+
+  const parseRequestStatusCodeFailureMessage = (message) => {
+    const responseStart = '\n\nThe response we got was:\n\n';
+    const statusStart = 'Status: ';
+    const headersStart = '\nHeaders: ';
+    const bodyStart = '\nBody: ';
+    if (
+      message.indexOf(responseStart) === -1 ||
+      message.indexOf(statusStart) === -1 ||
+      message.indexOf(headersStart) === -1 ||
+      message.indexOf(bodyStart) === -1
+    ) {
+      return {status: 'Cannot parse cy.request status code failure message!'};
+    }
+    const response = message.substr(message.indexOf(responseStart) + responseStart.length);
+    const statusStr = response.substr(
+      response.indexOf(statusStart) + statusStart.length,
+      response.indexOf(headersStart) - (response.indexOf(statusStart) + statusStart.length)
+    );
+    const headersStr = response.substr(
+      response.indexOf(headersStart) + headersStart.length,
+      response.indexOf(bodyStart) - (response.indexOf(headersStart) + headersStart.length)
+    );
+    const bodyStr = response.substr(response.indexOf(bodyStart) + bodyStart.length);
+    return {status: statusStr, headers: headersStr, body: bodyStr.trimEnd()};
+  };
+
+  const parseRequestNetworkError = (message) => {
+    const errorPartStart = 'We received this error at the network level:\n\n  > ';
+    const errorPrefix = 'Error: ';
+    if (message.indexOf(errorPartStart) === -1) {
+      return {status: 'Cannot parse cy.request network error message!'};
+    }
+    let fromError = message.substr(message.indexOf(errorPartStart) + errorPartStart.length);
+    let errorPart = fromError.substr(0, fromError.indexOf('\n'));
+    if (errorPart.startsWith(errorPrefix)) {
+      return errorPart.substr(errorPrefix.length).trim();
+    }
+    return errorPart.trim();
+  };
 
   Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
     let log;
@@ -224,31 +294,53 @@ function collectCypressRequestCommand(addLog, formatXhrLog) {
       log = `${args[0]}`;
     }
 
-    const response = await originalFn(...args).catch(async e => {
-      let xhr = e.onFail().toJSON().consoleProps.Yielded;
-      let body = xhr ? xhr.body : {};
-      let headers = xhr ? xhr.headers : {};
-      let status = xhr ? xhr.status : {};
-
-      log += `\n` + formatXhrLog(
-        status,
-        await xhrPartParse(requestHeaders),
-        await xhrPartParse(requestBody),
-        await xhrPartParse(headers),
-        await xhrPartParse(body),
-      );
+    const response = await originalFn(...args).catch(async (e) => {
+      if (isNetworkError(e)) {
+        log +=
+          `\n` +
+          formatXhrLog({
+            request: {
+              headers: await xhrPartParse(requestHeaders),
+              body: await xhrPartParse(requestBody),
+            },
+            networkError: parseRequestNetworkError(e.message),
+          });
+      } else if (isStatusCodeFailure(e)) {
+        const xhr = parseRequestStatusCodeFailureMessage(e.message);
+        log +=
+          `\n` +
+          formatXhrLog({
+            request: {
+              headers: await xhrPartParse(requestHeaders),
+              body: await xhrPartParse(requestBody),
+            },
+            response: {
+              status: xhr.status,
+              headers: await xhrPartParse(xhr.headers),
+              body: await xhrPartParse(xhr.body),
+            },
+          });
+      } else {
+        log += `\n` + 'Cannot parse cy.request error content!';
+      }
 
       addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
       throw e;
     });
 
-    log += `\n` + formatXhrLog(
-      response.status,
-      await xhrPartParse(requestHeaders),
-      await xhrPartParse(requestBody),
-      await xhrPartParse(response.headers),
-      await xhrPartParse(response.body),
-    );
+    log +=
+      `\n` +
+      formatXhrLog({
+        request: {
+          headers: await xhrPartParse(requestHeaders),
+          body: await xhrPartParse(requestBody),
+        },
+        response: {
+          status: response.status,
+          headers: await xhrPartParse(response.headers),
+          body: await xhrPartParse(response.body),
+        },
+      });
 
     addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
     return response;
@@ -269,30 +361,30 @@ function collectCypressRouteCommand(addLog, formatXhrLog) {
 
       const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
       let logMessage = `(${route.alias}) ${xhr.method} ${xhr.url}\n`;
-      logMessage += formatXhrLog(
-        xhr.status,
-        await xhrPartParse(xhr.request.headers),
-        await xhrPartParse(xhr.request.body),
-        await xhrPartParse(xhr.response.headers),
-        await xhrPartParse(xhr.response.body),
-      );
+      logMessage += formatXhrLog({
+        request: {
+          headers: await xhrPartParse(xhr.request.headers),
+          body: await xhrPartParse(xhr.request.body),
+        },
+        response: {
+          status: xhr.status,
+          headers: await xhrPartParse(xhr.response.headers),
+          body: await xhrPartParse(xhr.response.body),
+        },
+      });
 
-      addLog([
-        LOG_TYPE.CYPRESS_ROUTE,
-        logMessage,
-        severity
-      ]);
+      addLog([LOG_TYPE.CYPRESS_ROUTE, logMessage, severity]);
     };
     originalFn(options);
   });
 }
 
 function collectCypressGeneralCommandLog(addLog) {
-  Cypress.on('log:added', options => {
+  Cypress.on('log:added', (options) => {
     if (
       options.instrument === 'command' &&
       options.consoleProps &&
-      !(['xhr', 'log', 'request'].includes(options.name)) &&
+      !['xhr', 'log', 'request'].includes(options.name) &&
       !(options.name === 'task' && options.message.match(/ctrLogMessages/))
     ) {
       const log = options.name + '\t' + options.message;
