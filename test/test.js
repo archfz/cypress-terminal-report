@@ -68,6 +68,8 @@ const osSpecificEol = (str) =>
 const clean = (str) =>
   // Clean error trace as it changes from test to test.
   str.replace(/at [^(]+ \([^)]+\)/g, '')
+    // Replace durations with constant values as they vary all the time
+    .replace(/\([\d.]+ m?s\)/g, '(X ms)')
     // Clean new line of white space at the end.
     .replace(/\s+$/, '')
     // Normalize line endings across os.
@@ -134,8 +136,8 @@ describe('cypress-terminal-report', () => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/commands/network-requests\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  get\t.network-post\n`);
-      expect(stdout).to.contain(
-        `cy:xhr ${ICONS.info}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n`
+      expect(clean(stdout)).to.contain(
+        `cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\n${PADDING}Status: 404 - Not Found\n`
       );
       // cy.route logs.
       expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1\n`);
@@ -223,6 +225,24 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`\n${PADDING}  "test-header": "data",\n${PADDING}  "vary": "Accept-Encoding"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
       expect(stdout).to.contain(`POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "vary": "Accept-Encoding",\n`);
       expect(stdout).to.contain(`${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
+    });
+  }).timeout(60000);
+
+  it('Should only log XHR response body for non-successful requests not handled by cy.route.', async () => {
+    await runTest(commandBase([], ['xhrTypes.spec.js']), (error, stdout, stderr) => {
+      const cleanStdout = clean(stdout);
+      expect(cleanStdout).to.contain(
+        `cy:xhr ${ICONS.info}  GET https://jsonplaceholder.cypress.io/comments/1 (X ms)\n${PADDING}Status: 200 - OK\n      cy:command`,
+        'success XHR log should not contain response body'
+      );
+      expect(cleanStdout).to.contain(
+        `cy:xhr ${ICONS.warning}  GET https://www.mocky.io/v2/5ec993803000009700a6ce1f (X ms)\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: { "status": "Wrong!","data" : {"corpo" : "corpo da resposta","titulo" : "titulo da resposta"\n${PADDING}}\n${PADDING}}\n`,
+        'non-stubbed non-success XHR log should contain response body'
+      );
+      expect(cleanStdout).to.contain(
+        `cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\n${PADDING}Status: 403 - Forbidden\n        cy:route`,
+        'stubbed XHR log should not contain response body'
+      )
     });
   }).timeout(60000);
 

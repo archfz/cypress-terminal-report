@@ -30,7 +30,8 @@ function installLogsCollector(config = {}) {
 
   let logs = [];
   let logsChainId = {};
-  const addLog = (entry, id) => {
+  let xhrIdsOfLoggedResponses = [];
+  const addLog = (entry, id, xhrIdOfLoggedResponse) => {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
     if (config.filterLog && !config.filterLog(entry)) {
@@ -40,9 +41,22 @@ function installLogsCollector(config = {}) {
     if (id) {
       logsChainId[id] = logs.length;
     }
+    if (xhrIdOfLoggedResponse) {
+      xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
+    }
 
     logs.push(entry);
   };
+
+  const updateLog = (log, severity, id) => {
+    const existingLog = logsChainId[id] && logs[logsChainId[id]];
+    if (existingLog) {
+      existingLog[1] = log;
+      existingLog[2] = severity;
+    }
+  };
+
+  const hasXhrResponseBeenLogged = (xhrId) => xhrIdsOfLoggedResponses.includes(xhrId);
 
   const formatXhrLog = (xhrLog) => {
     let logMessage = '';
@@ -74,7 +88,7 @@ function installLogsCollector(config = {}) {
     collectCypressLogCommand(addLog);
   }
   if (collectTypes.includes(LOG_TYPE.CYPRESS_XHR)) {
-    collectCypressXhrLog(addLog);
+    collectCypressXhrLog(addLog, updateLog, hasXhrResponseBeenLogged);
   }
   if (collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
     collectCypressRequestCommand(addLog, formatXhrLog);
@@ -93,6 +107,7 @@ function installLogsCollector(config = {}) {
   });
 
   Cypress.mocha.getRunner().on('test', () => {
+    xhrIdsOfLoggedResponses = [];
     logsChainId = {};
     logs = [];
   });
@@ -219,18 +234,39 @@ function collectCypressLogCommand(addLog) {
   });
 }
 
-function collectCypressXhrLog(addLog) {
+function collectCypressXhrLog(addLog, updateLog, hasXhrResponseBeenLogged) {
+  const formatXhr = (options) => options.message +
+    (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
+    options.consoleProps.Method + ' ' + options.consoleProps.URL;
+
+  const formatDuration = (durationInMs) =>
+    durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
+
   Cypress.on('log:added', (options) => {
     if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
-      let detailMessage =
-        (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
-        options.consoleProps.Method +
-        ' ' +
-        options.consoleProps.URL;
-
-      const log = options.message + detailMessage;
+      const log = formatXhr(options);
       const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
       addLog([LOG_TYPE.CYPRESS_XHR, log, severity], options.id);
+    }
+  });
+
+  Cypress.on('log:changed', async (options) => {
+    if (
+      options.instrument === 'command' &&
+      options.name === 'xhr' &&
+      options.consoleProps &&
+      options.consoleProps.Status
+    ) {
+      const [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
+      const isSuccess = statusCode && statusCode[0] === '2';
+      const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
+      let log = formatXhr(options) +
+        ` (${formatDuration(options.consoleProps.Duration)})` +
+        `\nStatus: ${statusCode} - ${statusText}`;
+      if (!isSuccess && !hasXhrResponseBeenLogged(options.consoleProps.XHR.id)) {
+        log += `\nResponse body: ${await xhrPartParse(options.consoleProps.Response.body)}`;
+      }
+      updateLog(log, severity, options.id);
     }
   });
 }
@@ -381,7 +417,7 @@ function collectCypressRouteCommand(addLog, formatXhrLog) {
         },
       });
 
-      addLog([LOG_TYPE.CYPRESS_ROUTE, logMessage, severity]);
+      addLog([LOG_TYPE.CYPRESS_ROUTE, logMessage, severity], null, xhr.id);
     };
     originalFn(options);
   });
