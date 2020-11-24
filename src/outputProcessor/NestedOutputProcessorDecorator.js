@@ -21,7 +21,7 @@ module.exports = class NestedOutputProcessorDecorator {
   write(allMessages) {
     Object.entries(allMessages).forEach(([spec, messages]) => {
       const relativeSpec = path.relative(this.specRoot, spec);
-      const outPath = path.join(this.root, relativeSpec.replace(/\..+$/, `.${this.ext}`));
+      const outPath = path.join(this.root, relativeSpec.replace(new RegExp(path.extname(relativeSpec) + '$'), `.${this.ext}`));
       const processor = this.decoratedFactory(outPath);
 
       this.decoratedProcessors.push(processor);
