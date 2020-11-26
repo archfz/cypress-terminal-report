@@ -118,7 +118,7 @@ cypress/integration/requests.spec.js:
 
     GET should give 500 response status
         cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
-                        Status: 500 - Server Error
+                        Status: 500 - Internal Server Error
                         Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
 
     POST should give 400 response status

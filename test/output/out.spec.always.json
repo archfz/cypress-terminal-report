@@ -261,7 +261,7 @@
       {
         "type": "cy:request",
         "severity": "error",
-        "message": "GET http://www.mocky.io/v2/5ec993353000007900a6ce1e\nStatus: 500 - Server Error\nResponse body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API."
+        "message": "GET http://www.mocky.io/v2/5ec993353000007900a6ce1e\nStatus: 500 - Internal Server Error\nResponse body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API."
       }
     ],
     "POST should give 400 response status": [

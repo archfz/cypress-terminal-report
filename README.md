@@ -234,7 +234,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 ## Release Notes
 
 - Fix issue in nested file output not cleaning up existing files. 
-- Update to cypress 5.6.0 in tests.
+- Update to cypress 6.0.0 in tests and fix expectations.
 
 #### 2.3.0
 
