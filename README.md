@@ -233,6 +233,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix issue in nested file output not cleaning up existing files. 
+- Update to cypress 5.6.0 in tests.
+
 #### 2.3.0
 
 - Added support for custom log collector function on both [nodejs](#optionscollecttestlogs-1) and [browser](#optionscollecttestlogs-2) sides. [issue](https://github.com/archfz/cypress-terminal-report/issues/56) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/59) by [peruukki](https://github.com/peruukki)

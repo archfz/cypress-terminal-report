@@ -64,12 +64,12 @@
       {
         "type": "cy:route",
         "severity": "success",
-        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201\nResponse body: {\n  \"name\": \"Using POST in cy.route()\",\n  \"email\": \"hello@cypress.io\",\n  \"body\": \"You can change the method used for cy.route() to be GET, POST, PUT, PATCH, or DELETE\",\n  \"id\": 501\n}"
+        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201\nResponse body: {\n  \"name\": \"Using POST in cy.intercept()\",\n  \"email\": \"hello@cypress.io\",\n  \"body\": \"You can change the method used for cy.intercept() to be GET, POST, PUT, PATCH, or DELETE\",\n  \"id\": 501\n}"
       },
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **name=Using+POST+in+cy.route()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.route()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**"
+        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**"
       },
       {
         "type": "cy:command",
@@ -84,7 +84,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.route()**"
+        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.intercept()**"
       },
       {
         "type": "cy:command",

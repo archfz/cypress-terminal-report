@@ -65,7 +65,7 @@ module.exports = (on, config) => {
   if (config.env.printLogsToFileNever == '1') {
     options.printLogsToFile = 'never';
   }
-  if (config.env.collectTestLogs == '1') {
+  if (config.env.collectTestLogsPlugin == '1') {
     options.collectTestLogs = (context, logs) =>
       console.log(`Collected ${logs.length} logs for test "${context.test}", last log: ${logs[logs.length - 1]}`);
   }

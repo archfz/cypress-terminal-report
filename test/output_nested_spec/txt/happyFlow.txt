@@ -23,15 +23,15 @@ cypress/integration/happyFlow.spec.js:
           cy:route (K): (postComment) POST https://jsonplaceholder.cypress.io/comments
                         Status: 201
                         Response body: {
-                          "name": "Using POST in cy.route()",
+                          "name": "Using POST in cy.intercept()",
                           "email": "hello@cypress.io",
-                          "body": "You can change the method used for cy.route() to be GET, POST, PUT, PATCH, or DELETE",
+                          "body": "You can change the method used for cy.intercept() to be GET, POST, PUT, PATCH, or DELETE",
                           "id": 501
                         }
-        cy:command (K): assert	expected **name=Using+POST+in+cy.route()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.route()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**
+        cy:command (K): assert	expected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**
         cy:command (K): assert	expected **{ Object (Content-Type, Accept) }** to have property **Content-Type**
         cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name**
-        cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.route()**
+        cy:command (K): assert	expected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.intercept()**
         cy:command (K): window
         cons:error (X): null,
                         undefined,

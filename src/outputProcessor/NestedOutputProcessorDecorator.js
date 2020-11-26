@@ -13,9 +13,7 @@ module.exports = class NestedOutputProcessorDecorator {
   }
 
   initialize() {
-    if (fs.existsSync(this.root)) {
-      fs.removeSync(this.root);
-    }
+    /* noop */
   }
 
   write(allMessages) {
@@ -25,6 +23,7 @@ module.exports = class NestedOutputProcessorDecorator {
       const processor = this.decoratedFactory(outPath);
 
       this.decoratedProcessors.push(processor);
+      processor.initialize();
       processor.write({[spec]: messages});
     });
   }
