@@ -2,6 +2,7 @@ const {exec} = require('child_process');
 const {expect} = require('chai');
 const chalk = require('chalk');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const path = require('path');
 const os = require('os');
 const glob = require('glob');
@@ -66,21 +67,25 @@ const osSpecificEol = (str) =>
 
 const clean = (str) =>
   // Clean error trace as it changes from test to test.
-  str.replace(/at [^(]+ \([^)]+\)/g, '');
+  str.replace(/at [^(]+ \([^)]+\)/g, '')
+    // Clean new line of white space at the end.
+    .replace(/\s+$/, '')
+    // Normalize line endings across os.
+    .replace(/\r\n/g, "\n");
 
 const expectOutFilesMatch = (outputPath, specPath) => {
   const expectedBuffer = fs.readFileSync(specPath);
   const valueBuffer = fs.readFileSync(outputPath);
-  let value = clean(valueBuffer.toString().replace(/\s+$/, ''));
+  let value = clean(valueBuffer.toString());
   if (path.sep === '\\') {
     if (outputPath.endsWith('json')) {
-      value = value.replace('cypress\\\\integration\\\\', 'cypress/integration/');
-    } else {
-      value = value.replace('cypress\\integration\\', 'cypress/integration/');
+      value = value.replace(/cypress\\\\integration\\\\/g, 'cypress/integration/');
     }
+
+    value = value.replace(/cypress\\integration\\/g, 'cypress/integration/');
   }
 
-  let expected = clean(expectedBuffer.toString().replace(/\s+$/, ''));
+  let expected = clean(expectedBuffer.toString());
   if (outputPath.endsWith('.txt')) {
     expected = osSpecificEol(expected);
   }
@@ -281,7 +286,7 @@ describe('cypress-terminal-report', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     if (fs.existsSync(path.join(outRoot.value, 'not'))) {
-      fs.rmdirSync(path.join(outRoot.value, 'not'), {recursive: true});
+      fsExtra.removeSync(path.join(outRoot.value, 'not'));
     }
 
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
@@ -379,7 +384,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should generate proper nested log output files.', async () => {
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js', 'multiple.dots.in.spec.js'];
     await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
       const specs = glob.sync('./output_nested_spec/**/*', { nodir: true });
       specs.forEach(specFile => {
