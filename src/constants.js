@@ -7,6 +7,7 @@ module.exports = {
     BROWSER_CONSOLE_INFO: 'cons:info',
     BROWSER_CONSOLE_WARN: 'cons:warn',
     BROWSER_CONSOLE_ERROR: 'cons:error',
+    BROWSER_CONSOLE_DEBUG: 'cons:debug',
 
     CYPRESS_LOG: 'cy:log',
     CYPRESS_XHR: 'cy:xhr',

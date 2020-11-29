@@ -22,7 +22,8 @@ const LOG_SYMBOLS = (() => {
       warning: '⚠',
       success: '✔',
       info: 'ⓘ',
-      route: '⛗',
+      debug: 'ⓓ',
+      route: '⛗'
     }
   } else {
     return {
@@ -30,7 +31,8 @@ const LOG_SYMBOLS = (() => {
       warning: '!',
       success: '+',
       info: 'i',
-      route: '~',
+      debug: '%',
+      route: '~'
     }
   }
 })();
@@ -222,6 +224,9 @@ function logToTerminal(messages, options) {
     } else if (type === LOG_TYPES.BROWSER_CONSOLE_ERROR) {
       color = 'red';
       icon = LOG_SYMBOLS.warning;
+    } else if (type === LOG_TYPES.BROWSER_CONSOLE_DEBUG) {
+      color = 'blue';
+      icon = LOG_SYMBOLS.debug;
     } else if (type === LOG_TYPES.BROWSER_CONSOLE_LOG) {
       color = 'white';
       icon = LOG_SYMBOLS.info;

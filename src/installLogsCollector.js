@@ -221,6 +221,9 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
     if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_INFO)) {
       createWrapper('info', LOG_TYPE.BROWSER_CONSOLE_INFO);
     }
+    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_DEBUG)) {
+      createWrapper('debug', LOG_TYPE.BROWSER_CONSOLE_DEBUG);
+    }
     if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_LOG)) {
       createWrapper('log', LOG_TYPE.BROWSER_CONSOLE_LOG);
     }
