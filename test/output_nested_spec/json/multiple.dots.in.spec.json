@@ -1,0 +1,16 @@
+{
+  "cypress/integration/multiple.dots.in.spec.js": {
+    "Multiple dots.": [
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "visit\t/commands/network-requests"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking-wait"
+      }
+    ]
+  }
+}

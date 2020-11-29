@@ -26,7 +26,7 @@ describe('Successful.', () => {
     cy.wait('@postComment').should(xhr => {
       expect(xhr.requestBody).to.include('email');
       expect(xhr.requestHeaders).to.have.property('Content-Type');
-      expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.route()');
+      expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.intercept()');
     });
 
     cy.window().then(w => w.console.error(null, undefined, '', false, () => {}));

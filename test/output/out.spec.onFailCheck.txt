@@ -1,0 +1,4 @@
+cypress/integration/printLogsOnFail.spec.js:
+    Print Logs Fail
+        cy:command (K): visit	/
+        cy:command (X): contains	sserpyc

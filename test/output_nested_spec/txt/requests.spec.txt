@@ -1,0 +1,71 @@
+cypress/integration/requests.spec.js:
+    GET 200
+        cy:request (K): https://jsonplaceholder.cypress.io/todos/1
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 1,
+                          "title": "delectus aut autem",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/2
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 2,
+                          "title": "quis ut nam facilis et officia qui",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/3
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 3,
+                          "title": "fugiat veniam minus",
+                          "completed": false
+                        }
+        cy:command (X): get	.breaking-get
+
+    POST 200
+        cy:request (K): POST https://jsonplaceholder.cypress.io/comments
+                        Status: 201
+                        Response body: {
+                          "id": 501
+                        }
+        cy:command (X): get	.breaking-get
+
+    GET should give 500 response status
+        cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
+                        Status: 500 - Internal Server Error
+                        Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
+
+    POST should give 400 response status
+        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+                        Status: 400 - Bad Request
+                        Response body: {
+                          "status": "Wrong!",
+                          "data": {
+                            "corpo": "corpo da resposta",
+                            "titulo": "titulo da resposta"
+                          }
+                        }
+
+    PUT should fail
+        cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
+                        Status: 404 - Not Found
+                        Response body: {}
+
+    cypress logging is disabled in the request
+        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+                        Status: 400 - Bad Request
+                        Response body: {
+                          "status": "Wrong!",
+                          "data": {
+                            "corpo": "corpo da resposta",
+                            "titulo": "titulo da resposta"
+                          }
+                        }
+
+    Network error
+        cy:request (X): POST http://this.does.not.exist
+                        Network error: getaddrinfo ENOTFOUND this.does.not.exist
