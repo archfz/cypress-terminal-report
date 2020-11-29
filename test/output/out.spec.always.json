@@ -19,7 +19,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -54,7 +54,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments"
+        "message": "POST https://jsonplaceholder.cypress.io/comments (X ms)\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
@@ -178,8 +178,8 @@
       },
       {
         "type": "cy:xhr",
-        "severity": "success",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1"
+        "severity": "warning",
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 404 - Not Found"
       },
       {
         "type": "cy:command",

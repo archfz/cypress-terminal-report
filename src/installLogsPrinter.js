@@ -234,6 +234,7 @@ function logToTerminal(messages, options) {
     } else if (type === LOG_TYPES.CYPRESS_XHR) {
       color = 'green';
       icon = LOG_SYMBOLS.info;
+      trim = options.routeTrimLength || 5000;
     } else if (type === LOG_TYPES.CYPRESS_ROUTE) {
       color = 'green';
       icon = LOG_SYMBOLS.route;

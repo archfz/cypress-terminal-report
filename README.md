@@ -60,7 +60,7 @@ integer; default: 800; Max length of cy.log and console.warn/console.error.
 integer; default: 800; Max length of cy commands.
 
 #### `options.routeTrimLength`
-integer; default: 5000; Max length of cy.route request data.
+integer; default: 5000; Max length of cy.route, cy.request or XHR data.
 
 #### `options.compactLogs` 
 integer?; default: null; If it is set to a number greater or equal to 0, this amount of logs 
