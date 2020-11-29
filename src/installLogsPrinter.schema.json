@@ -18,13 +18,13 @@
       ]
     },
     "defaultTrimLength": {
-      "type": "string"
+      "type": ["string", "number"]
     },
     "commandTrimLength": {
-      "type": "string"
+      "type": ["string", "number"]
     },
     "routeTrimLength": {
-      "type": "string"
+      "type": ["string", "number"]
     },
     "compactLogs": {
       "type": "number",

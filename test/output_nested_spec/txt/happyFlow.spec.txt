@@ -67,6 +67,8 @@ cypress/integration/happyFlow.spec.js:
                         }
         cy:command (K): window
          cons:info (K): This should console.info appear.
+        cy:command (K): window
+        cons:debug (K): This should console.debug appear.
         cy:command (K): get	.network-put
         cy:command (K): click
             cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)

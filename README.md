@@ -10,6 +10,7 @@ Plugin for cypress that adds better terminal output for easier debugging.
 Prints cy commands, browser console logs, cy.request and cy.route data.
 
 * looks pretty in console
+* logs all commands, requests and browser console logs
 * supports logging to files
 * option between logging always or only on failure
 * options for trimming and compacting logs
@@ -232,6 +233,12 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 2.4.0
+
+- Improved logging of xhr with status code, response data in case of failure and duration. [issue](https://github.com/archfz/cypress-terminal-report/issues/61) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/66) by [peruukki](https://github.com/peruukki)   
+- Added `console.debug` logging support. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/48) by [reynoldsdj](https://github.com/reynoldsdj)
+- Improve config schema for trimming options to allow `number`.
 
 #### 2.3.1
 

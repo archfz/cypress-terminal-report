@@ -41,6 +41,7 @@ describe('Happy flow.', () => {
     cy.window().then((w) => w.console.log('This should console.log appear.'));
     cy.window().then((w) => w.console.log({this: 'Is an object', with: {keys: 12512}}));
     cy.window().then((w) => w.console.info('This should console.info appear.'));
+    cy.window().then((w) => w.console.debug('This should console.debug appear.'));
 
     // Stub a response to PUT comments/ ****
     cy.route({

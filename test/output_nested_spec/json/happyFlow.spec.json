@@ -169,6 +169,16 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "window\t"
+      },
+      {
+        "type": "cons:debug",
+        "severity": "success",
+        "message": "This should console.debug appear."
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "get\t.network-put"
       },
       {

@@ -15,9 +15,9 @@ if (process.platform === 'win32') {
 
 const ICONS = (() => {
   if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
-    return {error: '✘', warning: '⚠', success: '✔', info: 'ⓘ', route: '⛗'};
+    return {error: '✘', warning: '⚠', success: '✔', info: 'ⓘ', route: '⛗', debug: 'ⓓ'};
   } else {
-    return {error: 'x', warning: '!', success: '+', info: 'i', route: '~'};
+    return {error: 'x', warning: '!', success: '+', info: 'i', route: '~', debug: '%'};
   }
 })();
 
@@ -154,6 +154,7 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "a": "b"\n${PADDING}},\n${PADDING}{\n${PADDING}  "c": "d"\n${PADDING}},\n${PADDING}10,\n${PADDING}string\n`);
       expect(stdout).to.contain(`cons:error ${ICONS.error}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
       expect(stdout).to.contain(`cons:info ${ICONS.info}  This should console.info appear.`);
+      expect(stdout).to.contain(`cons:debug ${ICONS.debug}  This should console.debug appear.`);
       // log failed command
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-get\n`);
     });

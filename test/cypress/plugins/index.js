@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = (on, config) => {
-  let options = {};
+  let options = {
+    defaultTrimLength: 800,
+  };
 
   if (config.env.generateOutput == "1") {
     options.outputRoot = config.projectRoot + '/output/';
