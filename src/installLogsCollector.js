@@ -28,6 +28,7 @@ function installLogsCollector(config = {}) {
   const collectRequestData = config.xhr && config.xhr.printRequestData;
   const collectHeaderData = config.xhr && config.xhr.printHeaderData;
 
+  let afterHookIndex = 0;
   let logs = [];
   let logsChainId = {};
   let xhrIdsOfLoggedResponses = [];
@@ -45,6 +46,7 @@ function installLogsCollector(config = {}) {
       xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
     }
 
+    debugger;
     logs.push(entry);
   };
 
@@ -106,7 +108,16 @@ function installLogsCollector(config = {}) {
     }
   });
 
-  Cypress.mocha.getRunner().on('test', () => {
+  Cypress.mocha.getRunner().on('test', function() {
+    cy.task(
+      CONSTANTS.TASK_NAME,
+      {
+        //spec: this.test.file, //will we need this?
+        test: "before",
+        messages: logs.slice(1), // is trimming the very first element enough?
+      },                         // or should I even trim anything from here?
+      {log: false}
+    );
     xhrIdsOfLoggedResponses = [];
     logsChainId = {};
     logs = [];
@@ -130,11 +141,23 @@ function installLogsCollector(config = {}) {
       },
       {log: false}
     );
+    afterHookIndex = logs.length;
   });
 
   after(function () {
     // Need to wait otherwise some last commands get omitted from logs.
+    debugger;
     cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
+
+    cy.task(
+      CONSTANTS.TASK_NAME,
+      {
+        //spec: this.test.file, //do we need this?
+        test: "after",
+        messages: logs.slice(afterHookIndex), // how do I get only the after stuff in here
+      },
+      {log: false}
+    );
   });
 }
 
@@ -233,6 +256,7 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
 function collectCypressLogCommand(addLog) {
   Cypress.Commands.overwrite('log', (subject, ...args) => {
     addLog([LOG_TYPE.CYPRESS_LOG, args.join(' ')]);
+    debugger;
     subject(...args);
   });
 }
