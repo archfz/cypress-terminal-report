@@ -46,8 +46,9 @@ function enableFetchWorkaround() {
 
   before(() => {
     console.info('Load fetch XHR polyfill.');
-    cy.request('https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js').then(response => {
-      polyfill = response.body;
+    cy.request({url : 'https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js', method : 'GET', log : false})
+      .then(response => {
+        polyfill = response.body;
     });
   });
 

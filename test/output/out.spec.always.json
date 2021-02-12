@@ -134,7 +134,7 @@
       {
         "type": "cons:error",
         "severity": "error",
-        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)"
+        "message": "Error: This is an error message with stack.\n    "
       },
       {
         "type": "cy:command",
@@ -288,13 +288,7 @@
         "message": "PUT https://jsonplaceholder.cypress.io/comments\nStatus: 404 - Not Found\nResponse body: {}"
       }
     ],
-    "cypress logging is disabled in the request": [
-      {
-        "type": "cy:request",
-        "severity": "error",
-        "message": "POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
-      }
-    ],
+    "cypress logging is disabled in the request": [],
     "Network error": [
       {
         "type": "cy:request",

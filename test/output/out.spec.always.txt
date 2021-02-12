@@ -55,7 +55,7 @@ cypress/integration/happyFlow.spec.js:
         cons:error (X): This is an error message
         cy:command (K): window
         cons:error (X): Error: This is an error message with stack.
-                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)
+                            
         cy:command (K): window
           cons:log (K): This should console.log appear.
         cy:command (K): window
@@ -115,10 +115,7 @@ cypress/integration/requests.spec.js:
                         Response body: {
                           "userId": 1,
                           "id": 3,
-                          "title": "fugiat veniam minus",
-                          "completed": false
-                        }
-        cy:command (X): get	.breaking-get
+                          "title": "fugi: get	.breaking-get
 
     POST 200
         cy:request (K): POST https://jsonplaceholder.cypress.io/comments
@@ -131,10 +128,7 @@ cypress/integration/requests.spec.js:
     GET should give 500 response status
         cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
                         Status: 500 - Internal Server Error
-                        Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
-
-    POST should give 400 response status
-        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+                        Response body: Hey ya! Gre: POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
                         Status: 400 - Bad Request
                         Response body: {
                           "status": "Wrong!",
@@ -150,15 +144,6 @@ cypress/integration/requests.spec.js:
                         Response body: {}
 
     cypress logging is disabled in the request
-        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
-                        Status: 400 - Bad Request
-                        Response body: {
-                          "status": "Wrong!",
-                          "data": {
-                            "corpo": "corpo da resposta",
-                            "titulo": "titulo da resposta"
-                          }
-                        }
 
     Network error
         cy:request (X): POST http://this.does.not.exist

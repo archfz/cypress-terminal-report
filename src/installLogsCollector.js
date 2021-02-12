@@ -28,7 +28,8 @@ function installLogsCollector(config = {}) {
   const collectRequestData = config.xhr && config.xhr.printRequestData;
   const collectHeaderData = config.xhr && config.xhr.printHeaderData;
 
-  let afterHookIndex = 0;
+  let isBeforeLogged = false;
+
   let logs = [];
   let logsChainId = {};
   let xhrIdsOfLoggedResponses = [];
@@ -46,7 +47,6 @@ function installLogsCollector(config = {}) {
       xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
     }
 
-    debugger;
     logs.push(entry);
   };
 
@@ -108,16 +108,23 @@ function installLogsCollector(config = {}) {
     }
   });
 
+  // beforeEach(), doesn't trigger for failed before() hook
   Cypress.mocha.getRunner().on('test', function() {
-    cy.task(
-      CONSTANTS.TASK_NAME,
-      {
-        //spec: this.test.file, //will we need this?
-        test: "before",
-        messages: logs.slice(1), // is trimming the very first element enough?
-      },                         // or should I even trim anything from here?
-      {log: false}
-    );
+    debugger;
+    if (!isBeforeLogged && logs.length !== 0){
+      cy.task(
+        CONSTANTS.TASK_NAME,
+        {
+          spec: this.currentRunnable.invocationDetails.relativeFile,
+          test: "before",
+          messages: logs,
+        },
+        {log: false}
+      );
+
+      isBeforeLogged = true;
+    }
+
     xhrIdsOfLoggedResponses = [];
     logsChainId = {};
     logs = [];
@@ -126,11 +133,11 @@ function installLogsCollector(config = {}) {
   afterEach(function () {
     // Need to wait otherwise some last commands get omitted from logs.
     cy.wait(3, {log: false});
-    
+
     if (config.collectTestLogs) {
       config.collectTestLogs(this, logs);
     }
-    
+
     cy.task(
       CONSTANTS.TASK_NAME,
       {
@@ -141,23 +148,20 @@ function installLogsCollector(config = {}) {
       },
       {log: false}
     );
-    afterHookIndex = logs.length;
+  });
+
+  Cypress.mocha.getRunner().on('suite end', function() {
+    debugger;
+    isBeforeLogged = false;
+
+    xhrIdsOfLoggedResponses = [];
+    logsChainId = {};
+    logs = [];
   });
 
   after(function () {
-    // Need to wait otherwise some last commands get omitted from logs.
-    debugger;
+    // Need to wait otherwise some last commands get omitted from logs?
     cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
-
-    cy.task(
-      CONSTANTS.TASK_NAME,
-      {
-        //spec: this.test.file, //do we need this?
-        test: "after",
-        messages: logs.slice(afterHookIndex), // how do I get only the after stuff in here
-      },
-      {log: false}
-    );
   });
 }
 
@@ -256,7 +260,6 @@ function collectBrowserConsoleLogs(addLog, collectTypes) {
 function collectCypressLogCommand(addLog) {
   Cypress.Commands.overwrite('log', (subject, ...args) => {
     addLog([LOG_TYPE.CYPRESS_LOG, args.join(' ')]);
-    debugger;
     subject(...args);
   });
 }
@@ -348,6 +351,10 @@ function collectCypressRequestCommand(addLog, formatXhrLog) {
   };
 
   Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
+    if (typeof args === 'object' && args !== null && args[0]['log'] === false){
+      return originalFn(...args);
+    }
+
     let log;
     let requestBody;
     let requestHeaders;

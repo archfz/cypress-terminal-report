@@ -84,7 +84,7 @@ function installLogsPrinter(on, options = {}) {
 
       if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
         || options.printLogsToConsole === "always") {
-        logToTerminal(messages, options);
+        logToTerminal(messages, options, data.test);
       }
 
       if (options.collectTestLogs) {
@@ -207,9 +207,12 @@ function compactLogs(logs, keepAroundCount) {
   return compactedLogs;
 }
 
-function logToTerminal(messages, options) {
-  const padType = (type) =>
-    new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - 3, 0)).join(' ') + type + ' ';
+function logToTerminal(messages, options, testName) {
+  const padType = (type, padMinus = 3) =>
+    new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - padMinus, 0)).join(' ') + type + ' ';
+
+  let formattedTestName = chalk["white"]('\n' + padType(testName, 5) + '↴');
+  console.log(formattedTestName);
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
@@ -273,7 +276,7 @@ function logToTerminal(messages, options) {
     console.log(coloredTypeString, processedMessage.replace(/\n/g, '\n' + CONSTANTS.PADDING.LOG));
   });
 
-  console.log('\n\n');
+  console.log();
 }
 
 module.exports = installLogsPrinter;

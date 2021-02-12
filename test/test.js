@@ -131,20 +131,23 @@ describe('cypress-terminal-report', () => {
     }
   });
 
-  it.only('Should print for all the hooks.', async () => {
-    await runTest(commandBase(['printLogsToConsoleAlways=1'], ['tempTestName.spec.js']), (error, stdout, stderr) => {
+  // incomplete and wrong
+  it('Should print for all the hooks, except after.', async () => {
+    await runTest(commandBase(['printLogsToConsoleAlways=1'], ['hooksPrint.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:log ${ICONS.info}  from before`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from beforeEach`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from after`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from afterEach`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from it`);
       expect(stdout).to.contain(`cy:log ${ICONS.info}  from before again`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from beforeEach`);
       expect(stdout).to.contain(`cy:log ${ICONS.info}  from beforeEach again`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from after again`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from afterEach`);
       expect(stdout).to.contain(`cy:log ${ICONS.info}  from afterEach again`);
-      expect(stdout).to.contain(`cy:log ${ICONS.info}  from it again`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from first it`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from first it again`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from second it`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from second it again`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from third it`);
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  from third it again`);
     });
-  }).timeout(0);
+  }).timeout(60000);
 
   it('Should run happy flow.', async () => {
     await runTest(commandBase([], ['happyFlow.spec.js']), (error, stdout, stderr) => {
@@ -177,7 +180,7 @@ describe('cypress-terminal-report', () => {
 
   it('Should logs FETCH API routes.', async () => {
     await runTest(commandBase([], ['apiRoutes.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`(putComment) PUT https://example.cypress.io/comments/10\n`);
+      expect(stdout).to.contain(`(putComment) PUT https://jsonplaceholder.cypress.io/comments/1\n`);
       // cy.route empty body.
       expect(stdout).to.contain(`cy:route ${ICONS.route}`);
       expect(stdout).to.contain(`Status: 200\n`);
@@ -333,7 +336,6 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(90000);
 
-  // will fail
   it('Should print all tests to output files when configured so.', async () => {
     const outRoot = {};
     const testOutputs = {};
@@ -371,7 +373,6 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(90000);
 
-  // will fail
   it('Should not break normal execution.', async () => {
     await runTest(commandBase([], ['successful.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.not.contain(`error`);
