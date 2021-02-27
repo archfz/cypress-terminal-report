@@ -1,6 +1,6 @@
 {
   "cypress/integration/happyFlow.spec.js": {
-    "Happy flow": [
+    "Happy flow. -> Happy flow": [
       {
         "type": "cy:command",
         "severity": "success",
@@ -19,7 +19,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (521 ms)\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -54,7 +54,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments (X ms)\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments (317 ms)\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
@@ -189,7 +189,7 @@
       {
         "type": "cy:xhr",
         "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 404 - Not Found"
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (512 ms)\nStatus: 404 - Not Found"
       },
       {
         "type": "cy:command",

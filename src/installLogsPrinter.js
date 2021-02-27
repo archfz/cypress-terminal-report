@@ -84,7 +84,7 @@ function installLogsPrinter(on, options = {}) {
 
       if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
         || options.printLogsToConsole === "always") {
-        logToTerminal(messages, options);
+        logToTerminal(messages, options, data);
       }
 
       if (options.collectTestLogs) {
@@ -207,9 +207,12 @@ function compactLogs(logs, keepAroundCount) {
   return compactedLogs;
 }
 
-function logToTerminal(messages, options) {
+function logToTerminal(messages, options, data) {
+  const tabLevel = data.level;
+  const isPassed = data.state === 'passed';
+  const padding = CONSTANTS.PADDING.LOG + '  '.repeat(tabLevel - 1);
   const padType = (type) =>
-    new Array(Math.max(CONSTANTS.PADDING.LOG.length - type.length - 3, 0)).join(' ') + type + ' ';
+    new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
@@ -270,10 +273,15 @@ function logToTerminal(messages, options) {
       chalk[color].bold(typeString + icon + ' ') :
       chalk[color](typeString + icon + ' ');
 
-    console.log(coloredTypeString, processedMessage.replace(/\n/g, '\n' + CONSTANTS.PADDING.LOG));
+    console.log(
+      coloredTypeString,
+      processedMessage.replace(/\n/g, '\n' + padding)
+    );
   });
 
-  console.log('\n\n');
+  if (!isPassed) {
+    console.log('\n\n');
+  }
 }
 
 module.exports = installLogsPrinter;

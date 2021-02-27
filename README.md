@@ -234,6 +234,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
+level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
+
 #### 2.4.0
 
 - Improved logging of xhr with status code, response data in case of failure and duration. [issue](https://github.com/archfz/cypress-terminal-report/issues/61) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/66) by [peruukki](https://github.com/peruukki)   

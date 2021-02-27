@@ -1,6 +1,6 @@
 {
   "cypress/integration/multiple.dots.in.spec.js": {
-    "Multiple dots.": [
+    "Multiple dots. -> Multiple dots.": [
       {
         "type": "cy:command",
         "severity": "success",

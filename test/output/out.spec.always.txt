@@ -1,5 +1,5 @@
 cypress/integration/happyFlow.spec.js:
-    Happy flow
+    Happy flow. -> Happy flow
         cy:command (K): visit	/commands/network-requests
         cy:command (K): get	.network-btn
         cy:command (K): click
@@ -85,15 +85,27 @@ cypress/integration/happyFlow.spec.js:
 
 
 
+cypress/integration/mochaContexts.spec.js:
+    main context -> first level test
+        cy:command (X): get	.breaking-get 1
+
+    main context -> second context -> second level test
+        cy:command (X): get	.breaking-get 2
+
+    main context -> second context -> third context -> third level test
+        cy:command (X): get	.breaking-get 3
+
+
+
 cypress/integration/printLogsSuccess.spec.js:
-    Print Logs Success
+    Print Logs Success. -> Print Logs Success
         cy:command (K): visit	/
         cy:command (K): contains	cypress
 
 
 
 cypress/integration/requests.spec.js:
-    GET 200
+    Requests. -> GET 200
         cy:request (K): https://jsonplaceholder.cypress.io/todos/1
                         Status: 200
                         Response body: {
@@ -120,7 +132,7 @@ cypress/integration/requests.spec.js:
                         }
         cy:command (X): get	.breaking-get
 
-    POST 200
+    Requests. -> POST 200
         cy:request (K): POST https://jsonplaceholder.cypress.io/comments
                         Status: 201
                         Response body: {
@@ -128,12 +140,12 @@ cypress/integration/requests.spec.js:
                         }
         cy:command (X): get	.breaking-get
 
-    GET should give 500 response status
+    Requests. -> GET should give 500 response status
         cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
                         Status: 500 - Internal Server Error
                         Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
 
-    POST should give 400 response status
+    Requests. -> POST should give 400 response status
         cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
                         Status: 400 - Bad Request
                         Response body: {
@@ -144,12 +156,12 @@ cypress/integration/requests.spec.js:
                           }
                         }
 
-    PUT should fail
+    Requests. -> PUT should fail
         cy:request (X): PUT https://jsonplaceholder.cypress.io/comments
                         Status: 404 - Not Found
                         Response body: {}
 
-    cypress logging is disabled in the request
+    Requests. -> cypress logging is disabled in the request
         cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
                         Status: 400 - Bad Request
                         Response body: {
@@ -160,6 +172,7 @@ cypress/integration/requests.spec.js:
                           }
                         }
 
-    Network error
+    Requests. -> Network error
         cy:request (X): POST http://this.does.not.exist
                         Network error: getaddrinfo ENOTFOUND this.does.not.exist
+

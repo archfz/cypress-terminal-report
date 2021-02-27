@@ -92,7 +92,7 @@ const expectOutFilesMatch = (outputPath, specPath) => {
     expected = osSpecificEol(expected);
   }
 
-  expect(clean(value), `Check ${outputPath} matched spec.`).to.eq(clean(expected));
+  expect(clean(value), `Check ${outputPath} matched ${specPath}.`).to.eq(clean(expected));
 }
 
 const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, specExtName) => {
@@ -323,7 +323,7 @@ describe('cypress-terminal-report', () => {
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
+    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js', 'mochaContexts.spec.js'];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
@@ -427,6 +427,14 @@ describe('cypress-terminal-report', () => {
     await runTest(commandBase(['collectTestLogsPlugin=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Collected 17 logs for test "All types of logs."`);
       expect(stdout).to.contain(`last log: cy:command,get\t.breaking-get [filter-out-string],error`);
+    });
+  }).timeout(60000);
+
+  it('Should display correctly in console with multiple contexts.', async () => {
+    await runTest(commandBase([], ['mochaContexts.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`\n      cy:command ${ICONS.error}  get\t.breaking-get 1\n`);
+      expect(stdout).to.contain(`\n        cy:command ${ICONS.error}  get\t.breaking-get 2\n`);
+      expect(stdout).to.contain(`\n          cy:command ${ICONS.error}  get\t.breaking-get 3\n`);
     });
   }).timeout(60000);
 });

@@ -1,4 +1,4 @@
 cypress/integration/printLogsOnFail.spec.js:
-    Print Logs Fail
+    Print Logs onFail prints only failing tests. -> Print Logs Fail
         cy:command (K): visit	/
         cy:command (X): contains	sserpyc

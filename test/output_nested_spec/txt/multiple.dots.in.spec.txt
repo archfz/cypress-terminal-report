@@ -1,5 +1,5 @@
 cypress/integration/multiple.dots.in.spec.js:
-    Multiple dots.
+    Multiple dots. -> Multiple dots.
         cy:command (K): visit	/commands/network-requests
         cy:command (X): get	.breaking-wait
 

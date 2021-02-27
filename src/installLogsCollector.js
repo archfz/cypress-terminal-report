@@ -101,7 +101,7 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('log:changed', (options) => {
-    if (options.state === 'failed' && logsChainId[options.id] && logs[logsChainId[options.id]]) {
+    if (options.state === 'failed' && logsChainId[options.id] !== undefined && logs[logsChainId[options.id]]) {
       logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
     }
   });
@@ -113,23 +113,35 @@ function installLogsCollector(config = {}) {
   });
 
   afterEach(function () {
-    // Need to wait otherwise some last commands get omitted from logs.
-    cy.wait(3, {log: false});
-    
     if (config.collectTestLogs) {
       config.collectTestLogs(this, logs);
     }
-    
-    cy.task(
-      CONSTANTS.TASK_NAME,
-      {
-        spec: this.test.file,
-        test: this.currentTest.title,
-        messages: logs,
-        state: this.currentTest.state,
-      },
-      {log: false}
-    );
+
+    let testState = this.currentTest.state;
+    let testTitle = this.currentTest.title;
+    let testLevel = 0;
+
+    let parent = this.currentTest.parent;
+    while (parent && parent.title) {
+      testTitle = `${parent.title} -> ${testTitle}`
+      parent = parent.parent;
+      ++testLevel;
+    }
+
+    // Need to wait otherwise some last commands get omitted from logs.
+    cy.wait(3, {log: false}).then(() => {
+      cy.task(
+        CONSTANTS.TASK_NAME,
+        {
+          spec: this.test.file,
+          test: testTitle,
+          messages: logs,
+          state: testState,
+          level: testLevel,
+        },
+        {log: false}
+      );
+    });
   });
 
   after(function () {

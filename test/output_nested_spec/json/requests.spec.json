@@ -1,6 +1,6 @@
 {
   "cypress/integration/requests.spec.js": {
-    "GET 200": [
+    "Requests. -> GET 200": [
       {
         "type": "cy:request",
         "severity": "success",
@@ -22,7 +22,7 @@
         "message": "get\t.breaking-get"
       }
     ],
-    "POST 200": [
+    "Requests. -> POST 200": [
       {
         "type": "cy:request",
         "severity": "success",
@@ -34,35 +34,35 @@
         "message": "get\t.breaking-get"
       }
     ],
-    "GET should give 500 response status": [
+    "Requests. -> GET should give 500 response status": [
       {
         "type": "cy:request",
         "severity": "error",
         "message": "GET http://www.mocky.io/v2/5ec993353000007900a6ce1e\nStatus: 500 - Internal Server Error\nResponse body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API."
       }
     ],
-    "POST should give 400 response status": [
+    "Requests. -> POST should give 400 response status": [
       {
         "type": "cy:request",
         "severity": "error",
         "message": "POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
       }
     ],
-    "PUT should fail": [
+    "Requests. -> PUT should fail": [
       {
         "type": "cy:request",
         "severity": "error",
         "message": "PUT https://jsonplaceholder.cypress.io/comments\nStatus: 404 - Not Found\nResponse body: {}"
       }
     ],
-    "cypress logging is disabled in the request": [
+    "Requests. -> cypress logging is disabled in the request": [
       {
         "type": "cy:request",
         "severity": "error",
         "message": "POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
       }
     ],
-    "Network error": [
+    "Requests. -> Network error": [
       {
         "type": "cy:request",
         "severity": "error",
