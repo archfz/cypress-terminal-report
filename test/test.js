@@ -301,6 +301,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  // Tests in general the log formatting in files.
   it('Should generate proper log output files, and print only failing ones if config is on default.', async () => {
     const outRoot = {};
     const testOutputs = {};
@@ -310,7 +311,12 @@ describe('cypress-terminal-report', () => {
       fsExtra.removeSync(path.join(outRoot.value, 'not'));
     }
 
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
+    const specFiles = [
+      'requests.spec.js',
+      'happyFlow.spec.js',
+      'printLogsSuccess.spec.js',
+      'beforeLogs.spec.js',
+    ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
       testOutputs.value.push(path.join('not', 'existing', 'path', 'out.txt'));
@@ -323,7 +329,13 @@ describe('cypress-terminal-report', () => {
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js', 'mochaContexts.spec.js'];
+    const specFiles = [
+      'requests.spec.js',
+      'happyFlow.spec.js',
+      'printLogsSuccess.spec.js',
+      'mochaContexts.spec.js',
+      'beforeLogs.spec.js',
+    ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
@@ -435,6 +447,20 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`\n      cy:command ${ICONS.error}  get\t.breaking-get 1\n`);
       expect(stdout).to.contain(`\n        cy:command ${ICONS.error}  get\t.breaking-get 2\n`);
       expect(stdout).to.contain(`\n          cy:command ${ICONS.error}  get\t.breaking-get 3\n`);
+    });
+  }).timeout(60000);
+
+  it('Should display logs from before hooks if they fail.', async () => {
+    await runTest(commandBase([], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`1) "before all" hook for "the test"\n          cy:log ${ICONS.info}  some before command\n      cy:command ${ICONS.error}  get\t.breaking.get`);
+      expect(stdout).to.contain(`  nested before fails\n    nested context\n      3) "before all" hook for "the test"\n            cy:log ${ICONS.info}  some before command in nested\n        cy:command ${ICONS.error}  get\t.breaking.get`);
+    });
+  }).timeout(60000);
+
+  it('Should display logs from before hooks even if they passed, when configured so.', async () => {
+    await runTest(commandBase(['printSuccessfulHookLogs=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`  before succeeds\n    [[ before all #1 ]]\n          cy:log ${ICONS.info}  some before command`);
+      expect(stdout).to.contain(`[[ before all #2 ]]\n          cy:log ${ICONS.info}  some before command from second before hook`);
     });
   }).timeout(60000);
 });

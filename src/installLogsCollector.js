@@ -29,8 +29,13 @@ function installLogsCollector(config = {}) {
   const collectHeaderData = config.xhr && config.xhr.printHeaderData;
 
   let logs = [];
+  let leftoverLogs = [];
   let logsChainId = {};
   let xhrIdsOfLoggedResponses = [];
+  let beforeHookIndex = 0;
+  let afterHookIndex = 0;
+  let testIndexInSuite = -1;
+
   const addLog = (entry, id, xhrIdOfLoggedResponse) => {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
@@ -101,8 +106,13 @@ function installLogsCollector(config = {}) {
   }
 
   Cypress.on('log:changed', (options) => {
-    if (options.state === 'failed' && logsChainId[options.id] !== undefined && logs[logsChainId[options.id]]) {
-      logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
+    if (options.state === 'failed' && logsChainId[options.id] !== undefined) {
+      if (logs[logsChainId[options.id]]) {
+        logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
+      }
+      if (leftoverLogs[logsChainId[options.id]]) {
+        leftoverLogs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
+      }
     }
   });
 
@@ -110,18 +120,31 @@ function installLogsCollector(config = {}) {
     xhrIdsOfLoggedResponses = [];
     logsChainId = {};
     logs = [];
+    ++testIndexInSuite;
   });
 
-  afterEach(function () {
-    if (config.collectTestLogs) {
-      config.collectTestLogs(this, logs);
-    }
+  Cypress.mocha.getRunner().on('suite', () => {
+    xhrIdsOfLoggedResponses = [];
+    logsChainId = {};
+    logs = [];
+    leftoverLogs = [];
+    beforeHookIndex = 0;
+    afterHookIndex = 0;
+    testIndexInSuite = -1;
+  });
 
-    let testState = this.currentTest.state;
-    let testTitle = this.currentTest.title;
+  const sendLogsToPrinter = (logs, mochaRunnable, options = {}) => {
+    let testState = options.state || mochaRunnable.state;
+    let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
-    let parent = this.currentTest.parent;
+    if (config.collectTestLogs) {
+      mochaRunnable.title = testTitle;
+      mochaRunnable.state = testState;
+      config.collectTestLogs(mochaRunnable, logs);
+    }
+
+    let parent = mochaRunnable.parent;
     while (parent && parent.title) {
       testTitle = `${parent.title} -> ${testTitle}`
       parent = parent.parent;
@@ -129,23 +152,94 @@ function installLogsCollector(config = {}) {
     }
 
     // Need to wait otherwise some last commands get omitted from logs.
-    cy.wait(3, {log: false}).then(() => {
-      cy.task(
-        CONSTANTS.TASK_NAME,
-        {
-          spec: this.test.file,
-          test: testTitle,
-          messages: logs,
-          state: testState,
-          level: testLevel,
-        },
-        {log: false}
-      );
-    });
+    cy.wait(3, {log: false});
+    cy.task(
+      CONSTANTS.TASK_NAME,
+      {
+        spec: mochaRunnable.invocationDetails.relativeFile,
+        test: testTitle,
+        messages: logs,
+        state: testState,
+        level: testLevel,
+        consoleTitle: options.consoleTitle,
+        isHook: options.isHook,
+      },
+      {log: false}
+    );
+  };
+
+  const getBeforeHookTestTile = (index) => {
+    return CONSTANTS.HOOK_TITLES.BEFORE.replace('{index}', `#${index}`);
+  };
+
+  // Logs commands from before hook if the hook passed.
+  Cypress.mocha.getRunner().on('hook end', function (hook) {
+    if (hook.hookName === "before all") {
+      ++beforeHookIndex;
+      if (logs.length) {
+        sendLogsToPrinter(
+          logs,
+          this.currentRunnable,
+          {
+            state: 'passed',
+            isHook: true,
+            title: getBeforeHookTestTile(beforeHookIndex),
+            consoleTitle: getBeforeHookTestTile(beforeHookIndex),
+          }
+        );
+        logs = [];
+      }
+    }
   });
 
+  Cypress.mocha.getRunner().on('hook', function (hook) {
+    if (hook.hookName === "after all") {
+      ++afterHookIndex;
+      // In case we get to running after all hooks and there are still logs it means
+      // that these were not logged. Separate these and also start clean slate for
+      // collecting only logs from after hooks.
+      if (1 === afterHookIndex && logs.length) {
+        leftoverLogs = logs;
+        logs = [];
+      }
+    }
+  });
+
+  // Hack to have dynamic after hook per suite.
+  // The onSpecReady in cypress is called before the hooks are 'condensed', or so
+  // to say sealed and thus in this phase we can register dynamically hooks.
+  const oldOnSpecReady = Cypress.onSpecReady;
+  Cypress.onSpecReady = function () {
+    const ctrAfterAllPerSuite = function () {
+      if (-1 === testIndexInSuite && leftoverLogs.length) {
+        // Here we assume a command failed in the before hook since
+        // no test has been started.
+        sendLogsToPrinter(
+          leftoverLogs,
+          this.currentTest,
+          {
+            state: 'failed',
+            isHook: true,
+            title: getBeforeHookTestTile(++beforeHookIndex)
+          }
+        );
+      }
+    };
+
+    this.mocha.getRootSuite().suites.forEach((suite) => {
+      suite.afterAll(ctrAfterAllPerSuite);
+    });
+
+    oldOnSpecReady(...arguments);
+  }
+
+  // Logs commands form each separate test.
+  afterEach(function () {
+    sendLogsToPrinter(logs, this.currentTest);
+  });
+
+  // Logs to files.
   after(function () {
-    // Need to wait otherwise some last commands get omitted from logs.
     cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
   });
 }
@@ -336,6 +430,10 @@ function collectCypressRequestCommand(addLog, formatXhrLog) {
   };
 
   Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
+    if (typeof args === 'object' && args !== null && args[0]['log'] === false){
+      return originalFn(...args);
+    }
+
     let log;
     let requestBody;
     let requestHeaders;

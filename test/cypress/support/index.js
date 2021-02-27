@@ -10,8 +10,8 @@ if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
 }
 if (env.collectTestLogsSupport == '1') {
-  config.collectTestLogs = (context, logs) =>
-    cy.log(`Collected ${logs.length} logs for test "${context.currentTest.title}", last log: ${logs[logs.length - 1]}`);
+  config.collectTestLogs = (mochaRunnable, logs) =>
+    cy.log(`Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`);
 }
 if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};
@@ -46,9 +46,9 @@ function enableFetchWorkaround() {
 
   before(() => {
     console.info('Load fetch XHR polyfill.');
-    cy.request('https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js').then(response => {
+    cy.request({url: 'https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js', log: false, method: 'GET'}).then(response => {
       polyfill = response.body;
-    });
+    }, {log: false});
   });
 
   console.log(Cypress);

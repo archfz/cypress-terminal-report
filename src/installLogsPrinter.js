@@ -75,15 +75,25 @@ function installLogsPrinter(on, options = {}) {
         messages = compactLogs(messages, options.compactLogs);
       }
 
+      const isHookAndShouldLog = data.isHook &&
+        (options.includeSuccessfulHookLogs || data.state === 'failed');
+
       if (options.outputTarget && options.printLogsToFile !== "never") {
-        if (data.state === "failed" || options.printLogsToFile === "always") {
+        if (
+          data.state === "failed" ||
+          options.printLogsToFile === "always" ||
+          isHookAndShouldLog
+        ) {
           allMessages[data.spec] = allMessages[data.spec] || {};
           allMessages[data.spec][data.test] = messages;
         }
       }
 
-      if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
-        || options.printLogsToConsole === "always") {
+      if (
+        (options.printLogsToConsole === "onFail" && data.state !== "passed")
+        || options.printLogsToConsole === "always"
+        || isHookAndShouldLog
+      ) {
         logToTerminal(messages, options, data);
       }
 
@@ -209,10 +219,14 @@ function compactLogs(logs, keepAroundCount) {
 
 function logToTerminal(messages, options, data) {
   const tabLevel = data.level;
-  const isPassed = data.state === 'passed';
-  const padding = CONSTANTS.PADDING.LOG + '  '.repeat(tabLevel - 1);
+  const levelPadding = '  '.repeat(tabLevel - 1);
+  const padding = CONSTANTS.PADDING.LOG + levelPadding;
   const padType = (type) =>
     new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
+
+  if (data.consoleTitle) {
+    console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
+  }
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
@@ -279,9 +293,7 @@ function logToTerminal(messages, options, data) {
     );
   });
 
-  if (!isPassed) {
-    console.log('\n\n');
-  }
+  console.log('');
 }
 
 module.exports = installLogsPrinter;

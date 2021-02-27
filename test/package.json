@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test.js",
+    "cypress-open": "cypress open",
     "wsl-open-cypress": "cmd.exe /C npx cypress open"
   },
   "author": "Fodor Zoltan",

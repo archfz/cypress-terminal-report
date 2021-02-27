@@ -17,6 +17,9 @@
         "never"
       ]
     },
+    "includeSuccessfulHookLogs": {
+      "type": "boolean"
+    },
     "defaultTrimLength": {
       "type": ["string", "number"]
     },

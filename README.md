@@ -15,6 +15,7 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 * option between logging only on failure (default) or always
 * options for trimming and compacting logs
 * support for multiple and nested mocha contexts
+* log commands from before all hooks ([with a catch*](#optionsincludesuccessfulhooklogs))
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
@@ -87,6 +88,13 @@ logs will be printed to console for successful tests as well as failing ones.
 string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to file(s) for successful tests as well as failing ones.
 
+#### `options.includeSuccessfulHookLogs`
+boolean; Default: false. Commands from before all hooks by default get logged only if one
+of them failed. This default is in accordance with the defaults on `options.printLogsTo*` to 
+avoid printing too many, possibly irrelevant, information. However you can set this to `true` if you 
+need more extensive logging, but be aware that this will log all the commands from before
+hook regardless whether there were failing tests in the suite. 
+
 #### `options.collectTestLogs` *1
 ([spec, test, state], [type, message, severity][]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
@@ -110,9 +118,9 @@ Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.collectTestLogs` *2
-(context, [type, message, severity][]) => void; default: undefined;
+(mochaRunnable, [type, message, severity][]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
-The context is Mocha's `this` value in its `afterEach` hook, containing `test`, `currentTest` etc. fields.
+The `mochaRunnable` is of type `Test | Hook` from the mocha library.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.xhr.printHeaderData` 
@@ -235,6 +243,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.
+- ! Possibly breaking change: Test names in output files now contain mocha contexts.
+- Added support for logging commands from before all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
 - Updated cypress to 6.5.x in tests to confirm support.

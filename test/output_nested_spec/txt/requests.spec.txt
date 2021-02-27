@@ -56,15 +56,6 @@ cypress/integration/requests.spec.js:
                         Response body: {}
 
     Requests. -> cypress logging is disabled in the request
-        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
-                        Status: 400 - Bad Request
-                        Response body: {
-                          "status": "Wrong!",
-                          "data": {
-                            "corpo": "corpo da resposta",
-                            "titulo": "titulo da resposta"
-                          }
-                        }
 
     Requests. -> Network error
         cy:request (X): POST http://this.does.not.exist
