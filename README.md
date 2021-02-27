@@ -14,6 +14,7 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 * supports logging to files
 * option between logging always or only on failure
 * options for trimming and compacting logs
+* supports multiple and nested mocha contexts
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
