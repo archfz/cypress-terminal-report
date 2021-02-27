@@ -425,7 +425,7 @@ describe('cypress-terminal-report', () => {
 
   it('Should collect test logs if plugin configuration added.', async () => {
     await runTest(commandBase(['collectTestLogsPlugin=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`Collected 17 logs for test "All types of logs."`);
+      expect(stdout).to.contain(`Collected 17 logs for test "All types of logs. -> All types of logs."`);
       expect(stdout).to.contain(`last log: cy:command,get\t.breaking-get [filter-out-string],error`);
     });
   }).timeout(60000);

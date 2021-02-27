@@ -12,9 +12,9 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 * looks pretty in console
 * logs all commands, requests and browser console logs
 * supports logging to files
-* option between logging always or only on failure
+* option between logging only on failure (default) or always
 * options for trimming and compacting logs
-* supports multiple and nested mocha contexts
+* support for multiple and nested mocha contexts
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
@@ -237,6 +237,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
+- Updated cypress to 6.5.x in tests to confirm support.
 
 #### 2.4.0
 
