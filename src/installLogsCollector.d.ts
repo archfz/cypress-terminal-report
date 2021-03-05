@@ -1,3 +1,5 @@
+import {Hook, Test} from "mocha";
+
 type Severity = '' | 'error' | 'warning';
 
 interface SupportOptions {
@@ -23,7 +25,10 @@ interface SupportOptions {
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (mochaInstance: any, messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]) => void;
+  collectTestLogs?: (
+    context: {mochaRunnable: Test | Hook, testState: string, testTitle: string, testLevel: number},
+    messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]
+  ) => void;
 
   xhr?: {
     /**

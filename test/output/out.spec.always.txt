@@ -1,7 +1,48 @@
+cypress/integration/afterLogs.spec.js:
+    after fails -> the test 1
+            cy:log (K): log test 1
+
+    after fails -> the test 11
+            cy:log (K): log test 11
+
+    after fails -> [[ after all #1 ]]
+            cy:log (K): after log simple
+        cy:command (X): get	after simple
+
+    after succeeds -> the test 2
+            cy:log (K): log test 2
+
+    after succeeds -> the test 22
+            cy:log (K): log test 22
+
+    after succeeds -> the test 222
+            cy:log (K): log test 222
+
+    after succeeds -> [[ after all #1 ]]
+            cy:log (K): after 1
+
+    after succeeds -> [[ after all #2 ]]
+            cy:log (K): after 2
+
+    nested after fails -> nested context -> the test 3
+            cy:log (K): log test 3 nested
+
+    nested after fails -> nested context -> [[ after all #1 ]]
+        cy:command (X): get	after nested
+
+    nested after fails -> [[ after all #1 ]]
+            cy:log (K): log after root
+        cy:command (X): get	after root
+
+
+
 cypress/integration/beforeLogs.spec.js:
     before fails -> [[ before all #1 ]]
             cy:log (K): some before command
         cy:command (X): get	.breaking.get
+
+    before fails -> [[ after all #1 ]]
+            cy:log (K): after
 
     before succeeds -> [[ before all #1 ]]
             cy:log (K): some before command
@@ -14,12 +55,24 @@ cypress/integration/beforeLogs.spec.js:
             cy:log (K): log
         cy:command (X): get	.breaking.get
 
+    before succeeds -> [[ after all #1 ]]
+            cy:log (K): after before succeeds
+
     nested before fails -> [[ before all #1 ]]
             cy:log (K): some before command not in nested
+
+    nested before fails -> not nested
+            cy:log (K): not nested
 
     nested before fails -> nested context -> [[ before all #1 ]]
             cy:log (K): some before command in nested
         cy:command (X): get	.breaking.get
+
+    nested before fails -> nested context -> [[ after all #1 ]]
+            cy:log (K): after nested
+
+    nested before fails -> [[ after all #1 ]]
+            cy:log (K): after not nested
 
 
 
@@ -28,7 +81,7 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): visit	/commands/network-requests
         cy:command (K): get	.network-btn
         cy:command (K): click
-            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1 (515 ms)
+            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1 (361 ms)
                         Status: 200 - OK
         cy:command (K): wait	@getComment
           cy:route (K): (getComment) GET https://jsonplaceholder.cypress.io/comments/1
@@ -44,7 +97,7 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): assert	expected **200** to equal **200**
         cy:command (K): get	.network-post
         cy:command (K): click
-            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments (353 ms)
+            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments (395 ms)
                         Status: 201 - Created
         cy:command (K): wait	@postComment
           cy:route (K): (postComment) POST https://jsonplaceholder.cypress.io/comments
@@ -96,7 +149,7 @@ cypress/integration/happyFlow.spec.js:
         cons:debug (K): This should console.debug appear.
         cy:command (K): get	.network-put
         cy:command (K): click
-            cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (513 ms)
+            cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (506 ms)
                         Status: 404 - Not Found
         cy:command (K): wait	@putComment
           cy:route (!): (putComment) PUT https://jsonplaceholder.cypress.io/comments/1
@@ -119,6 +172,21 @@ cypress/integration/mochaContexts.spec.js:
 
     main context -> second context -> third context -> third level test
         cy:command (X): get	.breaking-get 3
+
+    unnested before with nested context -> [[ before all #1 ]]
+            cy:log (K): before should display before nested context title
+
+    unnested before with nested context -> nested context -> the test nested
+            cy:log (K): log
+
+    unnested before and test with nested context -> [[ before all #1 ]]
+            cy:log (K): before should display before nested context title
+
+    unnested before and test with nested context -> not nested
+            cy:log (K): log
+
+    unnested before and test with nested context -> nested context -> the test nested
+            cy:log (K): log
 
 
 

@@ -26,6 +26,7 @@ module.exports = {
 
   HOOK_TITLES: {
     BEFORE: '[[ before all {index} ]]',
+    AFTER: '[[ after all {index} ]]',
   },
 
   PADDING: {

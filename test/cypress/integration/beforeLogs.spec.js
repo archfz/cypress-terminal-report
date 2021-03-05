@@ -26,7 +26,7 @@ describe('before succeeds', () => {
     cy.get('.breaking.get', {timeout: 1});
   });
 
-  after(() => cy.log('after'));
+  after(() => cy.log('after before succeeds'));
 });
 
 describe('nested before fails', () => {
@@ -34,16 +34,26 @@ describe('nested before fails', () => {
     cy.log('some before command not in nested');
   });
 
+  it('not nested', () => {
+    cy.log('not nested');
+  })
+
   describe('nested context', () => {
     before(() => {
       cy.log('some before command in nested');
       cy.get('.breaking.get', {timeout: 1});
     });
 
-    it('the test', () => {
+    it('the test nested', () => {
       cy.log('log');
     });
 
-    after(() => cy.log('after'));
+    after(() => {
+      cy.log('after nested')
+    });
+  });
+
+  after(() => {
+    cy.log('after not nested')
   });
 });

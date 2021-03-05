@@ -19,11 +19,11 @@ const LOG_SYMBOLS = (() => {
   if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
     return {
       error: '✘',
-      warning: '⚠',
+      warning: '❖',
       success: '✔',
-      info: 'ⓘ',
-      debug: 'ⓓ',
-      route: '⛗'
+      info: '✱',
+      debug: '⚈',
+      route: '➟'
     }
   } else {
     return {
@@ -45,18 +45,7 @@ let outputProcessors = [];
  *
  * Needs to be added to plugins file.
  *
- * @param {Function} on
- *    Cypress event listen handler.
- * @param {object} options
- *    Options for displaying output:
- *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
- *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
- *      - defaultTrimLength?: Trim length for console and cy.log.
- *      - commandTrimLength?: Trim length for cy commands.
- *      - outputRoot?: The root path to output log files to.
- *      - outputTarget?: Log output types. {[filePath: string]: string | function}
- *      - compactLogs?: Number of lines to compact around failing commands.
- *      - collectTestLogs?: Callback to collect each test case's logs after its run.
+ * @see ./installLogsPrinter.d.ts
  */
 function installLogsPrinter(on, options = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
@@ -68,7 +57,7 @@ function installLogsPrinter(on, options = {}) {
   }
 
   on('task', {
-    [CONSTANTS.TASK_NAME]: data => {
+    [CONSTANTS.TASK_NAME]: function (data) {
       let messages = data.messages;
 
       if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
@@ -255,7 +244,7 @@ function logToTerminal(messages, options, data) {
       icon = LOG_SYMBOLS.info;
     } else if (type === LOG_TYPES.CYPRESS_XHR) {
       color = 'green';
-      icon = LOG_SYMBOLS.info;
+      icon = LOG_SYMBOLS.route;
       trim = options.routeTrimLength || 5000;
     } else if (type === LOG_TYPES.CYPRESS_ROUTE) {
       color = 'green';
@@ -293,7 +282,7 @@ function logToTerminal(messages, options, data) {
     );
   });
 
-  console.log('');
+  console.log('\n');
 }
 
 module.exports = installLogsPrinter;

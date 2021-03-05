@@ -15,13 +15,14 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 * option between logging only on failure (default) or always
 * options for trimming and compacting logs
 * support for multiple and nested mocha contexts
-* log commands from before all hooks ([with a catch*](#optionsincludesuccessfulhooklogs))
+* log commands from before all and after all hooks ([with a catch*](#optionsincludesuccessfulhooklogs))
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
 > Note: Currently logs do not appear in the dashboard. If you want to see them go
 to your CI runner and check the pipeline logs there.
 
+- [Requirements](#requirements)
 - [Install](#install)
 - [Options](#options)
 - [Logging to files](#logging-to-files)
@@ -30,6 +31,11 @@ to your CI runner and check the pipeline logs there.
 
 
 ![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
+
+## Requirements
+
+- `>=3.0.0` requires cypress `>=4.10.0`
+- `<3.0.0` requires cypress `>=3.8.0`
 
 ## Install
 
@@ -89,11 +95,12 @@ string; Default: 'onFail'. When to print logs to file(s), possible values: 'alwa
 logs will be printed to file(s) for successful tests as well as failing ones.
 
 #### `options.includeSuccessfulHookLogs`
-boolean; Default: false. Commands from before all hooks by default get logged only if one
-of them failed. This default is in accordance with the defaults on `options.printLogsTo*` to 
+boolean; Default: false. Commands from before all and after all hooks by default get logged only if
+a command from them failed. This default is in accordance with the defaults on `options.printLogsTo*` to 
 avoid printing too many, possibly irrelevant, information. However you can set this to `true` if you 
-need more extensive logging, but be aware that this will log all the commands from before
-hook regardless whether there were failing tests in the suite. 
+need more extensive logging, but be aware that commands will be logged to terminal from these hooks 
+regardless whether there were failing tests in the suite. This is because we can't know for sure in 
+advanced if a test fails or not.
 
 #### `options.collectTestLogs` *1
 ([spec, test, state], [type, message, severity][]) => void; default: undefined;
@@ -243,12 +250,16 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### next
+
 - ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.
 - ! Possibly breaking change: Test names in output files now contain mocha contexts.
-- Added support for logging commands from before all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
+- ! Minimum required cypress version increased to 4.10.0.
+- Added support for logging commands from before all and after all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
-- Updated cypress to 6.5.x in tests to confirm support.
+- Updated unicode icons for log types on linux.
+- Updated cypress to 6.6.x in tests to confirm support.
 
 #### 2.4.0
 

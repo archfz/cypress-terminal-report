@@ -1,4 +1,37 @@
 {
+  "cypress/integration/afterLogs.spec.js": {
+    "after fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after log simple"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter simple"
+      }
+    ],
+    "nested after fails -> nested context -> [[ after all #1 ]]": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter nested"
+      }
+    ],
+    "nested after fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log after root"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter root"
+      }
+    ]
+  },
   "cypress/integration/beforeLogs.spec.js": {
     "before fails -> [[ before all #1 ]]": [
       {
@@ -57,7 +90,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (583 ms)\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (578 ms)\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -92,7 +125,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments (433 ms)\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments (357 ms)\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
@@ -227,7 +260,7 @@
       {
         "type": "cy:xhr",
         "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (515 ms)\nStatus: 404 - Not Found"
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (511 ms)\nStatus: 404 - Not Found"
       },
       {
         "type": "cy:command",
