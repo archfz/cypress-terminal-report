@@ -255,6 +255,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 - ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.
 - ! Possibly breaking change: Test names in output files now contain mocha contexts.
 - ! Minimum required cypress version increased to 4.10.0.
+- ! Deprecated `printLogs` option on support install removed.
 - Added support for logging commands from before all and after all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
