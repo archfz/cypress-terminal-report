@@ -1,6 +1,6 @@
 const CONSTANTS = require('../constants');
 
-export default class LogCollectorState {
+module.exports = class LogCollectorState {
   constructor(config) {
     this.config = config;
 

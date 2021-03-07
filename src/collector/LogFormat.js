@@ -1,4 +1,4 @@
-export default class LogFormat {
+module.exports = class LogFormat {
 
   constructor(config) {
     this.config = config;
@@ -29,6 +29,20 @@ export default class LogFormat {
     }
 
     return logMessage.trimEnd();
+  }
+
+  formatXhrBody(body) {
+    if (!body) {
+      return Promise.resolve('<EMPTY>');
+    } else if (typeof body === 'string') {
+      return Promise.resolve(body);
+    } else if (typeof body === 'object') {
+      if (typeof body.text === 'function') {
+        return body.text();
+      }
+      return Promise.resolve(`${JSON.stringify(body, null, 2)}`);
+    }
+    return Promise.resolve('<UNKNOWN>');
   }
 
 }
