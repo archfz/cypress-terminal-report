@@ -43,6 +43,13 @@ interface SupportOptions {
      */
     printRequestData?: boolean;
   };
+
+  /**
+   * Enables extended log collection: including after all and before all hooks.
+   * @unstable
+   * @default false
+   */
+  enableExtendedCollector: boolean;
 }
 
 declare function installLogsCollector(config?: SupportOptions): void;

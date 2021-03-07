@@ -1,5 +1,4 @@
 Specs:
-cypress/integration/afterLogs.spec.js
-cypress/integration/beforeLogs.spec.js
 cypress/integration/happyFlow.spec.js
+cypress/integration/mochaContexts.spec.js
 cypress/integration/requests.spec.js

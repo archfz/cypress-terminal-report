@@ -1,0 +1,305 @@
+{
+  "cypress/integration/afterLogs.spec.js": {
+    "after fails -> the test 1": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 1"
+      }
+    ],
+    "after fails -> the test 11": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 11"
+      }
+    ],
+    "after fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after log simple"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter simple"
+      }
+    ],
+    "after succeeds -> the test 2": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 2"
+      }
+    ],
+    "after succeeds -> the test 22": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 22"
+      }
+    ],
+    "after succeeds -> the test 222": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 222"
+      }
+    ],
+    "after succeeds -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after 1"
+      }
+    ],
+    "after succeeds -> [[ after all #2 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after 2"
+      }
+    ],
+    "nested after fails -> nested context -> the test 3": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log test 3 nested"
+      }
+    ],
+    "nested after fails -> nested context -> [[ after all #1 ]]": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter nested"
+      }
+    ],
+    "nested after fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log after root"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tafter root"
+      }
+    ]
+  },
+  "cypress/integration/allHooks.spec.js": {
+    "All hooks. -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from before"
+      }
+    ],
+    "All hooks. -> passed it": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from beforeEach"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from it"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from afterEach"
+      }
+    ],
+    "All hooks. -> passed it 2": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from beforeEach"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from it 2"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from afterEach"
+      }
+    ],
+    "All hooks. -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from after"
+      }
+    ],
+    "All hooks. -> [[ after all #2 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from after 2"
+      }
+    ]
+  },
+  "cypress/integration/beforeLogs.spec.js": {
+    "before fails -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some before command"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking.get"
+      }
+    ],
+    "before fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after"
+      }
+    ],
+    "before succeeds -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some before command"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some other before command"
+      }
+    ],
+    "before succeeds -> [[ before all #2 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some before command from second before hook"
+      }
+    ],
+    "before succeeds -> the test fails": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking.get"
+      }
+    ],
+    "before succeeds -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after before succeeds"
+      }
+    ],
+    "nested before fails -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some before command not in nested"
+      }
+    ],
+    "nested before fails -> not nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "not nested"
+      }
+    ],
+    "nested before fails -> nested context -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "some before command in nested"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking.get"
+      }
+    ],
+    "nested before fails -> nested context -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after nested"
+      }
+    ],
+    "nested before fails -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "after not nested"
+      }
+    ]
+  },
+  "cypress/integration/mochaContexts.spec.js": {
+    "main context -> first level test": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking-get 1"
+      }
+    ],
+    "main context -> second context -> second level test": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking-get 2"
+      }
+    ],
+    "main context -> second context -> third context -> third level test": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking-get 3"
+      }
+    ],
+    "unnested before with nested context -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "before should display before nested context title"
+      }
+    ],
+    "unnested before with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "before should display before nested context title"
+      }
+    ],
+    "unnested before and test with nested context -> not nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ]
+  }
+}

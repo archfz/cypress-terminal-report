@@ -10,6 +10,11 @@ module.exports = class LogCollectorState {
     this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes = [];
     this.afterHookIndexes = [];
+    this.isStrict = false;
+  }
+
+  setStrict(strict) {
+    this.isStrict = true;
   }
 
   addNewLogStack() {
@@ -43,6 +48,14 @@ module.exports = class LogCollectorState {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
     if (this.config.filterLog && !this.config.filterLog(entry)) {
+      return;
+    }
+
+    const currentStack = this.getCurrentLogStack();
+    if (!currentStack) {
+      if (this.isStrict) {
+        console.warn('[cypress-terminal-report] Attempted to collect logs while not stack was defined.');
+      }
       return;
     }
 

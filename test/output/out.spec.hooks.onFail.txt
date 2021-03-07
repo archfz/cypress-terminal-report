@@ -1,0 +1,39 @@
+cypress/integration/afterLogs.spec.js:
+    after fails -> [[ after all #1 ]]
+            cy:log (K): after log simple
+        cy:command (X): get	after simple
+
+    nested after fails -> nested context -> [[ after all #1 ]]
+        cy:command (X): get	after nested
+
+    nested after fails -> [[ after all #1 ]]
+            cy:log (K): log after root
+        cy:command (X): get	after root
+
+
+
+cypress/integration/beforeLogs.spec.js:
+    before fails -> [[ before all #1 ]]
+            cy:log (K): some before command
+        cy:command (X): get	.breaking.get
+
+    before succeeds -> the test fails
+            cy:log (K): log
+        cy:command (X): get	.breaking.get
+
+    nested before fails -> nested context -> [[ before all #1 ]]
+            cy:log (K): some before command in nested
+        cy:command (X): get	.breaking.get
+
+
+
+cypress/integration/mochaContexts.spec.js:
+    main context -> first level test
+        cy:command (X): get	.breaking-get 1
+
+    main context -> second context -> second level test
+        cy:command (X): get	.breaking-get 2
+
+    main context -> second context -> third context -> third level test
+        cy:command (X): get	.breaking-get 3
+

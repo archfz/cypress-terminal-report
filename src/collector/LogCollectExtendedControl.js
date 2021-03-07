@@ -13,6 +13,8 @@ module.exports = class LogCollectExtendedControl {
   }
 
   register() {
+    this.collectorState.setStrict(true);
+
     this.registerState();
     this.registerBeforeAllHooks();
     this.registerAfterAllHooks();

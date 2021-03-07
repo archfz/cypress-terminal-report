@@ -13,7 +13,7 @@ const LogCollectCypressLog = require("./collector/LogCollectCypressLog");
 
 const LogCollectorState = require("./collector/LogCollectorState");
 const LogCollectExtendedControl = require("./collector/LogCollectExtendedControl");
-
+const LogCollectSimpleControl = require("./collector/LogCollectSimpleControl");
 
 /**
  * Installs the logs collector for cypress.
@@ -31,7 +31,12 @@ function installLogsCollector(config = {}) {
 
   let logCollectorState = new LogCollectorState(config);
   registerLogCollectorTypes(logCollectorState, config);
-  (new LogCollectExtendedControl(logCollectorState, config)).register();
+
+  if (config.enableExtendedCollector) {
+    (new LogCollectExtendedControl(logCollectorState, config)).register();
+  } else {
+    (new LogCollectSimpleControl(logCollectorState, config)).register();
+  }
 }
 
 function registerLogCollectorTypes(logCollectorState, config) {

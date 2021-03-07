@@ -15,7 +15,7 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 * option between logging only on failure (default) or always
 * options for trimming and compacting logs
 * support for multiple and nested mocha contexts
-* log commands from before all and after all hooks ([with a catch*](#optionsincludesuccessfulhooklogs))
+* log commands from before all and after all hooks ([with a catch*](#logging-after-all-and-before-all-hooks))
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
@@ -25,6 +25,7 @@ to your CI runner and check the pipeline logs there.
 - [Requirements](#requirements)
 - [Install](#install)
 - [Options](#options)
+- [Logging after all and before all hooks](#logging-after-all-and-before-all-hooks)
 - [Logging to files](#logging-to-files)
 - [Development](#development)
 - [Release Notes](#release-notes)
@@ -135,6 +136,24 @@ boolean; default false; Whether to print header data for XHR requests.
 
 #### `options.xhr.printRequestData`
 boolean; default false; Whether to print request data for XHR requests besides response data.
+
+#### `options.enableExtendedCollector`
+boolean; default false; Enables an extended collector which will also collect command logs from
+before all and after all hooks.
+
+## Logging after all and before all hooks
+
+Before all and after all hooks by default are not logged. A new experimental feature introduces
+support for logging commands from these hooks: [`enableExtendedCollector`](#optionsenableextendedcollector).
+This feature is by default disabled since it relies much more heavily on internals of cypress and 
+mocha, thus **there is a higher chance of something breaking, especially with cypress upgrades**.
+
+Once the feature enabled, logs from these hooks will only appear in console if:
+- a command from the hook fails
+- hook passes and [`printLogsToConsole`](#optionsprintlogstoconsole) == `always`
+- hook passes and [`printLogsToConsole`](#optionsprintlogstoconsole) ==`onFail` 
+  and [`includeSuccessfulHookLogs`](#optionsprintlogstoconsole) == `true`
+
 
 ## Logging to files
 
@@ -255,8 +274,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 - ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.
 - ! Possibly breaking change: Test names in output files now contain mocha contexts.
 - ! Minimum required cypress version increased to 4.10.0.
-- ! Deprecated `printLogs` option on support install removed.
-- Added support for logging commands from before all and after all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
+- ! Removed deprecated `printLogs` option on support install.
+- Added support for [logging commands from before all and after all hooks](#logging-after-all-and-before-all-hooks). [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
 - Updated unicode icons for log types on linux.

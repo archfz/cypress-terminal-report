@@ -72,6 +72,8 @@ const clean = (str) =>
     .replace(/\([\d.]+ m?s\)/g, '(X ms)')
     // Clean new line of white space at the end.
     .replace(/\s+$/, '')
+    // Clean slow test.
+    .replace(/\(\d+m?s\)/, '(X ms)')
     // Normalize line endings across os.
     .replace(/\r\n/g, "\n");
 
@@ -160,7 +162,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should logs FETCH API routes.', async () => {
+  it('Should log fetch api routes.', async () => {
     await runTest(commandBase([], ['apiRoutes.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`(putComment) PUT https://example.cypress.io/comments/10\n`);
       // cy.route empty body.
@@ -184,7 +186,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should log cy.requests', async () => {
+  it('Should log cypress requests', async () => {
     await runTest(commandBase([], [`requests.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(
         `cy:request ${ICONS.success}  https://jsonplaceholder.cypress.io/todos/1\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "title": "delectus aut autem",\n${PADDING}  "completed": false\n${PADDING}}`
@@ -315,8 +317,7 @@ describe('cypress-terminal-report', () => {
       'requests.spec.js',
       'happyFlow.spec.js',
       'printLogsSuccess.spec.js',
-      'beforeLogs.spec.js',
-      'afterLogs.spec.js',
+      'mochaContexts.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
@@ -335,8 +336,6 @@ describe('cypress-terminal-report', () => {
       'happyFlow.spec.js',
       'printLogsSuccess.spec.js',
       'mochaContexts.spec.js',
-      'beforeLogs.spec.js',
-      'afterLogs.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
@@ -445,9 +444,47 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  /*
+   * ----------------
+   * Extended mode. |
+   * ----------------
+   */
+
+  it('Should generate proper log output files for after and before hooks when logging is on fail.', async () => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    const specFiles = [
+      'beforeLogs.spec.js',
+      'afterLogs.spec.js',
+      'allHooks.spec.js',
+      'mochaContexts.spec.js',
+    ];
+    await runTest(commandBase(['generateOutput=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'hooks.onFail');
+    });
+  }).timeout(90000);
+
+  it('Should print all tests to output files when configured so.', async () => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    const specFiles = [
+      'beforeLogs.spec.js',
+      'afterLogs.spec.js',
+      'allHooks.spec.js',
+      'mochaContexts.spec.js',
+    ];
+    await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'hooks.always');
+    });
+  }).timeout(90000);
+
   it('Should display logs from before all hooks if they fail.', async () => {
-    await runTest(commandBase([], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`  before fails
+    await runTest(commandBase(['enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
       cy:command ${ICONS.error}  get	.breaking.get
@@ -466,13 +503,13 @@ describe('cypress-terminal-report', () => {
     nested context
       3) "before all" hook for "the test nested"
             cy:log ${ICONS.info}  some before command in nested
-        cy:command ${ICONS.error}  get	.breaking.get`);
+        cy:command ${ICONS.error}  get	.breaking.get`));
     });
   }).timeout(60000);
 
   it('Should display logs from before all hooks even if they passed, when configured so.', async () => {
-    await runTest(commandBase(['printSuccessfulHookLogs=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`  before fails
+    await runTest(commandBase(['printSuccessfulHookLogs=1','enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
       cy:command ${ICONS.error}  get	.breaking.get
@@ -521,18 +558,18 @@ describe('cypress-terminal-report', () => {
 
 
     [[ after all #1 ]]
-          cy:log ${ICONS.info}  after not nested`);
+          cy:log ${ICONS.info}  after not nested`));
     });
   }).timeout(60000);
 
   it('Should display logs from after all hooks if they fail.', async () => {
-    await runTest(commandBase([], ['afterLogs.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`1) "after all" hook for "the test 11"
+    await runTest(commandBase(['enableExtendedCollector=1'], ['afterLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(clean(`1) "after all" hook for "the test 11"
 
           cy:log ✱  after log simple
-      cy:command ✘  get\tafter simple`);
+      cy:command ✘  get\tafter simple`));
 
-      expect(stdout).to.contain(`nested after fails
+      expect(clean(stdout)).to.contain(clean(`nested after fails
     nested context
       ✓ the test 3
       2) "after all" hook for "the test 3"
@@ -541,13 +578,13 @@ describe('cypress-terminal-report', () => {
 
       3) "after all" hook for "the test 3"
           cy:log ${ICONS.info}  log after root
-      cy:command ${ICONS.error}  get	after root`);
+      cy:command ${ICONS.error}  get	after root`));
     });
   }).timeout(60000);
 
   it('Should display logs from after all hooks even if they passed, when configured so.', async () => {
-    await runTest(commandBase(['printSuccessfulHookLogs=1'], ['afterLogs.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`  after succeeds
+    await runTest(commandBase(['printSuccessfulHookLogs=1', 'enableExtendedCollector=1'], ['afterLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(clean(`  after succeeds
     ✓ the test 2
     ✓ the test 22
     ✓ the test 222
@@ -560,7 +597,7 @@ describe('cypress-terminal-report', () => {
           cy:log ${ICONS.info}  after 2
 
 
-  nested after fails`);
+  nested after fails`));
     });
   }).timeout(60000);
 });

@@ -46,6 +46,9 @@ if (env.supportBadConfig == '1') {
     shouldNotBeHere: ""
   };
 }
+if (env.enableExtendedCollector == '1') {
+  config.enableExtendedCollector = true;
+}
 
 require('../../../src/installLogsCollector')(config);
 
