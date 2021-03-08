@@ -35,6 +35,9 @@ module.exports = (on, config) => {
       },
     };
   }
+  if (config.env.disableVerbose == "1"){
+    options.outputVerbose = false;
+  }
   if (config.env.generateSimpleOutput == "1") {
     options.outputRoot = config.projectRoot + '/output/';
     options.outputTarget = {'out.txt': 'txt'};
@@ -48,6 +51,7 @@ module.exports = (on, config) => {
       outputTarget: {
         any: 100
       },
+      outputVerbose: "false",
       compactLogs: false,
       printLogsToConsole: true,
       printLogsToFile: true,

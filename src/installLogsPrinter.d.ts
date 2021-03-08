@@ -45,6 +45,12 @@ interface PluginOptions {
   >;
 
   /**
+   * Indicates whether 'Wrote custom logs to ..' appears on the console or not.
+   * @default true
+   */
+  outputVerbose?: boolean | true;
+
+  /**
    * Cypress specs root relative to package json. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).
    * @default null
    */
