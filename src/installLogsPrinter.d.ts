@@ -45,7 +45,7 @@ interface PluginOptions {
   >;
 
   /**
-   * Indicates whether 'Wrote custom logs to ..' appears on the console or not.
+   * Toggles verbose output.
    * @default true
    */
   outputVerbose?: boolean | true;

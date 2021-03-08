@@ -429,7 +429,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(90000);
 
-  it('Should not verbose files printed to.', async () => {
+  it('Should not verbose.', async () => {
     await runTest(commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']), (error, stdout) => {
       expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to txt.`);
       expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to json.`);
