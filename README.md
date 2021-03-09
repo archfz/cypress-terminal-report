@@ -87,6 +87,9 @@ string; default: null; Cypress specs root relative to package json. [More detail
 #### `options.outputTarget`
 object; default: null; Output logs to files. [More details](#logging-to-files).
 
+#### `options.outputVerbose`
+boolean; default: true; Toggles verbose output.
+
 #### `options.printLogsToConsole`
 string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to console for successful tests as well as failing ones.

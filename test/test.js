@@ -396,6 +396,7 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`Error: [cypress-terminal-report] Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .outputRoot: Invalid type: number (expected string)`);
       expect(stdout).to.contain(`=> .outputTarget/any: Invalid type: number (expected string/function)`);
+      expect(stdout).to.contain(`=> .outputVerbose: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .compactLogs: Invalid type: boolean (expected number)`);
       expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
       expect(stdout).to.contain(`=> .printLogsToFile: Invalid type: boolean (expected string)`);
@@ -428,6 +429,14 @@ describe('cypress-terminal-report', () => {
       });
     });
   }).timeout(90000);
+
+  it('Should not verbose.', async () => {
+    await runTest(commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']), (error, stdout) => {
+      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to txt.`);
+      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to json.`);
+      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to custom.`);
+    });
+  }).timeout(60000);
 
   it('Should collect test logs if support configuration added.', async () => {
     await runTest(commandBase(['collectTestLogsSupport=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {

@@ -50,6 +50,9 @@
         }
       }
     },
+    "outputVerbose": {
+      "type": "boolean"
+    },
     "collectTestLogs": {
       "type": "function"
     }

@@ -96,7 +96,8 @@ function installLogsPrinter(on, options = {}) {
       outputProcessors.forEach((processor) => {
         if (Object.entries(allMessages).length !== 0){
           processor.write(allMessages);
-          logOutputTarget(processor);
+          if (options.outputVerbose !== false)
+            logOutputTarget(processor);
         }
       });
       allMessages = {};
