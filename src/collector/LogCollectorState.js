@@ -51,6 +51,10 @@ module.exports = class LogCollectorState {
       return;
     }
 
+    if (this.config.processLog) {
+      entry = this.config.processLog(entry);
+    }
+
     const currentStack = this.getCurrentLogStack();
     if (!currentStack) {
       if (this.isStrict) {

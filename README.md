@@ -128,6 +128,11 @@ null | ([type, message, severity]) => boolean; default: undefined;
 Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
+#### `options.processLog`
+null | ([type, message, severity]) => string; default: undefined;
+Callback to process logs manually.
+The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
+
 #### `options.collectTestLogs` *2
 (mochaRunnable, [type, message, severity][]) => void; default: undefined;
 Callback to collect each test case's logs after its run.

@@ -73,6 +73,9 @@ function validateConfig(config) {
   if (config.filterLog && typeof config.filterLog !== 'function') {
     throw new CtrError(`[cypress-terminal-report] Filter log option expected to be a function.`);
   }
+  if (config.processLog && typeof config.processLog !== 'function') {
+    throw new CtrError(`[cypress-terminal-report] Process log option expected to be a function.`);
+  }
   if (config.collectTestLogs && typeof config.collectTestLogs !== 'function') {
     throw new CtrError(`[cypress-terminal-report] Collect test logs option expected to be a function.`);
   }

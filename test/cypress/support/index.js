@@ -9,6 +9,21 @@ if (env.setLogTypes == '1') {
 if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
 }
+if (env.setProcessLogs == '1') {
+  config.processLog = ([sev1, log, sev2]) => {
+    if (sev1 == 'cy:request'){
+      log = log.length.toString();
+    }
+    else{
+      let reg = /\[[^\[]+]/;
+      let secret = log.match(reg);
+      if (secret){
+        log = log.replace(reg, '[******]');
+      }
+    }
+    return [sev1, log, sev2];
+  }
+}
 if (env.collectTestLogsSupport == '1') {
   config.collectTestLogs = ({mochaRunnable, testTitle, testState, testLevel}, logs) =>
     Cypress.backend('task', {
@@ -37,6 +52,7 @@ if (env.supportBadConfig == '1') {
   config = {
     collectTypes: 0,
     filterLog: "string",
+    processLog: true,
     collectTestLogs: "string",
     xhr: {
       printRequestData: "",

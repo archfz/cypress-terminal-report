@@ -303,6 +303,14 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should process logs if configuration added.', async () => {
+    await runTest(commandBase(['setProcessLogs=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`This is a cypress log. [******]`);
+      expect(stdout).to.contain(`This should console.log appear. [******]`);
+      expect(stdout).to.contain(`get\t.breaking-get [******]`);
+    });
+  }).timeout(60000);
+
   // Tests in general the log formatting in files.
   it('Should generate proper log output files, and print only failing ones if config is on default.', async () => {
     const outRoot = {};
@@ -410,6 +418,7 @@ describe('cypress-terminal-report', () => {
       expect(stdout).to.contain(`[cypress-terminal-report] Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
       expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
+      expect(stdout).to.contain(`=> .processLog: Invalid type: boolean (expected function)`);
       expect(stdout).to.contain(`=> .collectTestLogs: Invalid type: string (expected function)`);
       expect(stdout).to.contain(`=> .xhr/printRequestData: Invalid type: string (expected boolean)`);
       expect(stdout).to.contain(`=> .xhr/printHeaderData: Invalid type: string (expected boolean)`);
@@ -496,7 +505,7 @@ describe('cypress-terminal-report', () => {
       expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -504,7 +513,7 @@ describe('cypress-terminal-report', () => {
     2) the test fails
 
           cy:log ${ICONS.info}  log
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
   nested before fails
@@ -512,7 +521,7 @@ describe('cypress-terminal-report', () => {
     nested context
       3) "before all" hook for "the test nested"
             cy:log ${ICONS.info}  some before command in nested
-        cy:command ${ICONS.error}  get	.breaking.get`));
+        cy:command ${ICONS.error}  get\t.breaking.get`));
     });
   }).timeout(60000);
 
@@ -521,7 +530,7 @@ describe('cypress-terminal-report', () => {
       expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -542,7 +551,7 @@ describe('cypress-terminal-report', () => {
     2) the test fails
 
           cy:log ${ICONS.info}  log
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
     [[ after all #1 ]]
@@ -558,7 +567,7 @@ describe('cypress-terminal-report', () => {
     nested context
       3) "before all" hook for "the test nested"
             cy:log ${ICONS.info}  some before command in nested
-        cy:command ${ICONS.error}  get	.breaking.get
+        cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -582,12 +591,12 @@ describe('cypress-terminal-report', () => {
     nested context
       ✓ the test 3
       2) "after all" hook for "the test 3"
-        cy:command ${ICONS.error}  get	after nested
+        cy:command ${ICONS.error}  get\tafter nested
 
 
       3) "after all" hook for "the test 3"
           cy:log ${ICONS.info}  log after root
-      cy:command ${ICONS.error}  get	after root`));
+      cy:command ${ICONS.error}  get\tafter root`));
     });
   }).timeout(60000);
 
