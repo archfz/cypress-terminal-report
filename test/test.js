@@ -496,7 +496,7 @@ describe('cypress-terminal-report', () => {
       expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -504,7 +504,7 @@ describe('cypress-terminal-report', () => {
     2) the test fails
 
           cy:log ${ICONS.info}  log
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
   nested before fails
@@ -512,7 +512,7 @@ describe('cypress-terminal-report', () => {
     nested context
       3) "before all" hook for "the test nested"
             cy:log ${ICONS.info}  some before command in nested
-        cy:command ${ICONS.error}  get	.breaking.get`));
+        cy:command ${ICONS.error}  get\t.breaking.get`));
     });
   }).timeout(60000);
 
@@ -521,7 +521,7 @@ describe('cypress-terminal-report', () => {
       expect(clean(stdout)).to.contain(clean(`  before fails
     1) "before all" hook for "the test"
           cy:log ${ICONS.info}  some before command
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -542,7 +542,7 @@ describe('cypress-terminal-report', () => {
     2) the test fails
 
           cy:log ${ICONS.info}  log
-      cy:command ${ICONS.error}  get	.breaking.get
+      cy:command ${ICONS.error}  get\t.breaking.get
 
 
     [[ after all #1 ]]
@@ -558,7 +558,7 @@ describe('cypress-terminal-report', () => {
     nested context
       3) "before all" hook for "the test nested"
             cy:log ${ICONS.info}  some before command in nested
-        cy:command ${ICONS.error}  get	.breaking.get
+        cy:command ${ICONS.error}  get\t.breaking.get
 
 
 
@@ -582,12 +582,12 @@ describe('cypress-terminal-report', () => {
     nested context
       ✓ the test 3
       2) "after all" hook for "the test 3"
-        cy:command ${ICONS.error}  get	after nested
+        cy:command ${ICONS.error}  get\tafter nested
 
 
       3) "after all" hook for "the test 3"
           cy:log ${ICONS.info}  log after root
-      cy:command ${ICONS.error}  get	after root`));
+      cy:command ${ICONS.error}  get\tafter root`));
     });
   }).timeout(60000);
 
