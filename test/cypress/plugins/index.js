@@ -35,6 +35,9 @@ module.exports = (on, config) => {
       },
     };
   }
+  if (config.env.disableVerbose == "1"){
+    options.outputVerbose = false;
+  }
   if (config.env.generateSimpleOutput == "1") {
     options.outputRoot = config.projectRoot + '/output/';
     options.outputTarget = {'out.txt': 'txt'};
@@ -48,6 +51,7 @@ module.exports = (on, config) => {
       outputTarget: {
         any: 100
       },
+      outputVerbose: "false",
       compactLogs: false,
       printLogsToConsole: true,
       printLogsToFile: true,
@@ -66,6 +70,9 @@ module.exports = (on, config) => {
   }
   if (config.env.printLogsToFileNever == '1') {
     options.printLogsToFile = 'never';
+  }
+  if (config.env.printSuccessfulHookLogs == '1') {
+    options.includeSuccessfulHookLogs = true;
   }
   if (config.env.collectTestLogsPlugin == '1') {
     options.collectTestLogs = (context, logs) =>

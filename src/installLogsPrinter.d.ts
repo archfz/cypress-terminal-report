@@ -45,6 +45,12 @@ interface PluginOptions {
   >;
 
   /**
+   * Toggles verbose output.
+   * @default true
+   */
+  outputVerbose?: boolean | true;
+
+  /**
    * Cypress specs root relative to package json. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).
    * @default null
    */
@@ -61,6 +67,14 @@ interface PluginOptions {
    * @default 'onFail'
    */
   printLogsToFile?: 'onFail' | 'always' | 'never';
+
+  /**
+   * Whether to log commands from hooks that passed.
+   * If enabled even when all tests pass in a spec the commands will always
+   * be printed from before and after hooks.
+   * @default false
+   */
+  includeSuccessfulHookLogs: boolean
 
   /**
    * Callback to collect each test case's logs after its run.

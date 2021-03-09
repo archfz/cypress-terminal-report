@@ -19,11 +19,11 @@ const LOG_SYMBOLS = (() => {
   if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
     return {
       error: '✘',
-      warning: '⚠',
+      warning: '❖',
       success: '✔',
-      info: 'ⓘ',
-      debug: 'ⓓ',
-      route: '⛗'
+      info: '✱',
+      debug: '⚈',
+      route: '➟'
     }
   } else {
     return {
@@ -45,18 +45,7 @@ let outputProcessors = [];
  *
  * Needs to be added to plugins file.
  *
- * @param {Function} on
- *    Cypress event listen handler.
- * @param {object} options
- *    Options for displaying output:
- *      - printLogsToConsole?: string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never'.
- *      - printLogsToFile?: string; Default: 'onFail'. When to print logs to file(s), possible values: 'always', 'onFail', 'never'.
- *      - defaultTrimLength?: Trim length for console and cy.log.
- *      - commandTrimLength?: Trim length for cy commands.
- *      - outputRoot?: The root path to output log files to.
- *      - outputTarget?: Log output types. {[filePath: string]: string | function}
- *      - compactLogs?: Number of lines to compact around failing commands.
- *      - collectTestLogs?: Callback to collect each test case's logs after its run.
+ * @see ./installLogsPrinter.d.ts
  */
 function installLogsPrinter(on, options = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
@@ -68,22 +57,32 @@ function installLogsPrinter(on, options = {}) {
   }
 
   on('task', {
-    [CONSTANTS.TASK_NAME]: data => {
+    [CONSTANTS.TASK_NAME]: function (data) {
       let messages = data.messages;
 
       if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
         messages = compactLogs(messages, options.compactLogs);
       }
 
+      const isHookAndShouldLog = data.isHook &&
+        (options.includeSuccessfulHookLogs || data.state === 'failed');
+
       if (options.outputTarget && options.printLogsToFile !== "never") {
-        if (data.state === "failed" || options.printLogsToFile === "always") {
+        if (
+          data.state === "failed" ||
+          options.printLogsToFile === "always" ||
+          isHookAndShouldLog
+        ) {
           allMessages[data.spec] = allMessages[data.spec] || {};
           allMessages[data.spec][data.test] = messages;
         }
       }
 
-      if ((options.printLogsToConsole === "onFail" && data.state !== "passed")
-        || options.printLogsToConsole === "always") {
+      if (
+        (options.printLogsToConsole === "onFail" && data.state !== "passed")
+        || options.printLogsToConsole === "always"
+        || isHookAndShouldLog
+      ) {
         logToTerminal(messages, options, data);
       }
 
@@ -97,7 +96,8 @@ function installLogsPrinter(on, options = {}) {
       outputProcessors.forEach((processor) => {
         if (Object.entries(allMessages).length !== 0){
           processor.write(allMessages);
-          logOutputTarget(processor);
+          if (options.outputVerbose !== false)
+            logOutputTarget(processor);
         }
       });
       allMessages = {};
@@ -209,10 +209,14 @@ function compactLogs(logs, keepAroundCount) {
 
 function logToTerminal(messages, options, data) {
   const tabLevel = data.level;
-  const isPassed = data.state === 'passed';
-  const padding = CONSTANTS.PADDING.LOG + '  '.repeat(tabLevel - 1);
+  const levelPadding = '  '.repeat(tabLevel - 1);
+  const padding = CONSTANTS.PADDING.LOG + levelPadding;
   const padType = (type) =>
     new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
+
+  if (data.consoleTitle) {
+    console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
+  }
 
   messages.forEach(([type, message, severity]) => {
     let color = 'white',
@@ -241,7 +245,7 @@ function logToTerminal(messages, options, data) {
       icon = LOG_SYMBOLS.info;
     } else if (type === LOG_TYPES.CYPRESS_XHR) {
       color = 'green';
-      icon = LOG_SYMBOLS.info;
+      icon = LOG_SYMBOLS.route;
       trim = options.routeTrimLength || 5000;
     } else if (type === LOG_TYPES.CYPRESS_ROUTE) {
       color = 'green';
@@ -279,9 +283,7 @@ function logToTerminal(messages, options, data) {
     );
   });
 
-  if (!isPassed) {
-    console.log('\n\n');
-  }
+  console.log('\n');
 }
 
 module.exports = installLogsPrinter;

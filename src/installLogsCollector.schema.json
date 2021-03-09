@@ -28,6 +28,9 @@
     "filterLog": {
       "type": "function"
     },
+    "processLog": {
+      "type": "function"
+    },
     "collectTestLogs": {
       "type": "function"
     },
@@ -42,6 +45,9 @@
         }
       },
       "additionalProperties": false
+    },
+    "enableExtendedCollector": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false

@@ -17,6 +17,9 @@
         "never"
       ]
     },
+    "includeSuccessfulHookLogs": {
+      "type": "boolean"
+    },
     "defaultTrimLength": {
       "type": ["string", "number"]
     },
@@ -46,6 +49,9 @@
           ]
         }
       }
+    },
+    "outputVerbose": {
+      "type": "boolean"
     },
     "collectTestLogs": {
       "type": "function"

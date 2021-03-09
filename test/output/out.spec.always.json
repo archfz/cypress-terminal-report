@@ -19,7 +19,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (361 ms)\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -54,7 +54,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments (X ms)\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments (395 ms)\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
@@ -189,7 +189,7 @@
       {
         "type": "cy:xhr",
         "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\nStatus: 404 - Not Found"
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (506 ms)\nStatus: 404 - Not Found"
       },
       {
         "type": "cy:command",
@@ -238,6 +238,27 @@
         "type": "cy:command",
         "severity": "error",
         "message": "get\t.breaking-get 3"
+      }
+    ],
+    "unnested before with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> not nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
       }
     ]
   },
@@ -311,13 +332,7 @@
         "message": "PUT https://jsonplaceholder.cypress.io/comments\nStatus: 404 - Not Found\nResponse body: {}"
       }
     ],
-    "Requests. -> cypress logging is disabled in the request": [
-      {
-        "type": "cy:request",
-        "severity": "error",
-        "message": "POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
-      }
-    ],
+    "Requests. -> cypress logging is disabled in the request": [],
     "Requests. -> Network error": [
       {
         "type": "cy:request",

@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test.js",
+    "cypress-open-files": "cypress open --env generateOutput=1,printLogsToFileAlways=1,printSuccessfulHookLogs=1",
+    "cypress-open-collect": "cypress open --env collectTestLogsSupport=1",
+    "cypress-run": "cypress run --headless --spec cypress/integration/afterLogs.spec.js --env generateOutput=1",
+    "mocha-debug": "mocha mocha.js",
     "wsl-open-cypress": "cmd.exe /C npx cypress open"
   },
   "author": "Fodor Zoltan",
   "license": "MIT",
   "dependencies": {
     "chai": "^4.2.0",
-    "cypress": "^6.5.0",
+    "cypress": "^6.6.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "mocha": "^7.0.1"

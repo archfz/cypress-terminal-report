@@ -1,3 +1,5 @@
+import {Hook, Test} from "mocha";
+
 type Severity = '' | 'error' | 'warning';
 
 interface SupportOptions {
@@ -20,10 +22,23 @@ interface SupportOptions {
     | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => boolean);
 
   /**
+   * Callback to process logs manually. The type is from the same list as for the collectTypes option.
+   * Severity can be of ['', 'error', 'warning'].
+   * @default undefined
+   */
+  processLog?:
+      | null
+      | NonNullable<SupportOptions['collectTypes']>[number]
+      | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => [Severity, string, Severity]);
+
+  /**
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (mochaInstance: any, messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]) => void;
+  collectTestLogs?: (
+    context: {mochaRunnable: Test | Hook, testState: string, testTitle: string, testLevel: number},
+    messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]
+  ) => void;
 
   xhr?: {
     /**
@@ -38,6 +53,13 @@ interface SupportOptions {
      */
     printRequestData?: boolean;
   };
+
+  /**
+   * Enables extended log collection: including after all and before all hooks.
+   * @unstable
+   * @default false
+   */
+  enableExtendedCollector: boolean;
 }
 
 declare function installLogsCollector(config?: SupportOptions): void;

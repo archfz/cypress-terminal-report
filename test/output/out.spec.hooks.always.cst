@@ -1,0 +1,5 @@
+Specs:
+cypress/integration/afterLogs.spec.js
+cypress/integration/allHooks.spec.js
+cypress/integration/beforeLogs.spec.js
+cypress/integration/mochaContexts.spec.js

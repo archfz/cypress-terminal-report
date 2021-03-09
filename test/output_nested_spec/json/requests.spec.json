@@ -55,13 +55,7 @@
         "message": "PUT https://jsonplaceholder.cypress.io/comments\nStatus: 404 - Not Found\nResponse body: {}"
       }
     ],
-    "Requests. -> cypress logging is disabled in the request": [
-      {
-        "type": "cy:request",
-        "severity": "error",
-        "message": "POST http://www.mocky.io/v2/5ec993803000009700a6ce1f\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
-      }
-    ],
+    "Requests. -> cypress logging is disabled in the request": [],
     "Requests. -> Network error": [
       {
         "type": "cy:request",

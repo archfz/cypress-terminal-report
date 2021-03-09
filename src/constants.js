@@ -24,6 +24,11 @@ module.exports = {
     WARNING: 'warning',
   },
 
+  HOOK_TITLES: {
+    BEFORE: '[[ before all {index} ]]',
+    AFTER: '[[ after all {index} ]]',
+  },
+
   PADDING: {
     LOG: Array(21).join(' '),
   }

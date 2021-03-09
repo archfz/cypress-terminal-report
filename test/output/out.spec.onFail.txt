@@ -3,7 +3,7 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): visit	/commands/network-requests
         cy:command (K): get	.network-btn
         cy:command (K): click
-            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1 (X ms)
+            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1 (492 ms)
                         Status: 200 - OK
         cy:command (K): wait	@getComment
           cy:route (K): (getComment) GET https://jsonplaceholder.cypress.io/comments/1
@@ -19,7 +19,7 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): assert	expected **200** to equal **200**
         cy:command (K): get	.network-post
         cy:command (K): click
-            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments (X ms)
+            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments (424 ms)
                         Status: 201 - Created
         cy:command (K): wait	@postComment
           cy:route (K): (postComment) POST https://jsonplaceholder.cypress.io/comments
@@ -71,7 +71,7 @@ cypress/integration/happyFlow.spec.js:
         cons:debug (K): This should console.debug appear.
         cy:command (K): get	.network-put
         cy:command (K): click
-            cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)
+            cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (507 ms)
                         Status: 404 - Not Found
         cy:command (K): wait	@putComment
           cy:route (!): (putComment) PUT https://jsonplaceholder.cypress.io/comments/1
@@ -82,6 +82,18 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): get	.network-put-comment
         cy:command (K): assert	expected **<div.network-put-comment>** to contain **whoa, this comment does not exist**
         cy:command (X): get	.breaking-get
+
+
+
+cypress/integration/mochaContexts.spec.js:
+    main context -> first level test
+        cy:command (X): get	.breaking-get 1
+
+    main context -> second context -> second level test
+        cy:command (X): get	.breaking-get 2
+
+    main context -> second context -> third context -> third level test
+        cy:command (X): get	.breaking-get 3
 
 
 
@@ -143,15 +155,6 @@ cypress/integration/requests.spec.js:
                         Response body: {}
 
     Requests. -> cypress logging is disabled in the request
-        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
-                        Status: 400 - Bad Request
-                        Response body: {
-                          "status": "Wrong!",
-                          "data": {
-                            "corpo": "corpo da resposta",
-                            "titulo": "titulo da resposta"
-                          }
-                        }
 
     Requests. -> Network error
         cy:request (X): POST http://this.does.not.exist
