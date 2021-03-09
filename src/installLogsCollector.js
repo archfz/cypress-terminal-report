@@ -17,6 +17,7 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
  *    Options for collection logs:
  *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
  *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
+ *      - processLog?: ([type, message, severity]) => string; Callback to process logs manually.
  *      - xhr?:
  *          - printHeaderData?: boolean; Defaults to false. Whether to write XHR header data.
  *          - printRequestData?: boolean; Defaults to false. Whether to write XHR request data.
@@ -41,6 +42,10 @@ function installLogsCollector(config = {}) {
 
     if (config.filterLog && !config.filterLog(entry)) {
       return;
+    }
+
+    if (config.processLog){
+      entry[1] = config.processLog(entry);
     }
 
     if (id) {
@@ -266,6 +271,9 @@ function validateConfig(config) {
 
   if (config.filterLog && typeof config.filterLog !== 'function') {
     throw new CtrError(`[cypress-terminal-report] Filter log option expected to be a function.`);
+  }
+  if (config.processLog && typeof config.processLog !== 'function') {
+    throw new CtrError(`[cypress-terminal-report] Process log option expected to be a function.`);
   }
   if (config.collectTestLogs && typeof config.collectTestLogs !== 'function') {
     throw new CtrError(`[cypress-terminal-report] Collect test logs option expected to be a function.`);

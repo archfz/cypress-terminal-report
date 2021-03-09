@@ -9,6 +9,22 @@ if (env.setLogTypes == '1') {
 if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
 }
+if (env.setProcessLogs == '1') {
+  config.processLog = ([sev, log]) => {
+    if (sev == 'cy:request'){
+      log = log.length.toString();
+    }
+    else{
+      debugger;
+      let reg = /\[[^\[]+]/;
+      let secret = log.match(reg);
+      if (secret){
+        log = log.replace(reg, '[******]');
+      }
+    }
+    return log;
+  }
+}
 if (env.collectTestLogsSupport == '1') {
   config.collectTestLogs = (mochaRunnable, logs) =>
     cy.log(`Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`);
@@ -28,6 +44,7 @@ if (env.supportBadConfig == '1') {
   config = {
     collectTypes: 0,
     filterLog: "string",
+    processLog: true,
     collectTestLogs: "string",
     xhr: {
       printRequestData: "",
