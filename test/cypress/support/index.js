@@ -11,7 +11,7 @@ if (env.setFilterLogs == '1') {
 }
 if (env.setProcessLogs == '1') {
   config.processLog = ([sev1, log, sev2]) => {
-    if (sev == 'cy:request'){
+    if (sev1 == 'cy:request'){
       log = log.length.toString();
     }
     else{
