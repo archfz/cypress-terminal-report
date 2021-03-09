@@ -52,7 +52,7 @@ module.exports = class LogCollectorState {
     }
 
     if (this.config.processLog) {
-      entry[1] = this.config.processLog(entry);
+      entry = this.config.processLog(entry);
     }
 
     const currentStack = this.getCurrentLogStack();
