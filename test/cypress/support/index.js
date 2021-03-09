@@ -10,7 +10,7 @@ if (env.setFilterLogs == '1') {
   config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
 }
 if (env.setProcessLogs == '1') {
-  config.processLog = ([sev, log]) => {
+  config.processLog = ([sev1, log, sev2]) => {
     if (sev == 'cy:request'){
       log = log.length.toString();
     }
@@ -21,7 +21,7 @@ if (env.setProcessLogs == '1') {
         log = log.replace(reg, '[******]');
       }
     }
-    return log;
+    return [sev1, log, sev2];
   }
 }
 if (env.collectTestLogsSupport == '1') {
