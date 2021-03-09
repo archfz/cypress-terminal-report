@@ -15,7 +15,6 @@ if (env.setProcessLogs == '1') {
       log = log.length.toString();
     }
     else{
-      debugger;
       let reg = /\[[^\[]+]/;
       let secret = log.match(reg);
       if (secret){
