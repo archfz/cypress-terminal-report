@@ -1,264 +1,65 @@
-const methods = require('methods');
 const tv4 = require('tv4');
-
 const schema = require('./installLogsCollector.schema.json');
 const CtrError = require('./CtrError');
 const LOG_TYPE = require('./constants').LOG_TYPES;
-const CONSTANTS = require('./constants');
-const xhrPartParse = require('./xhrPartParse');
 const tv4ErrorTransformer = require('./tv4ErrorTransformer');
+
+const LogCollectBrowserConsole = require("./collector/LogCollectBrowserConsole");
+const LogCollectCypressCommand = require("./collector/LogCollectCypressCommand");
+const LogCollectCypressRequest = require("./collector/LogCollectCypressRequest");
+const LogCollectCypressRoute = require("./collector/LogCollectCypressRoute");
+const LogCollectCypressXhr = require("./collector/LogCollectCypressXhr");
+const LogCollectCypressLog = require("./collector/LogCollectCypressLog");
+
+const LogCollectorState = require("./collector/LogCollectorState");
+const LogCollectExtendedControl = require("./collector/LogCollectExtendedControl");
+const LogCollectSimpleControl = require("./collector/LogCollectSimpleControl");
 
 /**
  * Installs the logs collector for cypress.
  *
  * Needs to be added to support file.
  *
- * @param {object} config
- *    Options for collection logs:
- *      - collectTypes?: array; Collect only these types of logs. Defaults to all types.
- *      - filterLog?: ([type, message, severity]) => boolean; Callback to filter logs manually.
- *      - processLog?: ([type, message, severity]) => string; Callback to process logs manually.
- *      - xhr?:
- *          - printHeaderData?: boolean; Defaults to false. Whether to write XHR header data.
- *          - printRequestData?: boolean; Defaults to false. Whether to write XHR request data.
+ * @see ./installLogsCollector.d.ts
  */
 function installLogsCollector(config = {}) {
   validateConfig(config);
 
-  const collectTypes = config.collectTypes || Object.values(LOG_TYPE);
-  const collectRequestData = config.xhr && config.xhr.printRequestData;
-  const collectHeaderData = config.xhr && config.xhr.printHeaderData;
+  config.collectTypes = config.collectTypes || Object.values(LOG_TYPE);
+  config.collectRequestData = config.xhr && config.xhr.printRequestData;
+  config.collectHeaderData = config.xhr && config.xhr.printHeaderData;
 
-  let logs = [];
-  let leftoverLogs = [];
-  let logsChainId = {};
-  let xhrIdsOfLoggedResponses = [];
-  let beforeHookIndex = 0;
-  let afterHookIndex = 0;
-  let testIndexInSuite = -1;
+  let logCollectorState = new LogCollectorState(config);
+  registerLogCollectorTypes(logCollectorState, config);
 
-  const addLog = (entry, id, xhrIdOfLoggedResponse) => {
-    entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
-
-    if (config.filterLog && !config.filterLog(entry)) {
-      return;
-    }
-
-    if (config.processLog){
-      entry[1] = config.processLog(entry);
-    }
-
-    if (id) {
-      logsChainId[id] = logs.length;
-    }
-    if (xhrIdOfLoggedResponse) {
-      xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
-    }
-
-    logs.push(entry);
-  };
-
-  const updateLog = (log, severity, id) => {
-    const existingLog = logsChainId[id] && logs[logsChainId[id]];
-    if (existingLog) {
-      existingLog[1] = log;
-      existingLog[2] = severity;
-    }
-  };
-
-  const hasXhrResponseBeenLogged = (xhrId) => xhrIdsOfLoggedResponses.includes(xhrId);
-
-  const formatXhrLog = (xhrLog) => {
-    let logMessage = '';
-    if (xhrLog.response) {
-      logMessage += `Status: ${xhrLog.response.status}\n`;
-    } else if (xhrLog.networkError) {
-      logMessage += `Network error: ${xhrLog.networkError}\n`;
-    }
-    if (xhrLog.request) {
-      if (collectRequestData) {
-        if (collectHeaderData) {
-          logMessage += `Request headers: ${xhrLog.request.headers}\n`;
-        }
-        logMessage += `Request body: ${xhrLog.request.body}\n`;
-      }
-    }
-    if (xhrLog.response) {
-      if (collectHeaderData) {
-        logMessage += `Response headers: ${xhrLog.response.headers}\n`;
-      }
-      logMessage += `Response body: ${xhrLog.response.body}`;
-    }
-    return logMessage.trimEnd();
-  };
-
-  collectBrowserConsoleLogs(addLog, collectTypes);
-
-  if (collectTypes.includes(LOG_TYPE.CYPRESS_LOG)) {
-    collectCypressLogCommand(addLog);
+  if (config.enableExtendedCollector) {
+    (new LogCollectExtendedControl(logCollectorState, config)).register();
+  } else {
+    (new LogCollectSimpleControl(logCollectorState, config)).register();
   }
-  if (collectTypes.includes(LOG_TYPE.CYPRESS_XHR)) {
-    collectCypressXhrLog(addLog, updateLog, hasXhrResponseBeenLogged);
+}
+
+function registerLogCollectorTypes(logCollectorState, config) {
+  (new LogCollectBrowserConsole(logCollectorState, config)).register()
+
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_LOG)) {
+    (new LogCollectCypressLog(logCollectorState, config)).register();
   }
-  if (collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
-    collectCypressRequestCommand(addLog, formatXhrLog);
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_XHR)) {
+    (new LogCollectCypressXhr(logCollectorState, config)).register();
   }
-  if (collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
-    collectCypressRouteCommand(addLog, formatXhrLog);
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
+    (new LogCollectCypressRequest(logCollectorState, config)).register();
   }
-  if (collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
-    collectCypressGeneralCommandLog(addLog);
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
+    (new LogCollectCypressRoute(logCollectorState, config)).register();
   }
-
-  Cypress.on('log:changed', (options) => {
-    if (options.state === 'failed' && logsChainId[options.id] !== undefined) {
-      if (logs[logsChainId[options.id]]) {
-        logs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
-      }
-      if (leftoverLogs[logsChainId[options.id]]) {
-        leftoverLogs[logsChainId[options.id]][2] = CONSTANTS.SEVERITY.ERROR;
-      }
-    }
-  });
-
-  Cypress.mocha.getRunner().on('test', () => {
-    xhrIdsOfLoggedResponses = [];
-    logsChainId = {};
-    logs = [];
-    ++testIndexInSuite;
-  });
-
-  Cypress.mocha.getRunner().on('suite', () => {
-    xhrIdsOfLoggedResponses = [];
-    logsChainId = {};
-    logs = [];
-    leftoverLogs = [];
-    beforeHookIndex = 0;
-    afterHookIndex = 0;
-    testIndexInSuite = -1;
-  });
-
-  const sendLogsToPrinter = (logs, mochaRunnable, options = {}) => {
-    let testState = options.state || mochaRunnable.state;
-    let testTitle = options.title || mochaRunnable.title;
-    let testLevel = 0;
-
-    if (config.collectTestLogs) {
-      mochaRunnable.title = testTitle;
-      mochaRunnable.state = testState;
-      config.collectTestLogs(mochaRunnable, logs);
-    }
-
-    let parent = mochaRunnable.parent;
-    while (parent && parent.title) {
-      testTitle = `${parent.title} -> ${testTitle}`
-      parent = parent.parent;
-      ++testLevel;
-    }
-
-    // Need to wait otherwise some last commands get omitted from logs.
-    cy.wait(3, {log: false});
-    cy.task(
-      CONSTANTS.TASK_NAME,
-      {
-        spec: mochaRunnable.invocationDetails.relativeFile,
-        test: testTitle,
-        messages: logs,
-        state: testState,
-        level: testLevel,
-        consoleTitle: options.consoleTitle,
-        isHook: options.isHook,
-      },
-      {log: false}
-    );
-  };
-
-  const getBeforeHookTestTile = (index) => {
-    return CONSTANTS.HOOK_TITLES.BEFORE.replace('{index}', `#${index}`);
-  };
-
-  // Logs commands from before hook if the hook passed.
-  Cypress.mocha.getRunner().on('hook end', function (hook) {
-    if (hook.hookName === "before all") {
-      ++beforeHookIndex;
-      if (logs.length) {
-        sendLogsToPrinter(
-          logs,
-          this.currentRunnable,
-          {
-            state: 'passed',
-            isHook: true,
-            title: getBeforeHookTestTile(beforeHookIndex),
-            consoleTitle: getBeforeHookTestTile(beforeHookIndex),
-          }
-        );
-        logs = [];
-      }
-    }
-  });
-
-  Cypress.mocha.getRunner().on('hook', function (hook) {
-    if (hook.hookName === "after all") {
-      ++afterHookIndex;
-      // In case we get to running after all hooks and there are still logs it means
-      // that these were not logged. Separate these and also start clean slate for
-      // collecting only logs from after hooks.
-      if (1 === afterHookIndex && logs.length) {
-        leftoverLogs = logs;
-        logs = [];
-      }
-    }
-  });
-
-  // Hack to have dynamic after hook per suite.
-  // The onSpecReady in cypress is called before the hooks are 'condensed', or so
-  // to say sealed and thus in this phase we can register dynamically hooks.
-  const oldOnSpecReady = Cypress.onSpecReady;
-  Cypress.onSpecReady = function () {
-    const ctrAfterAllPerSuite = function () {
-      if (-1 === testIndexInSuite && leftoverLogs.length) {
-        // Here we assume a command failed in the before hook since
-        // no test has been started.
-        sendLogsToPrinter(
-          leftoverLogs,
-          this.currentTest,
-          {
-            state: 'failed',
-            isHook: true,
-            title: getBeforeHookTestTile(++beforeHookIndex)
-          }
-        );
-      }
-    };
-
-    this.mocha.getRootSuite().suites.forEach((suite) => {
-      suite.afterAll(ctrAfterAllPerSuite);
-    });
-
-    oldOnSpecReady(...arguments);
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
+    (new LogCollectCypressCommand(logCollectorState, config)).register();
   }
-
-  // Logs commands form each separate test.
-  afterEach(function () {
-    sendLogsToPrinter(logs, this.currentTest);
-  });
-
-  // Logs to files.
-  after(function () {
-    cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
-  });
 }
 
 function validateConfig(config) {
-  before(function () {
-    if (typeof config.printLogs === 'string') {
-      cy.log(
-        'cypress-terminal-report: WARN! printLogs ' +
-          'configuration has been removed. Please check changelog in readme.'
-      );
-    }
-  });
-
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {
@@ -280,283 +81,5 @@ function validateConfig(config) {
   }
 }
 
-function collectBrowserConsoleLogs(addLog, collectTypes) {
-  const oldConsoleMethods = {};
-
-  Cypress.on('window:before:load', function () {
-    const docIframe = window.parent.document.querySelector("[id*='Your App']");
-    const appWindow = docIframe.contentWindow;
-
-    const processArg = (arg) => {
-      if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
-        return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
-      }
-
-      if (
-        (arg instanceof appWindow.Error || arg instanceof Error) &&
-        typeof arg.stack === 'string'
-      ) {
-        let stack = arg.stack;
-        if (stack.indexOf(arg.message) !== -1) {
-          stack = stack.slice(stack.indexOf(arg.message) + arg.message.length + 1);
-        }
-        return arg.toString() + '\n' + stack;
-      }
-
-      let json = '';
-      try {
-        json = JSON.stringify(arg, null, 2);
-      } catch (e) {
-        return '[unprocessable=' + arg + ']';
-      }
-
-      if (typeof json === 'undefined') {
-        return 'undefined';
-      }
-
-      return json;
-    };
-
-    const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {
-      oldConsoleMethods[method] = appWindow.console[method];
-
-      appWindow.console[method] = (...args) => {
-        addLog([logType, args.map(processArg).join(`,\n`), type]);
-        oldConsoleMethods[method](...args);
-      };
-    };
-
-    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_WARN)) {
-      createWrapper('warn', LOG_TYPE.BROWSER_CONSOLE_WARN, CONSTANTS.SEVERITY.WARNING);
-    }
-    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_ERROR)) {
-      createWrapper('error', LOG_TYPE.BROWSER_CONSOLE_ERROR, CONSTANTS.SEVERITY.ERROR);
-    }
-    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_INFO)) {
-      createWrapper('info', LOG_TYPE.BROWSER_CONSOLE_INFO);
-    }
-    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_DEBUG)) {
-      createWrapper('debug', LOG_TYPE.BROWSER_CONSOLE_DEBUG);
-    }
-    if (collectTypes.includes(LOG_TYPE.BROWSER_CONSOLE_LOG)) {
-      createWrapper('log', LOG_TYPE.BROWSER_CONSOLE_LOG);
-    }
-  });
-}
-
-function collectCypressLogCommand(addLog) {
-  Cypress.Commands.overwrite('log', (subject, ...args) => {
-    addLog([LOG_TYPE.CYPRESS_LOG, args.join(' ')]);
-    subject(...args);
-  });
-}
-
-function collectCypressXhrLog(addLog, updateLog, hasXhrResponseBeenLogged) {
-  const formatXhr = (options) => options.message +
-    (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
-    options.consoleProps.Method + ' ' + options.consoleProps.URL;
-
-  const formatDuration = (durationInMs) =>
-    durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
-
-  Cypress.on('log:added', (options) => {
-    if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
-      const log = formatXhr(options);
-      const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
-      addLog([LOG_TYPE.CYPRESS_XHR, log, severity], options.id);
-    }
-  });
-
-  Cypress.on('log:changed', async (options) => {
-    if (
-      options.instrument === 'command' &&
-      options.name === 'xhr' &&
-      options.consoleProps &&
-      options.consoleProps.Status
-    ) {
-      const [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
-      const isSuccess = statusCode && statusCode[0] === '2';
-      const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
-      let log = formatXhr(options) +
-        ` (${formatDuration(options.consoleProps.Duration)})` +
-        `\nStatus: ${statusCode} - ${statusText}`;
-      if (!isSuccess && !hasXhrResponseBeenLogged(options.consoleProps.XHR.id)) {
-        log += `\nResponse body: ${await xhrPartParse(options.consoleProps.Response.body)}`;
-      }
-      updateLog(log, severity, options.id);
-    }
-  });
-}
-
-function collectCypressRequestCommand(addLog, formatXhrLog) {
-  const isValidHttpMethod = (str) =>
-    typeof str === 'string' && methods.some((s) => str.toLowerCase().includes(s));
-
-  const isNetworkError = (e) =>
-    e.message && e.message.startsWith('`cy.request()` failed trying to load:');
-
-  const isStatusCodeFailure = (e) => e.message && e.message.startsWith('`cy.request()` failed on:');
-
-  const parseRequestStatusCodeFailureMessage = (message) => {
-    const responseStart = '\n\nThe response we got was:\n\n';
-    const statusStart = 'Status: ';
-    const headersStart = '\nHeaders: ';
-    const bodyStart = '\nBody: ';
-    if (
-      message.indexOf(responseStart) === -1 ||
-      message.indexOf(statusStart) === -1 ||
-      message.indexOf(headersStart) === -1 ||
-      message.indexOf(bodyStart) === -1
-    ) {
-      return {status: 'Cannot parse cy.request status code failure message!'};
-    }
-    const response = message.substr(message.indexOf(responseStart) + responseStart.length);
-    const statusStr = response.substr(
-      response.indexOf(statusStart) + statusStart.length,
-      response.indexOf(headersStart) - (response.indexOf(statusStart) + statusStart.length)
-    );
-    const headersStr = response.substr(
-      response.indexOf(headersStart) + headersStart.length,
-      response.indexOf(bodyStart) - (response.indexOf(headersStart) + headersStart.length)
-    );
-    const bodyStr = response.substr(response.indexOf(bodyStart) + bodyStart.length);
-    return {status: statusStr, headers: headersStr, body: bodyStr.trimEnd()};
-  };
-
-  const parseRequestNetworkError = (message) => {
-    const errorPartStart = 'We received this error at the network level:\n\n  > ';
-    const errorPrefix = 'Error: ';
-    if (message.indexOf(errorPartStart) === -1) {
-      return {status: 'Cannot parse cy.request network error message!'};
-    }
-    let fromError = message.substr(message.indexOf(errorPartStart) + errorPartStart.length);
-    let errorPart = fromError.substr(0, fromError.indexOf('\n'));
-    if (errorPart.startsWith(errorPrefix)) {
-      return errorPart.substr(errorPrefix.length).trim();
-    }
-    return errorPart.trim();
-  };
-
-  Cypress.Commands.overwrite('request', async (originalFn, ...args) => {
-    if (typeof args === 'object' && args !== null && args[0]['log'] === false){
-      return originalFn(...args);
-    }
-
-    let log;
-    let requestBody;
-    let requestHeaders;
-
-    // args can have up to 3 arguments
-    // https://docs.cypress.io/api/commands/request.html#Syntax
-    if (args[0].method) {
-      log = `${args[0].method} ${args[0].url ? `${args[0].url}` : args[0]}`;
-      requestBody = args[0].body;
-      requestHeaders = args[0].headers;
-    } else if (isValidHttpMethod(args[0])) {
-      log = `${args[0]} ${args[1]}`;
-      requestBody = args[3];
-    } else {
-      log = `${args[0]}`;
-    }
-
-    const response = await originalFn(...args).catch(async (e) => {
-      if (isNetworkError(e)) {
-        log +=
-          `\n` +
-          formatXhrLog({
-            request: {
-              headers: await xhrPartParse(requestHeaders),
-              body: await xhrPartParse(requestBody),
-            },
-            networkError: parseRequestNetworkError(e.message),
-          });
-      } else if (isStatusCodeFailure(e)) {
-        const xhr = parseRequestStatusCodeFailureMessage(e.message);
-        log +=
-          `\n` +
-          formatXhrLog({
-            request: {
-              headers: await xhrPartParse(requestHeaders),
-              body: await xhrPartParse(requestBody),
-            },
-            response: {
-              status: xhr.status,
-              headers: await xhrPartParse(xhr.headers),
-              body: await xhrPartParse(xhr.body),
-            },
-          });
-      } else {
-        log += `\n` + 'Cannot parse cy.request error content!';
-      }
-
-      addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
-      throw e;
-    });
-
-    log +=
-      `\n` +
-      formatXhrLog({
-        request: {
-          headers: await xhrPartParse(requestHeaders),
-          body: await xhrPartParse(requestBody),
-        },
-        response: {
-          status: response.status,
-          headers: await xhrPartParse(response.headers),
-          body: await xhrPartParse(response.body),
-        },
-      });
-
-    addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
-    return response;
-  });
-}
-
-function collectCypressRouteCommand(addLog, formatXhrLog) {
-  Cypress.Commands.overwrite('server', (originalFn, options = {}) => {
-    const prevCallback = options && options.onAnyResponse;
-    options.onAnyResponse = async (route, xhr) => {
-      if (prevCallback) {
-        prevCallback(route, xhr);
-      }
-
-      if (!route) {
-        return;
-      }
-
-      const severity = String(xhr.status).match(/^2[0-9]+$/) ? '' : CONSTANTS.SEVERITY.WARNING;
-      let logMessage = `(${route.alias}) ${xhr.method} ${xhr.url}\n`;
-      logMessage += formatXhrLog({
-        request: {
-          headers: await xhrPartParse(xhr.request.headers),
-          body: await xhrPartParse(xhr.request.body),
-        },
-        response: {
-          status: xhr.status,
-          headers: await xhrPartParse(xhr.response.headers),
-          body: await xhrPartParse(xhr.response.body),
-        },
-      });
-
-      addLog([LOG_TYPE.CYPRESS_ROUTE, logMessage, severity], null, xhr.id);
-    };
-    originalFn(options);
-  });
-}
-
-function collectCypressGeneralCommandLog(addLog) {
-  Cypress.on('log:added', (options) => {
-    if (
-      options.instrument === 'command' &&
-      options.consoleProps &&
-      !['xhr', 'log', 'request'].includes(options.name) &&
-      !(options.name === 'task' && options.message.match(/ctrLogMessages/))
-    ) {
-      const log = options.name + '\t' + options.message;
-      const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : '';
-      addLog([LOG_TYPE.CYPRESS_COMMAND, log, severity], options.id);
-    }
-  });
-}
 
 module.exports = installLogsCollector;

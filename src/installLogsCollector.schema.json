@@ -45,6 +45,9 @@
         }
       },
       "additionalProperties": false
+    },
+    "enableExtendedCollector": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false

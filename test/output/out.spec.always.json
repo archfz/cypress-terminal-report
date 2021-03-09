@@ -1,68 +1,4 @@
 {
-  "cypress/integration/beforeLogs.spec.js": {
-    "before fails -> [[ before all #1 ]]": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some before command"
-      },
-      {
-        "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
-      }
-    ],
-    "before succeeds -> [[ before all #1 ]]": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some before command"
-      },
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some other before command"
-      }
-    ],
-    "before succeeds -> [[ before all #2 ]]": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some before command from second before hook"
-      }
-    ],
-    "before succeeds -> the test fails": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "log"
-      },
-      {
-        "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
-      }
-    ],
-    "nested before fails -> [[ before all #1 ]]": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some before command not in nested"
-      }
-    ],
-    "nested before fails -> nested context -> [[ before all #1 ]]": [
-      {
-        "type": "cy:log",
-        "severity": "success",
-        "message": "some before command in nested"
-      },
-      {
-        "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
-      }
-    ]
-  },
   "cypress/integration/happyFlow.spec.js": {
     "Happy flow. -> Happy flow": [
       {
@@ -83,7 +19,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (515 ms)\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (361 ms)\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -118,7 +54,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments (353 ms)\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments (395 ms)\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
@@ -253,7 +189,7 @@
       {
         "type": "cy:xhr",
         "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (513 ms)\nStatus: 404 - Not Found"
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (506 ms)\nStatus: 404 - Not Found"
       },
       {
         "type": "cy:command",
@@ -302,6 +238,27 @@
         "type": "cy:command",
         "severity": "error",
         "message": "get\t.breaking-get 3"
+      }
+    ],
+    "unnested before with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> not nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
+      }
+    ],
+    "unnested before and test with nested context -> nested context -> the test nested": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "log"
       }
     ]
   },

@@ -89,7 +89,6 @@ module.exports = class BaseOutputProcessor {
 
     let sizeDiff = chunkBuffer.length - (oldChunkEnd - oldChunkStart);
     this.size += sizeDiff;
-    console.log(sizeDiff);
 
     if (0 > sizeDiff) {
       fs.truncateSync(this.file, this.size);

@@ -23,3 +23,43 @@ context('main context', () => {
     })
   })
 })
+
+describe('unnested before with nested context', () => {
+  before(() => {
+    cy.log('before should display before nested context title');
+  });
+
+  describe('nested context', () => {
+    it('the test nested', () => {
+      cy.log('log');
+    });
+  });
+});
+
+describe('unnested before and test with nested context', () => {
+  before(() => {
+    cy.log('before should display before nested context title');
+  });
+
+  describe('nested context', () => {
+    it('the test nested', () => {
+      cy.log('log');
+    });
+  });
+
+  it('not nested', () => {
+    cy.log('log');
+  });
+});
+
+describe('unnested failing before with nested context', () => {
+  before(() => {
+    cy.get('before should display before nested context title', {timeout: 0});
+  });
+
+  describe('nested context', () => {
+    it('the test nested', () => {
+      cy.log('log');
+    });
+  });
+});
