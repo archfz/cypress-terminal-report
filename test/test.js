@@ -500,7 +500,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(90000);
 
-  it('Should display logs from before all hooks if they fail.', async () => {
+  it('Should display logs from before all hooks if they fail.', async function () {
     this.retries(3);
 
     await runTest(commandBase(['enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
@@ -527,7 +527,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should display logs from before all hooks even if they passed, when configured so.', async () => {
+  it('Should display logs from before all hooks even if they passed, when configured so.', async function () {
     this.retries(3);
 
     await runTest(commandBase(['printSuccessfulHookLogs=1','enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
@@ -584,7 +584,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should display logs from after all hooks if they fail.', async () => {
+  it('Should display logs from after all hooks if they fail.', async function() {
     this.retries(3);
 
     await runTest(commandBase(['enableExtendedCollector=1'], ['afterLogs.spec.js']), (error, stdout, stderr) => {
@@ -606,7 +606,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
-  it('Should display logs from after all hooks even if they passed, when configured so.', async () => {
+  it('Should display logs from after all hooks even if they passed, when configured so.', async function() {
     this.retries(3);
 
     await runTest(commandBase(['printSuccessfulHookLogs=1', 'enableExtendedCollector=1'], ['afterLogs.spec.js']), (error, stdout, stderr) => {
