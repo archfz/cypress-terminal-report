@@ -286,8 +286,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 - Added support for [logging commands from before all and after all hooks](#logging-after-all-and-before-all-hooks). [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
-- Added support for processing log. [issue](https://github.com/archfz/cypress-terminal-report/issues/74) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/81) by [FLevent29](https://github.com/FLevent29)
-- Added support to disable verbose logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/71) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/80) by [FLevent29](https://github.com/FLevent29)
+- Added support for [option to process logs](#optionsprocesslog). [issue](https://github.com/archfz/cypress-terminal-report/issues/74) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/81) by [FLevent29](https://github.com/FLevent29)
+- Added support to [disable verbose logging](#optionsoutputverbose). [issue](https://github.com/archfz/cypress-terminal-report/issues/71) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/80) by [FLevent29](https://github.com/FLevent29)
 - Updated unicode icons for log types on linux.
 - Updated cypress to 6.6.x in tests to confirm support.
 
