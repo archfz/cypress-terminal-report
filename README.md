@@ -4,7 +4,7 @@
 [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
-> ! 2.0.0 is out. Please read the [release notes](#200) for upgrade path from 1.x.x.
+> ! 3.x.x is out. Please read the [release notes](#300) for upgrade path from 2.x.x.
 
 Plugin for cypress that adds better terminal output for easier debugging. 
 Prints cy commands, browser console logs, cy.request and cy.route data.
@@ -151,9 +151,9 @@ before all and after all hooks.
 
 ## Logging after all and before all hooks
 
-Before all and after all hooks by default are not logged. A new experimental feature introduces
+Commands from before all and after all hooks are not logged by default. A new experimental feature introduces
 support for logging commands from these hooks: [`enableExtendedCollector`](#optionsenableextendedcollector).
-This feature is by default disabled since it relies much more heavily on internals of cypress and 
+This feature is by default disabled as it relies much more heavily on internals of cypress and 
 mocha, thus **there is a higher chance of something breaking, especially with cypress upgrades**.
 
 Once the feature enabled, logs from these hooks will only appear in console if:
@@ -277,7 +277,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-#### next
+#### 3.0.0
 
 - ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.
 - ! Possibly breaking change: Test names in output files now contain mocha contexts.
@@ -286,6 +286,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 - Added support for [logging commands from before all and after all hooks](#logging-after-all-and-before-all-hooks). [issue](https://github.com/archfz/cypress-terminal-report/issues/55)
 - Added support for multiple and nested mocha context. In console logs are tabbed according to nesting
 level of context and in output files context titles are always added. [issue](https://github.com/archfz/cypress-terminal-report/issues/70)
+- Added support for processing log. [issue](https://github.com/archfz/cypress-terminal-report/issues/74) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/81) by [FLevent29](https://github.com/FLevent29)
+- Added support to disable verbose logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/71) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/80) by [FLevent29](https://github.com/FLevent29)
 - Updated unicode icons for log types on linux.
 - Updated cypress to 6.6.x in tests to confirm support.
 
