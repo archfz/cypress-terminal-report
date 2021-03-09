@@ -29,7 +29,7 @@ interface SupportOptions {
   processLog?:
       | null
       | NonNullable<SupportOptions['collectTypes']>[number]
-      | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => string);
+      | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => [Severity, string, Severity]);
 
   /**
    * Callback to collect each test case's logs after its run.
