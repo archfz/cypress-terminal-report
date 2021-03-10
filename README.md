@@ -277,6 +277,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### next
+
+- Fix issue with cucumber tests not logging properly to nested files. [issue](https://github.com/archfz/cypress-terminal-report/issues/82)
+
 #### 3.0.0
 
 - ! Breaking change in [`options.collectTestLogs`](#optionscollecttestlogs-2). First parameter (previously called context) changed.

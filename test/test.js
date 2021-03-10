@@ -439,7 +439,7 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(90000);
 
-  it('Should not verbose.', async () => {
+  it('Should be able to disable verbose.', async () => {
     await runTest(commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']), (error, stdout) => {
       expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to txt.`);
       expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to json.`);
@@ -626,4 +626,31 @@ describe('cypress-terminal-report', () => {
   nested after fails`));
     });
   }).timeout(60000);
+
+  /*
+   * -------------------
+   * Cucumber support. |
+   * ------------------
+   */
+
+  it('Should run happy flow with cucumber preprocessor.', async () => {
+    await runTest(commandBase(['enableCucumber=1', 'printLogsToConsoleAlways=1'], ['cucumber/Happy.feature']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  assert\texpected **0** to be below **2**`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\t**I open Happy page**`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\t**I can load comments**`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\t**I can post comment**`);
+    });
+  }).timeout(30000);
+
+  it('Should generate proper nested log output files with cucumber preprocessor.', async () => {
+    const specFiles = ['cucumber/Happy.feature'];
+    await runTest(commandBase(['generateNestedOutput=1', 'enableCucumber=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout) => {
+      const specs = glob.sync('./output_nested_cucumber_spec/**/*', { nodir: true });
+      specs.forEach(specFile => {
+        const actualFile = specFile.replace('output_nested_cucumber_spec', 'output_nested');
+        expect(fs.existsSync(actualFile), `Expected output file ${actualFile} to exist.`).to.be.true;
+        expectOutFilesMatch(actualFile, specFile);
+      });
+    });
+  }).timeout(90000);
 });

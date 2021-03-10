@@ -20,6 +20,7 @@ module.exports = class LogCollectSimpleControl {
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
+    let spec = mochaRunnable.parent.invocationDetails.relativeFile;
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     let parent = mochaRunnable.parent;
@@ -49,7 +50,7 @@ module.exports = class LogCollectSimpleControl {
         cy.task(
           CONSTANTS.TASK_NAME,
           {
-            spec: mochaRunnable.invocationDetails.relativeFile,
+            spec: spec,
             test: testTitle,
             messages: prepareLogs(),
             state: testState,

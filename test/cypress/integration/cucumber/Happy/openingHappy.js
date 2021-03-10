@@ -1,0 +1,14 @@
+import { Given, Then } from "cypress-cucumber-preprocessor/steps";
+
+Given(`I open Happy page`, () => {
+  cy.visit('/commands/network-requests');
+
+});
+
+Then(`I can load comments`, title => {
+  cy.get('.network-btn').click();
+
+  cy.wait('@getComment')
+    .its('status')
+    .should('eq', 200);
+});
