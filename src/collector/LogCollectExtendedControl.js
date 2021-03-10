@@ -1,11 +1,13 @@
 const CONSTANTS = require('../constants');
+const LogCollectBaseControl = require('./LogCollectBaseControl');
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-module.exports = class LogCollectExtendedControl {
+module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
   constructor(collectorState, config) {
+    super();
     this.config = config;
     this.collectorState = collectorState;
 
@@ -36,18 +38,9 @@ module.exports = class LogCollectExtendedControl {
       ++testLevel;
     }
 
+
     const prepareLogs = () => {
-      const logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
-
-      if (logsCopy === null) {
-        throw new Error(`[cypress-terminal-report] Domain exception: log stack null.`);
-      }
-
-      if (this.config.collectTestLogs) {
-        this.config.collectTestLogs({mochaRunnable, testState, testTitle, testLevel}, logsCopy);
-      }
-
-      return logsCopy;
+      return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
     };
 
     if (options.noQueue) {

@@ -48,6 +48,12 @@ if (env.printRequestData == '1') {
 if (env.filterOutCyCommand == '1') {
   config.filterLog = ([type]) => type !== 'cy:command';
 }
+if (env.filterKeepOnlyWarningAndError == '1') {
+  config.filterLog = ([,,severtiy]) => severtiy === 'error' || severtiy === 'warning';
+}
+if (env.processAllLogs == '1') {
+  config.processLog = ([type,message,severity]) => [type, '| ' + message, severity];
+}
 if (env.supportBadConfig == '1') {
   config = {
     collectTypes: 0,

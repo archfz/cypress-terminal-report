@@ -280,6 +280,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 #### next
 
 - Fix issue with cucumber tests not logging properly to nested files. [issue](https://github.com/archfz/cypress-terminal-report/issues/82)
+- Fix issue with `filterLog` and `processLog` options running too soon on non-final log list. [issue](https://github.com/archfz/cypress-terminal-report/issues/84)
 
 #### 3.0.0
 

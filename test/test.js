@@ -462,6 +462,13 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should filter and process late update logs correctly.', async () => {
+    await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
+      expect(stdout).to.contain(`cy:route ${ICONS.warning}  | (putComment) PUT https://example.cypress.io/comments/10`);
+    });
+  }).timeout(30000);
+
   /*
    * ----------------
    * Extended mode. |
