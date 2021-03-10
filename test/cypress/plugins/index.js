@@ -1,4 +1,5 @@
 const path = require('path');
+const cucumber = require('cypress-cucumber-preprocessor').default;
 
 module.exports = (on, config) => {
   let options = {
@@ -79,5 +80,13 @@ module.exports = (on, config) => {
       console.log(`Collected ${logs.length} logs for test "${context.test}", last log: ${logs[logs.length - 1]}`);
   }
 
+  if (config.env.enableCucumber) {
+    on('file:preprocessor', cucumber());
+    config.ignoreTestFiles = '*.js';
+    config.testFiles = '**/*.{feature,features}';
+  }
+
   require('../../../src/installLogsPrinter')(on, options);
+
+  return config;
 };

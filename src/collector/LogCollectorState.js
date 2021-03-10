@@ -47,18 +47,10 @@ module.exports = class LogCollectorState {
   addLog(entry, chainId, xhrIdOfLoggedResponse) {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
-    if (this.config.filterLog && !this.config.filterLog(entry)) {
-      return;
-    }
-
-    if (this.config.processLog) {
-      entry = this.config.processLog(entry);
-    }
-
     const currentStack = this.getCurrentLogStack();
     if (!currentStack) {
       if (this.isStrict) {
-        console.warn('[cypress-terminal-report] Attempted to collect logs while not stack was defined.');
+        console.warn('[cypress-terminal-report] Attempted to collect logs while no stack was defined.');
       }
       return;
     }

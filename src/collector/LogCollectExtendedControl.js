@@ -1,11 +1,13 @@
 const CONSTANTS = require('../constants');
+const LogCollectBaseControl = require('./LogCollectBaseControl');
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-module.exports = class LogCollectExtendedControl {
+module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
   constructor(collectorState, config) {
+    super();
     this.config = config;
     this.collectorState = collectorState;
 
@@ -26,6 +28,7 @@ module.exports = class LogCollectExtendedControl {
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
+    let spec = mochaRunnable.parent.invocationDetails.relativeFile;
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     let parent = mochaRunnable.parent;
@@ -35,18 +38,9 @@ module.exports = class LogCollectExtendedControl {
       ++testLevel;
     }
 
+
     const prepareLogs = () => {
-      const logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
-
-      if (logsCopy === null) {
-        throw new Error(`[cypress-terminal-report] Domain exception: log stack null.`);
-      }
-
-      if (this.config.collectTestLogs) {
-        this.config.collectTestLogs({mochaRunnable, testState, testTitle, testLevel}, logsCopy);
-      }
-
-      return logsCopy;
+      return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
     };
 
     if (options.noQueue) {
@@ -57,7 +51,7 @@ module.exports = class LogCollectExtendedControl {
           Cypress.backend('task', {
             task: CONSTANTS.TASK_NAME,
             arg: {
-              spec: mochaRunnable.invocationDetails.relativeFile,
+              spec: spec,
               test: testTitle,
               messages: prepareLogs(),
               state: testState,
@@ -77,7 +71,7 @@ module.exports = class LogCollectExtendedControl {
           cy.task(
             CONSTANTS.TASK_NAME,
             {
-              spec: mochaRunnable.invocationDetails.relativeFile,
+              spec: spec,
               test: testTitle,
               messages: prepareLogs(),
               state: testState,
