@@ -19,10 +19,8 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
-> Note: Currently logs do not appear in the dashboard. If you want to see them go
-to your CI runner and check the pipeline logs there.
-
 - [Requirements](#requirements)
+- [Limitations and notes](#limitations-and-notes)
 - [Install](#install)
 - [Options](#options)
 - [Logging after all and before all hooks](#logging-after-all-and-before-all-hooks)
@@ -37,6 +35,15 @@ to your CI runner and check the pipeline logs there.
 
 - `>=3.0.0` requires cypress `>=4.10.0`
 - `<3.0.0` requires cypress `>=3.8.0`
+
+## Limitations and notes
+
+- By default logs are not printed for successful tests. Please see [option](#optionsprintlogstoconsole) to change this.
+- Currently logs do not appear in the dashboard. If you want to see them go to your CI 
+  runner and check the pipeline logs there.
+- `console.log` usage was never meant to be used in the cypress test code. Using it will
+  not log anything with this plugin. Using it also goes against the queue nature of 
+  cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
 
 ## Install
 
@@ -276,6 +283,11 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 3.0.2
+
+- Fixed issue with errors not displaying correctly for commands outside of tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/85)
+- Update readme with additional notes on limitations.
 
 #### 3.0.1
 
