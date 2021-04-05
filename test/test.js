@@ -634,6 +634,12 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should not error with extended collector when a top level suite is skipped', async function () {
+    await runTest(commandBase(['enableExtendedCollector=1'], ['skipTopLevelSuite.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(clean(`1 pending`))
+    });
+  }).timeout(60000);
+
   /*
    * -------------------
    * Cucumber support. |
