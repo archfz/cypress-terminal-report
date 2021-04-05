@@ -469,6 +469,13 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(30000);
 
+  it.only('Should not send logs outside of tests and it should not break cypress errors.', async () => {
+    await runTest(commandBase([], ['errorsOutside.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`Cannot call \`cy.log()\` outside a running test.`);
+      expect(stdout).to.not.contain(`TypeError: Cannot read property 'relativeFile' of undefined`);
+    });
+  }).timeout(30000);
+
   /*
    * ----------------
    * Extended mode. |

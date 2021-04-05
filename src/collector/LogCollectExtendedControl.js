@@ -25,6 +25,10 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   }
 
   sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
+    if (!mochaRunnable.parent.invocationDetails) {
+      return;
+    }
+
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;

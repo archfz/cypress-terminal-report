@@ -284,6 +284,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.0.3
+
+- Fix incomplete previous release.
+
 #### 3.0.2
 
 - Fixed issue with errors not displaying correctly for commands outside of tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/85)
