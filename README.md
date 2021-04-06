@@ -284,6 +284,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.0.4
+
+- Fix skipped root suites breaking extended collector. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/90) by [jmoses](https://github.com/jmoses)
+
 #### 3.0.3
 
 - Fix incomplete previous release.
