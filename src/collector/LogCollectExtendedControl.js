@@ -295,6 +295,9 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     const recursiveSuites = (suites) => {
       if (suites) {
         suites.forEach((suite) => {
+          if (suite.isPending()) {
+            return
+          }
           suite.afterAll(hookCallback);
           // Make sure our hook is first so that other after all hook logs come after
           // the failed before all hooks logs.
