@@ -201,7 +201,7 @@ describe('cypress-terminal-report', () => {
   }).timeout(60000);
 
   it('Should log cypress requests', async () => {
-    await runTest(commandBase([], [`requests.spec.js`]), (error, stdout, stderr) => {
+    await runTest(commandBase([], [`requests.spec.js`, `requests2.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(
         `cy:request ${ICONS.success}  https://jsonplaceholder.cypress.io/todos/1\n${PADDING}Status: 200\n${PADDING}Response body: {\n${PADDING}  "userId": 1,\n${PADDING}  "id": 1,\n${PADDING}  "title": "delectus aut autem",\n${PADDING}  "completed": false\n${PADDING}}`
       );
@@ -228,6 +228,10 @@ describe('cypress-terminal-report', () => {
       );
       expect(stdout).to.contain(
         `cy:request ${ICONS.error}  POST http://this.does.not.exist\n${PADDING}Network error: getaddrinfo ENOTFOUND this.does.not.exist\n`
+      );
+      expect(stdout).to.contain(
+        `cy:request ${ICONS.error}  POST http://timeout
+                    Timed out!`
       );
       // Expect no parsing errors
       expect(stdout).not.to.contain('Cannot parse cy.request error content!');
@@ -259,7 +263,8 @@ describe('cypress-terminal-report', () => {
       expect(cleanStdout).to.contain(
         `cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (X ms)\n${PADDING}Status: 403 - Forbidden\n        cy:route`,
         'stubbed XHR log should not contain response body'
-      )
+      );
+      expect(stdout).to.contain(`cy:xhr ${ICONS.error}  GET https://example.cypress.io/comments/10 - ABORTED\n`);
     });
   }).timeout(60000);
 

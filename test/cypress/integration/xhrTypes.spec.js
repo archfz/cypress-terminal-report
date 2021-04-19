@@ -75,4 +75,29 @@ describe('XHR all types.', () => {
     cy.get('.breaking-get', {timeout: 100}); // longer timeout to ensure XHR log update is included
   });
 
+  /**
+   * Covers timeout.
+   */
+  it('Timeout', () => {
+    cy.visit('/commands/network-requests');
+
+    cy.server();
+
+    cy.route({
+      method: 'PUT',
+      url: 'comments/*',
+    }).as('req:timeout');
+
+    cy.window().then((w) => {
+      const script = w.document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js';
+      script.onload = () => {
+        w.axios.get('/comments/10', {timeout: 10});
+      };
+      w.document.head.appendChild(script);
+    });
+
+    cy.get('.breaking-get', {timeout: 100});
+  });
+
 });
