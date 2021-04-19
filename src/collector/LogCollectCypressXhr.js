@@ -20,7 +20,13 @@ module.exports = class LogCollectCypressXhr {
       durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
 
     Cypress.on('log:added', (options) => {
-      if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
+      if (
+        options.instrument === 'command' &&
+        options.consoleProps &&
+        options.name === 'xhr' &&
+        // Prevent duplicated xhr logs in case of cy.intercept.
+        options.displayName !== 'req'
+      ) {
         const log = formatXhr(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
         this.collectorState.addLog([LOG_TYPE.CYPRESS_XHR, log, severity], options.id);

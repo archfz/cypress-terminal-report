@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "chai": "^4.2.0",
-    "cypress": "^6.6.0",
+    "cypress": "^7.1.0",
     "cypress-cucumber-preprocessor": "^4.0.1",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",

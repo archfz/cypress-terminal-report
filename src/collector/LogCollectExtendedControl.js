@@ -205,7 +205,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               title: self.collectorState.getAfterHookTestTile(),
               isHook: true,
               noQueue: true,
-              wait: 0,
+              wait: 5, // Need to wait so that cypress log updates happen.
             }
           );
         });

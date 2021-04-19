@@ -6,7 +6,6 @@ module.exports = class LogCollectorState {
 
     this.currentTest = null;
     this.logStacks = [];
-    this.logsChainId = {};
     this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes = [];
     this.afterHookIndexes = [];
@@ -40,9 +39,6 @@ module.exports = class LogCollectorState {
   setCurrentTest(test) {
     this.currentTest = test;
   }
-  getLogChainId(chainId) {
-    return this.logsChainId[chainId];
-  }
 
   addLog(entry, chainId, xhrIdOfLoggedResponse) {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
@@ -56,33 +52,46 @@ module.exports = class LogCollectorState {
     }
 
     if (chainId) {
-      this.logsChainId[chainId] = this.getCurrentLogStack().length;
+      entry.chainId = chainId;
     }
     if (xhrIdOfLoggedResponse) {
       this.xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
     }
 
-    this.getCurrentLogStack().push(entry);
+    currentStack.push(entry);
   }
 
   updateLog(log, severity, id) {
-    this.logStacks.forEach(logStack => {
-      const existingLog = this.logsChainId[id] && logStack && logStack[this.logsChainId[id]];
-      if (existingLog) {
-        existingLog[1] = log;
-        existingLog[2] = severity;
+    this.loopLogStacks((entry) => {
+      if (entry.chainId === id) {
+        entry[1] = log;
+        entry[2] = severity;
       }
     });
   }
 
   updateLogStatusForChainId(chainId, state = CONSTANTS.SEVERITY.ERROR) {
-    if (this.getLogChainId(chainId) !== undefined) {
-      this.logStacks.forEach((logStack) => {
-        if (logStack && logStack[this.getLogChainId(chainId)]) {
-          logStack[this.getLogChainId(chainId)][2] = state;
+    this.loopLogStacks((entry) => {
+        if (entry.chainId === chainId) {
+          entry[2] = state;
         }
+    });
+  }
+
+  loopLogStacks(callback) {
+    this.logStacks.forEach(logStack => {
+      if (!logStack) {
+        return;
+      }
+
+      logStack.forEach(entry => {
+        if (!entry) {
+          return;
+        }
+
+        callback(entry);
       });
-    }
+    });
   }
 
   hasXhrResponseBeenLogged(xhrId) {
@@ -111,7 +120,6 @@ module.exports = class LogCollectorState {
 
   startSuite() {
     this.xhrIdsOfLoggedResponses = [];
-    this.logsChainId = {};
     this.beforeHookIndexes.unshift(0);
     this.afterHookIndexes.unshift(0);
   }

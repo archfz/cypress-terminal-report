@@ -17,6 +17,7 @@ describe("API routes", () => {
       response: '',
     }).as('getComment');
 
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
     cy.wait('@getComment');
 

@@ -10,6 +10,7 @@ describe('All types of logs.', () => {
     cy.server();
     cy.route('GET', 'comments/*').as('getComment');
 
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
     cy.wait('@getComment');
 

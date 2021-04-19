@@ -186,6 +186,20 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(60000);
 
+  it('Should log cypress intercept command.', async () => {
+    await runTest(commandBase([], ['apiRoutesIntercept.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Method: GET
+                    Matcher: "/test"
+                    Mocked Response: () => {
+                          return 'test';
+                        }`);
+      expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Matcher: {"method":"GET","url":"/comments\\\\/.*/"}
+                    Mocked Response: {"statusCode":200,"body":""}`);
+      expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Matcher: {"method":"PUT","url":"/comments\\\\/.*/","headers":{"Accept":"*/*"}}
+                    Mocked Response: {"statusCode":403,"body":"This is plain text data.","headers":{"Custom":"Header"}}`);
+    });
+  }).timeout(60000);
+
   it('Should log cypress requests', async () => {
     await runTest(commandBase([], [`requests.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(
@@ -611,10 +625,10 @@ describe('cypress-terminal-report', () => {
     nested context
       ✓ the test 3
       2) "after all" hook for "the test 3"
+      3) "after all" hook for "the test 3"
         cy:command ${ICONS.error}  get\tafter nested
 
 
-      3) "after all" hook for "the test 3"
           cy:log ${ICONS.info}  log after root
       cy:command ${ICONS.error}  get\tafter root`));
     });

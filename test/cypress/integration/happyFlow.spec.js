@@ -16,6 +16,7 @@ describe('Happy flow.', () => {
 
     // we have code that gets a comment when
     // the button is clicked in scripts.js
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
 
     cy.wait('@getComment')
@@ -33,7 +34,7 @@ describe('Happy flow.', () => {
       expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.intercept()');
     });
 
-    cy.window().then(w => w.console.error(null, undefined, '', false, () => {}));
+    cy.window().then(w => w.console.error(null, undefined, '', false, function () {}));
     cy.window().then(w => w.console.log({a: 'b'}, {c: 'd'}, 10, 'string'));
     cy.window().then(w => w.console.warn('This is a warning message'));
     cy.window().then(w => w.console.error('This is an error message'));

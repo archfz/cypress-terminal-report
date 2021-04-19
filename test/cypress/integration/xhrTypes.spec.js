@@ -43,6 +43,7 @@ describe('XHR all types.', () => {
 
     // Succeeding GET request
     cy.get('.network-comment').should('not.contain', 'laudantium enim quasi');
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
     cy.get('.network-comment').should('contain', 'laudantium enim quasi');
 
