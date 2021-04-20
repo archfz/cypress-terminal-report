@@ -495,6 +495,21 @@ describe('cypress-terminal-report', () => {
     });
   }).timeout(30000);
 
+  it.only('Should print logs for all cypress retries.', async () => {
+    await runTest(commandBase(['breaking=1'], ['retries.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`(Attempt 1 of 3) fails
+      cy:command ${ICONS.error}  get\tbreaking
+
+
+    (Attempt 2 of 3) fails
+      cy:command ${ICONS.error}  get\tbreaking
+
+
+    1) fails
+      cy:command ${ICONS.error}  get\tbreaking`);
+    });
+  }).timeout(30000);
+
   /*
    * ----------------
    * Extended mode. |
