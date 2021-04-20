@@ -97,7 +97,8 @@ describe('XHR all types.', () => {
       w.document.head.appendChild(script);
     });
 
-    cy.get('.breaking-get', {timeout: 100});
+    cy.wait('@req:timeout');
+    cy.get('.breaking-get', {timeout: 1});
   });
 
 });

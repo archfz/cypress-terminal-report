@@ -286,7 +286,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 - Add support for `cy.intercept()` capturing and logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/87)
 - Improve cy.request timeout and xhr abort error logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/89) 
-- Update cypress to 7.1.0 to confirm support.
+- Update cypress in tests to 7.1.0 to confirm support.
 
 #### 3.0.4
 
