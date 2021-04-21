@@ -43,6 +43,7 @@ describe('XHR all types.', () => {
 
     // Succeeding GET request
     cy.get('.network-comment').should('not.contain', 'laudantium enim quasi');
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
     cy.get('.network-comment').should('contain', 'laudantium enim quasi');
 
@@ -72,6 +73,32 @@ describe('XHR all types.', () => {
     cy.get('.network-error-message').should('contain', 'received response');
 
     cy.get('.breaking-get', {timeout: 100}); // longer timeout to ensure XHR log update is included
+  });
+
+  /**
+   * Covers timeout.
+   */
+  it('Timeout', () => {
+    cy.visit('/commands/network-requests');
+
+    cy.server();
+
+    cy.route({
+      method: 'PUT',
+      url: 'comments/*',
+    }).as('req:timeout');
+
+    cy.window().then((w) => {
+      const script = w.document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js';
+      script.onload = () => {
+        w.axios.get('/comments/10', {timeout: 10});
+      };
+      w.document.head.appendChild(script);
+    });
+
+    cy.wait('@req:timeout');
+    cy.get('.breaking-get', {timeout: 1});
   });
 
 });

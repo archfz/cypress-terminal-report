@@ -9,6 +9,7 @@ describe('Successful with not errors.', () => {
 
     // we have code that gets a comment when
     // the button is clicked in scripts.js
+    cy.wait(300, {log: false});
     cy.get('.network-btn').click();
 
     cy.wait('@getComment')

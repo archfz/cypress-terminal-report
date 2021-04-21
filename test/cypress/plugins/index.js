@@ -6,6 +6,12 @@ module.exports = (on, config) => {
     defaultTrimLength: 800,
   };
 
+  if (config.env.breaking) {
+    config.retries = {
+      "runMode": 2,
+      "openMode": 0
+    };
+  }
   if (config.env.generateOutput == "1") {
     options.outputRoot = config.projectRoot + '/output/';
     options.outputTarget = {

@@ -6,6 +6,7 @@ Given(`I open Happy page`, () => {
 });
 
 Then(`I can load comments`, title => {
+  cy.wait(300, {log: false});
   cy.get('.network-btn').click();
 
   cy.wait('@getComment')

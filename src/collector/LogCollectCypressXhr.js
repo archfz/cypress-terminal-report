@@ -20,7 +20,13 @@ module.exports = class LogCollectCypressXhr {
       durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
 
     Cypress.on('log:added', (options) => {
-      if (options.instrument === 'command' && options.consoleProps && options.name === 'xhr') {
+      if (
+        options.instrument === 'command' &&
+        options.consoleProps &&
+        options.name === 'xhr' &&
+        // Prevent duplicated xhr logs in case of cy.intercept.
+        options.displayName !== 'req'
+      ) {
         const log = formatXhr(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
         this.collectorState.addLog([LOG_TYPE.CYPRESS_XHR, log, severity], options.id);
@@ -32,17 +38,31 @@ module.exports = class LogCollectCypressXhr {
         options.instrument === 'command' &&
         options.name === 'xhr' &&
         options.consoleProps &&
-        options.consoleProps.Status
+        options.state !== 'pending'
       ) {
         const [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
         const isSuccess = statusCode && statusCode[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
-        let log = formatXhr(options) +
-          ` (${formatDuration(options.consoleProps.Duration)})` +
-          `\nStatus: ${statusCode} - ${statusText}`;
-        if (!isSuccess && !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)) {
+        let log = formatXhr(options);
+
+        if (options.consoleProps.Duration) {
+          log += ` (${formatDuration(options.consoleProps.Duration)})`;
+        }
+        if (options.consoleProps.Status) {
+          log += `\nStatus: ${statusCode} - ${statusText}`;
+        }
+        if (options.err && options.err.message.match(/abort/)) {
+          log += ' - ABORTED';
+        }
+        if (
+          !isSuccess &&
+          options.consoleProps.Response &&
+          options.consoleProps.XHR &&
+          !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)
+        ) {
           log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps.Response.body)}`;
         }
+
         this.collectorState.updateLog(log, severity, options.id);
       }
     });

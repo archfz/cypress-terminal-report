@@ -113,6 +113,8 @@ module.exports = class LogCollectCypressRequest {
                     body: await this.format.formatXhrBody(xhr.body),
                   },
                 });
+            } else if (e.message.match(/timed out/)) {
+              log += `\n` + 'Timed out!';
             } else {
               log += `\n` + 'Cannot parse cy.request error content!';
             }
