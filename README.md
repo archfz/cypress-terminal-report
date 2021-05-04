@@ -284,6 +284,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.1.1
+
+- Fix compatibility with cypress < 6.0.0. [issue](https://github.com/archfz/cypress-terminal-report/issues/95)
+- Confirm support with cypress 7.2.0.
+
 #### 3.1.0
 
 - Add support for `cy.intercept()` capturing and logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/87)
