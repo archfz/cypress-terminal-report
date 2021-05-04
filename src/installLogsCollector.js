@@ -1,4 +1,5 @@
 const tv4 = require('tv4');
+const semver = require('semver');
 const schema = require('./installLogsCollector.schema.json');
 const CtrError = require('./CtrError');
 const LOG_TYPE = require('./constants').LOG_TYPES;
@@ -55,11 +56,11 @@ function registerLogCollectorTypes(logCollectorState, config) {
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
     (new LogCollectCypressRoute(logCollectorState, config)).register();
   }
-  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_INTERCEPT)) {
-    (new LogCollectCypressIntercept(logCollectorState, config)).register();
-  }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
     (new LogCollectCypressCommand(logCollectorState, config)).register();
+  }
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_INTERCEPT) && semver.gte(Cypress.version, '6.0.0')) {
+    (new LogCollectCypressIntercept(logCollectorState, config)).register();
   }
 }
 
