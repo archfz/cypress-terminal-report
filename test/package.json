@@ -8,6 +8,7 @@
     "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
     "cypress-open-files": "cypress open --env enableCucumber=1,printLogsToConsoleAlways=1,printLogsToFileAlways=1,generateNestedOutput=1",
     "cypress-open-collect": "cypress open --env collectTestLogsSupport=1",
+    "cypress-open": "cypress open",
     "cypress-run": "npx cypress run --env enableCucumber=1,printLogsToConsoleAlways=1,printLogsToFileAlways=1,generateNestedOutput=1",
     "mocha-debug": "mocha mocha_debug.js",
     "wsl-open-cypress": "cmd.exe /C npx cypress open"

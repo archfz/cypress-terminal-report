@@ -25,14 +25,14 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   }
 
   sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
-    if (!mochaRunnable.parent.invocationDetails) {
+    if (!mochaRunnable.parent.invocationDetails && !mochaRunnable.invocationDetails) {
       return;
     }
 
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
-    let spec = mochaRunnable.parent.invocationDetails.relativeFile;
+    let spec = (mochaRunnable.parent.invocationDetails || mochaRunnable.invocationDetails).relativeFile;
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     let parent = mochaRunnable.parent;
