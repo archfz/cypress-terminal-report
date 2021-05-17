@@ -9,7 +9,7 @@ import {
 
 const {expect} = require('chai');
 
-describe('Extended controller.', () => {
+describe.only('Extended controller.', () => {
 
   afterEach(function () {
     if (this.currentTest.state == 'failed') {
@@ -178,9 +178,15 @@ describe('Extended controller.', () => {
     });
   }).timeout(60000);
 
-  it('Should not error with extended collector when a top level suite is skipped', async function () {
+  it('Should not error with extended collector when a top level suite is skipped.', async function () {
     await runTest(commandBase(['enableExtendedCollector=1'], ['skipTopLevelSuite.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout)).to.contain(clean(`1 pending`))
+    });
+  }).timeout(60000);
+
+  it.only('Should not send logs twice when parent suite after each exists for test.', async function () {
+    await runTest(commandBase(['enableExtendedCollector=1'], ['mochaContexts2.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout).match(/nestTest1/g) || []).to.have.length(1);
     });
   }).timeout(60000);
 });

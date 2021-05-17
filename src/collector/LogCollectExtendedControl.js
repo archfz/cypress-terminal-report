@@ -237,6 +237,16 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
+    const testHasAfterEachHooks = (test) => {
+      do {
+        if (test.parent._afterEach.length > 0) {
+          return true;
+        }
+        test = test.parent;
+      } while(test);
+      return false;
+    };
+
     // Logs commands form each separate test when after each hooks are present.
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === 'after each') {
@@ -247,7 +257,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     });
     // Logs commands form each separate test when there is no after each hook.
     Cypress.mocha.getRunner().on('test end', function (test) {
-      if (test.parent._afterEach.length === 0) {
+      if (!testHasAfterEachHooks(test)) {
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });

@@ -284,6 +284,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix issue with duplicated log send on extended control when parent suite has after each but current suite doesn't. [issue](https://github.com/archfz/cypress-terminal-report/issues/98) 
+
 #### 3.1.1
 
 - Fix compatibility with cypress < 6.0.0. [issue](https://github.com/archfz/cypress-terminal-report/issues/95)
