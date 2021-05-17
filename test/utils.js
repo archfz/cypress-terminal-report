@@ -36,7 +36,7 @@ export const logLastRun = () => {
 
 export const runTest = async (command, callback) => {
   await new Promise(resolve => {
-    exec(command, {encoding: "UTF-8"}, (error, stdout, stderr) => {
+    exec(command, {encoding: "UTF-8", env: {...process.env, NO_COLOR: 1}}, (error, stdout, stderr) => {
       if (stderr) {
         console.error(stderr);
       }
