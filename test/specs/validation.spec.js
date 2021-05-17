@@ -15,7 +15,7 @@ describe('Validation.', () => {
 
   it('Should print proper validation error on invalid plugin install options.', async () => {
     await runTest(commandBase(['pluginBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`Error: [cypress-terminal-report] Invalid plugin install options:`);
+      expect(stdout).to.contain(`Error: cypress-terminal-report: Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .outputRoot: Invalid type: number (expected string)`);
       expect(stdout).to.contain(`=> .outputTarget/any: Invalid type: number (expected string/function)`);
       expect(stdout).to.contain(`=> .outputVerbose: Invalid type: string (expected boolean)`);
@@ -29,7 +29,7 @@ describe('Validation.', () => {
 
   it('Should print proper validation error on invalid support install options.', async () => {
     await runTest(commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`[cypress-terminal-report] Invalid plugin install options:`);
+      expect(stdout).to.contain(`cypress-terminal-report: Invalid plugin install options:`);
       expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
       expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
       expect(stdout).to.contain(`=> .processLog: Invalid type: boolean (expected function)`);
