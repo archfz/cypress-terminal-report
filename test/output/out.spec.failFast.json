@@ -1,0 +1,31 @@
+{
+  "cypress/integration/requests.spec.js": {
+    "Requests. -> GET 200": [
+      {
+        "type": "cy:request",
+        "severity": "success",
+        "message": "https://jsonplaceholder.cypress.io/todos/1\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"delectus aut autem\",\n  \"completed\": false\n}"
+      },
+      {
+        "type": "cy:request",
+        "severity": "success",
+        "message": "GET https://jsonplaceholder.cypress.io/todos/2\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 2,\n  \"title\": \"quis ut nam facilis et officia qui\",\n  \"completed\": false\n}"
+      },
+      {
+        "type": "cy:request",
+        "severity": "success",
+        "message": "GET https://jsonplaceholder.cypress.io/todos/3\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 3,\n  \"title\": \"fugiat veniam minus\",\n  \"completed\": false\n}"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\t.breaking-get"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "task\tfailFastShouldSkip, true"
+      }
+    ]
+  }
+}

@@ -3,6 +3,10 @@ import './commands';
 const env = Cypress.env();
 let config = {};
 
+if (env.failFast == '1') {
+  require("cypress-fail-fast");
+}
+
 if (env.setLogTypes == '1') {
   config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
 }

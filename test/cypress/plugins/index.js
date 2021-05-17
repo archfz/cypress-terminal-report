@@ -85,11 +85,18 @@ module.exports = (on, config) => {
     options.collectTestLogs = (context, logs) =>
       console.log(`Collected ${logs.length} logs for test "${context.test}", last log: ${logs[logs.length - 1]}`);
   }
+  if (config.env.logToFilesOnAfterRun == '1') {
+    options.logToFilesOnAfterRun = true;
+  }
 
   if (config.env.enableCucumber) {
     on('file:preprocessor', cucumber());
     config.ignoreTestFiles = '*.js';
     config.testFiles = '**/*.{feature,features}';
+  }
+
+  if (config.env.failFast) {
+    require("cypress-fail-fast/plugin")(on, config);
   }
 
   require('../../../src/installLogsPrinter')(on, options);
