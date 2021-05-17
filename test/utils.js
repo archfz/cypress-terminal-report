@@ -25,15 +25,18 @@ export const commandBase = (env = [], specs = []) =>
   `${commandPrefix} run --env "${env.join(',')}" --headless --config video=false -s ${specs.map(s => `cypress/integration/${s}`)}`;
 
 let lastRunOutput = '';
+let lastRunCommand = '';
 export const logLastRun = () => {
   console.log(chalk.yellow('-- Cypress output start --\n\n'));
   console.log(lastRunOutput);
-  console.log(chalk.yellow('-- Cypress output end --\n\n\n\n'));
+  console.log(chalk.yellow('-- Cypress output end --'));
+  console.log(`Command: ${lastRunCommand}`);
+  console.log(lastRunCommand);
 };
 
 export const runTest = async (command, callback) => {
   await new Promise(resolve => {
-    exec(command, (error, stdout, stderr) => {
+    exec(command, {encoding: "UTF-8"}, (error, stdout, stderr) => {
       if (stderr) {
         console.error(stderr);
       }
@@ -45,6 +48,7 @@ export const runTest = async (command, callback) => {
       }
 
       lastRunOutput = stdout;
+      lastRunCommand = command;
       // Normalize line endings for unix.
       const normalizedStdout = stdout.replace(/\r\n/g, "\n");
       callback(error, normalizedStdout, stderr);

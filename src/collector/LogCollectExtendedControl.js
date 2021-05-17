@@ -243,7 +243,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
           return true;
         }
         test = test.parent;
-      } while(test);
+      } while(test.parent);
       return false;
     };
 

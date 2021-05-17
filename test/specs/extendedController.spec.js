@@ -9,7 +9,7 @@ import {
 
 const {expect} = require('chai');
 
-describe.only('Extended controller.', () => {
+describe('Extended controller.', () => {
 
   afterEach(function () {
     if (this.currentTest.state == 'failed') {
@@ -184,7 +184,7 @@ describe.only('Extended controller.', () => {
     });
   }).timeout(60000);
 
-  it.only('Should not send logs twice when parent suite after each exists for test.', async function () {
+  it('Should not send logs twice when parent suite after each exists for test.', async function () {
     await runTest(commandBase(['enableExtendedCollector=1'], ['mochaContexts2.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout).match(/nestTest1/g) || []).to.have.length(1);
     });
