@@ -99,4 +99,15 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
+  it('Should still output to files when fail fast is installed and log to files on after run enabled.', async () => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    const specFiles = ['requests.spec.js'];
+    await runTest(commandBase(['failFast=1', 'generateOutput=1', 'logToFilesOnAfterRun=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'failFast');
+    });
+  }).timeout(90000);
+
 });

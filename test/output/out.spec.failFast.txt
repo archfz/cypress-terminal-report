@@ -1,0 +1,29 @@
+cypress/integration/requests.spec.js:
+    Requests. -> GET 200
+        cy:request (K): https://jsonplaceholder.cypress.io/todos/1
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 1,
+                          "title": "delectus aut autem",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/2
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 2,
+                          "title": "quis ut nam facilis et officia qui",
+                          "completed": false
+                        }
+        cy:request (K): GET https://jsonplaceholder.cypress.io/todos/3
+                        Status: 200
+                        Response body: {
+                          "userId": 1,
+                          "id": 3,
+                          "title": "fugiat veniam minus",
+                          "completed": false
+                        }
+        cy:command (X): get	.breaking-get
+        cy:command (K): task	failFastShouldSkip, true
+

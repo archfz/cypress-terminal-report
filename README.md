@@ -44,6 +44,8 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of 
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
+- Using cypress-fail-fast and logging to files does not work out of the box. To enable support use 
+the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ## Install
 
@@ -118,6 +120,12 @@ advanced if a test fails or not.
 Callback to collect each test case's logs after its run.
 The first argument contains information about the test: the `spec` (test file), `test` (test title) and `state` (test state) fields.
 The second argument contains the test logs. 'type' is from the same list as for the `collectTypes` support install option (see below). Severity can be of ['', 'error', 'warning'].
+
+#### `options.logToFilesOnAfterRun`
+boolean; default: false;
+When set to true it enables additional log write pass to files using the cypress [`after:run`](https://docs.cypress.io/api/plugins/after-run-api) plugin
+hook. This option can only be used with cypress 6.2.0 onwards, and with the additional 
+`experimentalRunEvents` configuration on versions smaller than 6.7.0.
 
 <br/>
 
@@ -283,6 +291,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 3.2.0
+
+- Introduce support for [cypress-fail-fast](https://github.com/javierbrea/cypress-fail-fast) with the [logToFilesOnAfterRun](#optionslogtofilesonafterrun) option. [issue](https://github.com/archfz/cypress-terminal-report/issues/91)
 
 #### 3.1.2
 

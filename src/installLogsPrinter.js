@@ -37,7 +37,7 @@ const LOG_SYMBOLS = (() => {
   }
 })();
 
-let allMessages = {};
+let writeToFileMessages = {};
 let outputProcessors = [];
 
 /**
@@ -53,7 +53,7 @@ function installLogsPrinter(on, options = {}) {
   const result = tv4.validateMultiple(options, schema);
 
   if (!result.valid) {
-    throw new Error(`[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
+    throw new CtrError(`Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
   }
 
   on('task', {
@@ -73,8 +73,8 @@ function installLogsPrinter(on, options = {}) {
           options.printLogsToFile === "always" ||
           isHookAndShouldLog
         ) {
-          allMessages[data.spec] = allMessages[data.spec] || {};
-          allMessages[data.spec][data.test] = messages;
+          writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
+          writeToFileMessages[data.spec][data.test] = messages;
         }
       }
 
@@ -93,14 +93,7 @@ function installLogsPrinter(on, options = {}) {
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
-      outputProcessors.forEach((processor) => {
-        if (Object.entries(allMessages).length !== 0){
-          processor.write(allMessages);
-          if (options.outputVerbose !== false)
-            logOutputTarget(processor);
-        }
-      });
-      allMessages = {};
+      logToFiles(options);
       return null;
     }
   });
@@ -108,6 +101,27 @@ function installLogsPrinter(on, options = {}) {
   if (options.outputTarget) {
     installOutputProcessors(on, options);
   }
+
+  if (options.logToFilesOnAfterRun) {
+    enableLogToFilesOnAfterRun(on, options);
+  }
+}
+
+function enableLogToFilesOnAfterRun(on, options) {
+  on('after:run', () => {
+    logToFiles(options);
+  });
+}
+
+function logToFiles(options) {
+  outputProcessors.forEach((processor) => {
+    if (Object.entries(writeToFileMessages).length !== 0){
+      processor.write(writeToFileMessages);
+      if (options.outputVerbose !== false)
+        logOutputTarget(processor);
+    }
+  });
+  writeToFileMessages = {};
 }
 
 

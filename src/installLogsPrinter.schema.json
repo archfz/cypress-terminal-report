@@ -55,6 +55,9 @@
     },
     "collectTestLogs": {
       "type": "function"
+    },
+    "logToFilesOnAfterRun": {
+      "type": "boolean"
     }
   },
   "dependencies": {

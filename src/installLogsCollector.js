@@ -68,8 +68,8 @@ function validateConfig(config) {
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {
-    throw new Error(
-      `[cypress-terminal-report] Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(
+    throw new CtrError(
+      `Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(
         result.errors
       )}`
     );
