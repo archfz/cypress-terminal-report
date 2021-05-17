@@ -287,7 +287,9 @@ function logToTerminal(messages, options, data) {
     );
   });
 
-  console.log('\n');
+  if (messages.length !== 0) {
+    console.log('\n');
+  }
 }
 
 module.exports = installLogsPrinter;
