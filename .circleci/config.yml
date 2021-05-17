@@ -21,7 +21,7 @@ jobs:
           command: npm install --only prod && cd test && npm ci
       - run:
           name: Test
-          command: npm run test-ci
+          command: cd test && npm run test-ci
 
 workflows:
   # Below is the definition of your workflow.
