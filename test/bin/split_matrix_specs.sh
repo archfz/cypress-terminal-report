@@ -4,6 +4,9 @@
 allSpecs=$(find specs/ -name "*.spec.js" | sort -n)
 specCount=$(echo "$allSpecs" | wc -l)
 
+CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL
+CI_NODE_INDEX=$CIRCLE_NODE_INDEX
+
 if [ "$CI_NODE_INDEX" == "" ]; then
   CY_SPECS=$(echo "$allSpecs" | paste -sd " " -)
 else
