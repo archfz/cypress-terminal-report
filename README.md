@@ -292,6 +292,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.2.1
+
+- Additional fix over extended control with nested mocha contexts and after each hooks failing. [issue](https://github.com/archfz/cypress-terminal-report/issues/98)
+
 #### 3.2.0
 
 - Introduce support for [cypress-fail-fast](https://github.com/javierbrea/cypress-fail-fast) with the [logToFilesOnAfterRun](#optionslogtofilesonafterrun) option. [issue](https://github.com/archfz/cypress-terminal-report/issues/91)

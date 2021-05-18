@@ -186,7 +186,8 @@ describe('Extended controller.', () => {
 
   it('Should not send logs twice when parent suite after each exists for test.', async function () {
     await runTest(commandBase(['enableExtendedCollector=1'], ['mochaContexts2.spec.js']), (error, stdout, stderr) => {
-      expect(clean(stdout).match(/nestTest1/g) || []).to.have.length(1);
+      expect(clean(stdout).match(/Nested test no after each/g) || []).to.have.length(1);
+      expect(clean(stdout).match(/Nested test with after each/g) || []).to.have.length(1);
     });
   }).timeout(60000);
 });

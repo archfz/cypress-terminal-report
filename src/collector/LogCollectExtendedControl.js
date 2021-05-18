@@ -247,10 +247,22 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       return false;
     };
 
+    const isLastAfterEachHookForTest = (test, hook) => {
+      let suite = test.parent;
+      do {
+        if (suite._afterEach.length === 0) {
+          suite = suite.parent;
+        } else {
+          return suite._afterEach.indexOf(hook) === suite._afterEach.length - 1;
+        }
+      } while (suite);
+      return false;
+    };
+
     // Logs commands form each separate test when after each hooks are present.
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === 'after each') {
-        if (hook.parent._afterEach.indexOf(hook) === hook.parent._afterEach.length - 1) {
+        if (isLastAfterEachHookForTest(self.collectorState.getCurrentTest(), hook)) {
           sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
         }
       }

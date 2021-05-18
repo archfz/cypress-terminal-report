@@ -1,24 +1,25 @@
-describe('Nested log Test', () => {
-  afterEach(() => {
+describe('Context 1', () => {
+  afterEach(() => {});
+
+  it('testc1', () => {
   });
 
-  it('test1', () => {
-  });
-
-  it('test2', () => {
-  });
-
-  it('test3', () => {
-  });
-
-  describe('Nested', () => {
-    it('nestTest1', () => {
+  describe('Nested no after each', () => {
+    it('Nested test no after each', () => {
     });
+  });
+});
 
-    it('nestTest2', () => {
-    });
+describe('Context 2', () => {
+  afterEach(() => {});
 
-    it('nestTest3', () => {
+  it('testc2', () => {
+  });
+
+  describe('Nested with after each', () => {
+    afterEach(() => {});
+
+    it('Nested test with after each', () => {
     });
   });
 });
