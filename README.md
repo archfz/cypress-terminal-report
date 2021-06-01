@@ -127,6 +127,7 @@ When set to true it enables additional log write pass to files using the cypress
 hook. This option can only be used with cypress 6.2.0 onwards, and with the additional 
 `experimentalRunEvents` configuration on versions smaller than 6.7.0.
 
+
 <br/>
 
 ### _Options for the support install_
@@ -163,6 +164,21 @@ boolean; default false; Whether to print request data for XHR requests besides r
 #### `options.enableExtendedCollector`
 boolean; default false; Enables an extended collector which will also collect command logs from
 before all and after all hooks.
+
+#### _Example for options for the support install_
+
+```js
+  // ...
+  // Options for log collector
+  const options = {
+    // Log console output only
+    collectTypes: ["cons:log", "cons:info", "cons:warn", "cons:error"],
+  };
+
+  // Register the log collector
+  require("cypress-terminal-report/src/installLogsCollector")(options);
+  // ...
+```
 
 ## Logging after all and before all hooks
 
