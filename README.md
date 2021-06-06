@@ -308,6 +308,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.2.2
+
+- Added protection against incorrect tabbing level determined from test parents breaking logging to terminal. [issue](https://github.com/archfz/cypress-terminal-report/issues/107) 
+- Remove peer dependency mocha.
+- Update cypress to 7.4.0 in tests to confirm support.
+
 #### 3.2.1
 
 - Additional fix over extended control with nested mocha contexts and after each hooks failing. [issue](https://github.com/archfz/cypress-terminal-report/issues/98)

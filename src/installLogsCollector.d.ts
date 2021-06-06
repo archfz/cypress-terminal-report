@@ -1,5 +1,3 @@
-import {Hook, Test} from "mocha";
-
 type Severity = '' | 'error' | 'warning';
 
 interface SupportOptions {
@@ -36,7 +34,7 @@ interface SupportOptions {
    * @default undefined
    */
   collectTestLogs?: (
-    context: {mochaRunnable: Test | Hook, testState: string, testTitle: string, testLevel: number},
+    context: {mochaRunnable: any, testState: string, testTitle: string, testLevel: number},
     messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]
   ) => void;
 
