@@ -73,7 +73,7 @@ describe('Commands logging.', () => {
     await runTest(commandBase([], ['apiRoutesIntercept.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Method: GET
                     Matcher: "/test"
-                    Mocked Response: function () {
+                    Mocked Response: () => {
                           return 'test';
                         }`);
       expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Matcher: {"method":"GET","url":"/comments\\\\/.*/"}
