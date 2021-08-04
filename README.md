@@ -308,6 +308,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.3.0
+
+- Added support for logging command from skipped tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/111)
+- Update cypress to 8.1.0 in tests to confirm support.
+
 #### 3.2.2
 
 - Added protection against incorrect tabbing level determined from test parents breaking logging to terminal. [issue](https://github.com/archfz/cypress-terminal-report/issues/107) 

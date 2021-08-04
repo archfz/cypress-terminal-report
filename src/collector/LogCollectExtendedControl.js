@@ -273,6 +273,12 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });
+    // Logs commands if test was manually skipped.
+    Cypress.mocha.getRunner().on('pending', function (test) {
+      if (self.collectorState.getCurrentTest()) {
+        sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
+      }
+    });
   }
 
   registerLogToFiles() {

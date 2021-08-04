@@ -190,4 +190,14 @@ describe('Extended controller.', () => {
       expect(clean(stdout).match(/Nested test with after each/g) || []).to.have.length(1);
     });
   }).timeout(60000);
+
+  it('Should work correctly with skip.', async function () {
+    await runTest(commandBase(['enableExtendedCollector=1'], ['dynamicSkip.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout)).to.contain(`- test3
+          cy:log ${ICONS.info}  before
+          cy:log ${ICONS.info}  test3 1
+          cy:log ${ICONS.info}  test3 2
+          cy:log ${ICONS.info}  test3 3`);
+    });
+  }).timeout(60000);
 });
