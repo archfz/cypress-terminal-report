@@ -36,19 +36,27 @@ module.exports = class LogCollectCypressXhr {
     Cypress.on('log:changed', async (options) => {
       if (
         options.instrument === 'command' &&
-        options.name === 'xhr' &&
+        ['request', 'xhr'].includes(options.name) &&
         options.consoleProps &&
         options.state !== 'pending'
       ) {
-        const [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
-        const isSuccess = statusCode && statusCode[0] === '2';
+        let statusCode, statusText;
+
+        if (!options.consoleProps.XHR) {
+          [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
+        } else {
+          statusCode = options.consoleProps.XHR.status;
+          statusText = options.consoleProps.XHR.statusText;
+        }
+
+        const isSuccess = statusCode && (statusCode + '')[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
         let log = formatXhr(options);
 
         if (options.consoleProps.Duration) {
           log += ` (${formatDuration(options.consoleProps.Duration)})`;
         }
-        if (options.consoleProps.Status) {
+        if (statusCode && statusText) {
           log += `\nStatus: ${statusCode} - ${statusText}`;
         }
         if (options.err && options.err.message.match(/abort/)) {
@@ -56,11 +64,11 @@ module.exports = class LogCollectCypressXhr {
         }
         if (
           !isSuccess &&
-          options.consoleProps.Response &&
           options.consoleProps.XHR &&
+          options.consoleProps.XHR.response.size &&
           !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)
         ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps.Response.body)}`;
+          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps.XHR.response)}`;
         }
 
         this.collectorState.updateLog(log, severity, options.id);

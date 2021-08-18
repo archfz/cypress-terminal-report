@@ -1,7 +1,7 @@
 import {
   ICONS,
   runTest,
-  commandBase, logLastRun,
+  commandBase, logLastRun, clean,
 } from "../utils";
 
 const {expect} = require('chai');
@@ -74,5 +74,19 @@ describe('Misc.', () => {
       cy:command ${ICONS.error}  get\tbreaking`);
     });
   }).timeout(30000);
+
+  it('Should work correctly with skipped tests.', async function () {
+    await runTest(commandBase([''], ['skipTest.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.contain(`  Describe 1
+    - Skipped test 1
+    ✓ Test 2
+
+  Describe 2
+    - Skipped test 2
+    - Skipped test 3
+    ✓ Test 3
+    ✓ Test 4`);
+    });
+  }).timeout(60000);
 
 });

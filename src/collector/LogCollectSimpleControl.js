@@ -40,12 +40,11 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
       return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
     };
 
-    // Need to wait for command log update debounce.
-    cy.wait(wait, {log: false})
-      .then(() => {
-        cy.task(
-          CONSTANTS.TASK_NAME,
-          {
+    if (options.noQueue) {
+      Promise.resolve().then(() => {
+        Cypress.backend('task', {
+          task: CONSTANTS.TASK_NAME,
+          arg: {
             spec: spec,
             test: testTitle,
             messages: prepareLogs(),
@@ -53,10 +52,30 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
             level: testLevel,
             consoleTitle: options.consoleTitle,
             isHook: options.isHook,
-          },
-          {log: false}
-        );
-      });
+          }
+        })
+          // For some reason cypress throws empty error although the task indeed works.
+          .catch((error) => {/* noop */})
+      }).catch(console.error);
+    } else {
+      // Need to wait for command log update debounce.
+      cy.wait(wait, {log: false})
+        .then(() => {
+          cy.task(
+            CONSTANTS.TASK_NAME,
+            {
+              spec: spec,
+              test: testTitle,
+              messages: prepareLogs(),
+              state: testState,
+              level: testLevel,
+              consoleTitle: options.consoleTitle,
+              isHook: options.isHook,
+            },
+            {log: false}
+          );
+        });
+    }
   }
 
   registerState() {
@@ -86,7 +105,11 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
     // Logs commands if test was manually skipped.
     Cypress.mocha.getRunner().on('pending', function (test) {
       if (self.collectorState.getCurrentTest()) {
-        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest());
+        // In case of fully skipped tests we might not yet have a log stack.
+        if (!self.collectorState.hasLogsCurrentStack()) {
+          self.collectorState.addNewLogStack();
+        }
+        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {noQueue: true});
       }
     });
   }
