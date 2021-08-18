@@ -308,9 +308,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.3.1
+
 - Fix issue `cy:intercept` not between the allowed configuration options. [issue](https://github.com/archfz/cypress-terminal-report/issues/113)
 - Fix issue with plugin breaking cypress with skipped tests. [issue1](https://github.com/archfz/cypress-terminal-report/issues/116) [issue2](https://github.com/archfz/cypress-terminal-report/issues/114)
-  Update cypress to 8.3.0 in tests to confirm support.
+- Update cypress to 8.3.0 in tests to confirm support.
 
 #### 3.3.0
 
