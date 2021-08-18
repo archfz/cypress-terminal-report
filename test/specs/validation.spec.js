@@ -27,6 +27,12 @@ describe('Validation.', () => {
     });
   }).timeout(60000);
 
+  it('Should not fail with proper config.', async () => {
+    await runTest(commandBase(['supportGoodConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.not.contain(`cypress-terminal-report: Invalid plugin install options:`);
+    });
+  }).timeout(60000);
+
   it('Should print proper validation error on invalid support install options.', async () => {
     await runTest(commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cypress-terminal-report: Invalid plugin install options:`);

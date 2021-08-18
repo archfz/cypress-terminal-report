@@ -34,7 +34,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1 (471 ms)\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200 - OK"
       },
       {
         "type": "cy:command",
@@ -91,7 +91,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments (394 ms)\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201 - Created"
       },
       {
         "type": "cy:command",
