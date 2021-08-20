@@ -308,6 +308,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.3.2
+
+- Fix issue with no response on XHR breaking tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/119)
+
 #### 3.3.1
 
 - Fix issue `cy:intercept` not between the allowed configuration options. [issue](https://github.com/archfz/cypress-terminal-report/issues/113)

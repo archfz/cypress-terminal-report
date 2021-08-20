@@ -65,6 +65,7 @@ module.exports = class LogCollectCypressXhr {
         if (
           !isSuccess &&
           options.consoleProps.XHR &&
+          options.consoleProps.XHR.response &&
           options.consoleProps.XHR.response.size &&
           !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)
         ) {
