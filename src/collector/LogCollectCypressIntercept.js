@@ -33,7 +33,7 @@ module.exports = class LogCollectCypressIntercept {
       }
 
       this.collectorState.addLog([LOG_TYPE.CYPRESS_INTERCEPT, message, CONSTANTS.SEVERITY.SUCCESS]);
-      originalFn(...args);
+      return originalFn(...args);
     });
   }
 
