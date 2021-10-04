@@ -2,7 +2,6 @@ node_modules
 test/node_modules
 test/cypress/screenshots
 test/cypress/videos
-test/cypress/fixtures
 test/output/out.json
 test/output/out.txt
 test/output/not/existing/path/out.txt
