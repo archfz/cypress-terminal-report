@@ -32,5 +32,7 @@ module.exports = {
 
   PADDING: {
     LOG: Array(21).join(' '),
-  }
+  },
+
+  DEBUG_LOG_PREFIX: 'CTR-DEBUG: ',
 };

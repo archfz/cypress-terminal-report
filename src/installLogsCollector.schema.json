@@ -49,6 +49,9 @@
     },
     "enableExtendedCollector": {
       "type": "boolean"
+    },
+    "debug": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false

@@ -17,6 +17,9 @@ module.exports = class LogCollectorState {
   }
 
   addNewLogStack() {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'adding new log stack, new size ' + (this.logStacks.length + 1));
+    }
     this.logStacks.push([]);
   }
   getCurrentLogStackIndex() {
@@ -26,6 +29,9 @@ module.exports = class LogCollectorState {
     return this.logStacks[this.getCurrentLogStackIndex()];
   }
   consumeLogStacks(index) {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'consuming log stack at ' + index);
+    }
     const stack = this.logStacks[index];
     this.logStacks[index] = null;
     return stack;
@@ -46,7 +52,7 @@ module.exports = class LogCollectorState {
     const currentStack = this.getCurrentLogStack();
     if (!currentStack) {
       if (this.isStrict) {
-        console.warn('[cypress-terminal-report] Attempted to collect logs while no stack was defined.');
+        console.warn('cypress-terminal-report: Attempted to collect logs while no stack was defined.');
       }
       return;
     }
@@ -99,6 +105,9 @@ module.exports = class LogCollectorState {
   }
 
   markCurrentStackFromBeforeEach() {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'current log stack is before each at ' + this.getCurrentLogStackIndex());
+    }
     this.getCurrentLogStack()._ctr_before_each = 1;
   }
 
@@ -119,15 +128,24 @@ module.exports = class LogCollectorState {
   }
 
   startSuite() {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting suite');
+    }
     this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes.unshift(0);
     this.afterHookIndexes.unshift(0);
   }
   endSuite() {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'ending suite');
+    }
     this.beforeHookIndexes.shift();
     this.afterHookIndexes.shift();
   }
   startTest(test) {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting test: ' + test.title);
+    }
     this.setCurrentTest(test);
     this.xhrIdsOfLoggedResponses = [];
 

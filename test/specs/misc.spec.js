@@ -32,9 +32,9 @@ describe('Misc.', () => {
 
   it('Should be able to disable verbose.', async () => {
     await runTest(commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']), (error, stdout) => {
-      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to txt.`);
-      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to json.`);
-      expect(stdout).to.not.contain(`[cypress-terminal-report] Wrote custom logs to custom.`);
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to txt.`);
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to json.`);
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to custom.`);
     });
   }).timeout(60000);
 

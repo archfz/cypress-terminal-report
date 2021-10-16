@@ -7,6 +7,9 @@ if (env.failFast == '1') {
   require("cypress-fail-fast");
 }
 
+if (env.ctrDebug == '1') {
+  config.debug = true;
+}
 if (env.setLogTypes == '1') {
   config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
 }

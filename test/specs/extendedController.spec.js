@@ -192,6 +192,8 @@ describe('Extended controller.', () => {
   }).timeout(60000);
 
   it('Should work correctly with dynamic skip.', async function () {
+    this.retries(2);
+
     await runTest(commandBase(['enableExtendedCollector=1'], ['dynamicSkip.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout)).to.contain(`- test3
           cy:log ${ICONS.info}  before
@@ -212,6 +214,15 @@ describe('Extended controller.', () => {
     - Skipped test 3
     ✓ Test 3
     ✓ Test 4`);
+    });
+  }).timeout(60000);
+
+  it('Should work correctly with simple skipped tests.', async function () {
+    await runTest(commandBase(['enableExtendedCollector=1,printLogsToConsoleAlways=1'], ['skipTestSimple.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.contain(`  Error repro
+    ✓ Test1
+    - test2
+    - test3`);
     });
   }).timeout(60000);
 });
