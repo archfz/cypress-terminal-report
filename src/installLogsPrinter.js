@@ -135,7 +135,7 @@ function logOutputTarget(processor) {
   } else {
     message = `Wrote custom logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   }
-  console.log('[cypress-terminal-report]', message);
+  console.log('cypress-terminal-report:', message);
 }
 
 function installOutputProcessors(on, options) {
@@ -160,7 +160,7 @@ function installOutputProcessors(on, options) {
       throw new CtrError(`Unknown output format '${type}'.`);
     }
     if (!['function', 'string'].includes(typeof type)) {
-      throw new CtrError(`[cypress-terminal-report] Output target type can only be string or function.`);
+      throw new CtrError(`Output target type can only be string or function.`);
     }
 
     if (requiresNested) {

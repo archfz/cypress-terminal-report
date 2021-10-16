@@ -118,7 +118,7 @@ export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toN
     if (!['json', 'txt'].includes(ext)) {
       ext = 'custom';
     }
-    let logString = '[cypress-terminal-report] Wrote ' + ext +
+    let logString = 'cypress-terminal-report: Wrote ' + ext +
       ' logs to ' + path.join(outRoot.value, fileName);
 
     if (toNot) {

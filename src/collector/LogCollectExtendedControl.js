@@ -135,6 +135,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands from before all hook if the hook passed.
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
+        self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
           this.currentRunnable,
@@ -156,6 +157,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
           && this.currentTest.failedFromHookId // This is how we know a hook failed the suite.
           && self.collectorState.hasLogsCurrentStack()
         ) {
+          self.debugLog('extended: sending logs of failed before all hook');
           self.sendLogsToPrinter(
             self.collectorState.getCurrentLogStackIndex(),
             this.currentTest,
@@ -176,6 +178,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands from after all hooks that passed.
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === "after all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
+        self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
           hook,
@@ -197,6 +200,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsCurrentStack()) {
         // We only have the full list of commands when the suite ends.
         this.mocha.getRunner().prependOnceListener('suite end', () => {
+          self.debugLog('extended: sending logs of failed after all hook');
           self.sendLogsToPrinter(
             self.collectorState.getCurrentLogStackIndex(),
             currentRunnable,
@@ -263,6 +267,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === 'after each') {
         if (isLastAfterEachHookForTest(self.collectorState.getCurrentTest(), hook)) {
+          self.debugLog('extended: sending logs for ended test, just after the last after each hook: ' + self.collectorState.getCurrentTest().title);
           sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
         }
       }
@@ -270,17 +275,18 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands form each separate test when there is no after each hook.
     Cypress.mocha.getRunner().on('test end', function (test) {
       if (!testHasAfterEachHooks(test)) {
+        self.debugLog('extended: sending logs for ended test, that has not after each hooks: ' + self.collectorState.getCurrentTest().title);
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });
     // Logs commands if test was manually skipped.
     Cypress.mocha.getRunner().on('pending', function (test) {
-      if (self.collectorState.getCurrentTest()) {
+      if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
-        if (!self.collectorState.hasLogsCurrentStack()) {
-          self.collectorState.addNewLogStack();
+        if (self.collectorState.hasLogsCurrentStack()) {
+          self.debugLog('extended: sending logs for skipped test: ' + test.title);
+          sendLogsToPrinterForATest(test);
         }
-        sendLogsToPrinterForATest(test);
       }
     });
   }
@@ -375,6 +381,12 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
       return oldAction.call(Cypress, actionName, ...args);
     };
+  }
+
+  debugLog(message) {
+    if (this.config.debug) {
+      console.log(CONSTANTS.DEBUG_LOG_PREFIX + message);
+    }
   }
 
 };

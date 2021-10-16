@@ -58,6 +58,12 @@ interface SupportOptions {
    * @default false
    */
   enableExtendedCollector: boolean;
+
+  /**
+   * Enabled debug logging.
+   * @default false
+   */
+  debug: boolean;
 }
 
 declare function installLogsCollector(config?: SupportOptions): void;

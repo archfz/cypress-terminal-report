@@ -308,6 +308,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix issue in `extedend control` where skip tests would double consume logs, and cause domain exception. [issue](https://github.com/archfz/cypress-terminal-report/issues/122)
+- Update cypress to 8.6.0 in tests to confirm support.
+
 #### 3.3.3
 
 - Fix issue with `cy.intercept` overrides not working. [issue](https://github.com/archfz/cypress-terminal-report/issues/120)

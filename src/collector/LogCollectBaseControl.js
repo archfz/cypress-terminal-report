@@ -1,9 +1,11 @@
+const CtrError = require('../CtrError');
+
 module.exports = class LogCollectBaseControl {
   prepareLogs(logStackIndex, testData) {
     let logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
 
     if (logsCopy === null) {
-      throw new Error(`[cypress-terminal-report] Domain exception: log stack null.`);
+      throw new CtrError(`Domain exception: log stack null.`);
     }
 
     if (this.config.filterLog) {
