@@ -132,6 +132,34 @@ describe('Commands logging.', () => {
     });
   }).timeout(60000);
 
+  it('Should log fetch requests.', async () => {
+    await runTest(commandBase([], [`fetchApi.spec.js`]), (error, stdout, stderr) => {
+      const cleanStdout = clean(stdout, true);
+      // cy.intercept stubbed aliased commands are logged
+      expect(stdout).to.contain(`(putComment) STUBBED PUT https://example.cypress.io/comments/10\n`);
+      expect(stdout).to.contain(`cy:fetch ${ICONS.warning}`);
+      expect(stdout).to.contain(`Status: 404\n`);
+      expect(stdout).to.contain(`Response body: {\n${PADDING}  "error": "Test message."\n${PADDING}}\n`);
+
+      // test real fetch requests
+      expect(cleanStdout).to.contain(
+        `cy:fetch ${ICONS.route}  GET https://jsonplaceholder.cypress.io/comments/1\n${PADDING}  Status: 200\n`,
+        'non-intercepted success fetch contains url and status'
+      );
+
+      expect(cleanStdout).to.contain(
+        `cy:fetch ${ICONS.warning}  GET https://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}  Status: 400\n`,
+        'non-intercepted non-success fetch contains url and status'
+      );
+
+      expect(cleanStdout).to.contain(
+        `cy:fetch ${ICONS.warning}  GET https://www.mocky.io/v2/5ec993803000009700a6ce1f\n${PADDING}  Status: 400\n${PADDING}  Response body: {\n${PADDING}    "status": "Wrong!",\n${PADDING}    "data": {\n${PADDING}      "corpo": "corpo da resposta",\n${PADDING}      "titulo": "titulo da resposta"\n${PADDING}    }\n${PADDING}  }\n`,
+        'intercepted non-success fetch contains url, status and a response body'
+      );
+
+    });
+  }).timeout(60000);
+
   it('Should only log XHR response body for non-successful requests not handled by cy.route.', async () => {
     await runTest(commandBase([], ['xhrTypes.spec.js']), (error, stdout, stderr) => {
       const cleanStdout = clean(stdout, true);
