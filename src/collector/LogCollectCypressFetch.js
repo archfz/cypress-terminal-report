@@ -46,8 +46,8 @@ module.exports = class LogCollectCypressFetch {
         if (statusCode) {
           log += `\nStatus: ${statusCode}`;
         }
-        if (options.err && options.err.message.match(/abort/)) {
-          log += ' - ABORTED';
+        if (options.err && options.err.message) {
+          log += ' - ' + options.err.message;
         }
 
         if (

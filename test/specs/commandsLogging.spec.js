@@ -141,6 +141,12 @@ describe('Commands logging.', () => {
       expect(stdout).to.contain(`Status: 404\n`);
       expect(stdout).to.contain(`Response body: {\n${PADDING}  "error": "Test message."\n${PADDING}}\n`);
 
+      // timeouts / abort
+      expect(cleanStdout).to.contain(
+        `(putComment) STUBBED PUT https://example.cypress.io/comments/10 - forceNetworkError called`,
+        'network failed request contains failure message'
+      );
+
       // test real fetch requests
       expect(cleanStdout).to.contain(
         `cy:fetch ${ICONS.route}  GET https://jsonplaceholder.cypress.io/comments/1\n${PADDING}  Status: 200\n`,

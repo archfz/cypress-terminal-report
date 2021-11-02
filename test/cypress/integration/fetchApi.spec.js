@@ -24,7 +24,70 @@ describe('Fetch Api', () => {
     cy.wait('@putComment');
 
     cy.get('.breaking-get', {timeout: 1});
+  })
+
+  context('Timeout', () => {
+
+    it('forceNetworkError ', () => {
+      cy.visit('/commands/network-requests');
+  
+      cy.intercept(
+        {
+          method: 'PUT',
+          url: 'comments/*',
+  
+        },
+        {
+          forceNetworkError: true,
+        }
+      ).as('putComment');
+  
+      cy.window().then((w) => {
+        fetch('/comments/10', {
+          method: 'PUT',
+          body: 'test',
+        });
+      });
+  
+      cy.wait('@putComment');
+  
+      cy.get('.breaking-get', {timeout: 1});
+    });
+
+    // Currently Cypress can't handle fetch Abort properly. It produces an unhandled entry, while the request remains "pending":
+    // cy:command ✘  uncaught exception        AbortError: The user aborted a request.
+    it('timeout using AbortController', () => {
+      cy.visit('/commands/network-requests');
+  
+      cy.intercept(
+        {
+          method: 'PUT',
+          url: 'comments/*',
+  
+        },
+        {
+          delay: 500,
+        }
+      ).as('putComment');
+  
+      cy.window().then((w) => {
+  
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), 100);
+  
+        fetch('/comments/10', {
+          method: 'PUT',
+          body: 'test',
+          signal: controller.signal
+        });
+      });
+  
+      cy.wait('@putComment');
+  
+      cy.get('.breaking-get', {timeout: 1});
+    });
   });
+ 
 
   context('Real Fetch Requests', () => {
     const testRealFetchRequest = (options) => {
