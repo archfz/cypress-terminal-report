@@ -11,6 +11,7 @@ const LogCollectCypressRequest = require("./collector/LogCollectCypressRequest")
 const LogCollectCypressRoute = require("./collector/LogCollectCypressRoute");
 const LogCollectCypressIntercept = require("./collector/LogCollectCypressIntercept");
 const LogCollectCypressXhr = require("./collector/LogCollectCypressXhr");
+const LogCollectCypressFetch = require("./collector/LogCollectCypressFetch");
 const LogCollectCypressLog = require("./collector/LogCollectCypressLog");
 
 const LogCollectorState = require("./collector/LogCollectorState");
@@ -49,6 +50,9 @@ function registerLogCollectorTypes(logCollectorState, config) {
   }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_XHR)) {
     (new LogCollectCypressXhr(logCollectorState, config)).register();
+  }
+  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_FETCH)) {
+    (new LogCollectCypressFetch(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
     (new LogCollectCypressRequest(logCollectorState, config)).register();

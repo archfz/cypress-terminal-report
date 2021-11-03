@@ -261,6 +261,10 @@ function logToTerminal(messages, options, data) {
       color = 'green';
       icon = LOG_SYMBOLS.route;
       trim = options.routeTrimLength || 5000;
+    } else if (type === LOG_TYPES.CYPRESS_FETCH) {
+      color = 'green';
+      icon = LOG_SYMBOLS.route;
+      trim = options.routeTrimLength || 5000;
     } else if (type === LOG_TYPES.CYPRESS_ROUTE) {
       color = 'green';
       icon = LOG_SYMBOLS.route;
