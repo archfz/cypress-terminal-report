@@ -308,6 +308,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.4.0
+
+- Implement `cy:fetch` logging. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/126) by [Erik-Outreach](https://github.com/Erik-Outreach)
+- Update cypress to 8.7.0 in tests to confirm support.
+
 #### 3.3.4
 
 - Fix issue in `extedend control` where skip tests would double consume logs, and cause domain exception. [issue](https://github.com/archfz/cypress-terminal-report/issues/122)
