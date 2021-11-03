@@ -5,7 +5,7 @@ interface SupportOptions {
    * What types of logs to collect and print.
    * By default all types are enabled.
    * The 'cy:command' is the general type that contain all types of commands that are not specially treated.
-   * @default ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:command']
+   * @default ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:fetch', 'cy:request', 'cy:route', 'cy:command']
    */
   collectTypes?: readonly string[];
 
