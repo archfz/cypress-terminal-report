@@ -1,6 +1,6 @@
-type Severity = '' | 'error' | 'warning';
+export type Severity = '' | 'error' | 'warning';
 
-interface SupportOptions {
+export interface SupportOptions {
   /**
    * What types of logs to collect and print.
    * By default all types are enabled.
