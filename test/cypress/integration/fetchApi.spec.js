@@ -18,12 +18,12 @@ describe('Fetch Api', () => {
       fetch('/comments/10', {
         method: 'PUT',
         body: 'test',
-      });
+      }).catch(console.error);
     });
 
-    cy.wait('@putComment');
+    cy.wait('@putComment', {timeout: 1000});
 
-    cy.get('.breaking-get', {timeout: 1});
+    cy.get('.breaking-get', {timeout: 100});
   })
 
   context('Timeout', () => {
@@ -46,12 +46,12 @@ describe('Fetch Api', () => {
         fetch('/comments/10', {
           method: 'PUT',
           body: 'test',
-        });
+        }).catch(console.error);
       });
   
-      cy.wait('@putComment');
+      cy.wait('@putComment', {timeout: 1000});
   
-      cy.get('.breaking-get', {timeout: 1});
+      cy.get('.breaking-get', {timeout: 100});
     });
 
     // Currently Cypress can't handle fetch Abort properly. It produces an unhandled entry, while the request remains "pending":
@@ -79,10 +79,10 @@ describe('Fetch Api', () => {
           method: 'PUT',
           body: 'test',
           signal: controller.signal
-        });
+        }).catch(console.error);
       });
   
-      cy.wait('@putComment');
+      cy.wait('@putComment', {timeout: 1000});
   
       cy.get('.breaking-get', {timeout: 1});
     });
@@ -114,7 +114,7 @@ describe('Fetch Api', () => {
         button.addEventListener('click', () =>
           fetch(options.url).then(() => {
             containerDiv.innerHTML = 'received response';
-          })
+          }).catch(console.error)
         );
         containerDiv.before(button);
       });
