@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
-type Severity = '' | 'error' | 'warning';
+export type Severity = '' | 'error' | 'warning';
 
-interface PluginOptions {
+export interface PluginOptions {
   /**
    * Max length of cy.log and console.warn/console.error.
    * @default 800
