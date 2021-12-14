@@ -32,7 +32,9 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
-    let spec = (mochaRunnable.parent.invocationDetails || mochaRunnable.invocationDetails).relativeFile;
+
+    let invocationDetails = (mochaRunnable.parent.invocationDetails || mochaRunnable.invocationDetails);
+    let spec = invocationDetails.relativeFile || invocationDetails.fileUrl.replace(/^[^?]+\?p=/, '');
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     let parent = mochaRunnable.parent;

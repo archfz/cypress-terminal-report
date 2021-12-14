@@ -308,6 +308,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.4.1
+
+- Add severity typescript types. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/128)  by [tebeco](https://github.com/tebeco)
+- Fix nested file logging by fallback for determining spec path. [issue](https://github.com/archfz/cypress-terminal-report/issues/124)
+- Update cypress to 9.1.0 in tests to confirm support.
+
 #### 3.4.0
 
 - Implement `cy:fetch` logging. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/126) by [Erik-Outreach](https://github.com/Erik-Outreach)
