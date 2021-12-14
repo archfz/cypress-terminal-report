@@ -3,15 +3,14 @@ describe('Demo spec.', () => {
   it('Demo test.', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 403,
+    }, {
       headers: {
         'Test-Header': 'data',
       },
+      statusCode: 403,
       response: {
         'key': 'data'
       },

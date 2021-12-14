@@ -1,13 +1,21 @@
-# Cypress terminal report
-
-[![Build Status](https://circleci.com/gh/archfz/cypress-terminal-report/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/archfz/cypress-terminal-report)
-[![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
-[![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
+# Cypress terminal report [![Build Status](https://circleci.com/gh/archfz/cypress-terminal-report/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/archfz/cypress-terminal-report) [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report) [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
 > ! 3.x.x is out. Please read the [release notes](#300) for upgrade path from 2.x.x.
 
+<div align="center">
+
+[Limitations](#limitations-and-notes)
+• [Install](#install)
+• [Options](#options)
+• [Logging after/before all](#logging-after-all-and-before-all-hooks)
+• [Logging to files](#logging-to-files)
+• [Development](#development)
+• [Release Notes](#release-notes)
+
+</div>
+
 Plugin for cypress that adds better terminal output for easier debugging. 
-Prints cy commands, browser console logs, cy.request and cy.route data.
+Prints cy commands, browser console logs, cy.request and cy.intercept data. Great for your pipelines.
 
 * looks pretty in console
 * logs all commands, requests and browser console logs
@@ -19,28 +27,14 @@ Prints cy commands, browser console logs, cy.request and cy.route data.
 
 Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/cypress-terminal-report-demo).
 
-- [Requirements](#requirements)
-- [Limitations and notes](#limitations-and-notes)
-- [Install](#install)
-- [Options](#options)
-- [Logging after all and before all hooks](#logging-after-all-and-before-all-hooks)
-- [Logging to files](#logging-to-files)
-- [Development](#development)
-- [Release Notes](#release-notes)
 
+![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png?sanitize=true#gh-light-mode-only)
+![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo_dark.png?sanitize=true#gh-dark-mode-only)
 
-![demo](https://raw.githubusercontent.com/archfz/cypress-terminal-report/master/demo.png)
-
-## Requirements
-
-- `>=3.0.0` requires cypress `>=4.10.0`
-- `<3.0.0` requires cypress `>=3.8.0`
 
 ## Limitations and notes
 
 - By default logs are not printed for successful tests. Please see [option](#optionsprintlogstoconsole) to change this.
-- Currently logs do not appear in the dashboard. If you want to see them go to your CI 
-  runner and check the pipeline logs there.
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of 
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
@@ -48,6 +42,11 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ## Install
+
+### Requirements
+
+- `>=3.0.0` requires cypress `>=4.10.0`
+- `<3.0.0` requires cypress `>=3.8.0`
 
 1. Install npm package.
     ```bash
@@ -307,6 +306,12 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 3.4.1
+
+- Add severity typescript types. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/128)  by [tebeco](https://github.com/tebeco)
+- Fix nested file logging by fallback for determining spec path. [issue](https://github.com/archfz/cypress-terminal-report/issues/124)
+- Update cypress to 9.1.0 in tests to confirm support.
 
 #### 3.4.0
 
