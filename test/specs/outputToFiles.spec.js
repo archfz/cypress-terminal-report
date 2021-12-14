@@ -13,7 +13,7 @@ const fsExtra = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 
-describe.only('Output to files.', () => {
+describe('Output to files.', () => {
 
   afterEach(function () {
     if (this.currentTest.state == 'failed') {
