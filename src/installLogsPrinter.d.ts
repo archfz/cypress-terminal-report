@@ -1,6 +1,19 @@
 /// <reference types="cypress" />
 
 export type Severity = '' | 'error' | 'warning';
+export type LogType = 'cons:log' |
+  'cons:info' |
+  'cons:warn' |
+  'cons:error' |
+  'cons:debug' |
+  'cy:log' |
+  'cy:xhr' |
+  'cy:fetch' |
+  'cy:request' |
+  'cy:route' |
+  'cy:intercept' |
+  'cy:command' |
+  'ctr:info';
 
 export interface PluginOptions {
   /**
@@ -41,7 +54,7 @@ export interface PluginOptions {
     string,
     | 'json'
     | 'txt'
-    | ((messages: Record<string, Record<string, [string, string, Severity]>>) => string)
+    | ((messages: Record<string, Record<string, [LogType, string, Severity]>>) => string)
   >;
 
   /**
@@ -80,8 +93,8 @@ export interface PluginOptions {
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]) => void;
+  collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]) => void;
 }
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: PluginOptions): void;
-export = installLogsPrinter;
+export default installLogsPrinter;
