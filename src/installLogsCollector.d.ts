@@ -1,4 +1,17 @@
 export type Severity = '' | 'error' | 'warning';
+export type LogType = 'cons:log' |
+  'cons:info' |
+  'cons:warn' |
+  'cons:error' |
+  'cons:debug' |
+  'cy:log' |
+  'cy:xhr' |
+  'cy:fetch' |
+  'cy:request' |
+  'cy:route' |
+  'cy:intercept' |
+  'cy:command' |
+  'ctr:info';
 
 export interface SupportOptions {
   /**
@@ -17,7 +30,7 @@ export interface SupportOptions {
   filterLog?:
     | null
     | NonNullable<SupportOptions['collectTypes']>[number]
-    | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => boolean);
+    | ((args: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity]) => boolean);
 
   /**
    * Callback to process logs manually. The type is from the same list as for the collectTypes option.
@@ -27,7 +40,7 @@ export interface SupportOptions {
   processLog?:
       | null
       | NonNullable<SupportOptions['collectTypes']>[number]
-      | ((args: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity]) => [Severity, string, Severity]);
+      | ((args: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity]) => [Severity, string, Severity]);
 
   /**
    * Callback to collect each test case's logs after its run.
@@ -35,7 +48,7 @@ export interface SupportOptions {
    */
   collectTestLogs?: (
     context: {mochaRunnable: any, testState: string, testTitle: string, testLevel: number},
-    messages: [/* type: */ Severity, /* message: */ string, /* severity: */ Severity][]
+    messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]
   ) => void;
 
   xhr?: {
@@ -67,4 +80,4 @@ export interface SupportOptions {
 }
 
 declare function installLogsCollector(config?: SupportOptions): void;
-export = installLogsCollector;
+export default installLogsCollector;
