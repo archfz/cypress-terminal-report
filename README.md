@@ -307,6 +307,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Security update.
+- Update cypress to 9.4.1 in tests to confirm support.
+- 
 #### 3.4.1
 
 - Add severity typescript types. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/128)  by [tebeco](https://github.com/tebeco)
