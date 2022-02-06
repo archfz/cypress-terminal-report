@@ -307,6 +307,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.4.2
+
 - Fix incorrectly typed message type arguments. [issue](https://github.com/archfz/cypress-terminal-report/issues/132)
 - Security updates.
 - Update cypress to 9.4.1 in tests to confirm support.
