@@ -312,7 +312,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-#### 3.4.3
+#### 3.5.0
 
 - Add new feature outputCompactLogs to allow for optionally overriding compactLogs for the output file specifically [see here](#optionsoutputcompactlogs). [issue](https://github.com/archfz/cypress-terminal-report/issues/138)
 
