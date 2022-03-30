@@ -60,9 +60,10 @@ function installLogsPrinter(on, options = {}) {
     [CONSTANTS.TASK_NAME]: function (data) {
       let messages = data.messages;
 
-      if (typeof options.compactLogs === 'number' && options.compactLogs >= 0) {
-        messages = compactLogs(messages, options.compactLogs);
-      }
+      const terminalMessages =
+        typeof options.compactLogs === 'number' && options.compactLogs >= 0
+          ? compactLogs(messages, options.compactLogs)
+          : messages;
 
       const isHookAndShouldLog = data.isHook &&
         (options.includeSuccessfulHookLogs || data.state === 'failed');
@@ -73,8 +74,13 @@ function installLogsPrinter(on, options = {}) {
           options.printLogsToFile === "always" ||
           isHookAndShouldLog
         ) {
+          const outputFileMessages =
+            typeof options.outputCompactLogs === 'number' && options.outputCompactLogs >= 0
+              ? compactLogs(messages, options.outputCompactLogs)
+              : terminalMessages;
+
           writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
-          writeToFileMessages[data.spec][data.test] = messages;
+          writeToFileMessages[data.spec][data.test] = outputFileMessages;
         }
       }
 
@@ -83,11 +89,14 @@ function installLogsPrinter(on, options = {}) {
         || options.printLogsToConsole === "always"
         || isHookAndShouldLog
       ) {
-        logToTerminal(messages, options, data);
+        logToTerminal(terminalMessages, options, data);
       }
 
       if (options.collectTestLogs) {
-        options.collectTestLogs({ spec: data.spec, test: data.test, state: data.state }, messages);
+        options.collectTestLogs(
+          {spec: data.spec, test: data.test, state: data.state},
+          terminalMessages
+        );
       }
 
       return null;
