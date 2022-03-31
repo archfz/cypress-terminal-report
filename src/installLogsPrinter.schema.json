@@ -35,7 +35,7 @@
     },
     "outputCompactLogs": {
       "type": "number",
-      "minimum": 0
+      "minimum": -1
     },
     "outputRoot": {
       "type": "string"

@@ -90,6 +90,7 @@ for tests that don't have any `severity=error` logs nothing will be printed.
 integer?; default: null; Overrides `options.compactLogs` for the file log output specifically, when `options.outputTarget` is specified. 
 Allows compacting of the terminal and the file output logs to different levels.  
 If `options.outputCompactLogs` is unspecified, file output will use `options.compactLogs`.
+If set to -1, output file logs will not compact even if `options.compactLogs` is set.
 
 #### `options.outputRoot` 
 string; default: null; Required if `options.outputTarget` provided. [More details](#logging-to-files).
