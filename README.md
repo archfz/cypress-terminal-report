@@ -315,7 +315,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 #### 3.5.0
 
-- Add new feature outputCompactLogs to allow for optionally overriding compactLogs for the output file specifically [see here](#optionsoutputcompactlogs). by [bvandercar-vt](https://github.com/bvandercar-vt) [issue](https://github.com/archfz/cypress-terminal-report/issues/138)
+- Add new feature [`outputCompactLogs`](#optionsoutputcompactlogs) to allow for optionally overriding compactLogs for the output file specifically. by [bvandercar-vt](https://github.com/bvandercar-vt) [issue](https://github.com/archfz/cypress-terminal-report/issues/138)
+- Fix typing for `processLog`. [issue](https://github.com/archfz/cypress-terminal-report/issues/132)
 
 #### 3.4.2
 

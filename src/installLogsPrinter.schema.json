@@ -34,7 +34,7 @@
       "minimum": 0
     },
     "outputCompactLogs": {
-      "type": "number",
+      "type": ["number", "boolean"],
       "minimum": -1
     },
     "outputRoot": {
