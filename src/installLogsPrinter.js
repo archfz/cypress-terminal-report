@@ -74,16 +74,12 @@ function installLogsPrinter(on, options = {}) {
           options.printLogsToFile === "always" ||
           isHookAndShouldLog
         ) {
-          let outputFileMessages
-          if (typeof options.outputCompactLogs === 'number' ) {
-            if (options.outputCompactLogs >= 0){
-              outputFileMessages = compactLogs(messages, options.outputCompactLogs)
-            } else {
-              outputFileMessages = messages // if -1, override compactLogs, don't compact
-            }
-          } else{
-            outputFileMessages = terminalMessages // if unspecified, go with compactLogs
-          }
+          let outputFileMessages =
+            typeof options.outputCompactLogs === 'number'
+              ? compactLogs(messages, options.outputCompactLogs)
+              : options.outputCompactLogs === false
+              ? messages
+              : terminalMessages;
 
           writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
           writeToFileMessages[data.spec][data.test] = outputFileMessages;

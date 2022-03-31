@@ -44,7 +44,7 @@ export interface PluginOptions {
    * If it is set to a number greater or equal to 0, will override compactLogs for the file log output specifically. Use this for compacting of the terminal and the file output logs to different levels. 
    * @default null
    */
-  outputCompactLogs?: number | null;
+  outputCompactLogs?: false | number | null;
 
   /**
    * Required if outputTarget provided. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).

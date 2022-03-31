@@ -65,7 +65,7 @@ module.exports = (on, config) => {
   }
   if (config.env.outputCompactLogs == "3") {
     options.compactLogs = 5;
-    options.outputCompactLogs = -1;
+    options.outputCompactLogs = false;
     options.outputRoot = config.projectRoot + '/output/';
     options.outputTarget = { 'out.txt': 'txt', };
   }
