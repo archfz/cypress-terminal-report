@@ -320,6 +320,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 3.5.2
+
+- Fix issue where suites in sub-files called by top-level `.spec` files get put into a different output file than the top-level `.spec` log file.  by [bvandercar-vt](https://github.com/bvandercar-vt)
+
 #### 3.5.1
 
 - Fix custom output processor example in README. by [bvandercar-vt](https://github.com/bvandercar-vt)
