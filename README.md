@@ -86,6 +86,12 @@ will be printed only around failing commands. Use this to have shorter output es
 for when there are a lot of commands in tests. When used with `options.printLogsToConsole=always` 
 for tests that don't have any `severity=error` logs nothing will be printed.
 
+#### `options.outputCompactLogs` 
+integer? | false; default: null; Overrides `options.compactLogs` for the file log output specifically, 
+when `options.outputTarget` is specified. Allows compacting of the terminal and the file output logs to different levels.  
+If `options.outputCompactLogs` is unspecified, file output will use `options.compactLogs`.
+If set to `false`, output file logs will not compact even if `options.compactLogs` is set.
+
 #### `options.outputRoot` 
 string; default: null; Required if `options.outputTarget` provided. [More details](#logging-to-files).
 
@@ -306,6 +312,13 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 3.5.0
+
+- Add new feature [`outputCompactLogs`](#optionsoutputcompactlogs) to allow for optionally overriding compactLogs for the output file specifically. by [bvandercar-vt](https://github.com/bvandercar-vt) [issue](https://github.com/archfz/cypress-terminal-report/issues/138)
+- Fix typing for `processLog`. [issue](https://github.com/archfz/cypress-terminal-report/issues/132)
+- Security dependency updates.
+- Update cypress to 9.5.x in tests to confirm support.
 
 #### 3.4.2
 

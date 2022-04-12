@@ -33,6 +33,10 @@
       "type": "number",
       "minimum": 0
     },
+    "outputCompactLogs": {
+      "type": ["number", "boolean"],
+      "minimum": -1
+    },
     "outputRoot": {
       "type": "string"
     },
