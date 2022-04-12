@@ -322,7 +322,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 #### 3.5.1
 
-- Improve custom output processor example. by [bvandercar-vt](https://github.com/bvandercar-vt) [issue](https://github.com/archfz/cypress-terminal-report/issues/138)
+- Fix custom output processor example in README. by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Add more exported types to facilitate creating custom output processors in TypeScript. by [bvandercar-vt](https://github.com/bvandercar-vt)
 
 #### 3.5.0
 
