@@ -278,14 +278,14 @@ data in the output file.
   // ...
   const options = {
     outputTarget: {
-      'custom.output': function (messages) {
-        // messages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}}
+      'custom.output': function (allMessages) {
+        // allMessages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}}
 
-        Object.entries(messages).forEach(([spec, tests]) => {
+        Object.entries(allMessages).forEach(([spec, tests]) => {
           let text = `${spec}:\n`
-          Object.entries(tests).forEach(([test, testMessages]) => {
+          Object.entries(tests).forEach(([test, messages]) => {
             text += `    ${test}\n`
-            testMessages.forEach(([type, message, severity]) => {
+            messages.forEach(([type, message, severity]) => {
               text += `        ${type} (${severity}): ${message}\n`
             })
           })
