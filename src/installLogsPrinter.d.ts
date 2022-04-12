@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 export type Severity = '' | 'error' | 'warning';
+
 export type LogType = 'cons:log' |
   'cons:info' |
   'cons:warn' |
@@ -15,6 +16,12 @@ export type LogType = 'cons:log' |
   'cy:command' |
   'ctr:info';
 
+export type AllMessages = {
+  [specPath: string]: {
+    [testTitle: string]: [type: LogType, message: string, severity: Severity][]
+  }
+};
+  
 export interface PluginOptions {
   /**
    * Max length of cy.log and console.warn/console.error.
@@ -60,7 +67,7 @@ export interface PluginOptions {
     string,
     | 'json'
     | 'txt'
-    | ((messages: Record<string, Record<string, [LogType, string, Severity]>>) => string)
+    | ((allMessages: AllMessages) => string)
   >;
 
   /**
