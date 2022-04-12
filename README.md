@@ -324,6 +324,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 - Fix custom output processor example in README. by [bvandercar-vt](https://github.com/bvandercar-vt)
 - Add more exported types to facilitate creating custom output processors in TypeScript. by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Security dependency updates.
 
 #### 3.5.0
 
