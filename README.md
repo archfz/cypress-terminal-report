@@ -278,16 +278,23 @@ data in the output file.
   // ...
   const options = {
     outputTarget: {
-      'custom.output': function (messages) {
-        // messages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}
+      'custom.output': function (allMessages) {
+        // allMessages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}}
 
         Object.entries(allMessages).forEach(([spec, tests]) => {
-            let dataString = '';
-            // .. Process the tests object into desired format ..
-            // Insert chunk into file, by default at the end.
-            this.writeSpecChunk(spec, dataString);
-            // Or before the last two characters.
-            this.writeSpecChunk(spec, dataString, -2);
+          let text = `${spec}:\n`
+          Object.entries(tests).forEach(([test, messages]) => {
+            text += `    ${test}\n`
+            messages.forEach(([type, message, severity]) => {
+              text += `        ${type} (${severity}): ${message}\n`
+            })
+          })
+          
+          // .. Process the tests object into desired format ..
+          // Insert chunk into file, by default at the end.
+          this.writeSpecChunk(spec, text);
+          // Or before the last two characters.
+          this.writeSpecChunk(spec, text, -2);
         });
       }
     }
@@ -312,6 +319,11 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 3.5.1
+
+- Fix custom output processor example in README. by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Add more exported types to facilitate creating custom output processors in TypeScript. by [bvandercar-vt](https://github.com/bvandercar-vt)
 
 #### 3.5.0
 
