@@ -21,8 +21,8 @@ module.exports = (on, config) => {
       'out.cst': function (messages) {
         this.initialContent = 'Specs:\n';
         this.chunkSeparator = '\n';
-        Object.keys(messages).forEach((key) => {
-          this.writeSpecChunk(key, key);
+        Object.keys(messages).forEach((specPath) => {
+          this.writeSpecChunk(specPath, specPath);
         });
       },
     };
@@ -33,11 +33,11 @@ module.exports = (on, config) => {
     options.outputTarget = {
       'txt|txt': 'txt',
       'json|json': 'json',
-      'custom|cst': function (messages) {
+      'custom|cst': function (allMessages) {
         this.initialContent = 'Specs:\n';
         this.chunkSeparator = '\n';
-        Object.keys(messages).forEach((key) => {
-          this.writeSpecChunk(key, key);
+        Object.keys(messages).forEach((specPath) => {
+          this.writeSpecChunk(specPath, specPath);
         });
       },
     };
