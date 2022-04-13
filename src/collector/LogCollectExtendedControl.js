@@ -32,11 +32,11 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
-    let invocationDetails;
 
+    let invocationDetails = mochaRunnable.invocationDetails;
     {
       // always get top-most spec to determine the called .spec file
-      let parent = mochaRunnable;
+      let parent = mochaRunnable.parent;
       while (parent && parent.invocationDetails) {
         invocationDetails = parent.invocationDetails
         parent = parent.parent;
