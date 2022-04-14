@@ -1,0 +1,7 @@
+cypress/integration/callsSuiteInAnotherFile.spec.js:
+    Calls function in another file that creates a sub-suite. -> the test 2
+        cy:command (X): assert	expected **1** to equal **2**
+
+    Calls function in another file that creates a sub-suite. -> sub-suite in different file -> subsuite test 2
+        cy:command (X): assert	expected **1** to equal **2**
+
