@@ -323,6 +323,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 #### 3.5.2
 
 - Fix issue where top-level `.spec` files that call test functions in other files results in multiple output files being created.  by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Security dependency updates.
 
 #### 3.5.1
 
