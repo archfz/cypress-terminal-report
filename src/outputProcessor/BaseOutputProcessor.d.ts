@@ -22,7 +22,7 @@ export class BaseOutputProcessor {
   initialContent: string;
   chunkSeparator: string;
 
-  writeSpecChunk(spec: string, chunk: string, pos?: number);
+  writeSpecChunk(spec: string, chunk: string, pos?: number): void;
 }
 
 

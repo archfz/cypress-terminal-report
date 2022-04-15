@@ -77,7 +77,13 @@ describe('Output to files.', () => {
   }).timeout(90000);
 
   it('Should generate proper nested log output files.', async () => {
-    const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js', 'multiple.dots.in.spec.js'];
+    const specFiles = [
+      'requests.spec.js', 
+      'happyFlow.spec.js', 
+      'printLogsSuccess.spec.js', 
+      'multiple.dots.in.spec.js', 
+      'callsSuiteInAnotherFile.spec.js'
+    ];
     await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
       const specs = glob.sync('./output_nested_spec/**/*', {nodir: true});
       specs.forEach(specFile => {
@@ -85,6 +91,9 @@ describe('Output to files.', () => {
         expect(fs.existsSync(actualFile), `Expected output file ${actualFile} to exist.`).to.be.true;
         expectOutFilesMatch(actualFile, specFile);
       });
+
+      const shouldNotExist = glob.sync('./output_nested/**/suiteInOtherFile*', {nodir: true});
+      expect(shouldNotExist, `Expect no output file for suiteInOtherFile to exist.`).to.have.length(0);
     });
   }).timeout(90000);
 
