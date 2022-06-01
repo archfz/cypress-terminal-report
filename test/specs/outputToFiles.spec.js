@@ -33,10 +33,10 @@ describe('Output to files.', () => {
     }
 
     const specFiles = [
-      'requests.spec.js',
       'happyFlow.spec.js',
-      'printLogsSuccess.spec.js',
       'mochaContexts.spec.js',
+      'requests.spec.js',
+      'printLogsSuccess.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
@@ -51,10 +51,10 @@ describe('Output to files.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'requests.spec.js',
       'happyFlow.spec.js',
-      'printLogsSuccess.spec.js',
       'mochaContexts.spec.js',
+      'printLogsSuccess.spec.js',
+      'requests.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');

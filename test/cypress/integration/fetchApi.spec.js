@@ -123,7 +123,7 @@ describe('Fetch Api', () => {
       cy.get('.network-request').click();
       cy.get('.network-request-message').should('contain', 'received response');
 
-      cy.get('.breaking-get', {timeout: 100}); // longer timeout to ensure fetch log update is included
+      cy.get('.breaking-get', {timeout: 5000}); // longer timeout to ensure fetch log update is included
     };
 
     it('Fetch successful without interceptor', () =>

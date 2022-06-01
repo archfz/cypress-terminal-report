@@ -1,6 +1,6 @@
 # Cypress terminal report [![Build Status](https://circleci.com/gh/archfz/cypress-terminal-report/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/archfz/cypress-terminal-report) [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report) [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
-> ! 3.x.x is out. Please read the [release notes](#300) for upgrade path from 2.x.x.
+> This documentation is for cypress >= 10.0.0. For older versions see [3.x.x branch](https://github.com/archfz/cypress-terminal-report/tree/3.x.x).
 
 <div align="center">
 
@@ -45,6 +45,7 @@ the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ### Requirements
 
+- `>=4.0.0` requires cypress `>=10.0.0`
 - `>=3.0.0` requires cypress `>=4.10.0`
 - `<3.0.0` requires cypress `>=3.8.0`
 
@@ -52,13 +53,17 @@ the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
     ```bash
     npm i --save-dev cypress-terminal-report
     ```
-2. Register the output plugin in `cypress/plugins/index.js`
+2. Register the output plugin in `cypress.config.js`
     ```js
-    module.exports = (on) => {
-       require('cypress-terminal-report/src/installLogsPrinter')(on);
-    };
+    module.exports = defineConfig({
+      e2e: {
+        setupNodeEvents(on, config) {
+          require('cypress-terminal-report/src/installLogsPrinter')(on);
+        }
+      }
+    });
     ```
-3. Register the log collector support in `cypress/support/index.js`
+3. Register the log collector support in `cypress/support/e2e.js`
     ```js
     require('cypress-terminal-report/src/installLogsCollector')();
     ```
@@ -239,9 +244,8 @@ const path = require('path');
 module.exports = (on, config) => {
   const options = {
     outputRoot: config.projectRoot + '/logs/',
-    // Used to trim the base path of specs and reduce nesting in the
-    // generated output directory.
-    specRoot: path.relative(config.fileServerFolder, config.integrationFolder),
+    // Used to trim the base path of specs and reduce nesting in the generated output directory.
+    specRoot: 'cypress/e2e',
     outputTarget: {
       'cypress-logs|json': 'json',
     }
@@ -319,6 +323,12 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 4.0.0
+
+- Add support for cypress ^10. [Follow cypress upgrade](https://deploy-preview-4186--cypress-docs.netlify.app/guides/references/migration-guide#Migrating-to-Cypress-version-10-0).
+- ! Breaking change: `specRoot` option cannot be calculated anymore using config, as 
+  `integrationFolder` option was removed in cypress. [This now has to be set manually](#log-specs-in-separate-files). 
 
 #### 3.5.2
 
