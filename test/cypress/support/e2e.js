@@ -97,8 +97,6 @@ function enableFetchWorkaround() {
     }, {log: false});
   });
 
-  console.log(Cypress);
-
   Cypress.on('window:before:load', win => {
     delete win.fetch;
     win.eval(polyfill);

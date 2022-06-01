@@ -23,8 +23,8 @@ describe('Extended controller.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'beforeLogs.spec.js',
       'afterLogs.spec.js',
+      'beforeLogs.spec.js',
       'allHooks.spec.js',
       'mochaContexts.spec.js',
     ];
@@ -41,9 +41,9 @@ describe('Extended controller.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'beforeLogs.spec.js',
       'afterLogs.spec.js',
       'allHooks.spec.js',
+      'beforeLogs.spec.js',
       'mochaContexts.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
@@ -196,6 +196,7 @@ describe('Extended controller.', () => {
 
     await runTest(commandBase(['enableExtendedCollector=1'], ['dynamicSkip.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout)).to.contain(`- test3
+    ✓ test4 (X ms)
           cy:log ${ICONS.info}  before
           cy:log ${ICONS.info}  test3 1
           cy:log ${ICONS.info}  test3 2
