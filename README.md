@@ -210,7 +210,7 @@ To enable logging to file you must add the following configuration options to th
 plugin install.
 
 ```js
-module.exports = (on, config) => {
+setupNodeEvents(on, config) {
   // ...
   const options = {
     outputRoot: config.projectRoot + '/logs/',
@@ -222,7 +222,7 @@ module.exports = (on, config) => {
 
   require('cypress-terminal-report/src/installLogsPrinter')(on, options);
   // ...
-};
+}
 ```
 
 The `outputTarget` needs to be an object where the key is the relative path of the
@@ -239,9 +239,7 @@ is the file extension for the log files. The generated output will have the
 same structure as in the cypress specs root directory.
 
 ```js
-const path = require('path');
-
-module.exports = (on, config) => {
+setupNodeEvents(on, config) {
   const options = {
     outputRoot: config.projectRoot + '/logs/',
     // Used to trim the base path of specs and reduce nesting in the generated output directory.
@@ -250,7 +248,7 @@ module.exports = (on, config) => {
       'cypress-logs|json': 'json',
     }
   };
-};
+}
 ```
 
 ### Custom output log processor
