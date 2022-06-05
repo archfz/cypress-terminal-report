@@ -38,7 +38,7 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of 
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
-- Using cypress-fail-fast and logging to files does not work out of the box. To enable support use 
+- Using `cypress-fail-fast` and logging to files does not work out of the box. To enable support use 
 the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ## Install
@@ -53,7 +53,8 @@ the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
     ```bash
     npm i --save-dev cypress-terminal-report
     ```
-2. Register the output plugin in `cypress.config.js`
+2. If using typescript and es6 imports ensure `esModuleInterop` is enabled.
+3. Register the output plugin in `cypress.config.{js|ts}`
     ```js
     module.exports = defineConfig({
       e2e: {
@@ -63,7 +64,7 @@ the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
       }
     });
     ```
-3. Register the log collector support in `cypress/support/e2e.js`
+4. Register the log collector support in `cypress/support/e2e.{js|ts}`
     ```js
     require('cypress-terminal-report/src/installLogsCollector')();
     ```
@@ -321,6 +322,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 4.0.1
+
+- Typescript typing fix and readme update. [issue](https://github.com/archfz/cypress-terminal-report/issues/148)
 
 #### 4.0.0
 
