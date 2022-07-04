@@ -323,6 +323,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 4.0.2
+
+- Typescript typing fix to support both esm and commonjs require. [issue](https://github.com/archfz/cypress-terminal-report/issues/151)
+
 #### 4.0.1
 
 - Typescript typing fix and readme update. [issue](https://github.com/archfz/cypress-terminal-report/issues/148)
