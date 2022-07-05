@@ -323,6 +323,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 4.0.3
+
+- Fix issue with errors throw outside of tests overlapping real error. [issue](https://github.com/archfz/cypress-terminal-report/issues/152)
+- Add additional potential source for spec file path determination.
+- Update cypress in tests to 10.3.0 to confirm support.
+
 #### 4.0.2
 
 - Typescript typing fix to support both esm and commonjs require. [issue](https://github.com/archfz/cypress-terminal-report/issues/151)

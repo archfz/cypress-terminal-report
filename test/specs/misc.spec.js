@@ -60,6 +60,13 @@ describe('Misc.', () => {
     });
   }).timeout(30000);
 
+  it('Should not overlap error throw outside of spec.', async () => {
+    await runTest(commandBase([], ['errorsOutside2.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`> Error thrown outside of describe.`);
+      expect(stdout).to.not.contain(`TypeError: Cannot read properties of undefined (reading 'replace')`);
+    });
+  }).timeout(30000);
+
   it('Should print logs for all cypress retries.', async () => {
     await runTest(commandBase(['breaking=1'], ['retries.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`(Attempt 1 of 3) fails
