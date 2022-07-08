@@ -59,10 +59,10 @@ export const runTest = async (command, callback) => {
   });
 };
 
-export const runTestContinuous = async (command, callback) => {
+export const runTestContinuous = async (command, afterOutput, callback) => {
   await new Promise(resolve => {
     let allData = '';
-    const startTime = (new Date()).getTime();
+    let startTime;
     const mainCommand = command.split(' ')[0];
     const args = command.split(' ').map(arg => arg.replace(/^"/, '').replace(/"$/, ''));
     args.shift();
@@ -72,8 +72,14 @@ export const runTestContinuous = async (command, callback) => {
     child.on('close', resolve);
 
     const dataCallback = (data) => {
-      allData += data.toString();
-      callback(allData, ((new Date()).getTime() - startTime) / 1000);
+      if (data.toString().includes(afterOutput)) {
+        startTime = (new Date()).getTime();
+      }
+
+      if (startTime) {
+        allData += data.toString();
+        callback(allData, ((new Date()).getTime() - startTime) / 1000);
+      }
     };
 
     child.stdout.setEncoding('utf8');
