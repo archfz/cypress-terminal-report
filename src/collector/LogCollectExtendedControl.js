@@ -64,6 +64,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               level: testLevel,
               consoleTitle: options.consoleTitle,
               isHook: options.isHook,
+              continuous: false,
             }
           })
             // For some reason cypress throws empty error although the task indeed works.
@@ -84,6 +85,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               level: testLevel,
               consoleTitle: options.consoleTitle,
               isHook: options.isHook,
+              continuous: false,
             },
             {log: false}
           );

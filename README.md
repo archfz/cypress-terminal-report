@@ -178,8 +178,9 @@ before all and after all hooks.
 
 #### `options.enableContinuousLogging`
 boolean; default false; Enables logging logs to terminal continuously / immediately as they are registered.
-This feature is unstable and has an impact on pipeline performance. Use only for debugging purposes in case
-the pipelines / tests are timing out. 
+This feature is unstable and has an impact on pipeline performance. This option has no effect for extended 
+collector, only works for the simple collector. Use only for debugging purposes in case the pipelines / 
+tests are timing out. 
 
 > NOTE: In case of this option enabled, logs will come before the actual title of the test. Also the 
 > `printLogsToConsole` option will be ignored. Logging to files might also get impacted.
