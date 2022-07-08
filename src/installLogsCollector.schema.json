@@ -51,6 +51,9 @@
     "enableExtendedCollector": {
       "type": "boolean"
     },
+    "enableContinuousLogging": {
+      "type": "boolean"
+    },
     "debug": {
       "type": "boolean"
     }

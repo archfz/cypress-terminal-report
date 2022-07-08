@@ -83,6 +83,9 @@ if (env.supportGoodConfig == '1') {
 if (env.enableExtendedCollector == '1') {
   config.enableExtendedCollector = true;
 }
+if (env.enableContinuousLogging == '1') {
+  config.enableContinuousLogging = true;
+}
 
 require('../../../src/installLogsCollector')(config);
 

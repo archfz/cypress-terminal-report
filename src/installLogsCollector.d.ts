@@ -73,6 +73,13 @@ export interface SupportOptions {
   enableExtendedCollector: boolean;
 
   /**
+   * Enables continuous logging of logs to terminal one by one, as they get registerd or modified.
+   * @unstable
+   * @default false
+   */
+  enableContinuousLogging: boolean;
+
+  /**
    * Enabled debug logging.
    * @default false
    */

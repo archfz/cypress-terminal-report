@@ -176,6 +176,14 @@ boolean; default false; Whether to print request data for XHR requests besides r
 boolean; default false; Enables an extended collector which will also collect command logs from
 before all and after all hooks.
 
+#### `options.enableContinuousLogging`
+boolean; default false; Enables logging logs to terminal continuously / immediately as they are registered.
+This feature is unstable and has an impact on pipeline performance. Use only for debugging purposes in case
+the pipelines / tests are timing out. 
+
+> NOTE: In case of this option enabled, logs will come before the actual title of the test. Also the 
+> `printLogsToConsole` option will be ignored. Logging to files might also get impacted.
+
 #### _Example for options for the support install_
 
 ```js
@@ -322,6 +330,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 4.1.0
+
+- Add experimental [`enableContinuousLogging`](#optionsenablecontinuouslogging) option for timeout debugging purposes. [issue](https://github.com/archfz/cypress-terminal-report/issues/150)
 
 #### 4.0.3
 

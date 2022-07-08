@@ -55,6 +55,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
             level: testLevel,
             consoleTitle: options.consoleTitle,
             isHook: options.isHook,
+            continuous: this.config.enableContinuousLogging,
           }
         })
           // For some reason cypress throws empty error although the task indeed works.
@@ -74,6 +75,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
               level: testLevel,
               consoleTitle: options.consoleTitle,
               isHook: options.isHook,
+              continuous: this.config.enableContinuousLogging,
             },
             {log: false}
           );
@@ -100,6 +102,14 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
 
   registerTests() {
     const self = this;
+
+    if (this.config.enableContinuousLogging) {
+      this.collectorState.on('log', () => {
+        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {noQueue: true});
+        this.collectorState.addNewLogStack();
+      });
+      return;
+    }
 
     afterEach(function () {
       self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest());
