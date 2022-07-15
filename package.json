@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/archfz/cypress-terminal-report#readme",
   "dependencies": {
-    "chalk": "^5.0.1",
+    "chalk": "^4.0.0",
     "fs-extra": "^10.1.0",
     "methods": "^1.1.2",
     "semver": "^7.3.5",
