@@ -31,6 +31,6 @@
     "mocha": "^8.3.2"
   },
   "devDependencies": {
-    "cypress-fail-fast": "^2.3.2"
+    "cypress-fail-fast": "^5.0.0"
   }
 }
