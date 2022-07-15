@@ -25,5 +25,6 @@ cypress/integration/requests.spec.js:
                           "completed": false
                         }
         cy:command (X): get	.breaking-get
+        cy:command (K): task	failFastLog, Failed tests: 1/1
+        cy:command (K): task	failFastLog, Enabling skip mode
         cy:command (K): task	failFastShouldSkip, true
-
