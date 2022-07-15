@@ -19,18 +19,18 @@
     "nonGlobalStepDefinitions": true
   },
   "dependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/register": "^7.13.16",
+    "@babel/core": "^7.18.0",
+    "@babel/plugin-transform-runtime": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "@babel/register": "^7.18.0",
     "chai": "^4.2.0",
     "cypress": "10.3.0",
     "cypress-cucumber-preprocessor": "^4.3.0",
-    "fs-extra": "^9.0.1",
-    "glob": "^7.1.6",
-    "mocha": "^8.3.2"
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0"
   },
   "devDependencies": {
-    "cypress-fail-fast": "^2.3.2"
+    "cypress-fail-fast": "^5.0.0"
   }
 }
