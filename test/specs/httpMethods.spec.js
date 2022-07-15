@@ -1,5 +1,5 @@
 import { HTTP_METHODS } from '../../src/constants'
-import { METHODS } from 'node:http'
+import { METHODS } from 'http'
 
 const { expect } = require('chai')
 
