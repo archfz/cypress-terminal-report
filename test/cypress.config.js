@@ -1,6 +1,7 @@
 const { defineConfig } = require('cypress')
-const path = require("path");
-const {default: cucumber} = require("cypress-cucumber-preprocessor");
+const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+const createEsbuildPlugin = require("@badeball/cypress-cucumber-preprocessor/esbuild.js");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 
 module.exports = defineConfig({
   e2e: {
@@ -8,7 +9,7 @@ module.exports = defineConfig({
     "video": false,
     "screenshotOnRunFailure": false,
     specPattern: 'cypress/integration/**/*.spec.{js,jsx,ts,tsx}',
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       let options = {
         defaultTrimLength: 800,
       };
@@ -114,9 +115,15 @@ module.exports = defineConfig({
       }
 
       if (config.env.enableCucumber) {
-        on('file:preprocessor', cucumber());
-        config.ignoreTestFiles = '*.js';
-        config.testFiles = '**/*.{feature,features}';
+        await preprocessor.addCucumberPreprocessorPlugin(on, config);
+        on(
+          "file:preprocessor",
+          createBundler({
+            plugins: [createEsbuildPlugin.default(config)],
+          })
+        );
+        config.excludeSpecPattern = '*.js';
+        config.specPattern = 'cypress/integration/**/*.feature';
       }
 
       if (config.env.failFast) {
