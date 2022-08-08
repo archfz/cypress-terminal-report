@@ -103,7 +103,7 @@ declare namespace installLogsPrinter {
      * be printed from before and after hooks.
      * @default false
      */
-    includeSuccessfulHookLogs: boolean
+    includeSuccessfulHookLogs?: boolean
 
     /**
      * Callback to collect each test case's logs after its run.
