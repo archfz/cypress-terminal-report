@@ -27,6 +27,7 @@
     "@bahmutov/cypress-esbuild-preprocessor": "^2.1.3",
     "chai": "^4.2.0",
     "cypress": "10.3.1",
+    "cypress-grep": "^3.0.2",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0"

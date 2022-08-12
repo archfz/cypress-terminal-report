@@ -126,6 +126,10 @@ module.exports = defineConfig({
         config.specPattern = 'cypress/integration/**/*.feature';
       }
 
+      if (config.env.cypressGrep == '1') {
+        config.env.grep = "run only this"
+      }
+
       if (config.env.failFast) {
         require("cypress-fail-fast/plugin")(on, config);
       }

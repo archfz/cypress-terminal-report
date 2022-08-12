@@ -333,6 +333,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 ## Release Notes
 
 - Fix incorrectly required option props.
+- Fix missing option `logToFilesOnAfterRun` in types. [issue](https://github.com/archfz/cypress-terminal-report/issues/161)
+- Fix compatibility with `cypress-grep`. see [issue](https://github.com/archfz/cypress-terminal-report/issues/160)
 
 #### 4.1.1
 
