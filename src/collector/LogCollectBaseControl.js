@@ -32,8 +32,8 @@ module.exports = class LogCollectBaseControl {
       parent = parent.parent;
     }
 
-    return invocationDetails.relativeFile ||
-      (invocationDetails.fileUrl && invocationDetails.fileUrl.replace(/^[^?]+\?p=/, '')) ||
-      parent.file;
+    return parent.file || // Support for cypress-grep.
+      invocationDetails.relativeFile ||
+      (invocationDetails.fileUrl && invocationDetails.fileUrl.replace(/^[^?]+\?p=/, ''));
   }
 }

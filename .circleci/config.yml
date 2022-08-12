@@ -10,7 +10,7 @@ jobs:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/node
     docker:
       - image: cypress/base:12
-    parallelism: 2
+    parallelism: 3
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
     steps:

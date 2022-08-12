@@ -4,12 +4,17 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "step\t"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "assert\texpected **0** to be below **2**"
       },
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t**I open Happy page**"
+        "message": "step\tI open Happy page"
       },
       {
         "type": "cy:command",
@@ -19,7 +24,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t**I can load comments**"
+        "message": "step\tI can load comments"
       },
       {
         "type": "cy:command",
@@ -61,12 +66,17 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "step\t"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "assert\texpected **1** to be below **2**"
       },
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t**I open Happy page**"
+        "message": "step\tI open Happy page"
       },
       {
         "type": "cy:command",
@@ -76,7 +86,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t**I can post comment**"
+        "message": "step\tI can post comment"
       },
       {
         "type": "cy:command",

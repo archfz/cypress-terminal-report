@@ -1,9 +1,10 @@
 cypress/integration/cucumber/Happy.feature:
     The Happy -> Opening happy page and getting comments
+        cy:command (K): step
         cy:command (K): assert	expected **0** to be below **2**
-        cy:command (K): step	**I open Happy page**
+        cy:command (K): step	I open Happy page
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): step	**I can load comments**
+        cy:command (K): step	I can load comments
         cy:command (K): get	.network-btn
         cy:command (K): click
             cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1
@@ -22,10 +23,11 @@ cypress/integration/cucumber/Happy.feature:
         cy:command (K): assert	expected **200** to equal **200**
 
     The Happy -> Opening happy page and posting comments
+        cy:command (K): step
         cy:command (K): assert	expected **1** to be below **2**
-        cy:command (K): step	**I open Happy page**
+        cy:command (K): step	I open Happy page
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): step	**I can post comment**
+        cy:command (K): step	I can post comment
         cy:command (K): get	.network-post
         cy:command (K): click
             cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments

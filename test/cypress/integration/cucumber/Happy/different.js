@@ -1,4 +1,4 @@
-import { Given, Then, Before } from "cypress-cucumber-preprocessor/steps";
+import { Then, Before } from "@badeball/cypress-cucumber-preprocessor";
 
 let myBeforeCount = 0;
 

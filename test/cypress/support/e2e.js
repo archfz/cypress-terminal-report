@@ -1,10 +1,14 @@
 import './commands';
+import registerCypressGrep from "cypress-grep";
 
 const env = Cypress.env();
 let config = {};
 
 if (env.failFast == '1') {
   require("cypress-fail-fast");
+}
+if (env.cypressGrep == '1') {
+  registerCypressGrep();
 }
 
 if (env.ctrDebug == '1') {
