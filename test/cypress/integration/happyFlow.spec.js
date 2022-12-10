@@ -18,6 +18,8 @@ describe('Happy flow.', () => {
     cy.wait(300, {log: false});
     cy.get('.network-btn').click();
 
+    cy.wait(100, {log: false});
+
     cy.wait('@getComment')
       .its('response.statusCode')
       .should('eq', 200);
