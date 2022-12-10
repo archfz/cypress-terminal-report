@@ -7,8 +7,7 @@ describe('All types of logs.', () => {
 
     cy.request('http://google.com');
 
-    cy.server();
-    cy.route('GET', 'comments/*').as('getComment');
+    cy.intercept('GET', 'comments/*').as('getComment');
 
     cy.wait(300, {log: false});
     cy.get('.network-btn').click();

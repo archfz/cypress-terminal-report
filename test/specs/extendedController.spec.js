@@ -8,6 +8,7 @@ import {
 } from "../utils";
 
 const {expect} = require('chai');
+require('chai').config.truncateThreshold = 0;
 
 describe('Extended controller.', () => {
 
@@ -196,11 +197,14 @@ describe('Extended controller.', () => {
 
     await runTest(commandBase(['enableExtendedCollector=1'], ['dynamicSkip.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout)).to.contain(`- test3
-    ✓ test4 (X ms)
           cy:log ${ICONS.info}  before
           cy:log ${ICONS.info}  test3 1
           cy:log ${ICONS.info}  test3 2
-          cy:log ${ICONS.info}  test3 3`);
+          cy:log ${ICONS.info}  test3 3
+      cy:command ${ICONS.success}  wrap\t{}
+
+
+    ✓ test4 (X ms)`);
     });
   }).timeout(60000);
 

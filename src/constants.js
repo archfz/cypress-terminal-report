@@ -13,7 +13,6 @@ module.exports = {
     CYPRESS_XHR: 'cy:xhr',
     CYPRESS_FETCH: 'cy:fetch',
     CYPRESS_REQUEST: 'cy:request',
-    CYPRESS_ROUTE: 'cy:route',
     CYPRESS_INTERCEPT: 'cy:intercept',
     CYPRESS_COMMAND: 'cy:command',
 

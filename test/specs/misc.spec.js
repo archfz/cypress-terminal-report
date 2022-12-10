@@ -25,8 +25,8 @@ describe('Misc.', () => {
   it('Should properly set the breaking command in logs.', async () => {
     await runTest(commandBase([], [`waitFail.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
-      expect(stdout).to.not.contain(`cy:route ${ICONS.error}`);
-      expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1`);
+      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  GET https://jsonplaceholder.cypress.io/comments/1
+                    Status: 200`);
     });
   }).timeout(60000);
 
@@ -49,7 +49,11 @@ describe('Misc.', () => {
   it('Should filter and process late update logs correctly.', async () => {
     await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
-      expect(stdout).to.contain(`cy:route ${ICONS.warning}  | (putComment) PUT https://example.cypress.io/comments/10`);
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | STUBBED PUT https://example.cypress.io/comments/10
+                    Status: 404
+                    Response body: {
+                      "error": "Test message."
+                    }`);
     });
   }).timeout(30000);
 

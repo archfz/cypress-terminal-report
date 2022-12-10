@@ -10,14 +10,14 @@ Before(() => {
 });
 
 Then(`I can post comment`, () => {
-  cy.route('POST', '/comments').as('postComment');
+  cy.intercept('POST', '/comments').as('postComment');
 
   // we have code that posts a comment when
   // the button is clicked in scripts.js
   cy.get('.network-post').click();
   cy.wait('@postComment').should(xhr => {
-    expect(xhr.requestBody).to.include('email');
-    expect(xhr.requestHeaders).to.have.property('Content-Type');
-    expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.intercept()');
+    expect(xhr.request.body).to.include('email');
+    expect(xhr.request.headers).to.have.property('Content-Type');
+    expect(xhr.request.body).to.have.property('name', 'Using POST in cy.intercept()');
   });
 });

@@ -8,7 +8,6 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 const LogCollectBrowserConsole = require("./collector/LogCollectBrowserConsole");
 const LogCollectCypressCommand = require("./collector/LogCollectCypressCommand");
 const LogCollectCypressRequest = require("./collector/LogCollectCypressRequest");
-const LogCollectCypressRoute = require("./collector/LogCollectCypressRoute");
 const LogCollectCypressIntercept = require("./collector/LogCollectCypressIntercept");
 const LogCollectCypressXhr = require("./collector/LogCollectCypressXhr");
 const LogCollectCypressFetch = require("./collector/LogCollectCypressFetch");
@@ -56,9 +55,6 @@ function registerLogCollectorTypes(logCollectorState, config) {
   }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
     (new LogCollectCypressRequest(logCollectorState, config)).register();
-  }
-  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
-    (new LogCollectCypressRoute(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
     (new LogCollectCypressCommand(logCollectorState, config)).register();

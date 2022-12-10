@@ -2,63 +2,63 @@ describe("API routes", () => {
 
   /**
    * Covers XHR:
-   * - printing of cy.route in case of plain text data
-   * - printing of cy.route in case of unrecognizable data
+   * - printing of cy.intercept in case of plain text data
+   * - printing of cy.intercept in case of unrecognizable data
    */
   it('XHR body formats', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-
-    cy.route({
+    cy.intercept({
       method: 'GET',
       url: 'comments/*',
-      status: 200,
-      response: '',
+    }, {
+      statusCode: 200,
+      body: ''
     }).as('getComment');
 
     cy.wait(300, {log: false});
     cy.get('.network-btn').click();
     cy.wait('@getComment');
 
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 403,
-      response: 'This is plain text data.',
+    }, {
+      statusCode: 403,
+      body: 'This is plain text data.',
     }).as('putComment');
 
     cy.get('.network-put').click();
     cy.wait('@putComment');
 
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 401,
-      response: true,
+    }, {
+      statusCode: 401,
+      body: true,
     }).as('putComment');
 
     cy.get('.network-put').click();
     cy.wait('@putComment');
 
-    cy.get('.breaking-get', {timeout: 1});
+    cy.get('.breaking-get', {timeout: 100});
   });
 
   /**
    * Covers FETCH API:
-   * - printing of cy.route in case of FETCH API
+   * - printing of cy.intercept in case of FETCH API
    */
   it('Fetch API', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 404,
-      response: { error: 'Test message.' },
-      delay: 500,
+    }, {
+      statusCode: 404,
+      body: { error: 'Test message.' },
+      delayMs: 500,
     }).as('putComment');
 
     cy.window().then((w) => {
@@ -70,6 +70,6 @@ describe("API routes", () => {
 
     cy.wait('@putComment');
 
-    cy.get('.breaking-get', {timeout: 1});
+    cy.get('.breaking-get', {timeout: 100});
   });
 });

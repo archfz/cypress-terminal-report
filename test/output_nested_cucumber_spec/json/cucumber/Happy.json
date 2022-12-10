@@ -2,6 +2,11 @@
   "cypress/integration/cucumber/Happy.feature": {
     "The Happy -> Opening happy page and getting comments": [
       {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Method: GET\nMatcher: \"comments/*\""
+      },
+      {
         "type": "cy:command",
         "severity": "success",
         "message": "step\t"
@@ -39,17 +44,12 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "wait\t@getComment"
-      },
-      {
-        "type": "cy:route",
-        "severity": "success",
-        "message": "(getComment) GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200\nResponse body: {\n  \"postId\": 1,\n  \"id\": 1,\n  \"name\": \"id labore ex et quam laborum\",\n  \"email\": \"Eliseo@gardner.biz\",\n  \"body\": \"laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium\"\n}"
       },
       {
         "type": "cy:command",
@@ -58,11 +58,16 @@
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **200** to equal **200**"
+        "severity": "error",
+        "message": "assert\texpected **undefined** to equal **200**"
       }
     ],
     "The Happy -> Opening happy page and posting comments": [
+      {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Method: GET\nMatcher: \"comments/*\""
+      },
       {
         "type": "cy:command",
         "severity": "success",
@@ -89,6 +94,11 @@
         "message": "step\tI can post comment"
       },
       {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Method: POST\nMatcher: \"/comments\""
+      },
+      {
         "type": "cy:command",
         "severity": "success",
         "message": "get\t.network-post"
@@ -101,17 +111,12 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "wait\t@postComment"
-      },
-      {
-        "type": "cy:route",
-        "severity": "success",
-        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201\nResponse body: {\n  \"name\": \"Using POST in cy.intercept()\",\n  \"email\": \"hello@cypress.io\",\n  \"body\": \"You can change the method used for cy.intercept() to be GET, POST, PUT, PATCH, or DELETE\",\n  \"id\": 501\n}"
       },
       {
         "type": "cy:command",
@@ -120,18 +125,8 @@
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **{ Object (Content-Type, Accept) }** to have property **Content-Type**"
-      },
-      {
-        "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name**"
-      },
-      {
-        "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.intercept()**"
+        "severity": "error",
+        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **Content-Type**"
       }
     ]
   }

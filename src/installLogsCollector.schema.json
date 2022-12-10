@@ -22,7 +22,6 @@
           "cy:fetch",
           "cy:request",
           "cy:intercept",
-          "cy:route",
           "cy:command"
         ]
       }

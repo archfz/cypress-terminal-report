@@ -6,8 +6,7 @@ describe('Wait fail.', () => {
   it('Wait fail.', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-    cy.route('GET', 'comments/*').as('getComment');
+    cy.intercept('GET', 'comments/*').as('getComment');
 
     cy.window().then((w) => {
       setTimeout(() => {

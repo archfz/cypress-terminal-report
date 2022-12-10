@@ -7,6 +7,11 @@
         "message": "visit\t/commands/network-requests"
       },
       {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Method: GET\nMatcher: \"comments/*\""
+      },
+      {
         "type": "cy:command",
         "severity": "success",
         "message": "get\t.network-btn"
@@ -19,7 +24,7 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200 - OK"
+        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200"
       },
       {
         "type": "cy:command",
@@ -27,19 +32,19 @@
         "message": "wait\t@getComment"
       },
       {
-        "type": "cy:route",
-        "severity": "success",
-        "message": "(getComment) GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200\nResponse body: {\n  \"postId\": 1,\n  \"id\": 1,\n  \"name\": \"id labore ex et quam laborum\",\n  \"email\": \"Eliseo@gardner.biz\",\n  \"body\": \"laudantium enim quasi est quidem magnam voluptate ipsam eos\\ntempora quo necessitatibus\\ndolor quam autem quasi\\nreiciendis et nam sapiente accusantium\"\n}"
-      },
-      {
         "type": "cy:command",
         "severity": "success",
-        "message": "its\t.status"
+        "message": "its\t.response.statusCode"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "assert\texpected **200** to equal **200**"
+      },
+      {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Method: POST\nMatcher: \"/comments\""
       },
       {
         "type": "cy:command",
@@ -54,17 +59,12 @@
       {
         "type": "cy:xhr",
         "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201 - Created"
+        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "wait\t@postComment"
-      },
-      {
-        "type": "cy:route",
-        "severity": "success",
-        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201\nResponse body: {\n  \"name\": \"Using POST in cy.intercept()\",\n  \"email\": \"hello@cypress.io\",\n  \"body\": \"You can change the method used for cy.intercept() to be GET, POST, PUT, PATCH, or DELETE\",\n  \"id\": 501\n}"
       },
       {
         "type": "cy:command",
@@ -74,17 +74,12 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **{ Object (Content-Type, Accept) }** to have property **Content-Type**"
+        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **content-type**"
       },
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name**"
-      },
-      {
-        "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **{ Object (name, email, ...) }** to have property **name** of **Using POST in cy.intercept()**"
+        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **name=Using+POST+in+cy.intercept()**"
       },
       {
         "type": "cy:command",
@@ -134,7 +129,7 @@
       {
         "type": "cons:error",
         "severity": "error",
-        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:142:30)"
+        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:135:43)"
       },
       {
         "type": "cy:command",
@@ -177,6 +172,11 @@
         "message": "This should console.debug appear."
       },
       {
+        "type": "cy:intercept",
+        "severity": "success",
+        "message": "Matcher: {\"method\":\"PUT\",\"url\":\"comments/*\"}\nMocked Response: {\"statusCode\":404,\"body\":{\"error\":\"whoa, this comment does not exist\"},\"delayMs\":500}"
+      },
+      {
         "type": "cy:command",
         "severity": "success",
         "message": "get\t.network-put"
@@ -189,17 +189,12 @@
       {
         "type": "cy:xhr",
         "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1 (506 ms)\nStatus: 404 - Not Found"
+        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "wait\t@putComment"
-      },
-      {
-        "type": "cy:route",
-        "severity": "warning",
-        "message": "(putComment) PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}"
       },
       {
         "type": "cy:command",

@@ -12,8 +12,8 @@ module.exports = class LogCollectCypressXhr {
   }
 
   register() {
-    const formatXhr = (options) => options.message +
-      (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
+    const formatXhr = (options) =>
+      (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
       options.consoleProps.Method + ' ' + options.consoleProps.URL;
 
     const formatDuration = (durationInMs) =>
@@ -23,9 +23,7 @@ module.exports = class LogCollectCypressXhr {
       if (
         options.instrument === 'command' &&
         options.consoleProps &&
-        options.name === 'xhr' &&
-        // Prevent duplicated xhr logs in case of cy.intercept.
-        options.displayName !== 'req'
+        options.displayName === 'xhr'
       ) {
         const log = formatXhr(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
@@ -40,36 +38,49 @@ module.exports = class LogCollectCypressXhr {
         options.consoleProps &&
         options.state !== 'pending'
       ) {
-        let statusCode, statusText;
+        let statusCode;
 
-        if (!options.consoleProps.XHR) {
-          [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
-        } else {
-          statusCode = options.consoleProps.XHR.status;
-          statusText = options.consoleProps.XHR.statusText;
+        if (options.consoleProps['Response Status Code']) {
+          statusCode = options.consoleProps['Response Status Code'];
         }
 
         const isSuccess = statusCode && (statusCode + '')[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
         let log = formatXhr(options);
 
+        // @TODO: Not supported anymore :(
         if (options.consoleProps.Duration) {
           log += ` (${formatDuration(options.consoleProps.Duration)})`;
         }
-        if (statusCode && statusText) {
-          log += `\nStatus: ${statusCode} - ${statusText}`;
+        if (statusCode) {
+          log += `\nStatus: ${statusCode}`;
         }
         if (options.err && options.err.message.match(/abort/)) {
           log += ' - ABORTED';
         }
         if (
-          !isSuccess &&
-          options.consoleProps.XHR &&
-          options.consoleProps.XHR.response &&
-          options.consoleProps.XHR.response.size &&
-          !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)
+          this.config.collectRequestData && this.config.collectHeaderData &&
+          options.consoleProps['Request Headers']
         ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps.XHR.response)}`;
+          log += `\nRequest headers: ${await this.format.formatXhrBody(options.consoleProps['Request Headers'])}`;
+        }
+        if (
+          this.config.collectRequestData &&
+          options.consoleProps['Request Body']
+        ) {
+          log += `\nRequest body: ${await this.format.formatXhrBody(options.consoleProps['Request Body'])}`;
+        }
+        if (
+          this.config.collectHeaderData &&
+          options.consoleProps['Response Headers']
+        ) {
+          log += `\nResponse headers: ${await this.format.formatXhrBody(options.consoleProps['Response Headers'])}`;
+        }
+        if (
+          !isSuccess &&
+          options.consoleProps['Response Body']
+        ) {
+          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps['Response Body'])}`;
         }
 
         this.collectorState.updateLog(log, severity, options.id);

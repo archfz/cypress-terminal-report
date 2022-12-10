@@ -84,7 +84,7 @@ integer; default: 800; Max length of cy.log and console.warn/console.error.
 integer; default: 800; Max length of cy commands.
 
 #### `options.routeTrimLength`
-integer; default: 5000; Max length of cy.route, cy.request or XHR data.
+integer; default: 5000; Max length cy.request and XHR data.
 
 #### `options.compactLogs` 
 integer?; default: null; If it is set to a number greater or equal to 0, this amount of logs 
@@ -146,7 +146,7 @@ hook. This option can only be used with cypress 6.2.0 onwards, and with the addi
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
 #### `options.collectTypes` 
-array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:intercept', 'cy:command']
+array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
 What types of logs to collect and print. By default all types are enabled. The 'cy:command' is the general type that
 contain all types of commands that are not specially treated.
 
@@ -331,6 +331,13 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Typescript typing fix to support both esm and commonjs require in `installLogsCollector`. by [drebrez](https://github.com/drebrez)
+- Updated support for cypress 12.x.x.
+- ! Breaking change: `cy.route` removed from supported `options.collectTypes`, as cypress 12.x.x removed deprecated `cy.route`.
+  - Duration display is not supported anymore for XHR logs.
+  - Status code display is not supported anymore for XHR logs.
+  - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
 
 #### 4.1.2
 

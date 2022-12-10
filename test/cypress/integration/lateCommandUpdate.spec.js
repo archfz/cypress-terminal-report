@@ -2,14 +2,14 @@ describe("Late command update.", () => {
 
   it('Late command update', () => {
     cy.visit('/commands/network-requests');
-    cy.server();
 
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 404,
-      response: { error: 'Test message.' },
-      delay: 500,
+    }, {
+      statusCode: 404,
+      body: { error: 'Test message.' },
+      delayMs: 500,
     }).as('putComment');
 
     cy.window().then((w) => {

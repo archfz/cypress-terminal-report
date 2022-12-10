@@ -4,8 +4,7 @@ describe('Successful with not errors.', () => {
 
     let message = 'whoa, this comment does not exist';
 
-    cy.server();
-    cy.route('GET', 'comments/*').as('getComment');
+    cy.intercept('GET', 'comments/*').as('getComment');
 
     // we have code that gets a comment when
     // the button is clicked in scripts.js
@@ -13,29 +12,30 @@ describe('Successful with not errors.', () => {
     cy.get('.network-btn').click();
 
     cy.wait('@getComment')
-      .its('status')
+      .its('response.statusCode')
       .should('eq', 200);
 
-    cy.route('POST', '/comments').as('postComment');
+    cy.intercept('POST', '/comments').as('postComment');
 
     // we have code that posts a comment when
     // the button is clicked in scripts.js
     cy.get('.network-post').click();
     cy.wait('@postComment').should(xhr => {
-      expect(xhr.requestBody).to.include('email');
-      expect(xhr.requestHeaders).to.have.property('Content-Type');
-      expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.intercept()');
+      expect(xhr.request.body).to.include('email');
+      expect(xhr.request.headers).to.have.property('content-type');
+      expect(xhr.request.body).to.contain('name=Using+POST+in+cy.intercept()');
     });
 
     cy.window().then(w => w.console.log({a: 'b'}, {c: 'd'}, 10, 'string'));
     cy.window().then(w => w.console.warn('This is a warning message'));
 
     // Stub a response to PUT comments/ ****
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 404,
-      response: {error: message},
+    }, {
+      statusCode: 404,
+      body: {error: message},
     }).as('putComment');
 
     // we have code that puts a comment when

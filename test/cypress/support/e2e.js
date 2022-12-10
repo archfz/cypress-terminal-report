@@ -81,7 +81,7 @@ if (env.supportBadConfig == '1') {
 }
 if (env.supportGoodConfig == '1') {
   config = {
-    collectTypes: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:intercept', 'cy:command']
+    collectTypes: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
   };
 }
 if (env.enableExtendedCollector == '1') {

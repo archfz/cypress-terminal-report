@@ -14,7 +14,6 @@ declare namespace installLogsPrinter {
     'cy:xhr' |
     'cy:fetch' |
     'cy:request' |
-    'cy:route' |
     'cy:intercept' |
     'cy:command' |
     'ctr:info';
