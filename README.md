@@ -1,6 +1,6 @@
 # Cypress terminal report [![Build Status](https://circleci.com/gh/archfz/cypress-terminal-report/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/archfz/cypress-terminal-report) [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report) [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
-> This documentation is for cypress >= 10.0.0. For older versions see [3.x.x branch](https://github.com/archfz/cypress-terminal-report/tree/3.x.x).
+> This documentation is for cypress >= 12.0.0. For older versions see [4.x.x](https://github.com/archfz/cypress-terminal-report/tree/4.x.x) or [3.x.x branch](https://github.com/archfz/cypress-terminal-report/tree/3.x.x).
 
 <div align="center">
 
@@ -332,12 +332,17 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-- Typescript typing fix to support both esm and commonjs require in `installLogsCollector`. by [drebrez](https://github.com/drebrez)
+#### 5.0.0
+
 - Updated support for cypress 12.x.x.
 - ! Breaking change: `cy.route` removed from supported `options.collectTypes`, as cypress 12.x.x removed deprecated `cy.route`.
   - Duration display is not supported anymore for XHR logs.
   - Status code display is not supported anymore for XHR logs.
   - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
+
+#### 4.1.3
+
+- Typescript typing fix to support both esm and commonjs require in `installLogsCollector`. by [drebrez](https://github.com/drebrez)
 
 #### 4.1.2
 
