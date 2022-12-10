@@ -337,7 +337,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 - Updated support for cypress 12.x.x.
 - ! Breaking change: `cy.route` removed from supported `options.collectTypes`, as cypress 12.x.x removed deprecated `cy.route`.
   - Duration display is not supported anymore for XHR logs.
-  - Status code display is not supported anymore for XHR logs.
+  - Status message display is not supported anymore for XHR logs (status code is still displayed).
   - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
 
 #### 4.1.3
