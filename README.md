@@ -332,6 +332,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 4.1.3
+
+- Typescript typing fix to support both esm and commonjs require in `installLogCollector`. [drebrez](https://github.com/drebrez)
+
 #### 4.1.2
 
 - Fix incorrectly required option props.
