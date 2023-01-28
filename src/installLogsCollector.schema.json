@@ -17,6 +17,7 @@
           "cons:info",
           "cons:warn",
           "cons:error",
+          "cons:debug",
           "cy:log",
           "cy:xhr",
           "cy:fetch",
