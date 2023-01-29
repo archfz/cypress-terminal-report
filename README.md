@@ -332,6 +332,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.0.1
+
+- Fix `cons:debug` missing from allowed collect option. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/171) by [josh68](https://github.com/Josh68)
+
 #### 5.0.0
 
 - Updated support for cypress 12.x.x.
