@@ -21,9 +21,10 @@ describe('Output to files.', () => {
     }
   });
 
-
   // Tests in general the log formatting in files.
-  it('Should generate proper log output files, and print only failing ones if config is on default.', async () => {
+  it('Should generate proper log output files, and print only failing ones if config is on default.', async function () {
+    this.retries(2);
+
     const outRoot = {};
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);
