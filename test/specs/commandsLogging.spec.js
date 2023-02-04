@@ -185,4 +185,14 @@ describe('Commands logging.', () => {
       // expect(stdout).to.contain(`cy:xhr ${ICONS.error}  GET https://example.cypress.io/comments/10 - ABORTED\n`);
     });
   }).timeout(60000);
+
+  it('Should update existing logs message later correctly.', async () => {
+    await runTest(commandBase([], ['commandLogUpdate.spec.js']), (error, stdout, stderr) => {
+      const cleanStdout = clean(stdout, true);
+      expect(cleanStdout).to.contain(
+        `cy:command ${ICONS.success}  assert\texpected **<a>** to have text **something else**
+      cy:command ${ICONS.error}  get\tbreaking`,
+      );
+    });
+  }).timeout(60000);
 });
