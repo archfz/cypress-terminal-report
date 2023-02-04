@@ -332,6 +332,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.0.2
 
 - Fix existing log message not updating later. [issue](https://github.com/archfz/cypress-terminal-report/issues/173)
 
