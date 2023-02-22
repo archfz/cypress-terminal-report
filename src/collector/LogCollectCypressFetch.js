@@ -51,7 +51,7 @@ module.exports = class LogCollectCypressFetch {
         }
 
         if (
-          !isSuccess &&
+          (!isSuccess || this.config.collectResponseDataAlways) &&
           options.consoleProps["Response Body"]
         ) {
           log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps["Response Body"])}`;

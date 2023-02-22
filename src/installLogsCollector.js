@@ -30,6 +30,7 @@ function installLogsCollector(config = {}) {
   config.collectTypes = config.collectTypes || Object.values(LOG_TYPE);
   config.collectRequestData = config.xhr && config.xhr.printRequestData;
   config.collectHeaderData = config.xhr && config.xhr.printHeaderData;
+  config.collectResponseDataAlways = config.xhr && config.xhr.printResponseDataAlways;
 
   let logCollectorState = new LogCollectorState(config);
   registerLogCollectorTypes(logCollectorState, config);

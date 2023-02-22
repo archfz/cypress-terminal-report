@@ -44,6 +44,9 @@
         },
         "printRequestData": {
           "type": "boolean"
+        },
+        "printResponseDataAlways": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false

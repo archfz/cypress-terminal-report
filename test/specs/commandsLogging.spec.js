@@ -130,6 +130,12 @@ describe('Commands logging.', () => {
     });
   }).timeout(60000);
 
+  it.only('Should log response data even if successful.', async () => {
+    await runTest(commandBase(['printResponseDataAlways=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`ASD`);
+    });
+  }).timeout(60000);
+
   it('Should log fetch requests.', async () => {
     await runTest(commandBase([], [`fetchApi.spec.js`]), (error, stdout, stderr) => {
       const cleanStdout = clean(stdout, true);

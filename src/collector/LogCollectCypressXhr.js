@@ -77,7 +77,7 @@ module.exports = class LogCollectCypressXhr {
           log += `\nResponse headers: ${await this.format.formatXhrBody(options.consoleProps['Response Headers'])}`;
         }
         if (
-          !isSuccess &&
+          (!isSuccess || this.config.collectResponseDataAlways) &&
           options.consoleProps['Response Body']
         ) {
           log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps['Response Body'])}`;

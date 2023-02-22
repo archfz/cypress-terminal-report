@@ -66,6 +66,12 @@ declare namespace installLogsCollector {
        * @default false
        */
       printRequestData?: boolean;
+
+      /**
+       * Whether to print response data for XHR requests always, not just when it fails.
+       * @default false
+       */
+      printResponseDataAlways?: boolean;
     };
 
     /**
