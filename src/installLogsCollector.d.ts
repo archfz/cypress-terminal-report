@@ -91,15 +91,4 @@ declare namespace installLogsCollector {
   }
 }
 
-declare namespace Cypress {
-  interface TerminalReport {
-    getLogs<T extends 'txt' | 'json' | 'none' = 'none'>(format?: T): {
-      txt: string,
-      json: string,
-      none: installLogsCollector.Log[],
-    }[T];
-  }
-  const TerminalReport: TerminalReport;
-}
-
 export = installLogsCollector;

@@ -218,6 +218,8 @@ afterEach(() => {
 });
 ```
 
+For typescript support add to your tsconfig **types** `cypress-terminal-report`.
+
 ## Logging after all and before all hooks
 
 Commands from before all and after all hooks are not logged by default. A new experimental feature introduces
@@ -349,6 +351,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 5.1.1
+
+- Fix `Cypress.TerminalReport.getLogs()` types.
 
 #### 5.1.0
 
