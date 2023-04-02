@@ -17,6 +17,8 @@ const LogCollectorState = require("./collector/LogCollectorState");
 const LogCollectExtendedControl = require("./collector/LogCollectExtendedControl");
 const LogCollectSimpleControl = require("./collector/LogCollectSimpleControl");
 
+const logsTxtFormatter = require("./outputProcessor/logsTxtFormatter");
+
 /**
  * Installs the logs collector for cypress.
  *
@@ -39,6 +41,8 @@ function installLogsCollector(config = {}) {
   } else {
     (new LogCollectSimpleControl(logCollectorState, config)).register();
   }
+
+  registerGlobalApi(logCollectorState);
 }
 
 function registerLogCollectorTypes(logCollectorState, config) {
@@ -62,6 +66,22 @@ function registerLogCollectorTypes(logCollectorState, config) {
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_INTERCEPT) && semver.gte(Cypress.version, '6.0.0')) {
     (new LogCollectCypressIntercept(logCollectorState, config)).register();
   }
+}
+
+function registerGlobalApi(logCollectorState) {
+  Cypress.TerminalReport = {
+    getLogs: (format) => {
+      const logs = logCollectorState.getCurrentLogStack();
+
+      if (format === 'txt') {
+        return logsTxtFormatter(logs);
+      } else if (format === 'json') {
+        return JSON.stringify(logs, null, 2);
+      }
+
+      return logs;
+    },
+  };
 }
 
 function validateConfig(config) {

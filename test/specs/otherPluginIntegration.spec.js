@@ -52,4 +52,15 @@ describe('Other plugin integrations.', () => {
       });
     });
   }).timeout(90000);
+
+  it('Should be able to send logs to mochawesome.', async () => {
+    await runTest(commandBase(['mochawesome=1'], ['commandLogUpdate.spec.js']), (error, stdout) => {
+      expect(stdout).to.contain(`cy:log ${ICONS.info}  Global API logs:         cy:command (K): visit\t/commands/network-requests
+                            cy:command (K): window
+                            cy:command (K): get\t[href="https://on.cypress.io/request"]
+                            cy:command (K): first
+                            cy:command (K): assert\texpected **<a>** to have text **something else**
+                            cy:command (X): get\tbreaking`);
+    });
+  }).timeout(90000);
 });

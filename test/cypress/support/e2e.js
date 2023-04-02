@@ -1,5 +1,6 @@
 import './commands';
 import registerCypressGrep from "cypress-grep";
+import 'cypress-mochawesome-reporter/register';
 
 const env = Cypress.env();
 let config = {};
@@ -89,6 +90,16 @@ if (env.enableExtendedCollector == '1') {
 }
 if (env.enableContinuousLogging == '1') {
   config.enableContinuousLogging = true;
+}
+
+if (env.mochawesome == '1') {
+  afterEach(() => {
+    cy.wait(50, {log: false}).then(() => {
+      const logs = Cypress.TerminalReport.getLogs('txt');
+      cy.addTestContext(logs);
+      cy.log('Global API logs: ' + logs);
+    })
+  });
 }
 
 require('../../../src/installLogsCollector')(config);
