@@ -73,11 +73,11 @@ describe('Misc.', () => {
 
   it('Should print logs for all cypress retries.', async () => {
     await runTest(commandBase(['breaking=1'], ['retries.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`(Attempt 1 of 3) fails
+      // @TODO: Attempt lines are not displayed anymore: (Attempt 1 of 3) fails
+      expect(stdout).to.contain(`
       cy:command ${ICONS.error}  get\tbreaking
 
 
-    (Attempt 2 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking
 
 

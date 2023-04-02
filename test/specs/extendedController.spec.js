@@ -204,7 +204,7 @@ describe('Extended controller.', () => {
       cy:command ${ICONS.success}  wrap\t{}
 
 
-    ✓ test4 (X ms)`);
+    ✓ test4`);
     });
   }).timeout(60000);
 

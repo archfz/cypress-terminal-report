@@ -7,7 +7,8 @@
 [Limitations](#limitations-and-notes)
 • [Install](#install)
 • [Options](#options)
-• [Logging after/before all](#logging-after-all-and-before-all-hooks)
+• [Integrations](#integrations)
+• [After/before all](#logging-after-all-and-before-all-hooks)
 • [Logging to files](#logging-to-files)
 • [Development](#development)
 • [Release Notes](#release-notes)
@@ -38,8 +39,6 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of 
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
-- Using `cypress-fail-fast` and logging to files does not work out of the box. To enable support use 
-the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ## Install
 
@@ -200,6 +199,25 @@ tests are timing out.
   // ...
 ```
 
+## Integrations
+
+### `cypress-fail-fast`
+
+Logging to files does not work out of the box. To enable support use the 
+[`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
+
+### `cypress-mochawesome-reporter`
+
+The following example demonstrates adding logs to context for all tests (snippet from `e2e.js`):
+
+```js
+import 'cypress-mochawesome-reporter/register';
+
+afterEach(() => {
+    cy.wait(50, {log: false}).then(() => cy.addTestContext(Cypress.TerminalReport.getLogs('txt')))
+});
+```
+
 ## Logging after all and before all hooks
 
 Commands from before all and after all hooks are not logged by default. A new experimental feature introduces
@@ -331,6 +349,12 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+#### 5.1.0
+
+- Add global support side `Cypress.TerminalReport.getLogs()`.
+- Add example on how to integrate with [`mochawesome`](#cypress-mochawesome-reporter). [issue](https://github.com/archfz/cypress-terminal-report/issues/180)
+- Update cypress to 12.9.0 in tests to confirm support.
 
 #### 5.0.2
 

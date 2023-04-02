@@ -1,6 +1,5 @@
 declare function installLogsCollector(config?: installLogsCollector.SupportOptions): void;
 declare namespace installLogsCollector {
-
   type Severity = '' | 'error' | 'warning';
 
   type LogType = 'cons:log' |
@@ -15,6 +14,8 @@ declare namespace installLogsCollector {
     'cy:intercept' |
     'cy:command' |
     'ctr:info';
+
+  type Log = [/* type: */ LogType, /* message: */ string, /* severity: */ Severity];
 
   interface SupportOptions {
     /**
@@ -33,7 +34,7 @@ declare namespace installLogsCollector {
     filterLog?:
       | null
       | NonNullable<SupportOptions['collectTypes']>[number]
-      | ((args: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity]) => boolean);
+      | ((args: Log) => boolean);
 
     /**
      * Callback to process logs manually. The type is from the same list as for the collectTypes option.
@@ -43,7 +44,7 @@ declare namespace installLogsCollector {
     processLog?:
         | null
         | NonNullable<SupportOptions['collectTypes']>[number]
-        | ((args: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity]) => [LogType, string, Severity]);
+        | ((args: Log) => [LogType, string, Severity]);
 
     /**
      * Callback to collect each test case's logs after its run.
@@ -51,7 +52,7 @@ declare namespace installLogsCollector {
      */
     collectTestLogs?: (
       context: {mochaRunnable: any, testState: string, testTitle: string, testLevel: number},
-      messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]
+      messages: Log[]
     ) => void;
 
     xhr?: {
@@ -89,4 +90,16 @@ declare namespace installLogsCollector {
     debug?: boolean;
   }
 }
+
+declare namespace Cypress {
+  interface TerminalReport {
+    getLogs<T extends 'txt' | 'json' | 'none' = 'none'>(format?: T): {
+      txt: string,
+      json: string,
+      none: installLogsCollector.Log[],
+    }[T];
+  }
+  const TerminalReport: TerminalReport;
+}
+
 export = installLogsCollector;

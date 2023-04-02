@@ -8,6 +8,7 @@ module.exports = defineConfig({
     "baseUrl": "https://example.cypress.io",
     "video": false,
     "screenshotOnRunFailure": false,
+    reporter: 'cypress-mochawesome-reporter',
     specPattern: 'cypress/integration/**/*.spec.{js,jsx,ts,tsx}',
     async setupNodeEvents(on, config) {
       let options = {
@@ -132,6 +133,10 @@ module.exports = defineConfig({
 
       if (config.env.failFast) {
         require("cypress-fail-fast/plugin")(on, config);
+      }
+
+      if (config.env.mochawesome == '1') {
+        require('cypress-mochawesome-reporter/plugin')(on);
       }
 
       require('../src/installLogsPrinter')(on, options);
