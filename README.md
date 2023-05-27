@@ -233,6 +233,14 @@ Once the feature enabled, logs from these hooks will only appear in console if:
 - hook passes and [`printLogsToConsole`](#optionsprintlogstoconsole) ==`onFail` 
   and [`includeSuccessfulHookLogs`](#optionsprintlogstoconsole) == `true`
 
+Global `after all` hooks need to be registered before the registration of the `support install`, otherwise
+they will not be added to file outputs, if such is configured. Example `e2e.js`:
+
+```js
+after(() => cy.log('this log will appear in the output files'));
+require('cypress-terminal-report/src/installLogsCollector')(config);
+after(() => cy.log('this log will NOT appear in the files'));
+```
 
 ## Logging to files
 
@@ -352,7 +360,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-- Add theoretical fix for nested output processor causing file to be rewritten with on after run logging pass. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
+- Fix `extedend control` global after hooks not being logged to files. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
 - Add extra logging for `assert` of the expected and the actual object. [issue](https://github.com/archfz/cypress-terminal-report/issues/184)
 
 #### 5.1.1

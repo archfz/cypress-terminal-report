@@ -297,7 +297,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
   registerLogToFiles() {
     after(function () {
-      cy.wait(6, {log: false});
+      cy.wait(50, {log: false});
       cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
     });
   }

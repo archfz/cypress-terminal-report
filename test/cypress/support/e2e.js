@@ -102,6 +102,12 @@ if (env.mochawesome == '1') {
   });
 }
 
+if (env.globalAfter == '1') {
+  after(function () {
+    cy.log('global after');
+  });
+}
+
 require('../../../src/installLogsCollector')(config);
 
 enableFetchWorkaround();
