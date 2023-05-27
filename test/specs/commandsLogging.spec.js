@@ -191,7 +191,20 @@ describe('Commands logging.', () => {
       const cleanStdout = clean(stdout, true);
       expect(cleanStdout).to.contain(
         `cy:command ${ICONS.success}  assert\texpected **<a>** to have text **something else**
+                    Actual: \t"something else"
+                    Expected: \t"something else"
       cy:command ${ICONS.error}  get\tbreaking`,
+      );
+    });
+  }).timeout(60000);
+
+  it('Should log expected and actual for assert command.', async () => {
+    await runTest(commandBase([], ['expects.spec.js']), (error, stdout, stderr) => {
+      const cleanStdout = clean(stdout, true);
+      expect(cleanStdout).to.contain(
+        `cy:command ${ICONS.error}  assert\texpected **[ Array(12) ]** to equal **[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]**
+                    Actual: \t[1,2,3,4,5,6,7,8,9,10,11,12]
+                    Expected: \t[1,2,3,4,5,6,7,8,9,10]`,
       );
     });
   }).timeout(60000);

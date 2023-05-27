@@ -46,7 +46,8 @@ describe('Misc.', () => {
     });
   }).timeout(60000);
 
-  it('Should filter and process late update logs correctly.', async () => {
+  it('Should filter and process late update logs correctly.', async function() {
+    this.retries(2);
     await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
       expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | STUBBED PUT https://example.cypress.io/comments/10

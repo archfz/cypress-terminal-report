@@ -76,7 +76,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **1** to be below **2**"
+        "message": "assert\texpected **1** to be below **2**\nActual: \t1\nExpected: \t2"
       },
       {
         "type": "cy:command",

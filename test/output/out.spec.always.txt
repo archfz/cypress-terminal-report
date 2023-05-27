@@ -10,6 +10,8 @@ cypress/integration/happyFlow.spec.js:
         cy:command (K): wait	@getComment
         cy:command (K): its	.response.statusCode
         cy:command (K): assert	expected **200** to equal **200**
+                        Actual: 	200
+                        Expected: 	200
       cy:intercept (K): Method: POST
                         Matcher: "/comments"
         cy:command (K): get	.network-post
@@ -41,7 +43,7 @@ cypress/integration/happyFlow.spec.js:
         cons:error (X): This is an error message
         cy:command (K): window
         cons:error (X): Error: This is an error message with stack.
-                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:135:43)
+                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)
         cy:command (K): window
           cons:log (K): This should console.log appear.
         cy:command (K): window

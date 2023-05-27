@@ -39,7 +39,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "assert\texpected **200** to equal **200**"
+        "message": "assert\texpected **200** to equal **200**\nActual: \t200\nExpected: \t200"
       },
       {
         "type": "cy:intercept",
@@ -129,7 +129,7 @@
       {
         "type": "cons:error",
         "severity": "error",
-        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:135:43)"
+        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)"
       },
       {
         "type": "cy:command",

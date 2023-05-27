@@ -353,6 +353,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 ## Release Notes
 
 - Add theoretical fix for nested output processor causing file to be rewritten with on after run logging pass. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
+- Add extra logging for `assert` of the expected and the actual object. [issue](https://github.com/archfz/cypress-terminal-report/issues/184)
 
 #### 5.1.1
 

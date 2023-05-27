@@ -20,6 +20,8 @@ cypress/integration/cucumber/Happy.feature:
                         Matcher: "comments/*"
         cy:command (K): step
         cy:command (K): assert	expected **1** to be below **2**
+                        Actual: 	1
+                        Expected: 	2
         cy:command (K): step	I open Happy page
         cy:command (K): visit	/commands/network-requests
         cy:command (K): step	I can post comment
