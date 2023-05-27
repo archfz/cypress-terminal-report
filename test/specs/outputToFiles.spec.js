@@ -120,4 +120,17 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
+  // @TODO: Test was meant to reproduce issue https://github.com/archfz/cypress-terminal-report/issues/185
+  // it.only('Should generate correct output with extended collector and additional logging pass.', async () => {
+  //   const specFiles = ['allHooks.spec.js'];
+  //   await runTest(commandBase(['enableExtendedCollector=1', 'generateNestedOutput=1', 'printLogsToFileAlways=1', 'logToFilesOnAfterRun=1'], specFiles), (error, stdout, stderr) => {
+  //     const specs = glob.sync('./output_nested_on_after_spec/**/*', {nodir: true});
+  //     specs.forEach(specFile => {
+  //       const actualFile = specFile.replace('output_nested_on_after_spec', 'output_nested');
+  //       expect(fs.existsSync(actualFile), `Expected output file ${actualFile} to exist.`).to.be.true;
+  //       expectOutFilesMatch(actualFile, specFile);
+  //     });
+  //   });
+  // }).timeout(90000);
+
 });
