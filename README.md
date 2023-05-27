@@ -360,6 +360,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.2.0
+
 - Fix `extedend control` global after hooks not being logged to files. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
 - Add extra logging for `assert` of the expected and the actual object. [issue](https://github.com/archfz/cypress-terminal-report/issues/184)
 
