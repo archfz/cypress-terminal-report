@@ -155,7 +155,7 @@ Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.processLog`
-null | ([type, message, severity]) => string; default: undefined;
+null | ([type, message, severity]) => [type, message, severity]; default: undefined;
 Callback to process logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
