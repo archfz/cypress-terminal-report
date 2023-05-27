@@ -19,6 +19,6 @@ describe("Late command update.", () => {
       });
     });
 
-    cy.get('.breaking-get', {timeout: 1});
+    cy.get('.breaking-get', {timeout: 5});
   });
 });

@@ -15,9 +15,20 @@ module.exports = class LogCollectCypressCommand {
       !['xhr', 'log', 'request'].includes(options.name) &&
       !(options.name === 'task' && options.message.match(/ctrLogMessages/));
 
+    const formatLogMessage = (options) => {
+      let message = options.name + '\t' + options.message;
+
+      if (options.expected && options.actual) {
+        message += '\nActual: \t' + JSON.stringify(options.actual);
+        message += '\nExpected: \t' + JSON.stringify(options.expected);
+      }
+
+      return message;
+    };
+
     Cypress.on('log:added', (options) => {
       if (isOfInterest(options)) {
-        const log = options.name + '\t' + options.message;
+        const log = formatLogMessage(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : '';
         this.collectorState.addLog([LOG_TYPE.CYPRESS_COMMAND, log, severity], options.id);
       }
@@ -25,7 +36,7 @@ module.exports = class LogCollectCypressCommand {
 
     Cypress.on('log:changed', (options) => {
       if (isOfInterest(options)) {
-        const log = options.name + '\t' + options.message;
+        const log = formatLogMessage(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
         this.collectorState.updateLog(log, severity, options.id);
       }

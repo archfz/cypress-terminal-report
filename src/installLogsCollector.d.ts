@@ -44,7 +44,7 @@ declare namespace installLogsCollector {
     processLog?:
         | null
         | NonNullable<SupportOptions['collectTypes']>[number]
-        | ((args: Log) => [LogType, string, Severity]);
+        | ((args: Log) => Log);
 
     /**
      * Callback to collect each test case's logs after its run.

@@ -60,6 +60,8 @@ describe('Other plugin integrations.', () => {
                             cy:command (K): get\t[href="https://on.cypress.io/request"]
                             cy:command (K): first
                             cy:command (K): assert\texpected **<a>** to have text **something else**
+                                            Actual: \t"something else"
+                                            Expected: \t"something else"
                             cy:command (X): get\tbreaking`);
     });
   }).timeout(90000);

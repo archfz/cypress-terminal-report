@@ -120,4 +120,15 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
+  it('Should generate correct output with extended collector and additional logging pass.', async () => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    const specFiles = ['allHooks.spec.js'];
+    await runTest(commandBase(['enableExtendedCollector=1', 'generateOutput=1', 'printLogsToFileAlways=1', 'logToFilesOnAfterRun=1', 'globalAfter=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'globalAfter');
+    });
+  }).timeout(90000);
+
 });

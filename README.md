@@ -155,7 +155,7 @@ Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.processLog`
-null | ([type, message, severity]) => string; default: undefined;
+null | ([type, message, severity]) => [type, message, severity]; default: undefined;
 Callback to process logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
@@ -233,6 +233,14 @@ Once the feature enabled, logs from these hooks will only appear in console if:
 - hook passes and [`printLogsToConsole`](#optionsprintlogstoconsole) ==`onFail` 
   and [`includeSuccessfulHookLogs`](#optionsprintlogstoconsole) == `true`
 
+Global `after all` hooks need to be registered before the registration of the `support install`, otherwise
+they will not be added to file outputs, if such is configured. Example `e2e.js`:
+
+```js
+after(() => cy.log('this log will appear in the output files'));
+require('cypress-terminal-report/src/installLogsCollector')(config);
+after(() => cy.log('this log will NOT appear in the files'));
+```
 
 ## Logging to files
 
@@ -351,6 +359,9 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Fix `extedend control` global after hooks not being logged to files. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
+- Add extra logging for `assert` of the expected and the actual object. [issue](https://github.com/archfz/cypress-terminal-report/issues/184)
 
 #### 5.1.1
 

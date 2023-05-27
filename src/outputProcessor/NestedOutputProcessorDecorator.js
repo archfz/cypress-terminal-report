@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs-extra');
 
 module.exports = class NestedOutputProcessorDecorator {
 
@@ -9,22 +8,31 @@ module.exports = class NestedOutputProcessorDecorator {
     this.specRoot = specRoot || '';
     this.decoratedFactory = decoratedFactory;
 
-    this.decoratedProcessors = [];
+    this.processors = [];
   }
 
   initialize() {
     /* noop */
   }
 
+  getProcessor(spec) {
+    if (this.processors[spec]) {
+      return this.processors[spec];
+    }
+
+    const relativeSpec = path.relative(this.specRoot, spec);
+    const outPath = path.join(this.root, relativeSpec.replace(new RegExp(path.extname(relativeSpec) + '$'), `.${this.ext}`));
+    const processor = this.decoratedFactory(outPath);
+
+    processor.initialize();
+    this.processors[spec] = processor;
+
+    return processor;
+  }
+
   write(allMessages) {
     Object.entries(allMessages).forEach(([spec, messages]) => {
-      const relativeSpec = path.relative(this.specRoot, spec);
-      const outPath = path.join(this.root, relativeSpec.replace(new RegExp(path.extname(relativeSpec) + '$'), `.${this.ext}`));
-      const processor = this.decoratedFactory(outPath);
-
-      this.decoratedProcessors.push(processor);
-      processor.initialize();
-      processor.write({[spec]: messages});
+      this.getProcessor(spec).write({[spec]: messages});
     });
   }
 
@@ -33,6 +41,6 @@ module.exports = class NestedOutputProcessorDecorator {
   }
 
   getSpentTime() {
-    return this.decoratedProcessors.reduce((count, processor) => count + processor.getSpentTime(), 0);
+    return Object.values(this.processors).reduce((count, processor) => count + processor.getSpentTime(), 0);
   }
 };
