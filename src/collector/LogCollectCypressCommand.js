@@ -1,5 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
+const stringify = require('safe-json-stringify');
 
 module.exports = class LogCollectCypressCommand {
 
@@ -19,8 +20,8 @@ module.exports = class LogCollectCypressCommand {
       let message = options.name + '\t' + options.message;
 
       if (options.expected && options.actual) {
-        message += '\nActual: \t' + JSON.stringify(options.actual);
-        message += '\nExpected: \t' + JSON.stringify(options.expected);
+        message += '\nActual: \t' + stringify(options.actual);
+        message += '\nExpected: \t' + stringify(options.expected);
       }
 
       return message;
