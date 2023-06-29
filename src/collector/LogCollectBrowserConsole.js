@@ -1,7 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
 const stringify = require('safe-json-stringify');
-const {type} = require("mocha/lib/utils");
 
 module.exports = class LogCollectBrowserConsole {
 

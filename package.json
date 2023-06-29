@@ -42,10 +42,10 @@
     "tv4": "^1.3.0"
   },
   "peerDependencies": {
-    "cypress": ">=4.10.0"
+    "cypress": ">=10.0.0"
   },
   "devDependencies": {
-    "cypress": ">=4.10.0",
+    "cypress": ">=10.0.0",
     "mocha": ">=3.5.0"
   }
 }

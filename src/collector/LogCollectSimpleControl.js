@@ -1,5 +1,6 @@
 const CONSTANTS = require('../constants');
 const LogCollectBaseControl = require('./LogCollectBaseControl');
+const utils = require("../utils");
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -44,22 +45,15 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
     };
 
     if (options.noQueue) {
-      Promise.resolve().then(() => {
-        Cypress.backend('task', {
-          task: CONSTANTS.TASK_NAME,
-          arg: {
-            spec: spec,
-            test: testTitle,
-            messages: prepareLogs(),
-            state: testState,
-            level: testLevel,
-            consoleTitle: options.consoleTitle,
-            isHook: options.isHook,
-            continuous: this.config.enableContinuousLogging,
-          }
-        })
-          // For some reason cypress throws empty error although the task indeed works.
-          .catch((error) => {/* noop */})
+      utils.nonQueueTask(CONSTANTS.TASK_NAME, {
+        spec: spec,
+        test: testTitle,
+        messages: prepareLogs(),
+        state: testState,
+        level: testLevel,
+        consoleTitle: options.consoleTitle,
+        isHook: options.isHook,
+        continuous: this.config.enableContinuousLogging,
       }).catch(console.error);
     } else {
       // Need to wait for command log update debounce.
