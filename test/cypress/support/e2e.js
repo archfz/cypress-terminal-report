@@ -1,6 +1,7 @@
 import './commands';
 import registerCypressGrep from "cypress-grep";
 import 'cypress-mochawesome-reporter/register';
+import utils from "../../../src/utils";
 
 const env = Cypress.env();
 let config = {};
@@ -38,16 +39,13 @@ if (env.setProcessLogs == '1') {
 }
 if (env.collectTestLogsSupport == '1') {
   config.collectTestLogs = ({mochaRunnable, testTitle, testState, testLevel}, logs) =>
-    Cypress.backend('task', {
-      task: 'ctrLogMessages',
-      arg: {
-        spec: mochaRunnable.invocationDetails.relativeFile,
-        test: testTitle,
-        messages: [['cy:log', `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`, '']],
-        state: testState,
-        level: testLevel,
-      }
-    })
+    utils.nonQueueTask('ctrLogMessages', {
+      spec: mochaRunnable.invocationDetails.relativeFile,
+      test: testTitle,
+      messages: [['cy:log', `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`, '']],
+      state: testState,
+      level: testLevel,
+    });
 }
 if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};

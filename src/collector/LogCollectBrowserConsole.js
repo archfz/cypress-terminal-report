@@ -1,5 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
+const stringify = require('safe-json-stringify');
 
 module.exports = class LogCollectBrowserConsole {
 
@@ -34,9 +35,13 @@ module.exports = class LogCollectBrowserConsole {
 
         let json = '';
         try {
-          json = JSON.stringify(arg, null, 2);
+          json = stringify(arg, null, 2);
         } catch (e) {
-          return '[unprocessable=' + arg + ']';
+          if (typeof arg.toString === 'function') {
+            return '[unprocessable=' + arg.toString() + ']';
+          } else {
+            return '[unprocessable]';
+          }
         }
 
         if (typeof json === 'undefined') {

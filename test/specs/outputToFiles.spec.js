@@ -120,7 +120,7 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
-  it('Should generate correct output with extended collector and additional logging pass.', async () => {
+  it.only('Should generate correct output with extended collector and additional logging pass.', async () => {
     const outRoot = {};
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);

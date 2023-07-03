@@ -9,4 +9,13 @@ context('Expects', () => {
 
     expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).to.eq([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   })
+  it('expects with circular', () => {
+    // https://on.cypress.io/spy
+    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks')
+
+    const data = {};
+    data.data = data;
+
+    expect(data).to.eq({})
+  })
 })

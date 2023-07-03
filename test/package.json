@@ -8,7 +8,7 @@
     "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
     "cypress-open-files": "cypress open --env enableCucumber=1,printLogsToConsoleAlways=1,printLogsToFileAlways=1,generateNestedOutput=1",
     "cypress-open-collect": "cypress open --env collectTestLogsSupport=1",
-    "cypress-open": "cypress open --env generateNestedOutput=1",
+    "cypress-open": "cypress open --env enableExtendedCollector=1,ctrDebug=1",
     "cypress-run": "npx cypress run --env enableCucumber=1,printLogsToConsoleAlways=1,printLogsToFileAlways=1,generateNestedOutput=1",
     "mocha-debug": "mocha mocha_debug.js",
     "wsl-open-cypress": "cmd.exe /C npx cypress open"
@@ -26,7 +26,7 @@
     "@badeball/cypress-cucumber-preprocessor": "^12.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.1.3",
     "chai": "^4.2.0",
-    "cypress": "12.9.0",
+    "cypress": "12.16.0",
     "cypress-grep": "^3.0.2",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
