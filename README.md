@@ -360,6 +360,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.0
+
 - Fix circular reference causing error with expect logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/191)
 - Add additional protection against logs containing objects that are non JSON serializable and also don't have `.toString()`. [issue](https://github.com/archfz/cypress-terminal-report/issues/192)
 - Add support for the new format of `Cypress.backend('run:privileged')` for out of queue task running.

@@ -1,6 +1,6 @@
 {
   "name": "cypress-terminal-report",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Better terminal and file output for cypress test logs.",
   "main": "index.js",
   "scripts": {
