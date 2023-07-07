@@ -1,4 +1,4 @@
-import semver from "semver";
+const semver = require("semver");
 
 const utils = {
   nonQueueTask: function (name, data) {
