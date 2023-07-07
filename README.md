@@ -360,6 +360,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.1
+
+- Fix incorrect esm export. [issue](https://github.com/archfz/cypress-terminal-report/issues/197)
+
 #### 5.3.0
 
 - Fix circular reference causing error with expect logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/191)
