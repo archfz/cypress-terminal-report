@@ -360,8 +360,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.3
+
 - Add support for latest format of `Cypress.backend('run:privileged')` for out of queue task running: 
   Fixes command logging in certain cases for cypress >= 12.17.0.
+- Update cypress to 12.17.4 in tests to confirm support.
 
 #### 5.3.2
 
