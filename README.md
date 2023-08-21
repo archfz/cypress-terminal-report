@@ -360,6 +360,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Add support for latest format of `Cypress.backend('run:privileged')` for out of queue task running: 
+  Fixes command logging in certain cases for cypress >= 12.17.0.
+
 #### 5.3.2
 
 - Fix incorrect esm import. [issue](https://github.com/archfz/cypress-terminal-report/issues/197)
