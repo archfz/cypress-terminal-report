@@ -15,7 +15,7 @@ module.exports = class LogCollectCypressXhr {
     // In Cypress 13+ this is under an extra props key
     const consoleProps = (options) => options.consoleProps && options.consoleProps.props ? options.consoleProps.props : options.consoleProps
 
-    const formatXhr = (options) => (options.alias !== undefined ? '(' + options.alias + ') ' : '') +
+    const formatXhr = (options) =>
       (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
       consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
