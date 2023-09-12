@@ -16,7 +16,7 @@ module.exports = class LogCollectCypressXhr {
     const consoleProps = (options) => options.consoleProps && options.consoleProps.props ? options.consoleProps.props : options.consoleProps
 
     const formatXhr = (options) => (options.alias !== undefined ? '(' + options.alias + ') ' : '') +
-      (consoleProps(options)["Request went to origin?"] !== 'yes' ? 'STUBBED ' : '') +
+      (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
       consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
     const formatDuration = (durationInMs) =>
