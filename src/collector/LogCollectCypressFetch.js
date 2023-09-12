@@ -12,9 +12,12 @@ module.exports = class LogCollectCypressFetch {
   }
 
   register() {
+    // In Cypress 13+ this is under an extra props key
+    const consoleProps = (options) => options.consoleProps && options.consoleProps.props ? options.consoleProps.props : options.consoleProps
+
     const formatFetch = (options) => (options.alias !== undefined ? '(' + options.alias + ') ' : '') +
-      (options.consoleProps["Request went to origin?"] !== 'yes' ? 'STUBBED ' : '') +
-      options.consoleProps.Method + ' ' + options.consoleProps.URL;
+      (consoleProps(options)["Request went to origin?"] !== 'yes' ? 'STUBBED ' : '') +
+      consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
     const formatDuration = (durationInMs) =>
       durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
@@ -34,14 +37,14 @@ module.exports = class LogCollectCypressFetch {
       ) {
         let statusCode;
 
-        statusCode = options.consoleProps["Response Status Code"];
+        statusCode = consoleProps(options)["Response Status Code"];
 
         const isSuccess = statusCode && (statusCode + '')[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
         let log = formatFetch(options);
 
-        if (options.consoleProps.Duration) {
-          log += ` (${formatDuration(options.consoleProps.Duration)})`;
+        if (consoleProps(options).Duration) {
+          log += ` (${formatDuration(consoleProps(options).Duration)})`;
         }
         if (statusCode) {
           log += `\nStatus: ${statusCode}`;
@@ -52,9 +55,9 @@ module.exports = class LogCollectCypressFetch {
 
         if (
           !isSuccess &&
-          options.consoleProps["Response Body"]
+          consoleProps(options)["Response Body"]
         ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps["Response Body"])}`;
+          log += `\nResponse body: ${await this.format.formatXhrBody(consoleProps(options)["Response Body"])}`;
         }
 
         this.collectorState.updateLog(log, severity, options.id);
