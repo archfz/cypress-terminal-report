@@ -360,6 +360,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.4
+
+- Fix compatibility with cypress >=13. [issue](https://github.com/archfz/cypress-terminal-report/issues/209) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/210) by [matmannion](https://github.com/matmannion)
+- Update cypress to 13.1.0 in tests to confirm support.
+
 #### 5.3.3
 
 - Add support for latest format of `Cypress.backend('run:privileged')` for out of queue task running: 
