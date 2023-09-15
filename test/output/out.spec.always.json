@@ -99,7 +99,7 @@
       {
         "type": "cons:log",
         "severity": "success",
-        "message": "{\n  a: 'b'\n},\n{\n  c: 'd'\n},\n10,\nstring"
+        "message": "{\n  \"a\": \"b\"\n},\n{\n  \"c\": \"d\"\n},\n10,\nstring"
       },
       {
         "type": "cy:command",
@@ -149,7 +149,7 @@
       {
         "type": "cons:log",
         "severity": "success",
-        "message": "{\n  this: 'Is an object',\n  with: {\n    keys: 12512\n  }\n}"
+        "message": "{\n  \"this\": \"Is an object\",\n  \"with\": {\n    \"keys\": 12512\n  }\n}"
       },
       {
         "type": "cy:command",
