@@ -32,8 +32,8 @@ describe('Commands logging.', () => {
       expect(stdout).to.contain(`cons:error ${ICONS.error}  This is an error message\n`);
       expect(stdout).to.contain(`cons:error ${ICONS.error}  Error: This is an error message with stack.\n${PADDING}    at Context.eval (`);
       expect(stdout).to.contain(`cons:log ${ICONS.info}  This should console.log appear.`);
-      expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  this: 'Is an object',\n${PADDING}  with: {\n${PADDING}    keys: 12512\n${PADDING}  }\n${PADDING}}\n`);
-      expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  a: 'b'\n${PADDING}},\n${PADDING}{\n${PADDING}  c: 'd'\n${PADDING}},\n${PADDING}10,\n${PADDING}string\n`);
+      expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "this": "Is an object",\n${PADDING}  "with": {\n${PADDING}    "keys": 12512\n${PADDING}  }\n${PADDING}}\n`);
+      expect(stdout).to.contain(`cons:log ${ICONS.info}  {\n${PADDING}  "a": "b"\n${PADDING}},\n${PADDING}{\n${PADDING}  "c": "d"\n${PADDING}},\n${PADDING}10,\n${PADDING}string\n`);
       expect(stdout).to.contain(`cons:error ${ICONS.error}  null,\n${PADDING}undefined,\n${PADDING},\n${PADDING}false,\n${PADDING}function () {}\n`);
       expect(stdout).to.contain(`cons:info ${ICONS.info}  This should console.info appear.`);
       expect(stdout).to.contain(`cons:debug ${ICONS.debug}  This should console.debug appear.`);
@@ -191,8 +191,8 @@ describe('Commands logging.', () => {
       const cleanStdout = clean(stdout, true);
       expect(cleanStdout).to.contain(
         `cy:command ${ICONS.success}  assert\texpected **<a>** to have text **something else**
-                    Actual: \t'something else'
-                    Expected: \t'something else'
+                    Actual: \t"something else"
+                    Expected: \t"something else"
       cy:command ${ICONS.error}  get\tbreaking`,
       );
     });
@@ -203,38 +203,12 @@ describe('Commands logging.', () => {
       const cleanStdout = clean(stdout, true);
       expect(cleanStdout).to.contain(
         `cy:command ${ICONS.error}  assert\texpected **[ Array(12) ]** to equal **[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]**
-                    Actual: \t[
-                      1,
-                      2,
-                      3,
-                      4,
-                      5,
-                      6,
-                      7,
-                      8,
-                      9,
-                      10,
-                      11,
-                      12
-                    ]
-                    Expected: \t[
-                      1,
-                      2,
-                      3,
-                      4,
-                      5,
-                      6,
-                      7,
-                      8,
-                      9,
-                      10
-                    ]`,
+                    Actual: \t[1,2,3,4,5,6,7,8,9,10,11,12]
+                    Expected: \t[1,2,3,4,5,6,7,8,9,10]`,
       );
       expect(cleanStdout).to.contain(
         `cy:command ${ICONS.error}  assert\texpected **{ data: [Circular] }** to equal **{}**
-                    Actual: \t{
-                      data: "[Circular]"
-                    }
+                    Actual: \t{"data":"[Circular]"}
                     Expected: \t{}`,
       );
     });

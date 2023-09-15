@@ -1,6 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
-const stringify = require('stringify-object').default;
+const stringify = require('safe-json-stringify');
 
 module.exports = class LogCollectBrowserConsole {
 
@@ -35,9 +35,9 @@ module.exports = class LogCollectBrowserConsole {
 
         let json = '';
         try {
-          json = stringify(arg, {indent: '  '});
+          json = stringify(arg, null, 2);
         } catch (e) {
-          if (arg && typeof arg.toString === 'function') {
+          if (typeof arg.toString === 'function') {
             return '[unprocessable=' + arg.toString() + ']';
           } else {
             return '[unprocessable]';

@@ -356,13 +356,9 @@ is used to emulate the usage of the plugin, and a mocha suite to assert on those
 
 To add tests you need to first add a case to existing cypress spec or create a new one and then
 add the case as well in the `/test/test.js`. To run the tests you can use `npm test` in the test \
-directory. You should add `it` to the test case you are working on to speed up development.
+directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
-
-#### 5.3.5
-
-- Experimental change of `safe-json-stringify` to `stringify-object` for possible memory leak. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
 
 #### 5.3.4
 
