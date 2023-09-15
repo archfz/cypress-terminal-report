@@ -360,6 +360,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Experimental change of JSON stringification of logs for memory leak fix. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
+
+#### 5.3.5
+
+- Experimental change of `safe-json-stringify` to `stringify-object` for possible memory leak. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
+
 #### 5.3.4
 
 - Fix compatibility with cypress >=13. [issue](https://github.com/archfz/cypress-terminal-report/issues/209) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/210) by [matmannion](https://github.com/matmannion)

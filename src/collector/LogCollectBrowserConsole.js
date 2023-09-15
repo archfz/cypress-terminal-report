@@ -1,6 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
-const stringify = require('safe-json-stringify');
+const utils = require('../utils');
 
 module.exports = class LogCollectBrowserConsole {
 
@@ -33,22 +33,7 @@ module.exports = class LogCollectBrowserConsole {
           return arg.toString() + '\n' + stack;
         }
 
-        let json = '';
-        try {
-          json = stringify(arg, null, 2);
-        } catch (e) {
-          if (typeof arg.toString === 'function') {
-            return '[unprocessable=' + arg.toString() + ']';
-          } else {
-            return '[unprocessable]';
-          }
-        }
-
-        if (typeof json === 'undefined') {
-          return 'undefined';
-        }
-
-        return json;
+        return utils.jsonStringify(arg);
       };
 
       const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {

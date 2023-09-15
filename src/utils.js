@@ -1,4 +1,5 @@
 const semver = require("semver");
+const jsonPrune = require("./jsonPrune");
 
 const utils = {
   nonQueueTask: function (name, data) {
@@ -38,6 +39,30 @@ const utils = {
     })
       // For some reason cypress throws empty error although the task indeed works.
       .catch((error) => {/* noop */})
+  },
+
+  jsonStringify(value, format = true) {
+    let json = '';
+
+    try {
+      json = JSON.stringify(value, null, format ? 2 : undefined);
+    } catch (e) {
+      try {
+        let prunned = JSON.parse(jsonPrune(value, 20, 1000));
+        json = JSON.stringify(prunned, null, format ? 2 : undefined);
+      } catch (e) {
+        if (typeof value.toString === 'function') {
+          return '[unprocessable=' + value.toString() + ']';
+        }
+        return '[unprocessable]';
+      }
+    }
+
+    if (typeof json === 'undefined') {
+      return 'undefined';
+    }
+
+    return json;
   }
 }
 
