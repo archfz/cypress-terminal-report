@@ -360,6 +360,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.7
+
+- Fix retries not logged when test is in root of spec file. [issue](https://github.com/archfz/cypress-terminal-report/issues/214)
+
 #### 5.3.6
 
 - Experimental change of JSON stringification of logs for memory leak fix. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
