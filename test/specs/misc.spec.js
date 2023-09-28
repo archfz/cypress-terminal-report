@@ -84,6 +84,13 @@ describe('Misc.', () => {
 
     1) fails
       cy:command ${ICONS.error}  get\tbreaking`);
+      expect(stdout).to.contain(`
+          cy:log ${ICONS.info}  Hello. currentRetry: 0
+      cy:command ${ICONS.error}  contains\tFoobar
+
+
+          cy:log ${ICONS.info}  Hello. currentRetry: 1
+      cy:command ${ICONS.error}  contains\tFoobar`);
     });
   }).timeout(30000);
 

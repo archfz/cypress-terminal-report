@@ -24,6 +24,13 @@ module.exports = class LogCollectBaseControl {
   }
 
   getSpecFilePath(mochaRunnable) {
+    if (!mochaRunnable.invocationDetails && !mochaRunnable.parent.invocationDetails) {
+      if (mochaRunnable.parent.file) {
+        return mochaRunnable.parent.file;
+      }
+      return null;
+    }
+
     let invocationDetails = mochaRunnable.invocationDetails;
     let parent = mochaRunnable.parent;
     // always get top-most spec to determine the called .spec file
