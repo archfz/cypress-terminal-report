@@ -26,15 +26,16 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   }
 
   sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
-    if (!mochaRunnable.parent.invocationDetails && !mochaRunnable.invocationDetails) {
-      return;
-    }
-
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
     let spec = this.getSpecFilePath(mochaRunnable);
+
+    if (!spec) {
+      return;
+    }
+
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     {

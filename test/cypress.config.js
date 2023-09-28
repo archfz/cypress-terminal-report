@@ -18,7 +18,7 @@ module.exports = defineConfig({
       if (config.env.breaking) {
         config.retries = {
           "runMode": 2,
-          "openMode": 0
+          "openMode": 2
         };
       }
       if (config.env.generateOutput == "1") {
