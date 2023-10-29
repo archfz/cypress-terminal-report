@@ -9,7 +9,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t"
+        "message": "Before\t"
       },
       {
         "type": "cy:command",
@@ -19,7 +19,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\tI open Happy page"
+        "message": "Given \t**I open Happy page**"
       },
       {
         "type": "cy:command",
@@ -29,7 +29,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\tI can load comments"
+        "message": "Then \t**I can load comments**"
       },
       {
         "type": "cy:command",
@@ -71,7 +71,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\t"
+        "message": "Before\t"
       },
       {
         "type": "cy:command",
@@ -81,7 +81,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\tI open Happy page"
+        "message": "Given \t**I open Happy page**"
       },
       {
         "type": "cy:command",
@@ -91,7 +91,7 @@
       {
         "type": "cy:command",
         "severity": "success",
-        "message": "step\tI can post comment"
+        "message": "Then \t**I can post comment**"
       },
       {
         "type": "cy:intercept",

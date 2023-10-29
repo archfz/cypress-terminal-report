@@ -20,9 +20,9 @@ describe('Other plugin integrations.', () => {
   it('Should run happy flow with cucumber preprocessor.', async () => {
     await runTest(commandBase(['enableCucumber=1', 'printLogsToConsoleAlways=1'], ['cucumber/Happy.feature']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.success}  assert\texpected **0** to be below **2**`);
-      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\tI open Happy page`);
-      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\tI can load comments`);
-      expect(stdout).to.contain(`cy:command ${ICONS.success}  step\tI can post comment`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  Given \t**I open Happy page**`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  Then \t**I can load comments**`);
+      expect(stdout).to.contain(`cy:command ${ICONS.success}  Then \t**I can post comment**`);
     });
   }).timeout(30000);
 

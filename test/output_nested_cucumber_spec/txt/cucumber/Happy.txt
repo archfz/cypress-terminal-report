@@ -2,11 +2,11 @@ cypress/integration/cucumber/Happy.feature:
     The Happy -> Opening happy page and getting comments
       cy:intercept (K): Method: GET
                         Matcher: "comments/*"
-        cy:command (K): step
+        cy:command (K): Before
         cy:command (K): assert	expected **0** to be below **2**
-        cy:command (K): step	I open Happy page
+        cy:command (K): Given 	**I open Happy page**
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): step	I can load comments
+        cy:command (K): Then 	**I can load comments**
         cy:command (K): get	.network-btn
         cy:command (K): click
             cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1
@@ -18,13 +18,13 @@ cypress/integration/cucumber/Happy.feature:
     The Happy -> Opening happy page and posting comments
       cy:intercept (K): Method: GET
                         Matcher: "comments/*"
-        cy:command (K): step
+        cy:command (K): Before
         cy:command (K): assert	expected **1** to be below **2**
                         Actual: 	1
                         Expected: 	2
-        cy:command (K): step	I open Happy page
+        cy:command (K): Given 	**I open Happy page**
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): step	I can post comment
+        cy:command (K): Then 	**I can post comment**
       cy:intercept (K): Method: POST
                         Matcher: "/comments"
         cy:command (K): get	.network-post

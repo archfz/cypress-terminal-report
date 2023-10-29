@@ -138,12 +138,12 @@ cypress/integration/requests.spec.js:
         cy:command (X): get	.breaking-get
 
     Requests. -> GET should give 500 response status
-        cy:request (X): GET http://www.mocky.io/v2/5ec993353000007900a6ce1e
+        cy:request (X): GET https://run.mocky.io/v3/cf7c4ea3-5f3e-416c-ba17-7aa842b1e2d9
                         Status: 500 - Internal Server Error
                         Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.
 
     Requests. -> POST should give 400 response status
-        cy:request (X): POST http://www.mocky.io/v2/5ec993803000009700a6ce1f
+        cy:request (X): POST https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508
                         Status: 400 - Bad Request
                         Response body: {
                           "status": "Wrong!",

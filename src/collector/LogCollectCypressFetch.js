@@ -53,6 +53,7 @@ module.exports = class LogCollectCypressFetch {
           log += ' - ' + options.err.message;
         }
 
+        debugger;
         if (
           !isSuccess &&
           consoleProps(options)["Response Body"]

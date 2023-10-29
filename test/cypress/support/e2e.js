@@ -1,5 +1,5 @@
 import './commands';
-import registerCypressGrep from "cypress-grep";
+import registerCypressGrep from "@cypress/grep";
 import 'cypress-mochawesome-reporter/register';
 import utils from "../../../src/utils";
 
