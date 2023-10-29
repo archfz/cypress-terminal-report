@@ -11,8 +11,11 @@ module.exports = class LogCollectBrowserConsole {
 
   register() {
     const oldConsoleMethods = {};
+    const event = Cypress.testingType === 'component'
+      ? 'test:before:run'
+      : 'window:before:load';
 
-    Cypress.on('window:before:load', () => {
+    Cypress.on(event, () => {
       const docIframe = window.parent.document.querySelector("[id*='Your project: ']") ||
         window.parent.document.querySelector("[id*='Your App']");
       const appWindow = docIframe.contentWindow;
