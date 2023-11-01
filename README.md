@@ -360,6 +360,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.9
+
+- Remove incorrectly added `debugger` statement. [issue](https://github.com/archfz/cypress-terminal-report/issues/221)
+
 #### 5.3.8
 
 - Fix browser logs not logging with component tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/220)
