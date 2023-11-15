@@ -67,7 +67,7 @@ export interface PluginOptions {
     string,
     | 'json'
     | 'txt'
-    | ((allMessages: AllMessages) => string)
+    | ((allMessages: AllMessages) => void)
   >;
 
   /**
