@@ -1,5 +1,6 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
 const CONSTANTS = require('../constants');
+const utils = require('../utils');
 
 module.exports = class LogCollectBrowserConsole {
 
@@ -10,9 +11,13 @@ module.exports = class LogCollectBrowserConsole {
 
   register() {
     const oldConsoleMethods = {};
+    const event = Cypress.testingType === 'component'
+      ? 'test:before:run'
+      : 'window:before:load';
 
-    Cypress.on('window:before:load', () => {
-      const docIframe = window.parent.document.querySelector("[id*='Your App']");
+    Cypress.on(event, () => {
+      const docIframe = window.parent.document.querySelector("[id*='Your project: ']") ||
+        window.parent.document.querySelector("[id*='Your App']");
       const appWindow = docIframe.contentWindow;
 
       const processArg = (arg) => {
@@ -31,18 +36,7 @@ module.exports = class LogCollectBrowserConsole {
           return arg.toString() + '\n' + stack;
         }
 
-        let json = '';
-        try {
-          json = JSON.stringify(arg, null, 2);
-        } catch (e) {
-          return '[unprocessable=' + arg + ']';
-        }
-
-        if (typeof json === 'undefined') {
-          return 'undefined';
-        }
-
-        return json;
+        return utils.jsonStringify(arg);
       };
 
       const createWrapper = (method, logType, type = CONSTANTS.SEVERITY.SUCCESS) => {

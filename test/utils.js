@@ -1,4 +1,4 @@
-const {exec} = require('child_process');
+const {exec, spawn} = require('child_process');
 const {expect} = require('chai');
 const fs = require('fs');
 const path = require('path');
@@ -56,6 +56,36 @@ export const runTest = async (command, callback) => {
 
       resolve();
     });
+  });
+};
+
+export const runTestContinuous = async (command, afterOutput, callback) => {
+  await new Promise(resolve => {
+    let allData = '';
+    let startTime;
+    const mainCommand = command.split(' ')[0];
+    const args = command.split(' ').map(arg => arg.replace(/^"/, '').replace(/"$/, ''));
+    args.shift();
+
+    const child = spawn(mainCommand, args, {encoding: "UTF-8", env: {...process.env, NO_COLOR: 1}});
+
+    child.on('close', resolve);
+
+    const dataCallback = (data) => {
+      if (data.toString().includes(afterOutput)) {
+        startTime = (new Date()).getTime();
+      }
+
+      if (startTime) {
+        allData += data.toString();
+        callback(allData, ((new Date()).getTime() - startTime) / 1000);
+      }
+    };
+
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', dataCallback);
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', dataCallback);
   });
 };
 

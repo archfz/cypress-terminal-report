@@ -3,16 +3,15 @@ describe('XHR all types.', () => {
   it('XHR body formats', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 403,
+    }, {
+      statusCode: 403,
       headers: {
         'Test-Header': 'data',
       },
-      response: {
+      body: {
         'key': 'data'
       },
     }).as('putComment');
@@ -20,13 +19,13 @@ describe('XHR all types.', () => {
     cy.get('.network-put').click();
     cy.wait('@putComment');
 
-    cy.get('.breaking-get', {timeout: 1});
+    cy.get('.breaking-get', {timeout: 100});
   });
 
   it('POST should give 400 response status', () => {
     cy.request({
       method: 'POST',
-      url: 'http://www.mocky.io/v2/5ec993803000009700a6ce1f',
+      url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
       headers: {
         'token': 'test',
       },
@@ -38,7 +37,7 @@ describe('XHR all types.', () => {
     cy.get('.breaking-get', {timeout: 1});
   });
 
-  it('XHR responses not handled by cy.route', () => {
+  it('XHR responses not handled by cy.intercept', () => {
     cy.visit('/commands/network-requests');
 
     // Succeeding GET request
@@ -62,7 +61,7 @@ describe('XHR all types.', () => {
       networkErrorButton.className = 'network-error btn btn-primary';
       networkErrorButton.innerHTML = 'Request error';
       networkErrorButton.addEventListener('click', () =>
-        window.fetch('https://www.mocky.io/v2/5ec993803000009700a6ce1f')
+        window.fetch('https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508')
           .then(() => {
             networkErrorMessage.innerHTML = 'received response';
           }));
@@ -72,7 +71,7 @@ describe('XHR all types.', () => {
     cy.get('.network-error').click();
     cy.get('.network-error-message').should('contain', 'received response');
 
-    cy.get('.breaking-get', {timeout: 100}); // longer timeout to ensure XHR log update is included
+    cy.get('.breaking-get', {timeout: 500}); // longer timeout to ensure XHR log update is included
   });
 
   /**
@@ -81,24 +80,23 @@ describe('XHR all types.', () => {
   it('Timeout', () => {
     cy.visit('/commands/network-requests');
 
-    cy.server();
-
-    cy.route({
-      method: 'PUT',
+    cy.intercept({
+      method: 'GET',
       url: 'comments/*',
     }).as('req:timeout');
 
     cy.window().then((w) => {
-      const script = w.document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js';
-      script.onload = () => {
-        w.axios.get('/comments/10', {timeout: 10});
-      };
-      w.document.head.appendChild(script);
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      fetch("/comments/10", { signal }).catch(e => {
+        console.warn(`Fetch 1 error: ${e.message}`);
+      });
+      controller.abort();
     });
 
-    cy.wait('@req:timeout');
-    cy.get('.breaking-get', {timeout: 1});
+    cy.log('asd');
+    cy.get('.breaking-get', {timeout: 1000});
   });
 
 });

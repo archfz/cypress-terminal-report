@@ -1,0 +1,23 @@
+cypress/integration/allHooks.spec.js:
+    All hooks. -> [[ before all #1 ]]
+            cy:log (K): from before
+
+    All hooks. -> passed it
+            cy:log (K): from beforeEach
+            cy:log (K): from it
+            cy:log (K): from afterEach
+
+    All hooks. -> passed it 2
+            cy:log (K): from beforeEach
+            cy:log (K): from it 2
+            cy:log (K): from afterEach
+
+    All hooks. -> [[ after all #1 ]]
+            cy:log (K): from after
+
+    All hooks. -> [[ after all #2 ]]
+            cy:log (K): from after 2
+
+    [[ after all #1 ]]
+            cy:log (K): global after
+

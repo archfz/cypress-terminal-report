@@ -1,5 +1,6 @@
 const CONSTANTS = require('../constants');
 const LogCollectBaseControl = require('./LogCollectBaseControl');
+const utils = require("../utils");
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -19,25 +20,16 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
   }
 
   sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
-    if (!mochaRunnable.parent.invocationDetails && !mochaRunnable.invocationDetails) {
-      return;
-    }
-
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
-    let invocationDetails = mochaRunnable.invocationDetails;
-    {
-      // always get top-most spec to determine the called .spec file
-      let parent = mochaRunnable.parent;
-      while (parent && parent.invocationDetails) {
-        invocationDetails = parent.invocationDetails
-        parent = parent.parent;
-      }
+    let spec = this.getSpecFilePath(mochaRunnable);
+
+    if (!spec) {
+      return;
     }
 
-    let spec = invocationDetails.relativeFile || invocationDetails.fileUrl.replace(/^[^?]+\?p=/, '');
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     {
@@ -54,21 +46,15 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
     };
 
     if (options.noQueue) {
-      Promise.resolve().then(() => {
-        Cypress.backend('task', {
-          task: CONSTANTS.TASK_NAME,
-          arg: {
-            spec: spec,
-            test: testTitle,
-            messages: prepareLogs(),
-            state: testState,
-            level: testLevel,
-            consoleTitle: options.consoleTitle,
-            isHook: options.isHook,
-          }
-        })
-          // For some reason cypress throws empty error although the task indeed works.
-          .catch((error) => {/* noop */})
+      utils.nonQueueTask(CONSTANTS.TASK_NAME, {
+        spec: spec,
+        test: testTitle,
+        messages: prepareLogs(),
+        state: testState,
+        level: testLevel,
+        consoleTitle: options.consoleTitle,
+        isHook: options.isHook,
+        continuous: this.config.enableContinuousLogging,
       }).catch(console.error);
     } else {
       // Need to wait for command log update debounce.
@@ -84,6 +70,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
               level: testLevel,
               consoleTitle: options.consoleTitle,
               isHook: options.isHook,
+              continuous: this.config.enableContinuousLogging,
             },
             {log: false}
           );
@@ -111,18 +98,27 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
   registerTests() {
     const self = this;
 
+    if (this.config.enableContinuousLogging) {
+      this.collectorState.on('log', () => {
+        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {noQueue: true});
+        this.collectorState.addNewLogStack();
+      });
+      return;
+    }
+
     afterEach(function () {
       self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest());
     });
 
     // Logs commands if test was manually skipped.
-    Cypress.mocha.getRunner().on('pending', function (test) {
-      if (self.collectorState.getCurrentTest()) {
+    Cypress.mocha.getRunner().on('pending', function () {
+      let test = self.collectorState.getCurrentTest();
+      if (test && test.state === 'pending') {
         // In case of fully skipped tests we might not yet have a log stack.
         if (!self.collectorState.hasLogsCurrentStack()) {
           self.collectorState.addNewLogStack();
         }
-        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {noQueue: true});
+        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
       }
     });
   }

@@ -8,7 +8,6 @@ const tv4ErrorTransformer = require('./tv4ErrorTransformer');
 const LogCollectBrowserConsole = require("./collector/LogCollectBrowserConsole");
 const LogCollectCypressCommand = require("./collector/LogCollectCypressCommand");
 const LogCollectCypressRequest = require("./collector/LogCollectCypressRequest");
-const LogCollectCypressRoute = require("./collector/LogCollectCypressRoute");
 const LogCollectCypressIntercept = require("./collector/LogCollectCypressIntercept");
 const LogCollectCypressXhr = require("./collector/LogCollectCypressXhr");
 const LogCollectCypressFetch = require("./collector/LogCollectCypressFetch");
@@ -17,6 +16,8 @@ const LogCollectCypressLog = require("./collector/LogCollectCypressLog");
 const LogCollectorState = require("./collector/LogCollectorState");
 const LogCollectExtendedControl = require("./collector/LogCollectExtendedControl");
 const LogCollectSimpleControl = require("./collector/LogCollectSimpleControl");
+
+const logsTxtFormatter = require("./outputProcessor/logsTxtFormatter");
 
 /**
  * Installs the logs collector for cypress.
@@ -40,6 +41,8 @@ function installLogsCollector(config = {}) {
   } else {
     (new LogCollectSimpleControl(logCollectorState, config)).register();
   }
+
+  registerGlobalApi(logCollectorState);
 }
 
 function registerLogCollectorTypes(logCollectorState, config) {
@@ -57,15 +60,28 @@ function registerLogCollectorTypes(logCollectorState, config) {
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_REQUEST)) {
     (new LogCollectCypressRequest(logCollectorState, config)).register();
   }
-  if (config.collectTypes.includes(LOG_TYPE.CYPRESS_ROUTE)) {
-    (new LogCollectCypressRoute(logCollectorState, config)).register();
-  }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_COMMAND)) {
     (new LogCollectCypressCommand(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(LOG_TYPE.CYPRESS_INTERCEPT) && semver.gte(Cypress.version, '6.0.0')) {
     (new LogCollectCypressIntercept(logCollectorState, config)).register();
   }
+}
+
+function registerGlobalApi(logCollectorState) {
+  Cypress.TerminalReport = {
+    getLogs: (format) => {
+      const logs = logCollectorState.getCurrentLogStack();
+
+      if (format === 'txt') {
+        return logsTxtFormatter(logs);
+      } else if (format === 'json') {
+        return JSON.stringify(logs, null, 2);
+      }
+
+      return logs;
+    },
+  };
 }
 
 function validateConfig(config) {

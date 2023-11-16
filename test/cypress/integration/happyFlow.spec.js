@@ -4,34 +4,35 @@ describe('Happy flow.', () => {
    * - printing of cy.commands
    * - printing xhr with STUBBED
    * - printing of console warn and console error
-   * - printing of cy.route in case of XMLHTTPREQUEST API
+   * - printing of cy.intercept in case of XMLHTTPREQUEST API
    */
   it('Happy flow', () => {
     cy.visit('/commands/network-requests');
 
     let message = 'whoa, this comment does not exist';
 
-    cy.server();
-    cy.route('GET', 'comments/*').as('getComment');
+    cy.intercept('GET', 'comments/*').as('getComment');
 
     // we have code that gets a comment when
     // the button is clicked in scripts.js
     cy.wait(300, {log: false});
     cy.get('.network-btn').click();
 
+    cy.wait(100, {log: false});
+
     cy.wait('@getComment')
-      .its('status')
+      .its('response.statusCode')
       .should('eq', 200);
 
-    cy.route('POST', '/comments').as('postComment');
+    cy.intercept('POST', '/comments').as('postComment');
 
     // we have code that posts a comment when
     // the button is clicked in scripts.js
     cy.get('.network-post').click();
     cy.wait('@postComment').should(xhr => {
-      expect(xhr.requestBody).to.include('email');
-      expect(xhr.requestHeaders).to.have.property('Content-Type');
-      expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.intercept()');
+      expect(xhr.request.body).to.include('email');
+      expect(xhr.request.headers).to.have.property('content-type');
+      expect(xhr.request.body).to.contain('name=Using+POST+in+cy.intercept()');
     });
 
     cy.window().then(w => w.console.error(null, undefined, '', false, function () {}));
@@ -45,12 +46,13 @@ describe('Happy flow.', () => {
     cy.window().then((w) => w.console.debug('This should console.debug appear.'));
 
     // Stub a response to PUT comments/ ****
-    cy.route({
+    cy.intercept({
       method: 'PUT',
       url: 'comments/*',
-      status: 404,
-      response: {error: message},
-      delay: 500,
+    }, {
+      statusCode: 404,
+      body: {error: message},
+      delayMs: 500,
     }).as('putComment');
 
     // we have code that puts a comment when

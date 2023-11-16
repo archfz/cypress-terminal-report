@@ -1,0 +1,16 @@
+{
+  "cypress/integration/cypressGrep.spec.js": {
+    "Cypress grep -> run only this": [
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "visit\t/"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "contains\tcypress"
+      }
+    ]
+  }
+}

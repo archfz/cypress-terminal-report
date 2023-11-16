@@ -123,7 +123,7 @@ describe('Fetch Api', () => {
       cy.get('.network-request').click();
       cy.get('.network-request-message').should('contain', 'received response');
 
-      cy.get('.breaking-get', {timeout: 100}); // longer timeout to ensure fetch log update is included
+      cy.get('.breaking-get', {timeout: 5000}); // longer timeout to ensure fetch log update is included
     };
 
     it('Fetch successful without interceptor', () =>
@@ -133,12 +133,12 @@ describe('Fetch Api', () => {
 
     it('Fetch failed without interceptors', () =>
       testRealFetchRequest({
-        url: 'https://www.mocky.io/v2/5ec993803000009700a6ce1f',
+        url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
       }));
 
     it('Fetch failed with interceptors', () =>
       testRealFetchRequest({
-        url: 'https://www.mocky.io/v2/5ec993803000009700a6ce1f',
+        url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
         interceptPath: 'https://www.mocky.io/**/*',
       }));
   });

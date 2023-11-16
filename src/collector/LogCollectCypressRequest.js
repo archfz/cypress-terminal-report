@@ -1,7 +1,7 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
+const HTTP_METHODS = require('../constants').HTTP_METHODS;
 const CONSTANTS = require('../constants');
 const LogFormat = require("./LogFormat");
-const methods = require('methods');
 
 module.exports = class LogCollectCypressRequest {
 
@@ -14,7 +14,7 @@ module.exports = class LogCollectCypressRequest {
 
   register() {
     const isValidHttpMethod = (str) =>
-      typeof str === 'string' && methods.some((s) => str.toLowerCase().includes(s));
+      typeof str === 'string' && HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
     const isNetworkError = (e) =>
       e.message && e.message.startsWith('`cy.request()` failed trying to load:');

@@ -1,4 +1,3 @@
 beforeEach(() => {
-  cy.server();
-  cy.route('GET', 'comments/*').as('getComment');
+  cy.intercept('GET', 'comments/*').as('getComment');
 });

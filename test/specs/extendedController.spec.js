@@ -8,6 +8,7 @@ import {
 } from "../utils";
 
 const {expect} = require('chai');
+require('chai').config.truncateThreshold = 0;
 
 describe('Extended controller.', () => {
 
@@ -23,8 +24,8 @@ describe('Extended controller.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'beforeLogs.spec.js',
       'afterLogs.spec.js',
+      'beforeLogs.spec.js',
       'allHooks.spec.js',
       'mochaContexts.spec.js',
     ];
@@ -41,9 +42,9 @@ describe('Extended controller.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'beforeLogs.spec.js',
       'afterLogs.spec.js',
       'allHooks.spec.js',
+      'beforeLogs.spec.js',
       'mochaContexts.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
@@ -199,7 +200,11 @@ describe('Extended controller.', () => {
           cy:log ${ICONS.info}  before
           cy:log ${ICONS.info}  test3 1
           cy:log ${ICONS.info}  test3 2
-          cy:log ${ICONS.info}  test3 3`);
+          cy:log ${ICONS.info}  test3 3
+      cy:command ${ICONS.success}  wrap\t{}
+
+
+    ✓ test4`);
     });
   }).timeout(60000);
 
