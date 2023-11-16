@@ -1,5 +1,6 @@
 const CONSTANTS = require('../constants');
 const LogCollectBaseControl = require('./LogCollectBaseControl');
+const utils = require("../utils");
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -25,25 +26,16 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   }
 
   sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
-    if (!mochaRunnable.parent.invocationDetails && !mochaRunnable.invocationDetails) {
-      return;
-    }
-
     let testState = options.state || mochaRunnable.state;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
-    let invocationDetails = mochaRunnable.invocationDetails;
-    {
-      // always get top-most spec to determine the called .spec file
-      let parent = mochaRunnable.parent;
-      while (parent && parent.invocationDetails) {
-        invocationDetails = parent.invocationDetails
-        parent = parent.parent;
-      }
+    let spec = this.getSpecFilePath(mochaRunnable);
+
+    if (!spec) {
+      return;
     }
-    
-    let spec = invocationDetails.relativeFile || invocationDetails.fileUrl.replace(/^[^?]+\?p=/, '');
+
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     {
@@ -56,29 +48,27 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     }
 
     const prepareLogs = () => {
-      return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
+      const logs = this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
+      this.debugLog('Sending logs: ' + logs.length);
+      return logs;
     };
 
     if (options.noQueue) {
+      this.debugLog('Sending with debounce.');
       this.debounceNextMochaSuite(Promise.resolve()
         // Need to wait for command log update debounce.
         .then(() => new Promise(resolve => setTimeout(resolve, wait)))
-        .then(() => {
-          Cypress.backend('task', {
-            task: CONSTANTS.TASK_NAME,
-            arg: {
-              spec: spec,
-              test: testTitle,
-              messages: prepareLogs(),
-              state: testState,
-              level: testLevel,
-              consoleTitle: options.consoleTitle,
-              isHook: options.isHook,
-            }
-          })
-            // For some reason cypress throws empty error although the task indeed works.
-            .catch((error) => {/* noop */})
-        }).catch(console.error)
+        .then(() => utils.nonQueueTask(CONSTANTS.TASK_NAME, {
+          spec: spec,
+          test: testTitle,
+          messages: prepareLogs(),
+          state: testState,
+          level: testLevel,
+          consoleTitle: options.consoleTitle,
+          isHook: options.isHook,
+          continuous: false,
+        }))
+        .catch(console.error)
       );
     } else {
       // Need to wait for command log update debounce.
@@ -94,6 +84,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               level: testLevel,
               consoleTitle: options.consoleTitle,
               isHook: options.isHook,
+              continuous: false,
             },
             {log: false}
           );
@@ -305,7 +296,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
   registerLogToFiles() {
     after(function () {
-      cy.wait(6, {log: false});
+      cy.wait(50, {log: false});
       cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
     });
   }

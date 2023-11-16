@@ -1,0 +1,5 @@
+cypress/integration/cypressGrep.spec.js:
+    Cypress grep -> run only this
+        cy:command (K): visit	/
+        cy:command (K): contains	cypress
+

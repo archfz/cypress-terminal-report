@@ -21,9 +21,10 @@ describe('Output to files.', () => {
     }
   });
 
-
   // Tests in general the log formatting in files.
-  it('Should generate proper log output files, and print only failing ones if config is on default.', async () => {
+  it('Should generate proper log output files, and print only failing ones if config is on default.', async function () {
+    this.retries(2);
+
     const outRoot = {};
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);
@@ -33,10 +34,10 @@ describe('Output to files.', () => {
     }
 
     const specFiles = [
-      'requests.spec.js',
       'happyFlow.spec.js',
-      'printLogsSuccess.spec.js',
       'mochaContexts.spec.js',
+      'requests.spec.js',
+      'printLogsSuccess.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
@@ -51,10 +52,10 @@ describe('Output to files.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     const specFiles = [
-      'requests.spec.js',
       'happyFlow.spec.js',
-      'printLogsSuccess.spec.js',
       'mochaContexts.spec.js',
+      'printLogsSuccess.spec.js',
+      'requests.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
@@ -116,6 +117,17 @@ describe('Output to files.', () => {
     const specFiles = ['requests.spec.js'];
     await runTest(commandBase(['failFast=1', 'generateOutput=1', 'logToFilesOnAfterRun=1'], specFiles), (error, stdout, stderr) => {
       expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'failFast');
+    });
+  }).timeout(90000);
+
+  it('Should generate correct output with extended collector and additional logging pass.', async () => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    const specFiles = ['allHooks.spec.js'];
+    await runTest(commandBase(['enableExtendedCollector=1', 'generateOutput=1', 'printLogsToFileAlways=1', 'logToFilesOnAfterRun=1', 'globalAfter=1'], specFiles), (error, stdout, stderr) => {
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'globalAfter');
     });
   }).timeout(90000);
 

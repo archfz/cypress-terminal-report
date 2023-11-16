@@ -1,7 +1,7 @@
 const LOG_TYPE = require('../constants').LOG_TYPES;
+const HTTP_METHODS = require('../constants').HTTP_METHODS;
 const CONSTANTS = require('../constants');
 const LogFormat = require("./LogFormat");
-const methods = require('methods');
 
 Object.defineProperty(RegExp.prototype, "toJSON", {
   value: RegExp.prototype.toString
@@ -20,7 +20,7 @@ module.exports = class LogCollectCypressIntercept {
     Cypress.Commands.overwrite('intercept', (originalFn, ...args) => {
       let message = '';
 
-      if (typeof args[0] === "string" && methods.includes(args[0].toLowerCase())) {
+      if (typeof args[0] === "string" && HTTP_METHODS.includes(args[0].toUpperCase())) {
         message += `Method: ${args[0]}\nMatcher: ${JSON.stringify(args[1])}`;
         if (args[2]) {
           message += `\nMocked Response: ${typeof args[2] === 'object' ? JSON.stringify(args[2]) : args[2]}`;

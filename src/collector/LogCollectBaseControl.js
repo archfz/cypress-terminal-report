@@ -22,4 +22,25 @@ module.exports = class LogCollectBaseControl {
 
     return logsCopy;
   }
+
+  getSpecFilePath(mochaRunnable) {
+    if (!mochaRunnable.invocationDetails && !mochaRunnable.parent.invocationDetails) {
+      if (mochaRunnable.parent.file) {
+        return mochaRunnable.parent.file;
+      }
+      return null;
+    }
+
+    let invocationDetails = mochaRunnable.invocationDetails;
+    let parent = mochaRunnable.parent;
+    // always get top-most spec to determine the called .spec file
+    while (parent && parent.invocationDetails) {
+      invocationDetails = parent.invocationDetails
+      parent = parent.parent;
+    }
+
+    return parent.file || // Support for cypress-grep.
+      invocationDetails.relativeFile ||
+      (invocationDetails.fileUrl && invocationDetails.fileUrl.replace(/^[^?]+\?p=/, ''));
+  }
 }

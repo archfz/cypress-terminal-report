@@ -316,7 +316,7 @@ function logToTerminal(messages, options, data) {
     );
   });
 
-  if (messages.length !== 0) {
+  if (messages.length !== 0 && !data.continuous) {
     console.log('\n');
   }
 }

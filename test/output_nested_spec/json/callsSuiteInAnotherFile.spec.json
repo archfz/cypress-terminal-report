@@ -4,14 +4,14 @@
       {
         "type": "cy:command",
         "severity": "error",
-        "message": "assert\texpected **1** to equal **2**"
+        "message": "assert\texpected **1** to equal **2**\nActual: \t1\nExpected: \t2"
       }
     ],
     "Calls function in another file that creates a sub-suite. -> sub-suite in different file -> subsuite test 2": [
       {
         "type": "cy:command",
         "severity": "error",
-        "message": "assert\texpected **1** to equal **2**"
+        "message": "assert\texpected **1** to equal **2**\nActual: \t1\nExpected: \t2"
       }
     ]
   }

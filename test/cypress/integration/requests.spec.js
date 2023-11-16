@@ -17,14 +17,14 @@ describe('Requests.', () => {
   it('GET should give 500 response status', () => {
     cy.request({
       method: 'GET',
-      url: 'http://www.mocky.io/v2/5ec993353000007900a6ce1e',
+      url: 'https://run.mocky.io/v3/cf7c4ea3-5f3e-416c-ba17-7aa842b1e2d9',
     });
   });
 
   it('POST should give 400 response status', () => {
     cy.request({
       method: 'POST',
-      url: 'http://www.mocky.io/v2/5ec993803000009700a6ce1f',
+      url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
     });
   });
 
@@ -38,7 +38,7 @@ describe('Requests.', () => {
   it('cypress logging is disabled in the request', () => {
     cy.request({
       method: 'POST',
-      url: 'http://www.mocky.io/v2/5ec993803000009700a6ce1f',
+      url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
       log: false,
     });
   });

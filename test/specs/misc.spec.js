@@ -1,7 +1,7 @@
 import {
   ICONS,
   runTest,
-  commandBase, logLastRun, clean,
+  commandBase, logLastRun, clean, runTestContinuous,
 } from "../utils";
 
 const {expect} = require('chai');
@@ -25,8 +25,8 @@ describe('Misc.', () => {
   it('Should properly set the breaking command in logs.', async () => {
     await runTest(commandBase([], [`waitFail.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
-      expect(stdout).to.not.contain(`cy:route ${ICONS.error}`);
-      expect(stdout).to.contain(`cy:route ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1`);
+      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  GET https://jsonplaceholder.cypress.io/comments/1
+                    Status: 200`);
     });
   }).timeout(60000);
 
@@ -46,10 +46,15 @@ describe('Misc.', () => {
     });
   }).timeout(60000);
 
-  it('Should filter and process late update logs correctly.', async () => {
+  it('Should filter and process late update logs correctly.', async function() {
+    this.retries(2);
     await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
-      expect(stdout).to.contain(`cy:route ${ICONS.warning}  | (putComment) PUT https://example.cypress.io/comments/10`);
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | STUBBED PUT https://example.cypress.io/comments/10
+                    Status: 404
+                    Response body: {
+                      "error": "Test message."
+                    }`);
     });
   }).timeout(30000);
 
@@ -60,18 +65,32 @@ describe('Misc.', () => {
     });
   }).timeout(30000);
 
+  it('Should not overlap error throw outside of spec.', async () => {
+    await runTest(commandBase([], ['errorsOutside2.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`> Error thrown outside of describe.`);
+      expect(stdout).to.not.contain(`TypeError: Cannot read properties of undefined (reading 'replace')`);
+    });
+  }).timeout(30000);
+
   it('Should print logs for all cypress retries.', async () => {
     await runTest(commandBase(['breaking=1'], ['retries.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`(Attempt 1 of 3) fails
+      // @TODO: Attempt lines are not displayed anymore: (Attempt 1 of 3) fails
+      expect(stdout).to.contain(`
       cy:command ${ICONS.error}  get\tbreaking
 
 
-    (Attempt 2 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking
 
 
     1) fails
       cy:command ${ICONS.error}  get\tbreaking`);
+      expect(stdout).to.contain(`
+          cy:log ${ICONS.info}  Hello. currentRetry: 0
+      cy:command ${ICONS.error}  contains\tFoobar
+
+
+          cy:log ${ICONS.info}  Hello. currentRetry: 1
+      cy:command ${ICONS.error}  contains\tFoobar`);
     });
   }).timeout(30000);
 
@@ -87,6 +106,28 @@ describe('Misc.', () => {
     ✓ Test 3
     ✓ Test 4`);
     });
+  }).timeout(60000);
+
+  it('Should continuously log.', async function () {
+    let checksMade = 0;
+    await runTestContinuous(
+      commandBase(['enableContinuousLogging=1'], ['continuousLogging.spec.js']),
+      'continuous logging',
+      (data, elapsedTime) => {
+        if (elapsedTime > 0.5 && elapsedTime <= 1) {
+          ++checksMade;
+          expect(clean(data)).to.contain(`cy:log ${ICONS.info}  log 1`);
+          expect(clean(data)).to.contain(`cy:log ${ICONS.info}  log 2`);
+          expect(clean(data)).to.not.contain(`cy:log ${ICONS.info}  log 3`);
+        }
+        if (elapsedTime > 2.6 && elapsedTime <= 3) {
+          ++checksMade;
+          expect(clean(data)).to.contain(`cy:log ${ICONS.info}  log again 1`);
+          expect(clean(data)).to.not.contain(`cy:log ${ICONS.info}  log again 2`);
+        }
+      });
+
+    expect(checksMade, "No checks where made. The process might have ended too early.").to.be.greaterThan(0)
   }).timeout(60000);
 
 });

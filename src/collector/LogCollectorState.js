@@ -4,6 +4,7 @@ module.exports = class LogCollectorState {
   constructor(config) {
     this.config = config;
 
+    this.listeners = {};
     this.currentTest = null;
     this.logStacks = [];
     this.xhrIdsOfLoggedResponses = [];
@@ -65,6 +66,7 @@ module.exports = class LogCollectorState {
     }
 
     currentStack.push(entry);
+    this.emit('log');
   }
 
   updateLog(log, severity, id) {
@@ -74,6 +76,7 @@ module.exports = class LogCollectorState {
         entry[2] = severity;
       }
     });
+    this.emit('log');
   }
 
   updateLogStatusForChainId(chainId, state = CONSTANTS.SEVERITY.ERROR) {
@@ -161,5 +164,14 @@ module.exports = class LogCollectorState {
       this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
       --previousIndex;
     }
+  }
+
+  emit(event) {
+    (this.listeners[event] || []).forEach(callback => callback());
+  }
+
+  on(event, callback) {
+    this.listeners[event] = this.listeners[event] || [];
+    this.listeners[event].push(callback);
   }
 }

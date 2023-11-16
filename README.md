@@ -1,13 +1,14 @@
 # Cypress terminal report [![Build Status](https://circleci.com/gh/archfz/cypress-terminal-report/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/archfz/cypress-terminal-report) [![Downloads](https://badgen.net/npm/dw/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report) [![Version](https://badgen.net/npm/v/cypress-terminal-report)](https://www.npmjs.com/package/cypress-terminal-report)
 
-> ! 3.x.x is out. Please read the [release notes](#300) for upgrade path from 2.x.x.
+> This documentation is for cypress >= 12.0.0. For older versions see [4.x.x](https://github.com/archfz/cypress-terminal-report/tree/4.x.x) or [3.x.x branch](https://github.com/archfz/cypress-terminal-report/tree/3.x.x).
 
 <div align="center">
 
 [Limitations](#limitations-and-notes)
 • [Install](#install)
 • [Options](#options)
-• [Logging after/before all](#logging-after-all-and-before-all-hooks)
+• [Integrations](#integrations)
+• [After/before all](#logging-after-all-and-before-all-hooks)
 • [Logging to files](#logging-to-files)
 • [Development](#development)
 • [Release Notes](#release-notes)
@@ -38,13 +39,12 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of 
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
-- Using cypress-fail-fast and logging to files does not work out of the box. To enable support use 
-the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
 
 ## Install
 
 ### Requirements
 
+- `>=4.0.0` requires cypress `>=10.0.0`
 - `>=3.0.0` requires cypress `>=4.10.0`
 - `<3.0.0` requires cypress `>=3.8.0`
 
@@ -52,13 +52,18 @@ the [`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
     ```bash
     npm i --save-dev cypress-terminal-report
     ```
-2. Register the output plugin in `cypress/plugins/index.js`
+2. If using typescript and es6 imports ensure `esModuleInterop` is enabled.
+3. Register the output plugin in `cypress.config.{js|ts}`
     ```js
-    module.exports = (on) => {
-       require('cypress-terminal-report/src/installLogsPrinter')(on);
-    };
+    module.exports = defineConfig({
+      e2e: {
+        setupNodeEvents(on, config) {
+          require('cypress-terminal-report/src/installLogsPrinter')(on);
+        }
+      }
+    });
     ```
-3. Register the log collector support in `cypress/support/index.js`
+4. Register the log collector support in `cypress/support/e2e.{js|ts}`
     ```js
     require('cypress-terminal-report/src/installLogsCollector')();
     ```
@@ -78,7 +83,7 @@ integer; default: 800; Max length of cy.log and console.warn/console.error.
 integer; default: 800; Max length of cy commands.
 
 #### `options.routeTrimLength`
-integer; default: 5000; Max length of cy.route, cy.request or XHR data.
+integer; default: 5000; Max length cy.request and XHR data.
 
 #### `options.compactLogs` 
 integer?; default: null; If it is set to a number greater or equal to 0, this amount of logs 
@@ -140,7 +145,7 @@ hook. This option can only be used with cypress 6.2.0 onwards, and with the addi
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
 #### `options.collectTypes` 
-array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:intercept', 'cy:command']
+array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
 What types of logs to collect and print. By default all types are enabled. The 'cy:command' is the general type that
 contain all types of commands that are not specially treated.
 
@@ -150,7 +155,7 @@ Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.processLog`
-null | ([type, message, severity]) => string; default: undefined;
+null | ([type, message, severity]) => [type, message, severity]; default: undefined;
 Callback to process logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
@@ -170,6 +175,15 @@ boolean; default false; Whether to print request data for XHR requests besides r
 boolean; default false; Enables an extended collector which will also collect command logs from
 before all and after all hooks.
 
+#### `options.enableContinuousLogging`
+boolean; default false; Enables logging logs to terminal continuously / immediately as they are registered.
+This feature is unstable and has an impact on pipeline performance. This option has no effect for extended 
+collector, only works for the simple collector. Use only for debugging purposes in case the pipelines / 
+tests are timing out. 
+
+> NOTE: In case of this option enabled, logs will come before the actual title of the test. Also the 
+> `printLogsToConsole` option will be ignored. Logging to files might also get impacted.
+
 #### _Example for options for the support install_
 
 ```js
@@ -185,6 +199,27 @@ before all and after all hooks.
   // ...
 ```
 
+## Integrations
+
+### `cypress-fail-fast`
+
+Logging to files does not work out of the box. To enable support use the 
+[`logToFilesOnAfterRun`](#optionslogtofilesonafterrun) option.
+
+### `cypress-mochawesome-reporter`
+
+The following example demonstrates adding logs to context for all tests (snippet from `e2e.js`):
+
+```js
+import 'cypress-mochawesome-reporter/register';
+
+afterEach(() => {
+    cy.wait(50, {log: false}).then(() => cy.addTestContext(Cypress.TerminalReport.getLogs('txt')))
+});
+```
+
+For typescript support add to your tsconfig **types** `cypress-terminal-report`.
+
 ## Logging after all and before all hooks
 
 Commands from before all and after all hooks are not logged by default. A new experimental feature introduces
@@ -198,6 +233,14 @@ Once the feature enabled, logs from these hooks will only appear in console if:
 - hook passes and [`printLogsToConsole`](#optionsprintlogstoconsole) ==`onFail` 
   and [`includeSuccessfulHookLogs`](#optionsprintlogstoconsole) == `true`
 
+Global `after all` hooks need to be registered before the registration of the `support install`, otherwise
+they will not be added to file outputs, if such is configured. Example `e2e.js`:
+
+```js
+after(() => cy.log('this log will appear in the output files'));
+require('cypress-terminal-report/src/installLogsCollector')(config);
+after(() => cy.log('this log will NOT appear in the files'));
+```
 
 ## Logging to files
 
@@ -205,7 +248,7 @@ To enable logging to file you must add the following configuration options to th
 plugin install.
 
 ```js
-module.exports = (on, config) => {
+setupNodeEvents(on, config) {
   // ...
   const options = {
     outputRoot: config.projectRoot + '/logs/',
@@ -217,7 +260,7 @@ module.exports = (on, config) => {
 
   require('cypress-terminal-report/src/installLogsPrinter')(on, options);
   // ...
-};
+}
 ```
 
 The `outputTarget` needs to be an object where the key is the relative path of the
@@ -234,19 +277,16 @@ is the file extension for the log files. The generated output will have the
 same structure as in the cypress specs root directory.
 
 ```js
-const path = require('path');
-
-module.exports = (on, config) => {
+setupNodeEvents(on, config) {
   const options = {
     outputRoot: config.projectRoot + '/logs/',
-    // Used to trim the base path of specs and reduce nesting in the
-    // generated output directory.
-    specRoot: path.relative(config.fileServerFolder, config.integrationFolder),
+    // Used to trim the base path of specs and reduce nesting in the generated output directory.
+    specRoot: 'cypress/e2e',
     outputTarget: {
       'cypress-logs|json': 'json',
     }
   };
-};
+}
 ```
 
 ### Custom output log processor
@@ -320,9 +360,127 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.9
+
+- Remove incorrectly added `debugger` statement. [issue](https://github.com/archfz/cypress-terminal-report/issues/221)
+
+#### 5.3.8
+
+- Fix browser logs not logging with component tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/220)
+- Vulnerability updates in semver. [issue](https://github.com/archfz/cypress-terminal-report/issues/218)
+
+#### 5.3.7
+
+- Fix retries not logged when test is in root of spec file. [issue](https://github.com/archfz/cypress-terminal-report/issues/214)
+
+#### 5.3.6
+
+- Experimental change of JSON stringification of logs for memory leak fix. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
+
+#### 5.3.5
+
+- Experimental change of `safe-json-stringify` to `stringify-object` for possible memory leak. [issue](https://github.com/archfz/cypress-terminal-report/issues/203)
+
+#### 5.3.4
+
+- Fix compatibility with cypress >=13. [issue](https://github.com/archfz/cypress-terminal-report/issues/209) [merge-request](https://github.com/archfz/cypress-terminal-report/pull/210) by [matmannion](https://github.com/matmannion)
+- Update cypress to 13.1.0 in tests to confirm support.
+
+#### 5.3.3
+
+- Add support for latest format of `Cypress.backend('run:privileged')` for out of queue task running: 
+  Fixes command logging in certain cases for cypress >= 12.17.0.
+- Update cypress to 12.17.4 in tests to confirm support.
+
+#### 5.3.2
+
+- Fix incorrect esm import. [issue](https://github.com/archfz/cypress-terminal-report/issues/197)
+
+#### 5.3.1
+
+- Fix incorrect esm export. [issue](https://github.com/archfz/cypress-terminal-report/issues/197)
+
+#### 5.3.0
+
+- Fix circular reference causing error with expect logging. [issue](https://github.com/archfz/cypress-terminal-report/issues/191)
+- Add additional protection against logs containing objects that are non JSON serializable and also don't have `.toString()`. [issue](https://github.com/archfz/cypress-terminal-report/issues/192)
+- Add support for the new format of `Cypress.backend('run:privileged')` for out of queue task running.
+- Update cypress to 12.16.0 in tests to confirm support.
+
+#### 5.2.0
+
+- Fix `extedend control` global after hooks not being logged to files. [issue](https://github.com/archfz/cypress-terminal-report/issues/185)
+- Add extra logging for `assert` of the expected and the actual object. [issue](https://github.com/archfz/cypress-terminal-report/issues/184)
+
+#### 5.1.1
+
+- Fix `Cypress.TerminalReport.getLogs()` types.
+
+#### 5.1.0
+
+- Add global support side `Cypress.TerminalReport.getLogs()`.
+- Add example on how to integrate with [`mochawesome`](#cypress-mochawesome-reporter). [issue](https://github.com/archfz/cypress-terminal-report/issues/180)
+- Update cypress to 12.9.0 in tests to confirm support.
+
+#### 5.0.2
+
+- Fix existing log message not updating later. [issue](https://github.com/archfz/cypress-terminal-report/issues/173)
+
+#### 5.0.1
+
+- Fix `cons:debug` missing from allowed collect option. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/171) by [josh68](https://github.com/Josh68)
+
+#### 5.0.0
+
+- Updated support for cypress 12.x.x.
+- ! Breaking change: `cy.route` removed from supported `options.collectTypes`, as cypress 12.x.x removed deprecated `cy.route`.
+  - Duration display is not supported anymore for XHR logs.
+  - Status message display is not supported anymore for XHR logs (status code is still displayed).
+  - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
+
+#### 4.1.3
+
+- Typescript typing fix to support both esm and commonjs require in `installLogsCollector`. by [drebrez](https://github.com/drebrez)
+
+#### 4.1.2
+
+- Fix incorrectly required option props.
+- Fix missing option `logToFilesOnAfterRun` in types. [issue](https://github.com/archfz/cypress-terminal-report/issues/161)
+- Fix compatibility with `cypress-grep`. see [issue](https://github.com/archfz/cypress-terminal-report/issues/160)
+
+#### 4.1.1
+
+- Fix issue with `http` module causing `vite` issues. [issue](https://github.com/archfz/cypress-terminal-report/issues/154) by [wopian](https://github.com/wopian) 
+- Dependency updates. by [wopian](https://github.com/wopian)
+
+#### 4.1.0
+
+- Add experimental [`enableContinuousLogging`](#optionsenablecontinuouslogging) option for timeout debugging purposes. [issue](https://github.com/archfz/cypress-terminal-report/issues/150)
+
+#### 4.0.3
+
+- Fix issue with errors throw outside of tests overlapping real error. [issue](https://github.com/archfz/cypress-terminal-report/issues/152)
+- Add additional potential source for spec file path determination.
+- Update cypress in tests to 10.3.0 to confirm support.
+
+#### 4.0.2
+
+- Typescript typing fix to support both esm and commonjs require. [issue](https://github.com/archfz/cypress-terminal-report/issues/151)
+
+#### 4.0.1
+
+- Typescript typing fix and readme update. [issue](https://github.com/archfz/cypress-terminal-report/issues/148)
+
+#### 4.0.0
+
+- Add support for cypress ^10. [Follow cypress upgrade](https://deploy-preview-4186--cypress-docs.netlify.app/guides/references/migration-guide#Migrating-to-Cypress-version-10-0).
+- ! Breaking change: `specRoot` option cannot be calculated anymore using config, as 
+  `integrationFolder` option was removed in cypress. [This now has to be set manually](#log-specs-in-separate-files). 
+
 #### 3.5.2
 
 - Fix issue where top-level `.spec` files that call test functions in other files results in multiple output files being created.  by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Security dependency updates.
 
 #### 3.5.1
 

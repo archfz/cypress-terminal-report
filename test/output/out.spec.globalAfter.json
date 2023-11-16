@@ -1,0 +1,66 @@
+{
+  "cypress/integration/allHooks.spec.js": {
+    "All hooks. -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from before"
+      }
+    ],
+    "All hooks. -> passed it": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from beforeEach"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from it"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from afterEach"
+      }
+    ],
+    "All hooks. -> passed it 2": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from beforeEach"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from it 2"
+      },
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from afterEach"
+      }
+    ],
+    "All hooks. -> [[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from after"
+      }
+    ],
+    "All hooks. -> [[ after all #2 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "from after 2"
+      }
+    ],
+    "[[ after all #1 ]]": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "global after"
+      }
+    ]
+  }
+}

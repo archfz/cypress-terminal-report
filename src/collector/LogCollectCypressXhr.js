@@ -12,9 +12,12 @@ module.exports = class LogCollectCypressXhr {
   }
 
   register() {
-    const formatXhr = (options) => options.message +
-      (options.consoleProps.Stubbed === 'Yes' ? 'STUBBED ' : '') +
-      options.consoleProps.Method + ' ' + options.consoleProps.URL;
+    // In Cypress 13+ this is under an extra props key
+    const consoleProps = (options) => options.consoleProps && options.consoleProps.props ? options.consoleProps.props : options.consoleProps
+
+    const formatXhr = (options) =>
+      (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
+      consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
     const formatDuration = (durationInMs) =>
       durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
@@ -22,10 +25,8 @@ module.exports = class LogCollectCypressXhr {
     Cypress.on('log:added', (options) => {
       if (
         options.instrument === 'command' &&
-        options.consoleProps &&
-        options.name === 'xhr' &&
-        // Prevent duplicated xhr logs in case of cy.intercept.
-        options.displayName !== 'req'
+        consoleProps(options) &&
+        options.displayName === 'xhr'
       ) {
         const log = formatXhr(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
@@ -37,39 +38,52 @@ module.exports = class LogCollectCypressXhr {
       if (
         options.instrument === 'command' &&
         ['request', 'xhr'].includes(options.name) &&
-        options.consoleProps &&
+        consoleProps(options) &&
         options.state !== 'pending'
       ) {
-        let statusCode, statusText;
+        let statusCode;
 
-        if (!options.consoleProps.XHR) {
-          [, statusCode, statusText] = /^(\d{3})\s\((.+)\)$/.exec(options.consoleProps.Status) || [];
-        } else {
-          statusCode = options.consoleProps.XHR.status;
-          statusText = options.consoleProps.XHR.statusText;
+        if (consoleProps(options)['Response Status Code']) {
+          statusCode = consoleProps(options)['Response Status Code'];
         }
 
         const isSuccess = statusCode && (statusCode + '')[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
         let log = formatXhr(options);
 
-        if (options.consoleProps.Duration) {
-          log += ` (${formatDuration(options.consoleProps.Duration)})`;
+        // @TODO: Not supported anymore :(
+        if (consoleProps(options).Duration) {
+          log += ` (${formatDuration(consoleProps(options).Duration)})`;
         }
-        if (statusCode && statusText) {
-          log += `\nStatus: ${statusCode} - ${statusText}`;
+        if (statusCode) {
+          log += `\nStatus: ${statusCode}`;
         }
         if (options.err && options.err.message.match(/abort/)) {
           log += ' - ABORTED';
         }
         if (
-          !isSuccess &&
-          options.consoleProps.XHR &&
-          options.consoleProps.XHR.response &&
-          options.consoleProps.XHR.response.size &&
-          !this.collectorState.hasXhrResponseBeenLogged(options.consoleProps.XHR.id)
+          this.config.collectRequestData && this.config.collectHeaderData &&
+          consoleProps(options)['Request Headers']
         ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(options.consoleProps.XHR.response)}`;
+          log += `\nRequest headers: ${await this.format.formatXhrBody(consoleProps(options)['Request Headers'])}`;
+        }
+        if (
+          this.config.collectRequestData &&
+          consoleProps(options)['Request Body']
+        ) {
+          log += `\nRequest body: ${await this.format.formatXhrBody(consoleProps(options)['Request Body'])}`;
+        }
+        if (
+          this.config.collectHeaderData &&
+          consoleProps(options)['Response Headers']
+        ) {
+          log += `\nResponse headers: ${await this.format.formatXhrBody(consoleProps(options)['Response Headers'])}`;
+        }
+        if (
+          !isSuccess &&
+          consoleProps(options)['Response Body']
+        ) {
+          log += `\nResponse body: ${await this.format.formatXhrBody(consoleProps(options)['Response Body'])}`;
         }
 
         this.collectorState.updateLog(log, severity, options.id);

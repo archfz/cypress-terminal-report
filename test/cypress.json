@@ -1,5 +1,0 @@
-{
-  "baseUrl": "https://example.cypress.io",
-  "video": false,
-  "screenshotOnRunFailure": false
-}

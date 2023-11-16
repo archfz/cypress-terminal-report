@@ -1,10 +1,16 @@
 import './commands';
+import registerCypressGrep from "@cypress/grep";
+import 'cypress-mochawesome-reporter/register';
+import utils from "../../../src/utils";
 
 const env = Cypress.env();
 let config = {};
 
 if (env.failFast == '1') {
   require("cypress-fail-fast");
+}
+if (env.cypressGrep == '1') {
+  registerCypressGrep();
 }
 
 if (env.ctrDebug == '1') {
@@ -33,16 +39,13 @@ if (env.setProcessLogs == '1') {
 }
 if (env.collectTestLogsSupport == '1') {
   config.collectTestLogs = ({mochaRunnable, testTitle, testState, testLevel}, logs) =>
-    Cypress.backend('task', {
-      task: 'ctrLogMessages',
-      arg: {
-        spec: mochaRunnable.invocationDetails.relativeFile,
-        test: testTitle,
-        messages: [['cy:log', `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`, '']],
-        state: testState,
-        level: testLevel,
-      }
-    })
+    utils.nonQueueTask('ctrLogMessages', {
+      spec: mochaRunnable.invocationDetails.relativeFile,
+      test: testTitle,
+      messages: [['cy:log', `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`, '']],
+      state: testState,
+      level: testLevel,
+    });
 }
 if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};
@@ -77,11 +80,30 @@ if (env.supportBadConfig == '1') {
 }
 if (env.supportGoodConfig == '1') {
   config = {
-    collectTypes: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:route', 'cy:intercept', 'cy:command']
+    collectTypes: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
   };
 }
 if (env.enableExtendedCollector == '1') {
   config.enableExtendedCollector = true;
+}
+if (env.enableContinuousLogging == '1') {
+  config.enableContinuousLogging = true;
+}
+
+if (env.mochawesome == '1') {
+  afterEach(() => {
+    cy.wait(50, {log: false}).then(() => {
+      const logs = Cypress.TerminalReport.getLogs('txt');
+      cy.addTestContext(logs);
+      cy.log('Global API logs: ' + logs);
+    })
+  });
+}
+
+if (env.globalAfter == '1') {
+  after(function () {
+    cy.log('global after');
+  });
 }
 
 require('../../../src/installLogsCollector')(config);
@@ -96,8 +118,6 @@ function enableFetchWorkaround() {
       polyfill = response.body;
     }, {log: false});
   });
-
-  console.log(Cypress);
 
   Cypress.on('window:before:load', win => {
     delete win.fetch;

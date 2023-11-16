@@ -24,6 +24,16 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "task\tfailFastLog, Failed tests: 1/1"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "task\tfailFastLog, Enabling skip mode"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "task\tfailFastShouldSkip, true"
       }
     ]
