@@ -360,6 +360,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix type of function return on `outputTarget`. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/223) by [bvandercar-vt](https://github.com/bvandercar-vt)
+
 #### 5.3.9
 
 - Remove incorrectly added `debugger` statement. [issue](https://github.com/archfz/cypress-terminal-report/issues/221)
