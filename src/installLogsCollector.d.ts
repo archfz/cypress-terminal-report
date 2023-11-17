@@ -1,30 +1,36 @@
 declare function installLogsCollector(config?: installLogsCollector.SupportOptions): void;
 declare namespace installLogsCollector {
-  type Severity = '' | 'error' | 'warning';
+  enum Severity {
+    NONE = '',
+    ERROR = 'error',
+    WARNING = 'warning'
+  }
 
-  type LogType = 'cons:log' |
-    'cons:info' |
-    'cons:warn' |
-    'cons:error' |
-    'cons:debug' |
-    'cy:log' |
-    'cy:xhr' |
-    'cy:fetch' |
-    'cy:request' |
-    'cy:intercept' |
-    'cy:command' |
-    'ctr:info';
+  enum LogType {
+    CONSOLE_LOG = 'cons:log',
+    CONSOLE_INFO = 'cons:info',
+    CONSOLE_WARN = 'cons:warn',
+    CONSOLE_ERROR = 'cons:error',
+    CONSOLE_DEBUG = 'cons:debug',
+    CY_LOG = 'cy:log',
+    CY_XHR = 'cy:xhr',
+    CY_FETCH = 'cy:fetch',
+    CY_REQUEST = 'cy:request' ,
+    CY_INTERCEPT = 'cy:intercept',
+    CY_COMMAND = 'cy:command',
+    CTR_INFO = 'ctr:info'
+  }
 
-  type Log = [/* type: */ LogType, /* message: */ string, /* severity: */ Severity];
+  type Log = [type: LogType, message: string, severity: Severity];
 
   interface SupportOptions {
     /**
      * What types of logs to collect and print.
      * By default all types are enabled.
      * The 'cy:command' is the general type that contain all types of commands that are not specially treated.
-     * @default ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:fetch', 'cy:request', 'cy:route', 'cy:command']
+     * @default ['cons:log', 'cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:fetch', 'cy:request', 'cy:route', 'cy:command']
      */
-    collectTypes?: readonly string[];
+    collectTypes?: readonly LogType[];
 
     /**
      * Callback to filter logs manually. The type is from the same list as for the collectTypes option.

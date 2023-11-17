@@ -2,21 +2,26 @@
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: installLogsPrinter.PluginOptions): void;
 declare namespace installLogsPrinter {
+  enum Severity {
+    NONE = '',
+    ERROR = 'error',
+    WARNING = 'warning'
+  }
 
-  type Severity = '' | 'error' | 'warning';
-
-  type LogType = 'cons:log' |
-    'cons:info' |
-    'cons:warn' |
-    'cons:error' |
-    'cons:debug' |
-    'cy:log' |
-    'cy:xhr' |
-    'cy:fetch' |
-    'cy:request' |
-    'cy:intercept' |
-    'cy:command' |
-    'ctr:info';
+  enum LogType {
+    CONSOLE_LOG = 'cons:log',
+    CONSOLE_INFO = 'cons:info',
+    CONSOLE_WARN = 'cons:warn',
+    CONSOLE_ERROR = 'cons:error',
+    CONSOLE_DEBUG = 'cons:debug',
+    CY_LOG = 'cy:log',
+    CY_XHR = 'cy:xhr',
+    CY_FETCH = 'cy:fetch',
+    CY_REQUEST = 'cy:request' ,
+    CY_INTERCEPT = 'cy:intercept',
+    CY_COMMAND = 'cy:command',
+    CTR_INFO = 'ctr:info'
+  }
 
   type AllMessages = {
     [specPath: string]: {
@@ -114,7 +119,7 @@ declare namespace installLogsPrinter {
      * Callback to collect each test case's logs after its run.
      * @default undefined
      */
-    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]) => void;
+    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [type: LogType, message: string, severity: Severity][]) => void;
   }
 }
 export = installLogsPrinter;
