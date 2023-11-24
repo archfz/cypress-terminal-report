@@ -1,26 +1,16 @@
 /// <reference types="cypress" />
 
+import { Severity as Severity_, LogType as LogType_, Log as Log_ } from "./installLogsCollector";
+
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: installLogsPrinter.PluginOptions): void;
 declare namespace installLogsPrinter {
-
-  type Severity = '' | 'error' | 'warning';
-
-  type LogType = 'cons:log' |
-    'cons:info' |
-    'cons:warn' |
-    'cons:error' |
-    'cons:debug' |
-    'cy:log' |
-    'cy:xhr' |
-    'cy:fetch' |
-    'cy:request' |
-    'cy:intercept' |
-    'cy:command' |
-    'ctr:info';
+  export type Severity = Severity_
+  export type LogType = LogType_
+  export type Log = Log_
 
   type AllMessages = {
     [specPath: string]: {
-      [testTitle: string]: [type: LogType, message: string, severity: Severity][]
+      [testTitle: string]: Log[]
     }
   };
 
@@ -114,7 +104,7 @@ declare namespace installLogsPrinter {
      * Callback to collect each test case's logs after its run.
      * @default undefined
      */
-    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]) => void;
+    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: Log[]) => void;
   }
 }
 export = installLogsPrinter;

@@ -15,16 +15,16 @@ declare namespace installLogsCollector {
     'cy:command' |
     'ctr:info';
 
-  type Log = [/* type: */ LogType, /* message: */ string, /* severity: */ Severity];
+  type Log = [type: LogType, message: string, severity: Severity];
 
   interface SupportOptions {
     /**
      * What types of logs to collect and print.
      * By default all types are enabled.
      * The 'cy:command' is the general type that contain all types of commands that are not specially treated.
-     * @default ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:fetch', 'cy:request', 'cy:route', 'cy:command']
+     * @default ['cons:log', 'cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:fetch', 'cy:request', 'cy:intercept', 'cy:command']
      */
-    collectTypes?: readonly string[];
+    collectTypes?: readonly LogType[];
 
     /**
      * Callback to filter logs manually. The type is from the same list as for the collectTypes option.
