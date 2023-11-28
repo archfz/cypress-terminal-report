@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
+import { Log } from "./installLogsCollector";
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: installLogsPrinter.PluginOptions): void;
 declare namespace installLogsPrinter {
-
   type Severity = '' | 'error' | 'warning';
 
   type LogType = 'cons:log' |
@@ -20,7 +20,7 @@ declare namespace installLogsPrinter {
 
   type AllMessages = {
     [specPath: string]: {
-      [testTitle: string]: [type: LogType, message: string, severity: Severity][]
+      [testTitle: string]: Log[]
     }
   };
 
@@ -114,7 +114,7 @@ declare namespace installLogsPrinter {
      * Callback to collect each test case's logs after its run.
      * @default undefined
      */
-    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: [/* type: */ LogType, /* message: */ string, /* severity: */ Severity][]) => void;
+    collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: Log[]) => void;
   }
 }
 export = installLogsPrinter;
