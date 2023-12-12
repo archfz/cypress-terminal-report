@@ -26,31 +26,34 @@ declare namespace installLogsPrinter {
 
   interface PluginOptions {
     /**
-     * Max length of cy.log and console.warn/console.error.
+     * Max length of `cy.log` and `console.warn`/`console.error`.
      * @default 800
      */
     defaultTrimLength?: number;
 
     /**
-     * Max length of cy commands.
+     * Max length of `cy` commands.
      * @default 800
      */
     commandTrimLength?: number;
 
     /**
-     * Max length of cy.route request data.
+     * Max length of `cy.route` request data.
      * @default 5000
      */
     routeTrimLength?: number;
 
     /**
-     * If it is set to a number greater or equal to 0, this amount of logs will be printed only around failing commands. Use this to have shorter output especially for when there are a lot of commands in tests. When used with options.printLogs=always for tests that don't have any severity=error logs nothing will be printed.
+     * If set to a number greater or equal to 0, this amount of logs will be printed only around failing commands. 
+     * Use this to have shorter output especially for when there are a lot of commands in tests.
+     * When used with `options.printLogs=always`, for tests that don't have any `severity=error` logs, nothing will be printed.
      * @default null
      */
     compactLogs?: number | null;
 
     /**
-     * If it is set to a number greater or equal to 0, will override compactLogs for the file log output specifically. Use this for compacting of the terminal and the file output logs to different levels.
+     * If it is set to a number greater or equal to 0, will override `compactLogs` for the file log output specifically.
+     * Use this for compacting of the terminal and the file output logs to different levels.
      * @default null
      */
     outputCompactLogs?: false | number | null;
@@ -105,7 +108,7 @@ declare namespace installLogsPrinter {
     includeSuccessfulHookLogs?: boolean;
 
     /**
-     * When set to true it enables additional log write pass to files
+     * When set to `true`, enables additional log write pass to files.
      * @default false
      */
     logToFilesOnAfterRun?: boolean;
