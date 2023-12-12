@@ -25,7 +25,7 @@ declare class BaseOutputProcessor {
   /**
    * Writes a chunk of data in the output file.
    */
-  writeSpecChunk(spec: string, chunk: string, pos?: number): void;
+  writeSpecChunk(spec: string, chunk: string, pos?: number | null): void;
 }
 
 export = BaseOutputProcessor;
