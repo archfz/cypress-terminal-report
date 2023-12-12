@@ -25,7 +25,7 @@ declare namespace installLogsPrinter {
     }
   };
 
-  type CustomOutputProcessorCallback = ((this: CustomOutputProcessor, allMessages: AllMessages) => void);
+  type CustomOutputProcessorCallback = (this: CustomOutputProcessor, allMessages: AllMessages) => void;
 
   interface PluginOptions {
     /**
