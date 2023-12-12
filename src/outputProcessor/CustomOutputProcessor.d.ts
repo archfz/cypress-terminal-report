@@ -1,29 +1,25 @@
-import { AllMessages } from "../installLogsPrinter";
-import BaseOutputProcessor  from "./BaseOutputProcessor";
+import type { CustomOutputProcessorCallback } from "../installLogsPrinter";
+import type BaseOutputProcessor  from "./BaseOutputProcessor";
 
 /**
- * Custom output processor. [More details](https://github.com/archfz/cypress-terminal-report#custom-output-log-processor).
+ * Gives the functions and variables available for use when specifying a custom output processor. [More details](https://github.com/archfz/cypress-terminal-report#custom-output-log-processor).
+ * 
+ * i.e. Allows use of `this.writeSpecChunk` without ts warning/error.
  * 
  * @example
  * ```
- * import CustomOutputProcessor from 'cypress-terminal-report/src/outputProcessor/CustomOutputProcessor'
+ * import type { AllMessages } from 'cypress-terminal-report/src/installLogsPrinter'
+ * import type CustomOutputProcessor from 'cypress-terminal-report/src/outputProcessor/CustomOutputProcessor'
+ * 
+ * ...
  *
- * const processor = new CustomOutputProcessor('output.html', 
- *     function outputProcessor(this: BaseOutputProcessor, messages: AllMessages){ 
- *         <custom output processor function> 
- *     }
- * )
- * processor.initialize()
- * processor.write( <all messages> )
+ * outputTarget: {
+ *     'custom|cts': function outputProcessor(this: CustomOutputProcessor, allMessages: AllMessages){ <custom output processor function> }                
+ * }
  * ```
  */
 declare class CustomOutputProcessor extends BaseOutputProcessor {
-    constructor(file: string, processorCallback: ((allMessages: AllMessages) => void));
-
-    /**
-     * Calls `this.processorCallback`
-     */
-    write(allMessages: AllMessages): void;
+    constructor(file: string, processorCallback: CustomOutputProcessorCallback);
 }  
 
 export = CustomOutputProcessor;

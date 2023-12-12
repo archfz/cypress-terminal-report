@@ -1,4 +1,4 @@
-import BaseOutputProcessor from "./BaseOutputProcessor";
+import type BaseOutputProcessor from "./BaseOutputProcessor";
 
 declare class JsonOutputProcessor extends BaseOutputProcessor {}  
 

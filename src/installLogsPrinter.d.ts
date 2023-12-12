@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
-import { Log } from "./installLogsCollector";
+import type { Log } from "./installLogsCollector";
+import type CustomOutputProcessor from "./outputProcessor/CustomOutputProcessor";
 
 declare function installLogsPrinter(on: Cypress.PluginEvents, options?: installLogsPrinter.PluginOptions): void;
 declare namespace installLogsPrinter {
@@ -23,6 +24,8 @@ declare namespace installLogsPrinter {
       [testTitle: string]: Log[]
     }
   };
+
+  type CustomOutputProcessorCallback = ((this: CustomOutputProcessor, allMessages: AllMessages) => void);
 
   interface PluginOptions {
     /**
@@ -72,7 +75,7 @@ declare namespace installLogsPrinter {
       string,
       | 'json'
       | 'txt'
-      | ((allMessages: AllMessages) => void)
+      | CustomOutputProcessorCallback
       >;
 
     /**
