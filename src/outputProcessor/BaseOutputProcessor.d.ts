@@ -29,6 +29,3 @@ declare class BaseOutputProcessor {
 }
 
 export = BaseOutputProcessor;
-
-
-
