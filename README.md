@@ -306,11 +306,12 @@ Inside the function you will have access to the following API:
 
 - `this.size` - Current char size of the output file.
 - `this.atChunk` - The count of the chunk to be written.
-- `this.initialContent` - The initial content of the file. Defaults to ''. Set this
+- `this.initialContent` - The initial content of the file. Defaults to `''`. Set this
 before the first chunk write in order for it to work.
-- `this.chunkSeparator` - Chunk separator string. Defaults to ''. This string will 
+- `this.chunkSeparator` - Chunk separator string. Defaults to `''`. This string will 
 be written between each chunk. If you need a special separator between chunks use this 
 as it is internally handled to properly write and replace the chunks.
+- `this.initialize()` - Unlinks file to initialize. This is required for custom output processors provided as config to be able to define custom initial content.
 - `this.writeSpecChunk(specPath, dataString, positionInFile?)` - Writes a chunk of 
 data in the output file.
 

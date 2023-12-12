@@ -5,7 +5,7 @@
  * @example
  * ```
  * import { type AllMessages } from 'cypress-terminal-report/src/installLogsPrinter'
- * import { type BaseOutputProcessor } from 'cypress-terminal-report/src/outputProcessor/BaseOutputProcessor'
+ * import type BaseOutputProcessor from 'cypress-terminal-report/src/outputProcessor/BaseOutputProcessor'
  * 
  * ...
  *
@@ -14,32 +14,38 @@
  * }
  * ```
  */
-export class BaseOutputProcessor {
+ declare class BaseOutputProcessor {
   constructor(file: string);
 
+  /**
+   * Current char size of the output file.
+   */
   size: number;
+  /**
+   * The count of the chunk to be written.
+   */
   atChunk: number;
+  /**
+   * The initial content of the file. Defaults to `''`. Set this before the first chunk write in order for it to work.
+   */
   initialContent: string;
+  /**
+   * Chunk separator string. Defaults to `''`. This string will be written between each chunk.
+   * If you need a special separator between chunks, use this as it is internally handled to properly write and replace the chunks.
+   */
   chunkSeparator: string;
 
   /**
-   * @returns `this.file`
-   */
-  getTarget(): string;
-  /**
-   * Unlink file on initialize to start clean.
-   * This is required for custom output processors provided as config to be able to define custom initial content.
+   * Unlinks file to initialize. This is required for custom output processors provided as config to be able to define custom initial content.
    */
   initialize(): void;
-  prepareForWrite(): void;
-  writeSpecChunk(spec: string, chunk: string, pos?: number): void;
-  replaceSpecChunk(spec: string, chunk: string): void;
-  appendSeparator(pos: number): void;
   /**
-   * @returns data buffer length
+   * Writes a chunk of data in the output file.
    */
-  writeAtPosition(data: string, pos: number): number;
+  writeSpecChunk(spec: string, chunk: string, pos?: number): void;
 }
+
+export = BaseOutputProcessor;
 
 
 
