@@ -22,7 +22,23 @@ export class BaseOutputProcessor {
   initialContent: string;
   chunkSeparator: string;
 
+  /**
+   * @returns `this.file`
+   */
+  getTarget(): string;
+  /**
+   * Unlink file on initialize to start clean.
+   * This is required for custom output processors provided as config to be able to define custom initial content.
+   */
+  initialize(): void;
+  prepareForWrite(): void;
   writeSpecChunk(spec: string, chunk: string, pos?: number): void;
+  replaceSpecChunk(spec: string, chunk: string): void;
+  appendSeparator(pos: number): void;
+  /**
+   * @returns data buffer length
+   */
+  writeAtPosition(data: string, pos: number): number;
 }
 
 
