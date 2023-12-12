@@ -23,6 +23,3 @@ declare class CustomOutputProcessor extends BaseOutputProcessor {
 }  
 
 export = CustomOutputProcessor;
-  
-  
-  
