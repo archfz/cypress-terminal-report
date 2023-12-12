@@ -1,5 +1,5 @@
 /**
- * Base output processor class that the main processors extend.
+ * Base output processor class that the actual output processors extend.
  */
 declare class BaseOutputProcessor {
   constructor(file: string);
