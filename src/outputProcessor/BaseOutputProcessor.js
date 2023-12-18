@@ -42,6 +42,7 @@ module.exports = class BaseOutputProcessor {
     fs.writeFileSync(this.file, this.initialContent);
   }
 
+  /** @type { import('./BaseOutputProcessor')['writeSpecChunk']} */
   writeSpecChunk(spec, chunk, pos = null) {
     const startTime = new Date().getTime();
 

@@ -1,3 +1,16 @@
+/**
+ * @typedef {import('./installLogsCollector').Log} Log 
+ * @typedef {import('./installLogsPrinter').PluginOptions} PluginOptions
+ * @typedef {{ messages: Log[], 
+ *             isHook: boolean, 
+ *             state: string, 
+ *             spec: string, 
+ *             test: string, 
+ *             level?: number,
+ *             consoleTitle?: string,
+ *             continuous?: boolean }} Data
+ */
+
 const chalk = require('chalk');
 const path = require('path');
 const tv4 = require('tv4');
@@ -46,6 +59,7 @@ let outputProcessors = [];
  * Needs to be added to plugins file.
  *
  * @see ./installLogsPrinter.d.ts
+ * @type {import('./installLogsPrinter')}
  */
 function installLogsPrinter(on, options = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
@@ -57,7 +71,7 @@ function installLogsPrinter(on, options = {}) {
   }
 
   on('task', {
-    [CONSTANTS.TASK_NAME]: function (data) {
+    [CONSTANTS.TASK_NAME]: function (/** @type {Data} */ data) {
       let messages = data.messages;
 
       const terminalMessages =
@@ -118,13 +132,13 @@ function installLogsPrinter(on, options = {}) {
   }
 }
 
-function enableLogToFilesOnAfterRun(on, options) {
+function enableLogToFilesOnAfterRun(on, /** @type {PluginOptions} */ options) {
   on('after:run', () => {
     logToFiles(options);
   });
 }
 
-function logToFiles(options) {
+function logToFiles(/** @type {PluginOptions} */ options) {
   outputProcessors.forEach((processor) => {
     if (Object.entries(writeToFileMessages).length !== 0){
       processor.write(writeToFileMessages);
@@ -148,8 +162,7 @@ function logOutputTarget(processor) {
   }
   console.log('cypress-terminal-report:', message);
 }
-
-function installOutputProcessors(on, options) {
+function installOutputProcessors(on, /** @type {PluginOptions} */ options) {
   if (!options.outputRoot) {
     throw new CtrError(`Missing outputRoot configuration.`);
   }
@@ -189,7 +202,11 @@ function installOutputProcessors(on, options) {
   outputProcessors.forEach((processor) => processor.initialize());
 }
 
-function compactLogs(logs, keepAroundCount) {
+function compactLogs(
+  /** @type {Log[]} */ 
+  logs, 
+  /** @type {number} */ 
+  keepAroundCount) {
   const failingIndexes = logs.filter((log) => log[2] === CONSTANTS.SEVERITY.ERROR)
     .map((log) => logs.indexOf(log));
 
@@ -232,7 +249,13 @@ function compactLogs(logs, keepAroundCount) {
   return compactedLogs;
 }
 
-function logToTerminal(messages, options, data) {
+function logToTerminal(
+  /** @type {Log[]} */
+  messages, 
+  /** @type {PluginOptions} */
+  options,
+  /** @type {Data} */
+  data) {
   const tabLevel = data.level || 0;
   const levelPadding = '  '.repeat(Math.max(0, tabLevel - 1));
   const padding = CONSTANTS.PADDING.LOG + levelPadding;

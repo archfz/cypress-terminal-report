@@ -30,7 +30,7 @@ module.exports = class NestedOutputProcessorDecorator {
     return processor;
   }
 
-  write(allMessages) {
+  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages) {
     Object.entries(allMessages).forEach(([spec, messages]) => {
       this.getProcessor(spec).write({[spec]: messages});
     });

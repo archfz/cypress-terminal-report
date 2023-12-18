@@ -25,6 +25,7 @@ const logsTxtFormatter = require("./outputProcessor/logsTxtFormatter");
  * Needs to be added to support file.
  *
  * @see ./installLogsCollector.d.ts
+ * @type {import('./installLogsCollector')} 
  */
 function installLogsCollector(config = {}) {
   validateConfig(config);
