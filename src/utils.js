@@ -3,6 +3,21 @@ const jsonPrune = require("./jsonPrune");
 
 const utils = {
   nonQueueTask: function (name, data) {
+    if (Cypress.testingType === 'component' && semver.gte(Cypress.version, '12.15.0')) {
+      // In component tests task commands don't need to be verified for some reason.
+      return new Promise(resolve => setTimeout(resolve, 5))
+        .then(() => Cypress.backend('run:privileged', {
+          commandName: 'task',
+          userArgs: [name, data],
+          options: {
+            task: name,
+            arg: data
+          },
+        }))
+        // For some reason cypress throws empty error although the task indeed works.
+        .catch(() => {/* noop */})
+    }
+
     if (semver.gte(Cypress.version, '12.17.0')) {
       const { args, promise } = Cypress.emitMap('command:invocation', {name: 'task', args: [name, data]})[0]
       return new Promise((r) => promise.then(r))

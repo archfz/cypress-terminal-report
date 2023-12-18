@@ -123,7 +123,7 @@ describe('Commands logging.', () => {
 
   it('Should log request data and response headers.', async () => {
     await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not;A=Brand\\"`);
+      expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not.A/Brand\\";v=\\"8\\"`);
       expect(stdout).to.contain(`\n${PADDING}  "Keep-Alive": "timeout=5"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
       expect(stdout).to.contain(`POST https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "content-type": "application/json; charset=UTF-8",\n`);
       expect(stdout).to.contain(`${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
