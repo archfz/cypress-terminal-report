@@ -11,8 +11,7 @@ module.exports = class TextOutputProcessor extends BaseOutputProcessor {
     this.chunkSeparator = EOL + EOL;
   }
 
-  write(allMessages) {
-
+  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {
       let text = `${spec}:${EOL}`;
       Object.entries(tests).forEach(([test, messages]) => {

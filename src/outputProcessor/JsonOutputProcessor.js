@@ -8,7 +8,7 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
     this.chunkSeparator = ',\n';
   }
 
-  write(allMessages) {
+  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {
       let data = {[spec]: {}};
 

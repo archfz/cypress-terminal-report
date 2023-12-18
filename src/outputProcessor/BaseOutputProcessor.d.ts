@@ -1,29 +1,31 @@
 /**
- * Gives the functions and variables available for use when specifying a custom output processor.
- * i.e. Allows use of this.writeSpecChunk without ts warning/error
- * 
- * Example usage:
- * 
- * import { AllMessages } from 'cypress-terminal-report/src/installLogsPrinter'
- * import { BaseOutputProcessor } from 'cypress-terminal-report/src/outputProcessor/BaseOutputProcessor'
- * 
- * ...
- * 
- * outputTarget: {
- *     'custom|cts':  function outputProcessor(this: BaseOutputProcessor, messages: AllMessages){ <custom output processor function> }                
- * },
- * 
+ * Base output processor class that the actual output processors extend.
  */
-export class BaseOutputProcessor {
+declare class BaseOutputProcessor {
   constructor(file: string);
 
+  /**
+   * Current char size of the output file.
+   */
   size: number;
+  /**
+   * The count of the chunk to be written.
+   */
   atChunk: number;
+  /**
+   * The initial content of the file. Defaults to `''`. Set this before the first chunk write in order for it to work.
+   */
   initialContent: string;
+  /**
+   * Chunk separator string. Defaults to `''`. This string will be written between each chunk.
+   * If you need a special separator between chunks, use this as it is internally handled to properly write and replace the chunks.
+   */
   chunkSeparator: string;
 
-  writeSpecChunk(spec: string, chunk: string, pos?: number): void;
+  /**
+   * Writes a chunk of data in the output file.
+   */
+  writeSpecChunk(spec: string, chunk: string, pos?: number | null): void;
 }
 
-
-
+export = BaseOutputProcessor;

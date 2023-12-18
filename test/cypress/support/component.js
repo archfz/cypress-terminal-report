@@ -2,4 +2,12 @@ import './commands';
 import { mount } from 'cypress/react';
 
 Cypress.Commands.add('mount', mount)
-require('../../../src/installLogsCollector')({});
+
+const config = {};
+const env = Cypress.env();
+
+if (env.enableContinuousLogging == '1') {
+  config.enableContinuousLogging = true;
+}
+
+require('../../../src/installLogsCollector')(config);
