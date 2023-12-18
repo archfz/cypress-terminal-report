@@ -360,9 +360,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.10
+
 - Fix component tests failing to run non queue tasks. 
   Issue was reproducing with extended collector or with continuous logging enabled. [issue](https://github.com/archfz/cypress-terminal-report/issues/225)
 - Fix type of function return on `outputTarget`. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/223) by [bvandercar-vt](https://github.com/bvandercar-vt)
+- General types improvements. by [bvandercar-vt](https://github.com/bvandercar-vt)
 - Update cypress to 13.6.1 in tests to confirm support.
 
 #### 5.3.9
