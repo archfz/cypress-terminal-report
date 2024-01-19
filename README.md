@@ -360,6 +360,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix component tests failing with browser console logs due to multiple overrides. [issue](https://github.com/archfz/cypress-terminal-report/issues/232)
+
 #### 5.3.10
 
 - Fix component tests failing to run non queue tasks. 

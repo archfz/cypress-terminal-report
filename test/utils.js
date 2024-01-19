@@ -21,8 +21,8 @@ export const ICONS = (() => {
 
 export const PADDING = '                    ';
 
-export const commandBase = (env = [], specs = []) =>
-  `${commandPrefix} run --env "${env.join(',')}" --headless --config video=false -s ${specs.map(s => `cypress/integration/${s}`)}`;
+export const commandBase = (env = [], specs = [], component = false) =>
+  `${commandPrefix} run --env "${env.join(',')}" --headless ${component ? '--component' : ''} --config video=false -s ${specs.map(s => component ? `cypress/component/${s}` : `cypress/integration/${s}`)}`;
 
 let lastRunOutput = '';
 let lastRunCommand = '';

@@ -20,6 +20,12 @@ module.exports = class LogCollectBrowserConsole {
         window.parent.document.querySelector("[id*='Your App']");
       const appWindow = docIframe.contentWindow;
 
+      // In case of component tests the even will be called multiple times. Prevent registering multiple times.
+      if (appWindow._ctr_registered) {
+        return;
+      }
+      appWindow._ctr_registered = true;
+
       const processArg = (arg) => {
         if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
           return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
