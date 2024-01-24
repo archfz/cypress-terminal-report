@@ -216,6 +216,9 @@ import 'cypress-mochawesome-reporter/register';
 afterEach(() => {
     cy.wait(50, {log: false}).then(() => cy.addTestContext(Cypress.TerminalReport.getLogs('txt')))
 });
+
+// Ensure that after plugin installation is after the afterEach handling the integration.
+require('cypress-terminal-report/src/installLogsCollector')()
 ```
 
 For typescript support add to your tsconfig **types** `cypress-terminal-report`.
@@ -359,6 +362,8 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Fix type issues for `cypress-mochawesome-reporter` integration. [issue](https://github.com/archfz/cypress-terminal-report/issues/233)
 
 #### 5.3.11
 
