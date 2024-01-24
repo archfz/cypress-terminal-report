@@ -363,6 +363,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 5.3.12
+
 - Fix type issues for `cypress-mochawesome-reporter` integration. [issue](https://github.com/archfz/cypress-terminal-report/issues/233)
 
 #### 5.3.11
