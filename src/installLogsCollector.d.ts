@@ -88,6 +88,12 @@ declare namespace installLogsCollector {
     enableContinuousLogging?: boolean;
 
     /**
+     * Adds time information to logs.
+     * @default null
+     */
+    commandTimings?: null | 'timestamp' | 'seconds'
+
+    /**
      * Enabled debug logging.
      * @default false
      */

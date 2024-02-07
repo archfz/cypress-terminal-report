@@ -13,11 +13,17 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
       let data = {[spec]: {}};
 
       Object.entries(tests).forEach(([test, messages]) => {
-        data[spec][test] = messages.map(({type, message, severity}) => ({
-          type: type,
-          severity: severity,
-          message: message,
-        }))
+        data[spec][test] = messages.map(({type, message, severity, timeString}) => {
+          const data = {
+            type: type,
+            severity: severity,
+            message: message,
+          };
+
+          if (timeString) {
+            data.timeString = timeString;
+          }
+        });
       });
 
       let chunk = JSON.stringify(data, null, 2);

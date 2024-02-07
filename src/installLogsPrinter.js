@@ -266,7 +266,7 @@ function logToTerminal(
     console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
   }
 
-  messages.forEach(({type, message, severity}) => {
+  messages.forEach(({type, message, severity, timeString}) => {
     let color = 'white',
       typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
       processedMessage = message,
@@ -332,6 +332,10 @@ function logToTerminal(
     const coloredTypeString = ['red', 'yellow'].includes(color) ?
       chalk[color].bold(typeString + icon + ' ') :
       chalk[color](typeString + icon + ' ');
+
+    if (timeString) {
+      console.log(chalk.gray(`${padding}Time: ${timeString}`));
+    }
 
     console.log(
       coloredTypeString,

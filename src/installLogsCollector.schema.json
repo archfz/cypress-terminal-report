@@ -54,6 +54,10 @@
     "enableContinuousLogging": {
       "type": "boolean"
     },
+    "commandTimings": {
+      "type": ["null", "string"],
+      "enum": ["timestamp", "seconds"]
+    },
     "debug": {
       "type": "boolean"
     }

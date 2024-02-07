@@ -130,4 +130,16 @@ describe('Misc.', () => {
     expect(checksMade, "No checks where made. The process might have ended too early.").to.be.greaterThan(0)
   }).timeout(60000);
 
+  it('Should log command times in timestamp.', async function () {
+    await runTest(commandBase(['commandTimings=timestamp'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\n      cy:command/);
+    });
+  }).timeout(60000);
+
+  it('Should log command times in seconds.', async function () {
+    await runTest(commandBase(['commandTimings=seconds'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+    });
+  }).timeout(60000);
+
 });

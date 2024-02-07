@@ -149,6 +149,12 @@ array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'c
 What types of logs to collect and print. By default all types are enabled. The 'cy:command' is the general type that
 contain all types of commands that are not specially treated.
 
+#### `options.commandTimings` 
+null | 'timestamp' | 'seconds'; default: null; 
+Record and log the time when the logs were generated. 
+'timestamp' is the epoch timestamp in milliseconds.
+'seconds' is the number of seconds since the test start, displaying the milliseconds as decimals.
+
 #### `options.filterLog` 
 null | ({type, message, severity}) => boolean; default: undefined; 
 Callback to filter logs manually.
@@ -363,6 +369,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Add new option [`commandTimings`](#optionscommandtimings-) to display the time of the logs. [issue](https://github.com/archfz/cypress-terminal-report/issues/207)
 - ! Breaking change: Refactored the log type: `[type, message, severity]` is now `{type, severity, message}`.
   - If you have used any of the following options, you will have to make changes in the integration:
     `collectTestLogs`, `filterLog`, `processLog`, custom file output processor.

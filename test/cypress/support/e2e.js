@@ -93,6 +93,9 @@ if (env.enableExtendedCollector == '1') {
 if (env.enableContinuousLogging == '1') {
   config.enableContinuousLogging = true;
 }
+if (env.commandTimings) {
+  config.commandTimings = env.commandTimings;
+}
 
 if (env.mochawesome == '1') {
   afterEach(() => {
