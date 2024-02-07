@@ -160,7 +160,7 @@ Callback to process logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.collectTestLogs` *2
-(mochaRunnable, [type, message, severity][]) => void; default: undefined;
+(mochaRunnable, {type, message, severity}[]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
 The `mochaRunnable` is of type `Test | Hook` from the mocha library.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
@@ -328,7 +328,7 @@ data in the output file.
           let text = `${spec}:\n`
           Object.entries(tests).forEach(([test, messages]) => {
             text += `    ${test}\n`
-            messages.forEach(([type, message, severity]) => {
+            messages.forEach(({type, message, severity}) => {
               text += `        ${type} (${severity}): ${message}\n`
             })
           })
