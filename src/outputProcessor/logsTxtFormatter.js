@@ -9,7 +9,7 @@ const padTypeText = (text) => {
 }
 
 function logsTxtFormatter(logs, EOL = '\n') {
-  return logs.map(([type, message, severity]) => {
+  return logs.map(({type, message, severity}) => {
     return (padTypeText(`${type} (${{
         [CONSTANTS.SEVERITY.ERROR]: 'X',
         [CONSTANTS.SEVERITY.WARNING]: '!',

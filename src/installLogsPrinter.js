@@ -1,11 +1,11 @@
 /**
- * @typedef {import('./installLogsCollector').Log} Log 
+ * @typedef {import('./installLogsCollector').Log} Log
  * @typedef {import('./installLogsPrinter').PluginOptions} PluginOptions
- * @typedef {{ messages: Log[], 
- *             isHook: boolean, 
- *             state: string, 
- *             spec: string, 
- *             test: string, 
+ * @typedef {{ messages: Log[],
+ *             isHook: boolean,
+ *             state: string,
+ *             spec: string,
+ *             test: string,
  *             level?: number,
  *             consoleTitle?: string,
  *             continuous?: boolean }} Data
@@ -203,11 +203,11 @@ function installOutputProcessors(on, /** @type {PluginOptions} */ options) {
 }
 
 function compactLogs(
-  /** @type {Log[]} */ 
-  logs, 
-  /** @type {number} */ 
+  /** @type {Log[]} */
+  logs,
+  /** @type {number} */
   keepAroundCount) {
-  const failingIndexes = logs.filter((log) => log[2] === CONSTANTS.SEVERITY.ERROR)
+  const failingIndexes = logs.filter((log) => log.severity === CONSTANTS.SEVERITY.ERROR)
     .map((log) => logs.indexOf(log));
 
   const includeIndexes = new Array(logs.length);
@@ -222,11 +222,11 @@ function compactLogs(
 
   const compactedLogs = [];
   const addOmittedLog = (count) =>
-    compactedLogs.push([
-      CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
-      `[ ... ${count} omitted logs ... ]`,
-      CONSTANTS.SEVERITY.SUCCESS
-    ]);
+    compactedLogs.push({
+      type: CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
+      message: `[ ... ${count} omitted logs ... ]`,
+      severity: CONSTANTS.SEVERITY.SUCCESS
+  });
 
   let excludeCount = 0;
   for (let i = 0; i < includeIndexes.length; i++) {
@@ -251,7 +251,7 @@ function compactLogs(
 
 function logToTerminal(
   /** @type {Log[]} */
-  messages, 
+  messages,
   /** @type {PluginOptions} */
   options,
   /** @type {Data} */
@@ -266,7 +266,7 @@ function logToTerminal(
     console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
   }
 
-  messages.forEach(([type, message, severity]) => {
+  messages.forEach(({type, message, severity}) => {
     let color = 'white',
       typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
       processedMessage = message,

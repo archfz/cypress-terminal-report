@@ -126,7 +126,7 @@ regardless whether there were failing tests in the suite. This is because we can
 advanced if a test fails or not.
 
 #### `options.collectTestLogs` *1
-([spec, test, state], [type, message, severity][]) => void; default: undefined;
+([spec, test, state], {type, message, severity}[]) => void; default: undefined;
 Callback to collect each test case's logs after its run.
 The first argument contains information about the test: the `spec` (test file), `test` (test title) and `state` (test state) fields.
 The second argument contains the test logs. 'type' is from the same list as for the `collectTypes` support install option (see below). Severity can be of ['', 'error', 'warning'].
@@ -150,12 +150,12 @@ What types of logs to collect and print. By default all types are enabled. The '
 contain all types of commands that are not specially treated.
 
 #### `options.filterLog` 
-null | ([type, message, severity]) => boolean; default: undefined; 
+null | ({type, message, severity}) => boolean; default: undefined; 
 Callback to filter logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
 #### `options.processLog`
-null | ([type, message, severity]) => [type, message, severity]; default: undefined;
+null | ({type, message, severity}) => {type, message, severity}; default: undefined;
 Callback to process logs manually.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
@@ -362,6 +362,10 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- ! Breaking change: Refactored the log type: `[type, message, severity]` is now `{type, severity, message}`.
+  - If you have used any of the following options, you will have to make changes in the integration:
+    `collectTestLogs`, `filterLog`, `processLog`, custom file output processor.
 
 #### 5.3.12
 

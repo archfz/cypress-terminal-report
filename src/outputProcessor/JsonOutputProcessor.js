@@ -13,7 +13,7 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
       let data = {[spec]: {}};
 
       Object.entries(tests).forEach(([test, messages]) => {
-        data[spec][test] = messages.map(([type, message, severity]) => ({
+        data[spec][test] = messages.map(({type, message, severity}) => ({
           type: type,
           severity: severity,
           message: message,

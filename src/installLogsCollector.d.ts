@@ -15,7 +15,11 @@ declare namespace installLogsCollector {
     'cy:command' |
     'ctr:info';
 
-  type Log = [type: LogType, message: string, severity: Severity];
+  type Log = {
+    type: LogType,
+    message: string,
+    severity: Severity,
+  };
 
   interface SupportOptions {
     /**

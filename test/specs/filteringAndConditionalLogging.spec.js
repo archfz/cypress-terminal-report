@@ -72,7 +72,7 @@ describe('Filtering and conditional logging.', () => {
   it('Should collect test logs if support configuration added.', async () => {
     await runTest(commandBase(['collectTestLogsSupport=1'], ['allTypesOfLogs.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Collected 17 logs for test "All types of logs."`);
-      expect(stdout).to.contain(`last log: cy:command,get\t.breaking-get [filter-out-string],error`);
+      expect(stdout).to.contain(`last log: {"type":"cy:command","message":"get\\t.breaking-get [filter-out-string]","severity":"error"}`);
     });
   }).timeout(60000);
 });

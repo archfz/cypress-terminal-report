@@ -20,21 +20,21 @@ if (env.setLogTypes == '1') {
   config.collectTypes = ['cy:request', 'cy:log', 'cons:warn'];
 }
 if (env.setFilterLogs == '1') {
-  config.filterLog = ([,log]) => log.indexOf('[filter-out-string]') !== -1;
+  config.filterLog = ({message}) => message.indexOf('[filter-out-string]') !== -1;
 }
 if (env.setProcessLogs == '1') {
-  config.processLog = ([sev1, log, sev2]) => {
-    if (sev1 == 'cy:request'){
-      log = log.length.toString();
+  config.processLog = ({type, message, severity}) => {
+    if (type == 'cy:request'){
+      message = message.length.toString();
     }
     else{
       let reg = /\[[^\[]+]/;
-      let secret = log.match(reg);
+      let secret = message.match(reg);
       if (secret){
-        log = log.replace(reg, '[******]');
+        message = message.replace(reg, '[******]');
       }
     }
-    return [sev1, log, sev2];
+    return {type, message, severity};
   }
 }
 if (env.collectTestLogsSupport == '1') {
@@ -42,7 +42,11 @@ if (env.collectTestLogsSupport == '1') {
     utils.nonQueueTask('ctrLogMessages', {
       spec: mochaRunnable.invocationDetails.relativeFile,
       test: testTitle,
-      messages: [['cy:log', `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${logs[logs.length - 1]}`, '']],
+      messages: [{
+        type: 'cy:log',
+        message: `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${JSON.stringify(logs[logs.length - 1])}`,
+        severity: '',
+      }],
       state: testState,
       level: testLevel,
     });
@@ -56,13 +60,13 @@ if (env.printRequestData == '1') {
   config.xhr.printRequestData = true;
 }
 if (env.filterOutCyCommand == '1') {
-  config.filterLog = ([type]) => type !== 'cy:command';
+  config.filterLog = ({type}) => type !== 'cy:command';
 }
 if (env.filterKeepOnlyWarningAndError == '1') {
-  config.filterLog = ([,,severtiy]) => severtiy === 'error' || severtiy === 'warning';
+  config.filterLog = ({severity}) => severity === 'error' || severity === 'warning';
 }
 if (env.processAllLogs == '1') {
-  config.processLog = ([type,message,severity]) => [type, '| ' + message, severity];
+  config.processLog = ({type,message,severity}) => ({type, message: '| ' + message, severity});
 }
 if (env.supportBadConfig == '1') {
   config = {

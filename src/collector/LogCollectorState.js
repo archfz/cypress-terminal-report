@@ -35,6 +35,13 @@ module.exports = class LogCollectorState {
     }
     const stack = this.logStacks[index];
     this.logStacks[index] = null;
+
+    stack.forEach(log => {
+      if (log.chainId) {
+        delete log.chainId;
+      }
+    });
+
     return stack;
   }
   hasLogsCurrentStack() {
@@ -58,22 +65,28 @@ module.exports = class LogCollectorState {
       return;
     }
 
+    const structuredEntry = {
+      type: entry[0],
+      message: entry[1],
+      severity: entry[2],
+    };
+
     if (chainId) {
-      entry.chainId = chainId;
+      structuredEntry.chainId = chainId;
     }
     if (xhrIdOfLoggedResponse) {
       this.xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
     }
 
-    currentStack.push(entry);
+    currentStack.push(structuredEntry);
     this.emit('log');
   }
 
   updateLog(log, severity, id) {
     this.loopLogStacks((entry) => {
       if (entry.chainId === id) {
-        entry[1] = log;
-        entry[2] = severity;
+        entry.message = log;
+        entry.severity = severity;
       }
     });
     this.emit('log');
@@ -82,7 +95,7 @@ module.exports = class LogCollectorState {
   updateLogStatusForChainId(chainId, state = CONSTANTS.SEVERITY.ERROR) {
     this.loopLogStacks((entry) => {
         if (entry.chainId === chainId) {
-          entry[2] = state;
+          entry.severity = state;
         }
     });
   }
