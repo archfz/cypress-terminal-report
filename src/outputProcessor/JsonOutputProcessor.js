@@ -23,6 +23,8 @@ module.exports = class JsonOutputProcessor extends BaseOutputProcessor {
           if (timeString) {
             data.timeString = timeString;
           }
+
+          return data;
         });
       });
 
