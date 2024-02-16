@@ -19,6 +19,7 @@ declare namespace installLogsCollector {
     type: LogType,
     message: string,
     severity: Severity,
+    timeString?: string,
   };
 
   interface SupportOptions {
