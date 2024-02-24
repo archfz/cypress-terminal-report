@@ -369,6 +369,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 6.0.1
+
+- Fix `txt` output processor not logging command timings. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/236) by [AlexGuironnetRTE](https://github.com/AlexGuironnetRTE)
+- Fix `LogType` missing `timeString` type. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/237) by [bvandercar-vt](https://github.com/bvandercar-vt)
+
 #### 6.0.0
 
 - Add new option [`commandTimings`](#optionscommandtimings) to display the time of the logs. [issue](https://github.com/archfz/cypress-terminal-report/issues/207)
