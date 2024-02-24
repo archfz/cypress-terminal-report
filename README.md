@@ -372,7 +372,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 #### 6.0.0
 
 - Add new option [`commandTimings`](#optionscommandtimings) to display the time of the logs. [issue](https://github.com/archfz/cypress-terminal-report/issues/207)
-- ! Breaking change: Refactored the log type: `[type, message, severity]` is now `{type, severity, message}`.
+- ! Breaking change: Refactored the log type: `[type, message, severity]` is now `{type, message, severity}`.
   - If you have used any of the following options, you will have to make changes in the integration:
     `collectTestLogs`, `filterLog`, `processLog`, custom file output processor.
 

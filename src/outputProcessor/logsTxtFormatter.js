@@ -8,14 +8,22 @@ const padTypeText = (text) => {
     + text;
 }
 
+const padTimeText = (text) => {
+  return PADDING_LOGS + text;
+}
+
 function logsTxtFormatter(logs, EOL = '\n') {
-  return logs.map(({type, message, severity}) => {
-    return (padTypeText(`${type} (${{
+  return logs.map(({type, message, severity, timeString}) => {
+    let formattedLog = (padTypeText(`${type} (${{
         [CONSTANTS.SEVERITY.ERROR]: 'X',
         [CONSTANTS.SEVERITY.WARNING]: '!',
         [CONSTANTS.SEVERITY.SUCCESS]: 'K',
       }[severity]}): `) +
       message.replace(/\n/g, `${EOL}${PADDING_LOGS}`) + EOL).replace(/\s+\n/, '\n');
+    if (timeString) {
+      formattedLog = padTimeText(`Time: ${timeString}`) + `\n` + formattedLog;
+    }
+    return formattedLog;
   }).join('');
 }
 
