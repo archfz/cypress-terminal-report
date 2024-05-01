@@ -142,4 +142,10 @@ describe('Misc.', () => {
     });
   }).timeout(60000);
 
+  it('Should log command times in seconds with extended collector and before hooks.', async function () {
+    await runTest(commandBase(['commandTimings=seconds', 'enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+    });
+  }).timeout(60000);
+
 });

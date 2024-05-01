@@ -11,7 +11,7 @@ module.exports = class LogCollectorState {
     this.beforeHookIndexes = [];
     this.afterHookIndexes = [];
     this.isStrict = false;
-    this.testStartTime = null;
+    this.suiteStartTime = null;
   }
 
   setStrict(strict) {
@@ -79,7 +79,7 @@ module.exports = class LogCollectorState {
       if (this.config.commandTimings == 'timestamp') {
         structuredEntry.timeString = Date.now() + "";
       } else if (this.config.commandTimings == 'seconds') {
-        structuredEntry.timeString = (Date.now() - this.testStartTime.getTime()) / 1000 + "s";
+        structuredEntry.timeString = (Date.now() - this.suiteStartTime.getTime()) / 1000 + "s";
       }
     }
     if (xhrIdOfLoggedResponse) {
@@ -155,6 +155,7 @@ module.exports = class LogCollectorState {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting suite');
     }
+    this.suiteStartTime = new Date();
     this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes.unshift(0);
     this.afterHookIndexes.unshift(0);
@@ -172,7 +173,6 @@ module.exports = class LogCollectorState {
     }
     this.setCurrentTest(test);
     this.xhrIdsOfLoggedResponses = [];
-    this.testStartTime = new Date();
 
     this.addNewLogStack();
 
