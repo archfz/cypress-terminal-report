@@ -369,6 +369,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 6.0.2
+
 - Fix `never` on `printLogsToConsole` works in all cases. [issue](https://github.com/archfz/cypress-terminal-report/issues/241)
 - Fix `commandTimings` failing when before hooks are logged. [issue](https://github.com/archfz/cypress-terminal-report/issues/240)
 - `commandTimings` now log the time elapsed since the suite / spec start instead of the time since the test start.
