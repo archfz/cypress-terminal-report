@@ -19,12 +19,22 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "then\tfunction(){}"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "Given \t**I open Happy page**"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "visit\t/commands/network-requests"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "then\tfunction(){}"
       },
       {
         "type": "cy:command",
@@ -81,12 +91,22 @@
       {
         "type": "cy:command",
         "severity": "success",
+        "message": "then\tfunction(){}"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
         "message": "Given \t**I open Happy page**"
       },
       {
         "type": "cy:command",
         "severity": "success",
         "message": "visit\t/commands/network-requests"
+      },
+      {
+        "type": "cy:command",
+        "severity": "success",
+        "message": "then\tfunction(){}"
       },
       {
         "type": "cy:command",

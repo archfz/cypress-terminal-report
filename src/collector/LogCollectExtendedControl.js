@@ -138,7 +138,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands from before all hook if the hook passed.
     Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
-        self.debugLog('extended: sending logs of passed after all hook');
+        self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
           this.currentRunnable,
@@ -212,7 +212,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               title: self.collectorState.getAfterHookTestTile(),
               isHook: true,
               noQueue: true,
-              wait: 5, // Need to wait so that cypress log updates happen.
+              wait: 8, // Need to wait so that cypress log updates happen.
             }
           );
         });
