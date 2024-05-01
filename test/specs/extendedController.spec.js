@@ -136,6 +136,12 @@ describe('Extended controller.', () => {
     });
   }).timeout(60000);
 
+  it('Should not display logs from before all hooks when printing to console is never.', async function () {
+    await runTest(commandBase(['printSuccessfulHookLogs=1', 'enableExtendedCollector=1', 'printLogsToConsoleNever=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.not.contain(`cy:log ${ICONS.info}  some before command`);
+    });
+  }).timeout(60000);
+
   it('Should display logs from after all hooks if they fail.', async function () {
     this.retries(3);
 

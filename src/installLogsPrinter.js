@@ -101,9 +101,11 @@ function installLogsPrinter(on, options = {}) {
       }
 
       if (
-        (options.printLogsToConsole === "onFail" && data.state !== "passed")
-        || options.printLogsToConsole === "always"
-        || isHookAndShouldLog
+        options.printLogsToConsole !== "never" && (
+          options.printLogsToConsole === "always"
+          || (options.printLogsToConsole === "onFail" && data.state !== "passed")
+          || isHookAndShouldLog
+        )
       ) {
         logToTerminal(terminalMessages, options, data);
       }

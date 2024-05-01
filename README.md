@@ -369,6 +369,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Fix `never` on `printLogsToConsole` works in all cases. [issue](https://github.com/archfz/cypress-terminal-report/issues/241)
+
 #### 6.0.1
 
 - Fix `txt` output processor not logging command timings. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/236) by [AlexGuironnetRTE](https://github.com/AlexGuironnetRTE)
