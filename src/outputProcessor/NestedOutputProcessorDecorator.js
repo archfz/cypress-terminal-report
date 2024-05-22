@@ -33,11 +33,51 @@ module.exports = class NestedOutputProcessorDecorator {
 	const parsed = path.parse(relativeSpec);
 	const relpath = parsed.dir;
 	const basename = parsed.name;
+	
+	// default/example date time info - also to know which keys are available
+	const DefaultTimeInfos = {
+		H: "0",			// Hour of day
+		HH: "00",		// Hour of day - with leading zero
+		M: "0",			// Minute of hour
+		MM: "00",		// Minute of hour - with leading zero
+		S: "0",			// Second of minute
+		SS: "00",		// Second of minute - with leading zero
+		d: "1",			// day of month
+		dd: "01",		// day of month - with leading zero
+		m: "1",			// month of year
+		mm: "01",		// month of year - with leading zero
+		yy: "70",		// last 2 digits of current year
+		yyyy: "1970",	// current year
+	};
+	var dateTimeInfos = DefaultTimeInfos;
+	// lazy init dateTime info only on demand
+	var initDate = function() {
+		if (dateTimeInfos === DefaultTimeInfos) {
+			var d = new Date();
+			dateTimeInfos = {
+				m: d.getMonth() + 1,
+				d: d.getDate(),
+				H: d.getHours(),
+				M: d.getMinutes(),
+				S: d.getSeconds(),
+			};
+			// convert to string and prepend 0
+			Object.keys(dateTimeInfos).forEach(function(key) {
+				dateTimeInfos[key] = ""+dateTimeInfos[key];
+				dateTimeInfos[key+key] = (dateTimeInfos[key].length < 2 ? "0" : "")+dateTimeInfos[key];
+			});
+			// year
+			dateTimeInfos.yyyy = ""+d.getFullYear();
+			dateTimeInfos.yy = dateTimeInfos.yyyy.slice(-2);
+		}
+		return dateTimeInfos;
+	}
 
 	// replace [*] tokens in pattern to build output filepath
 	var outPath = this.pattern.replace(/\[([^\]]+)\]/g, function(m, cap1) {
 		if (cap1 === "relpath") return relpath;
 		if (cap1 === "basename") return basename;
+		if (Object.hasOwn(dateTimeInfos, cap1)) return initDate()[cap1];
 		return "-";
 	});
 
