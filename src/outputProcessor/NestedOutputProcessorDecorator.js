@@ -2,9 +2,10 @@ const path = require('path');
 
 module.exports = class NestedOutputProcessorDecorator {
 
-  constructor(root, specRoot, ext, decoratedFactory) {
-    this.root = root;
-    this.ext = ext;
+  constructor(filePattern, specRoot, decoratedFactory) {
+	const parts = filePattern.split('|');
+    this.root = parts[0];
+    this.ext = parts[1];
     this.specRoot = specRoot || '';
     this.decoratedFactory = decoratedFactory;
 
