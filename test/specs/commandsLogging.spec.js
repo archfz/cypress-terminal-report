@@ -130,6 +130,12 @@ describe('Commands logging.', () => {
     });
   }).timeout(60000);
 
+  it('Should not log response body when configured so.', async () => {
+    await runTest(commandBase(['printBody=0'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
+      expect(stdout).to.not.contain(`${PADDING}Response body: {`);
+    });
+  }).timeout(60000);
+
   it('Should log fetch requests.', async () => {
     await runTest(commandBase([], [`fetchApi.spec.js`]), (error, stdout, stderr) => {
       const cleanStdout = clean(stdout, true);

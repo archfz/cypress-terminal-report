@@ -55,6 +55,10 @@ if (env.printHeaderData == '1') {
   config.xhr = config.xhr || {};
   config.xhr.printHeaderData = true;
 }
+if (env.printBody == '0') {
+  config.xhr = config.xhr || {};
+  config.xhr.printBody = false;
+}
 if (env.printRequestData == '1') {
   config.xhr = config.xhr || {};
   config.xhr.printRequestData = true;

@@ -25,12 +25,13 @@ const logsTxtFormatter = require("./outputProcessor/logsTxtFormatter");
  * Needs to be added to support file.
  *
  * @see ./installLogsCollector.d.ts
- * @type {import('./installLogsCollector')} 
+ * @type {import('./installLogsCollector')}
  */
 function installLogsCollector(config = {}) {
   validateConfig(config);
 
   config.collectTypes = config.collectTypes || Object.values(LOG_TYPE);
+  config.collectBody = config.xhr ? !!config.xhr.printBody : true;
   config.collectRequestData = config.xhr && config.xhr.printRequestData;
   config.collectHeaderData = config.xhr && config.xhr.printHeaderData;
 

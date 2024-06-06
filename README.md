@@ -171,6 +171,10 @@ Callback to collect each test case's logs after its run.
 The `mochaRunnable` is of type `Test | Hook` from the mocha library.
 The type is from the same list as for the `collectTypes` option. Severity can be of ['', 'error', 'warning'].
 
+#### `options.xhr.printBody` 
+boolean; default true; Whether to print response data. Controls request body as well when `printRequestData` is 
+enabled. Note that currently response body is logged only on failing requests and when this config is enabled.
+
 #### `options.xhr.printHeaderData` 
 boolean; default false; Whether to print header data for XHR requests.
 
@@ -368,6 +372,8 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Add [`printBody`](#optionsxhrprintbody-) option to control output of http request / response body. [issue](https://github.com/archfz/cypress-terminal-report/issues/246)
 
 #### 6.0.2
 

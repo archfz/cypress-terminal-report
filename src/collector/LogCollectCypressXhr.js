@@ -68,7 +68,7 @@ module.exports = class LogCollectCypressXhr {
           log += `\nRequest headers: ${await this.format.formatXhrBody(consoleProps(options)['Request Headers'])}`;
         }
         if (
-          this.config.collectRequestData &&
+          this.config.collectRequestData && this.config.collectBody &&
           consoleProps(options)['Request Body']
         ) {
           log += `\nRequest body: ${await this.format.formatXhrBody(consoleProps(options)['Request Body'])}`;
@@ -80,7 +80,7 @@ module.exports = class LogCollectCypressXhr {
           log += `\nResponse headers: ${await this.format.formatXhrBody(consoleProps(options)['Response Headers'])}`;
         }
         if (
-          !isSuccess &&
+          !isSuccess && this.config.collectBody &&
           consoleProps(options)['Response Body']
         ) {
           log += `\nResponse body: ${await this.format.formatXhrBody(consoleProps(options)['Response Body'])}`;

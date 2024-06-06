@@ -62,6 +62,13 @@ declare namespace installLogsCollector {
 
     xhr?: {
       /**
+       * Whether to print body for XHR requests. Controls request body printing as well when request data logging is
+       * enabled.
+       * @default true
+       */
+      printBody?: boolean;
+
+      /**
        * Whether to print header data for XHR requests.
        * @default false
        */
