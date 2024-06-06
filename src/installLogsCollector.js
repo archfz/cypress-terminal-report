@@ -31,7 +31,7 @@ function installLogsCollector(config = {}) {
   validateConfig(config);
 
   config.collectTypes = config.collectTypes || Object.values(LOG_TYPE);
-  config.collectBody = config.xhr ? !!config.xhr.printBody : true;
+  config.collectBody = config.xhr && config.xhr.printBody !== undefined ? !!config.xhr.printBody : true;
   config.collectRequestData = config.xhr && config.xhr.printRequestData;
   config.collectHeaderData = config.xhr && config.xhr.printHeaderData;
 

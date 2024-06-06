@@ -25,7 +25,7 @@ describe('XHR all types.', () => {
   it('POST should give 400 response status', () => {
     cy.request({
       method: 'POST',
-      url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
+      url: 'https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5',
       headers: {
         'token': 'test',
       },
@@ -61,7 +61,7 @@ describe('XHR all types.', () => {
       networkErrorButton.className = 'network-error btn btn-primary';
       networkErrorButton.innerHTML = 'Request error';
       networkErrorButton.addEventListener('click', () =>
-        window.fetch('https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508')
+        window.fetch('https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5')
           .then(() => {
             networkErrorMessage.innerHTML = 'received response';
           }));

@@ -133,12 +133,12 @@ describe('Fetch Api', () => {
 
     it('Fetch failed without interceptors', () =>
       testRealFetchRequest({
-        url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
+        url: 'https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5',
       }));
 
     it('Fetch failed with interceptors', () =>
       testRealFetchRequest({
-        url: 'https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508',
+        url: 'https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5',
         interceptPath: 'https://www.mocky.io/**/*',
       }));
   });

@@ -101,11 +101,11 @@ describe('Commands logging.', () => {
       );
 
       expect(stdout).to.contain(
-        `cy:request ${ICONS.error}  GET https://run.mocky.io/v3/cf7c4ea3-5f3e-416c-ba17-7aa842b1e2d9\n${PADDING}Status: 500 - Internal Server Error\n${PADDING}Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
+        `cy:request ${ICONS.error}  GET https://run.mocky.io/v3/0ea84a27-e918-4c1c-b1cb-c019260a5ea4\n${PADDING}Status: 500 - Internal Server Error\n${PADDING}Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
       );
 
       expect(stdout).to.contain(
-        `cy:request ${ICONS.error}  POST https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
+        `cy:request ${ICONS.error}  POST https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
       );
       expect(stdout).to.contain(
         `cy:request ${ICONS.error}  POST http://this.does.not.exist\n${PADDING}Network error: getaddrinfo ENOTFOUND this.does.not.exist\n`
@@ -125,7 +125,7 @@ describe('Commands logging.', () => {
     await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not=A?Brand\\";v=\\"99\\"`);
       expect(stdout).to.contain(`\n${PADDING}  "Keep-Alive": "timeout=5"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
-      expect(stdout).to.contain(`POST https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "content-type": "application/json; charset=UTF-8",\n`);
+      expect(stdout).to.contain(`POST https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "content-type": "application/json; charset=UTF-8",\n`);
       expect(stdout).to.contain(`${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
     });
   }).timeout(60000);
@@ -159,14 +159,14 @@ describe('Commands logging.', () => {
 
       // @TODO: Response body not logged since cypress 13?
       // expect(cleanStdout).to.contain(
-      //   `cy:fetch ${ICONS.warning}  GET https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}  Status: 400\n${PADDING}  Response body: {\n${PADDING}    "status": "Wrong!",\n${PADDING}    "data": {\n${PADDING}      "corpo": "corpo da resposta",\n${PADDING}      "titulo": "titulo da resposta"\n${PADDING}    }\n${PADDING}  }\n`,
+      //   `cy:fetch ${ICONS.warning}  GET https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\n${PADDING}  Status: 400\n${PADDING}  Response body: {\n${PADDING}    "status": "Wrong!",\n${PADDING}    "data": {\n${PADDING}      "corpo": "corpo da resposta",\n${PADDING}      "titulo": "titulo da resposta"\n${PADDING}    }\n${PADDING}  }\n`,
       //   'intercepted non-success fetch contains url, status and a response body'
       // );
 
     });
   }).timeout(60000);
 
-  it('Should only log XHR response body for non-successful requests not handled by cy.route.', async () => {
+  it('Should only log XHR response body for non-successful requests not handled by intercept.', async () => {
     await runTest(commandBase([], ['xhrTypes.spec.js']), (error, stdout, stderr) => {
       const cleanStdout = clean(stdout, true);
       expect(cleanStdout).to.contain(
@@ -175,8 +175,8 @@ describe('Commands logging.', () => {
       );
       expect(cleanStdout).to.contain(
         // @TODO: Test broken. But cypress is not returning the response data here for some reason.
-        // `cy:xhr ${ICONS.warning}  GET https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: { "status": "Wrong!","data" : {"corpo" : "corpo da resposta","titulo" : "titulo da resposta"\n${PADDING}}\n${PADDING}}\n`,
-        `cy:xhr ${ICONS.warning}  GET https://run.mocky.io/v3/e2df0c52-dfdd-4a83-a842-7193ef950508\n${PADDING}Status: 400\n`,
+        // `cy:xhr ${ICONS.warning}  GET https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: { "status": "Wrong!","data" : {"corpo" : "corpo da resposta","titulo" : "titulo da resposta"\n${PADDING}}\n${PADDING}}\n`,
+        `cy:xhr ${ICONS.warning}  GET https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\n${PADDING}Status: 400\n`,
         'non-stubbed non-success XHR log should contain response body'
       );
       expect(cleanStdout).to.not.contain(
