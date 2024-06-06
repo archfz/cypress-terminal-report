@@ -133,7 +133,7 @@ export const expectOutFilesMatch = (outputPath, specPath) => {
   expect(clean(value), `Check ${outputPath} matched ${specPath}.`).to.eq(clean(expected));
 }
 
-export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specFiles, specExtName) => {
+export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specExtName) => {
   testOutputs.value.forEach((out) => {
     expectOutFilesMatch(
       path.join(outRoot.value, out),

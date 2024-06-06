@@ -1,7 +1,7 @@
 import {
   ICONS,
   runTest,
-  commandBase, logLastRun, clean, runTestContinuous,
+  commandBase, logLastRun, clean, runTestContinuous, outputCleanUpAndInitialization, expectOutputFilesToBeCorrect,
 } from "../utils";
 
 const {expect} = require('chai');
@@ -73,7 +73,11 @@ describe('Misc.', () => {
   }).timeout(30000);
 
   it('Should print logs for all cypress retries.', async () => {
-    await runTest(commandBase(['breaking=1'], ['retries.spec.js']), (error, stdout, stderr) => {
+    const outRoot = {};
+    const testOutputs = {};
+    outputCleanUpAndInitialization(testOutputs, outRoot);
+
+    await runTest(commandBase(['breaking=1', 'generateOutput=1'], ['retries.spec.js']), (error, stdout, stderr) => {
       // @TODO: Attempt lines are not displayed anymore: (Attempt 1 of 3) fails
       expect(stdout).to.contain(`
       cy:command ${ICONS.error}  get\tbreaking
@@ -91,6 +95,8 @@ describe('Misc.', () => {
 
           cy:log ${ICONS.info}  Hello. currentRetry: 1
       cy:command ${ICONS.error}  contains\tFoobar`);
+
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'retries');
     });
   }).timeout(30000);
 

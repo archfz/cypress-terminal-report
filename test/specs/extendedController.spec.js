@@ -30,7 +30,7 @@ describe('Extended controller.', () => {
       'mochaContexts.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'hooks.onFail');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'hooks.onFail');
     });
   }).timeout(90000);
 
@@ -48,7 +48,7 @@ describe('Extended controller.', () => {
       'mochaContexts.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1', 'enableExtendedCollector=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'hooks.always');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'hooks.always');
     });
   }).timeout(90000);
 

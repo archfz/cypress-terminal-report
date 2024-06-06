@@ -117,7 +117,9 @@ if (env.globalAfter == '1') {
   });
 }
 
-require('../../../src/installLogsCollector')(config);
+if (env.disabled != '1') {
+  require('../../../src/installLogsCollector')(config);
+}
 
 enableFetchWorkaround();
 function enableFetchWorkaround() {

@@ -1,0 +1,49 @@
+{
+  "cypress/integration/retries.spec.js": {
+    "fail but win (Attempt 1)": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "Hello. currentRetry: 0"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "contains\tFoobar"
+      }
+    ],
+    "fail but win (Attempt 2)": [
+      {
+        "type": "cy:log",
+        "severity": "success",
+        "message": "Hello. currentRetry: 1"
+      },
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "contains\tFoobar"
+      }
+    ],
+    "Retries -> fails (Attempt 1)": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tbreaking"
+      }
+    ],
+    "Retries -> fails (Attempt 2)": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tbreaking"
+      }
+    ],
+    "Retries -> fails (Attempt 3)": [
+      {
+        "type": "cy:command",
+        "severity": "error",
+        "message": "get\tbreaking"
+      }
+    ]
+  }
+}

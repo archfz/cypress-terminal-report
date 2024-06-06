@@ -40,7 +40,7 @@ describe('Output to files.', () => {
       'printLogsSuccess.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFail');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'onFail');
       testOutputs.value.push(path.join('not', 'existing', 'path', 'out.txt'));
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
@@ -58,7 +58,7 @@ describe('Output to files.', () => {
       'requests.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'always');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'always');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
   }).timeout(90000);
@@ -79,10 +79,10 @@ describe('Output to files.', () => {
 
   it('Should generate proper nested log output files.', async () => {
     const specFiles = [
-      'requests.spec.js', 
-      'happyFlow.spec.js', 
-      'printLogsSuccess.spec.js', 
-      'multiple.dots.in.spec.js', 
+      'requests.spec.js',
+      'happyFlow.spec.js',
+      'printLogsSuccess.spec.js',
+      'multiple.dots.in.spec.js',
       'callsSuiteInAnotherFile.spec.js'
     ];
     await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
@@ -104,7 +104,7 @@ describe('Output to files.', () => {
 
     const specFiles = ['printLogsOnFail.spec.js'];
     await runTest(commandBase(['generateSimpleOutput=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'onFailCheck');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'onFailCheck');
       expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
     });
   }).timeout(90000);
@@ -116,7 +116,7 @@ describe('Output to files.', () => {
 
     const specFiles = ['requests.spec.js'];
     await runTest(commandBase(['failFast=1', 'generateOutput=1', 'logToFilesOnAfterRun=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'failFast');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'failFast');
     });
   }).timeout(90000);
 
@@ -127,7 +127,7 @@ describe('Output to files.', () => {
 
     const specFiles = ['allHooks.spec.js'];
     await runTest(commandBase(['enableExtendedCollector=1', 'generateOutput=1', 'printLogsToFileAlways=1', 'logToFilesOnAfterRun=1', 'globalAfter=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, specFiles, 'globalAfter');
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'globalAfter');
     });
   }).timeout(90000);
 

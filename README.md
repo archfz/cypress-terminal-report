@@ -374,6 +374,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 ## Release Notes
 
 - Add [`printBody`](#optionsxhrprintbody-) option to control output of http request / response body. [issue](https://github.com/archfz/cypress-terminal-report/issues/246)
+- Fix attempts not logged to files due to title collision, since cypress is not including in test title the attempt anymore. [issue](https://github.com/archfz/cypress-terminal-report/issues/242) 
 
 #### 6.0.2
 

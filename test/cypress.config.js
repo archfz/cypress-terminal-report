@@ -140,7 +140,9 @@ module.exports = defineConfig({
         require('cypress-mochawesome-reporter/plugin')(on);
       }
 
-      require('../src/installLogsPrinter')(on, options);
+      if (config.env.disabled != '1') {
+        require('../src/installLogsPrinter')(on, options);
+      }
 
       return config;
     }

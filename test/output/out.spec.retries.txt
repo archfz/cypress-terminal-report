@@ -1,0 +1,18 @@
+cypress/integration/retries.spec.js:
+    fail but win (Attempt 1)
+            cy:log (K): Hello. currentRetry: 0
+        cy:command (X): contains	Foobar
+
+    fail but win (Attempt 2)
+            cy:log (K): Hello. currentRetry: 1
+        cy:command (X): contains	Foobar
+
+    Retries -> fails (Attempt 1)
+        cy:command (X): get	breaking
+
+    Retries -> fails (Attempt 2)
+        cy:command (X): get	breaking
+
+    Retries -> fails (Attempt 3)
+        cy:command (X): get	breaking
+

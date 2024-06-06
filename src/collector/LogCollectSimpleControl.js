@@ -41,6 +41,10 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
       }
     }
 
+    if (testState === 'failed' && mochaRunnable?._retries > 0) {
+      testTitle += ` (Attempt ${mochaRunnable?._currentRetry + 1})`
+    }
+
     const prepareLogs = () => {
       return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
     };
