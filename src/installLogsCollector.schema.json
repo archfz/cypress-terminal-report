@@ -44,6 +44,9 @@
         },
         "printRequestData": {
           "type": "boolean"
+        },
+        "printBody": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
