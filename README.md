@@ -373,6 +373,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 6.1.2
+
+- Fix `printBody` option no applying to `cy:request`.
+
 #### 6.1.1
 
 - Fix missing schema for `printBody` option. [issue](https://github.com/archfz/cypress-terminal-report/issues/248)

@@ -310,14 +310,14 @@
       {
         "type": "cy:request",
         "severity": "error",
-        "message": "GET https://run.mocky.io/v3/0ea84a27-e918-4c1c-b1cb-c019260a5ea4\nStatus: 500 - Internal Server Error\nResponse body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API."
+        "message": "GET https://run.mocky.io/v3/6108634c-2ef1-4c61-9df4-456b7421b084\nStatus: 500 - Internal Server Error\nResponse body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API."
       }
     ],
     "Requests. -> POST should give 400 response status": [
       {
         "type": "cy:request",
         "severity": "error",
-        "message": "POST https://run.mocky.io/v3/ded564f7-0a44-435d-9113-9e16067c15f5\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
+        "message": "POST https://run.mocky.io/v3/141f4175-05e5-41dd-aa97-4d8f425bd823\nStatus: 400 - Bad Request\nResponse body: {\n  \"status\": \"Wrong!\",\n  \"data\": {\n    \"corpo\": \"corpo da resposta\",\n    \"titulo\": \"titulo da resposta\"\n  }\n}"
       }
     ],
     "Requests. -> PUT should fail": [
