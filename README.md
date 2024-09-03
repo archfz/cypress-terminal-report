@@ -373,6 +373,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 6.1.3
+
+- Fix compatibility with node 12. [issue](https://github.com/archfz/cypress-terminal-report/issues/254) by [wemcdonald](https://github.com/wemcdonald) and [yaobao1993](https://github.com/yaobao1993)
+- Upgrade cypress to 13.14.1 in tests.
+- Add backwards compatibility testing.
+
 #### 6.1.2
 
 - Fix `printBody` option no applying to `cy:request`.
