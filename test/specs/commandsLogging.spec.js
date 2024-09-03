@@ -42,7 +42,7 @@ describe('Commands logging.', () => {
     });
   }).timeout(60000);
 
-  it('Should log fetch api routes.', async () => {
+  it('Should log fetch api routes. [backward-compatibility-skip]', async () => {
     await runTest(commandBase([], ['apiRoutes.spec.js']), (error, stdout, stderr) => {
       // cy.route empty body.
       expect(stdout).to.contain(`cy:xhr ${ICONS.route}  STUBBED GET https://jsonplaceholder.cypress.io/comments/1
@@ -121,7 +121,7 @@ describe('Commands logging.', () => {
     });
   }).timeout(60000);
 
-  it('Should log request data and response headers.', async () => {
+  it('Should log request data and response headers. [backward-compatibility-skip]', async () => {
     await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not=A?Brand\\";v=\\"99\\"`);
       expect(stdout).to.contain(`\n${PADDING}  "Keep-Alive": "timeout=5"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);

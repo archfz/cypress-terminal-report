@@ -198,7 +198,7 @@ describe('Extended controller.', () => {
     });
   }).timeout(60000);
 
-  it('Should work correctly with dynamic skip.', async function () {
+  it('Should work correctly with dynamic skip. [backward-compatibility-skip]', async function () {
     this.retries(2);
 
     await runTest(commandBase(['enableExtendedCollector=1'], ['dynamicSkip.spec.js']), (error, stdout, stderr) => {

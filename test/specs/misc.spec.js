@@ -46,7 +46,7 @@ describe('Misc.', () => {
     });
   }).timeout(60000);
 
-  it('Should filter and process late update logs correctly.', async function() {
+  it('Should filter and process late update logs correctly. [backward-compatibility-skip]', async function() {
     this.retries(2);
     await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
