@@ -1,8 +1,5 @@
 const { defineConfig } = require('cypress')
-const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
-const createEsbuildPlugin = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
-const Promise = require("@babel/core/lib/vendor/import-meta-resolve");
 
 module.exports = defineConfig({
   e2e: {
@@ -117,6 +114,9 @@ module.exports = defineConfig({
       }
 
       if (config.env.enableCucumber) {
+        const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+        const createEsbuildPlugin = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+
         await preprocessor.addCucumberPreprocessorPlugin(on, config);
         on(
           "file:preprocessor",

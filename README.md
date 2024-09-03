@@ -44,7 +44,7 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 
 ### Requirements
 
-- `>=4.0.0` requires cypress `>=10.0.0`
+- `>=4.0.0` requires cypress `>=10.0.0` and node `>=12`
 - `>=3.0.0` requires cypress `>=4.10.0`
 - `<3.0.0` requires cypress `>=3.8.0`
 

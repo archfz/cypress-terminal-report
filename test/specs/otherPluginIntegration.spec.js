@@ -17,7 +17,7 @@ describe('Other plugin integrations.', () => {
     }
   });
 
-  it('Should run happy flow with cucumber preprocessor.', async () => {
+  it('Should run happy flow with cucumber preprocessor. [backward-compatibility-skip]', async () => {
     await runTest(commandBase(['enableCucumber=1', 'printLogsToConsoleAlways=1'], ['cucumber/Happy.feature']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.success}  assert\texpected **0** to be below **2**`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  Given \t**I open Happy page**`);
@@ -26,7 +26,7 @@ describe('Other plugin integrations.', () => {
     });
   }).timeout(30000);
 
-  it('Should generate proper nested log output files with cucumber preprocessor.', async () => {
+  it('Should generate proper nested log output files with cucumber preprocessor. [backward-compatibility-skip]', async () => {
     const specFiles = ['cucumber/Happy.feature'];
     await runTest(commandBase(['generateNestedOutput=1', 'enableCucumber=1', 'printLogsToFileAlways=1'], specFiles), (error, stdout) => {
       const specs = glob.sync('./output_nested_cucumber_spec/**/*', {nodir: true});

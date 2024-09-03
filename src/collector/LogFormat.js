@@ -39,6 +39,13 @@ module.exports = class LogFormat {
     if (!body) {
       return Promise.resolve('<EMPTY>');
     } else if (typeof body === 'string') {
+      // @TODO: Legacy support code. On older version body might be string but infact JSON.
+      if (body.charAt(0) === '{' && body.charAt(body.length - 1) === '}') {
+        try {
+          return Promise.resolve(JSON.stringify(JSON.parse(body), null, 2));
+        } catch (e) {/* noop */}
+      }
+
       return Promise.resolve(body);
     } else if (typeof body === 'object') {
       if (typeof body.text === 'function') {

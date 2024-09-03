@@ -1,0 +1,42 @@
+{
+  "name": "cypress-terminal-report-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require @babel/register specs/*.spec.js",
+    "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
+    "test-backwards-ci": "npm run test-ci -- --fgrep '[backward-compatibility-skip]' -i"
+  },
+  "author": "Fodor Zoltan",
+  "license": "MIT",
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
+  },
+  "dependencies": {
+    "@babel/core": "7.4.5",
+    "@babel/plugin-transform-runtime": "7.2.0",
+    "@babel/preset-env": "7.4.5",
+    "@babel/preset-react": "^7.22.15",
+    "@babel/register": "7.13.16",
+    "@badeball/cypress-cucumber-preprocessor": "^4.1.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
+    "@cypress/grep": "^4.0.1",
+    "babel-loader": "^8.3.0",
+    "chai": "^4.2.0",
+    "cypress": "^10.0.0",
+    "esbuild": "^0.23.1",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "html-webpack-plugin": "^5.5.3",
+    "mocha": "^3.5.0",
+    "process": "^0.11.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webpack": "^5.89.0"
+  },
+  "devDependencies": {
+    "cypress-fail-fast": "^7.0.3",
+    "cypress-mochawesome-reporter": "^3.6.1"
+  }
+}
