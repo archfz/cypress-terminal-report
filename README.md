@@ -106,9 +106,6 @@ string; default: null; Cypress specs root relative to package json. [More detail
 #### `options.outputTarget`
 object; default: null; Output logs to files. [More details](#logging-to-files).
 
-#### `options.outputVerbose`
-boolean; default: true; Toggles verbose output.
-
 #### `options.printLogsToConsole`
 string; Default: 'onFail'. When to print logs to console, possible values: 'always', 'onFail', 'never' - When set to always
 logs will be printed to console for successful tests as well as failing ones.
@@ -124,6 +121,12 @@ avoid printing too many, possibly irrelevant, information. However you can set t
 need more extensive logging, but be aware that commands will be logged to terminal from these hooks 
 regardless whether there were failing tests in the suite. This is because we can't know for sure in 
 advanced if a test fails or not.
+
+#### `options.outputVerbose`
+boolean; default: true; Toggles verbose output. Currently just writes out additional file write information, if any.
+
+#### `options.debug`
+boolean; default: false; Toggles debug output. Useful in cases of difficult to reproduce issues with the plugin.
 
 #### `options.collectTestLogs` *1
 ([spec, test, state], {type, message, severity}[]) => void; default: undefined;
@@ -372,6 +375,8 @@ add the case as well in the `/test/test.js`. To run the tests you can use `npm t
 directory. You should add `it.only` to the test case you are working on to speed up development.
 
 ## Release Notes
+
+- Add `debug` option on plugin install side for logging.
 
 #### 6.1.3
 

@@ -57,6 +57,9 @@
     "outputVerbose": {
       "type": "boolean"
     },
+    "debug": {
+      "type": "boolean"
+    },
     "collectTestLogs": {
       "type": "function"
     },

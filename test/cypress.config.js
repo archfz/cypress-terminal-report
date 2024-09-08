@@ -52,6 +52,9 @@ module.exports = defineConfig({
       if (config.env.disableVerbose == "1"){
         options.outputVerbose = false;
       }
+      if (config.env.debug == "1"){
+        options.debug = true;
+      }
       if (config.env.generateSimpleOutput == "1") {
         options.outputRoot = config.projectRoot + '/output/';
         options.outputTarget = {'out.txt': 'txt'};

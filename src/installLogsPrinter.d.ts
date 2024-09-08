@@ -36,7 +36,7 @@ declare namespace installLogsPrinter {
     routeTrimLength?: number;
 
     /**
-     * If set to a number greater or equal to 0, this amount of logs will be printed only around failing commands. 
+     * If set to a number greater or equal to 0, this amount of logs will be printed only around failing commands.
      * Use this to have shorter output especially for when there are a lot of commands in tests.
      * When used with `options.printLogs=always`, for tests that don't have any `severity=error` logs, nothing will be printed.
      * @default null
@@ -72,6 +72,12 @@ declare namespace installLogsPrinter {
      * @default true
      */
     outputVerbose?: boolean | true;
+
+    /**
+     * Toggles debug output.
+     * @default false
+     */
+    debug?: boolean;
 
     /**
      * Cypress specs root relative to package json. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).

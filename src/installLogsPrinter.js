@@ -53,6 +53,10 @@ const LOG_SYMBOLS = (() => {
 let writeToFileMessages = {};
 let outputProcessors = [];
 
+const createLogger = (enabled) => enabled
+  ? (message) => console.log(`[cypress-terminal-report:debug] ${message}`)
+  : () => {}
+
 /**
  * Installs the cypress plugin for printing logs to terminal.
  *
@@ -70,13 +74,16 @@ function installLogsPrinter(on, options = {}) {
     throw new CtrError(`Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
   }
 
+  const logDebug = createLogger(options.debug);
+
   on('task', {
     [CONSTANTS.TASK_NAME]: function (/** @type {Data} */ data) {
+      logDebug(`${CONSTANTS.TASK_NAME}: Received ${data.messages.length} messages, for ${data.spec}:${data.test}, with state ${data.state}.`);
       let messages = data.messages;
 
       const terminalMessages =
         typeof options.compactLogs === 'number' && options.compactLogs >= 0
-          ? compactLogs(messages, options.compactLogs)
+          ? compactLogs(messages, options.compactLogs, logDebug)
           : messages;
 
       const isHookAndShouldLog = data.isHook &&
@@ -90,10 +97,12 @@ function installLogsPrinter(on, options = {}) {
         ) {
           let outputFileMessages =
             typeof options.outputCompactLogs === 'number'
-              ? compactLogs(messages, options.outputCompactLogs)
+              ? compactLogs(messages, options.outputCompactLogs, logDebug)
               : options.outputCompactLogs === false
               ? messages
               : terminalMessages;
+
+          logDebug(`Storing for file logging ${outputFileMessages.length} messages, for ${data.spec}:${data.test}.`);
 
           writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
           writeToFileMessages[data.spec][data.test] = outputFileMessages;
@@ -107,10 +116,12 @@ function installLogsPrinter(on, options = {}) {
           || isHookAndShouldLog
         )
       ) {
+        logDebug(`Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
         logToTerminal(terminalMessages, options, data);
       }
 
       if (options.collectTestLogs) {
+        logDebug(`Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
         options.collectTestLogs(
           {spec: data.spec, test: data.test, state: data.state},
           terminalMessages
@@ -120,6 +131,7 @@ function installLogsPrinter(on, options = {}) {
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
+      logDebug(`${CONSTANTS.TASK_NAME_OUTPUT}: Triggered.`);
       logToFiles(options);
       return null;
     }
@@ -130,14 +142,11 @@ function installLogsPrinter(on, options = {}) {
   }
 
   if (options.logToFilesOnAfterRun) {
-    enableLogToFilesOnAfterRun(on, options);
+    on('after:run', () => {
+      logDebug(`after:run: Attempting file logging on after run.`);
+      logToFiles(options);
+    });
   }
-}
-
-function enableLogToFilesOnAfterRun(on, /** @type {PluginOptions} */ options) {
-  on('after:run', () => {
-    logToFiles(options);
-  });
 }
 
 function logToFiles(/** @type {PluginOptions} */ options) {
@@ -208,7 +217,12 @@ function compactLogs(
   /** @type {Log[]} */
   logs,
   /** @type {number} */
-  keepAroundCount) {
+  keepAroundCount,
+  /** @type {function} */
+  logDebug,
+) {
+  logDebug(`Compacting ${logs.length} logs.`)
+
   const failingIndexes = logs.filter((log) => log.severity === CONSTANTS.SEVERITY.ERROR)
     .map((log) => logs.indexOf(log));
 

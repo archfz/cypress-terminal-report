@@ -1,7 +1,13 @@
 import {
   ICONS,
   runTest,
-  commandBase, logLastRun, clean, runTestContinuous, outputCleanUpAndInitialization, expectOutputFilesToBeCorrect,
+  commandBase,
+  logLastRun,
+  clean,
+  runTestContinuous,
+  outputCleanUpAndInitialization,
+  expectOutputFilesToBeCorrect,
+  PADDING,
 } from "../utils";
 
 const {expect} = require('chai');
@@ -151,6 +157,16 @@ describe('Misc.', () => {
   it('Should log command times in seconds with extended collector and before hooks.', async function () {
     await runTest(commandBase(['commandTimings=seconds', 'enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
       expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+    });
+  }).timeout(60000);
+
+  it('Should output debug logs when enabled.', async () => {
+    await runTest(commandBase(['debug=1', 'outputCompactLogs=1', 'generateSimpleOutput=1', 'collectTestLogsPlugin=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] ctrLogMessages: Received 42 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow, with state failed.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Compacting 42 logs.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Logging to console 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Running \`collectTestLogs\` on 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] ctrLogFiles: Triggered.`);
     });
   }).timeout(60000);
 
