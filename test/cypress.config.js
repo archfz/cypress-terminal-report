@@ -1,5 +1,6 @@
 const { defineConfig } = require('cypress')
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+require('./mock_server.js');
 
 module.exports = defineConfig({
   e2e: {
