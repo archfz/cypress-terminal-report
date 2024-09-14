@@ -125,7 +125,7 @@ describe('Commands logging.', () => {
     await runTest(commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not=A?Brand\\";v=\\"99\\"`);
       expect(stdout).to.contain(`\n${PADDING}  "Keep-Alive": "timeout=5"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`);
-      expect(stdout).to.contain(`POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "x-powered-by": "Express",\n${PADDING}  "content-type": "application/json; charset=utf-8",\n`);
+      expect(stdout).to.contain(`POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "x-powered-by": "Express",\n${PADDING}  "access-control-allow-origin": "*",\n`);
       expect(stdout).to.contain(`${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`);
     });
   }).timeout(60000);
