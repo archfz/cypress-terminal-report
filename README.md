@@ -376,6 +376,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Migrate `src` to typescript.
+
 #### 6.2.0
 
 - Add `debug` option on plugin install side for logging.

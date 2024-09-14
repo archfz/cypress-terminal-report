@@ -1,22 +1,22 @@
-const LOG_TYPE = require('../constants').LOG_TYPES;
-const CONSTANTS = require('../constants');
-const utils = require('../utils');
+import CONSTANTS from '../constants';
+import utils from '../utils';
 
-module.exports = class LogCollectCypressCommand {
+export default class LogCollectCypressCommand {
+  collectorState: any;
+  config: any;
 
-  constructor(collectorState, config) {
+  constructor(collectorState: any, config: any) {
     this.config = config;
     this.collectorState = collectorState;
   }
 
   register() {
-    const isOfInterest = (options) =>
-      options.instrument === 'command' &&
-      options.consoleProps &&
-      !['xhr', 'log', 'request'].includes(options.name) &&
-      !(options.name === 'task' && options.message.match(/ctrLogMessages/));
+    const isOfInterest = (options: any) => options.instrument === 'command' &&
+    options.consoleProps &&
+    !['xhr', 'log', 'request'].includes(options.name) &&
+    !(options.name === 'task' && options.message.match(/ctrLogMessages/));
 
-    const formatLogMessage = (options) => {
+    const formatLogMessage = (options: any) => {
       let message = options.name + '\t' + options.message;
 
       if (options.expected && options.actual) {
@@ -27,15 +27,15 @@ module.exports = class LogCollectCypressCommand {
       return message;
     };
 
-    Cypress.on('log:added', (options) => {
+    Cypress.on('log:added', (options: any) => {
       if (isOfInterest(options)) {
         const log = formatLogMessage(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : '';
-        this.collectorState.addLog([LOG_TYPE.CYPRESS_COMMAND, log, severity], options.id);
+        this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_COMMAND, log, severity], options.id);
       }
     });
 
-    Cypress.on('log:changed', (options) => {
+    Cypress.on('log:changed', (options: any) => {
       if (isOfInterest(options)) {
         const log = formatLogMessage(options);
         const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
@@ -43,5 +43,4 @@ module.exports = class LogCollectCypressCommand {
       }
     });
   }
-
 }

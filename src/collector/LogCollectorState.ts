@@ -1,7 +1,16 @@
-const CONSTANTS = require('../constants');
+import CONSTANTS from '../constants';
 
-module.exports = class LogCollectorState {
-  constructor(config) {
+export default class LogCollectorState {
+  afterHookIndexes: any;
+  beforeHookIndexes: any;
+  config: any;
+  currentTest: any;
+  isStrict: any;
+  listeners: any;
+  logStacks: any;
+  suiteStartTime: any;
+  xhrIdsOfLoggedResponses: any;
+  constructor(config: any) {
     this.config = config;
 
     this.listeners = {};
@@ -14,7 +23,7 @@ module.exports = class LogCollectorState {
     this.suiteStartTime = null;
   }
 
-  setStrict(strict) {
+  setStrict(strict: any) {
     this.isStrict = true;
   }
 
@@ -30,14 +39,14 @@ module.exports = class LogCollectorState {
   getCurrentLogStack() {
     return this.logStacks[this.getCurrentLogStackIndex()];
   }
-  consumeLogStacks(index) {
+  consumeLogStacks(index: any) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'consuming log stack at ' + index);
     }
     const stack = this.logStacks[index];
     this.logStacks[index] = null;
 
-    stack.forEach(log => {
+    stack.forEach((log: any) => {
       if (log.chainId) {
         delete log.chainId;
       }
@@ -51,11 +60,11 @@ module.exports = class LogCollectorState {
   getCurrentTest() {
     return this.currentTest;
   }
-  setCurrentTest(test) {
+  setCurrentTest(test: any) {
     this.currentTest = test;
   }
 
-  addLog(entry, chainId, xhrIdOfLoggedResponse) {
+  addLog(entry: any, chainId: any, xhrIdOfLoggedResponse: any) {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
     const currentStack = this.getCurrentLogStack();
@@ -73,12 +82,15 @@ module.exports = class LogCollectorState {
     };
 
     if (chainId) {
+      // @ts-expect-error TS(2339): Property 'chainId' does not exist on type '{ type:... Remove this comment to see the full error message
       structuredEntry.chainId = chainId;
     }
     if (this.config.commandTimings) {
       if (this.config.commandTimings == 'timestamp') {
+        // @ts-expect-error TS(2339): Property 'timeString' does not exist on type '{ ty... Remove this comment to see the full error message
         structuredEntry.timeString = Date.now() + "";
       } else if (this.config.commandTimings == 'seconds') {
+        // @ts-expect-error TS(2339): Property 'timeString' does not exist on type '{ ty... Remove this comment to see the full error message
         structuredEntry.timeString = (Date.now() - this.suiteStartTime.getTime()) / 1000 + "s";
       }
     }
@@ -90,8 +102,8 @@ module.exports = class LogCollectorState {
     this.emit('log');
   }
 
-  updateLog(log, severity, id) {
-    this.loopLogStacks((entry) => {
+  updateLog(log: any, severity: any, id: any) {
+    this.loopLogStacks((entry: any) => {
       if (entry.chainId === id) {
         entry.message = log;
         entry.severity = severity;
@@ -100,21 +112,21 @@ module.exports = class LogCollectorState {
     this.emit('log');
   }
 
-  updateLogStatusForChainId(chainId, state = CONSTANTS.SEVERITY.ERROR) {
-    this.loopLogStacks((entry) => {
+  updateLogStatusForChainId(chainId: any, state = CONSTANTS.SEVERITY.ERROR) {
+    this.loopLogStacks((entry: any) => {
         if (entry.chainId === chainId) {
           entry.severity = state;
         }
     });
   }
 
-  loopLogStacks(callback) {
-    this.logStacks.forEach(logStack => {
+  loopLogStacks(callback: any) {
+    this.logStacks.forEach((logStack: any) => {
       if (!logStack) {
         return;
       }
 
-      logStack.forEach(entry => {
+      logStack.forEach((entry: any) => {
         if (!entry) {
           return;
         }
@@ -124,7 +136,7 @@ module.exports = class LogCollectorState {
     });
   }
 
-  hasXhrResponseBeenLogged(xhrId) {
+  hasXhrResponseBeenLogged(xhrId: any) {
     return this.xhrIdsOfLoggedResponses.includes(xhrId);
   }
 
@@ -167,7 +179,7 @@ module.exports = class LogCollectorState {
     this.beforeHookIndexes.shift();
     this.afterHookIndexes.shift();
   }
-  startTest(test) {
+  startTest(test: any) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting test: ' + test.title);
     }
@@ -180,7 +192,9 @@ module.exports = class LogCollectorState {
     const currentIndex = this.getCurrentLogStackIndex();
     let previousIndex = currentIndex - 1;
     while (
+      // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
       this.getCurrentLogStack(previousIndex)
+      // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
       && this.getCurrentLogStack(previousIndex)._ctr_before_each
     ) {
       this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
@@ -188,11 +202,11 @@ module.exports = class LogCollectorState {
     }
   }
 
-  emit(event) {
-    (this.listeners[event] || []).forEach(callback => callback());
+  emit(event: any) {
+    (this.listeners[event] || []).forEach((callback: any) => callback());
   }
 
-  on(event, callback) {
+  on(event: any, callback: any) {
     this.listeners[event] = this.listeners[event] || [];
     this.listeners[event].push(callback);
   }

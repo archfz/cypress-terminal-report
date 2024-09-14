@@ -1,15 +1,16 @@
-const LOG_TYPE = require('../constants').LOG_TYPES;
-const HTTP_METHODS = require('../constants').HTTP_METHODS;
-const CONSTANTS = require('../constants');
-const LogFormat = require("./LogFormat");
+import CONSTANTS from '../constants';
+import LogFormat from "./LogFormat";
 
 Object.defineProperty(RegExp.prototype, "toJSON", {
   value: RegExp.prototype.toString
 });
 
-module.exports = class LogCollectCypressIntercept {
+export default class LogCollectCypressIntercept {
+  collectorState: any;
+  config: any;
+  format: any;
 
-  constructor(collectorState, config) {
+  constructor(collectorState: any, config: any) {
     this.config = config;
     this.collectorState = collectorState;
 
@@ -17,10 +18,10 @@ module.exports = class LogCollectCypressIntercept {
   }
 
   register() {
-    Cypress.Commands.overwrite('intercept', (originalFn, ...args) => {
+    Cypress.Commands.overwrite('intercept', (originalFn: any, ...args: any[]) => {
       let message = '';
 
-      if (typeof args[0] === "string" && HTTP_METHODS.includes(args[0].toUpperCase())) {
+      if (typeof args[0] === "string" && CONSTANTS.HTTP_METHODS.includes(args[0].toUpperCase())) {
         message += `Method: ${args[0]}\nMatcher: ${JSON.stringify(args[1])}`;
         if (args[2]) {
           message += `\nMocked Response: ${typeof args[2] === 'object' ? JSON.stringify(args[2]) : args[2]}`;
@@ -32,9 +33,8 @@ module.exports = class LogCollectCypressIntercept {
         }
       }
 
-      this.collectorState.addLog([LOG_TYPE.CYPRESS_INTERCEPT, message, CONSTANTS.SEVERITY.SUCCESS]);
+      this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_INTERCEPT, message, CONSTANTS.SEVERITY.SUCCESS]);
       return originalFn(...args);
     });
   }
-
 }

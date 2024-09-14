@@ -10,3 +10,5 @@ test/output_nested
 test/cypress/reports
 .idea
 .vscode
+.aider*
+src/**/*.js

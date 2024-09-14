@@ -1,13 +1,17 @@
-const CONSTANTS = require('../constants');
-const LogCollectBaseControl = require('./LogCollectBaseControl');
-const utils = require("../utils");
+import CONSTANTS from '../constants';
+import LogCollectBaseControl from './LogCollectBaseControl';
+import utils from "../utils";
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
+export default class LogCollectExtendedControl extends LogCollectBaseControl {
+  collectorState: any;
+  config: any;
+  getSpecFilePath: any;
+  prepareLogs: any;
 
-  constructor(collectorState, config) {
+  constructor(collectorState: any, config: any) {
     super();
     this.config = config;
     this.collectorState = collectorState;
@@ -25,8 +29,10 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     this.registerLogToFiles();
   }
 
-  sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
+  sendLogsToPrinter(logStackIndex: any, mochaRunnable: any, options = {}) {
+    // @ts-expect-error TS(2339): Property 'state' does not exist on type '{}'.
     let testState = options.state || mochaRunnable.state;
+    // @ts-expect-error TS(2339): Property 'title' does not exist on type '{}'.
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
@@ -36,6 +42,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       return;
     }
 
+    // @ts-expect-error TS(2339): Property 'wait' does not exist on type '{}'.
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     {
@@ -53,6 +60,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       return logs;
     };
 
+    // @ts-expect-error TS(2339): Property 'noQueue' does not exist on type '{}'.
     if (options.noQueue) {
       this.debugLog('Sending with debounce.');
       this.debounceNextMochaSuite(Promise.resolve()
@@ -64,7 +72,9 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
           messages: prepareLogs(),
           state: testState,
           level: testLevel,
+          // @ts-expect-error TS(2339): Property 'consoleTitle' does not exist on type '{}... Remove this comment to see the full error message
           consoleTitle: options.consoleTitle,
+          // @ts-expect-error TS(2339): Property 'isHook' does not exist on type '{}'.
           isHook: options.isHook,
           continuous: false,
         }))
@@ -82,7 +92,9 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
               messages: prepareLogs(),
               state: testState,
               level: testLevel,
+              // @ts-expect-error TS(2339): Property 'consoleTitle' does not exist on type '{}... Remove this comment to see the full error message
               consoleTitle: options.consoleTitle,
+              // @ts-expect-error TS(2339): Property 'isHook' does not exist on type '{}'.
               isHook: options.isHook,
               continuous: false,
             },
@@ -95,23 +107,27 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   registerState() {
     const self = this;
 
-    Cypress.on('log:changed', (options) => {
+    Cypress.on('log:changed', (options: any) => {
       if (options.state === 'failed') {
         this.collectorState.updateLogStatusForChainId(options.id);
       }
     });
-    Cypress.mocha.getRunner().on('test', (test) => {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('test', (test: any) => {
       this.collectorState.startTest(test);
     });
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     Cypress.mocha.getRunner().on('suite', () => {
       this.collectorState.startSuite();
     });
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     Cypress.mocha.getRunner().on('suite end', () => {
       this.collectorState.endSuite();
     });
 
     // Keeps track of before and after all hook indexes.
-    Cypress.mocha.getRunner().on('hook', function (hook) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('hook', function (hook: any) {
       if (!hook._ctr_hook && !hook.fn._ctr_hook) {
         // After each hooks get merged with the test.
         if (hook.hookName !== "after each") {
@@ -136,7 +152,8 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     const self = this;
 
     // Logs commands from before all hook if the hook passed.
-    Cypress.mocha.getRunner().on('hook end', function (hook) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('hook end', function(this: any, hook: any) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
@@ -153,8 +170,8 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     });
 
     // Logs commands from before all hooks that failed.
-    Cypress.on('before:mocha:hooks:seal', function () {
-      self.prependBeforeAllHookInAllSuites(this.mocha.getRootSuite().suites, function ctrAfterAllPerSuite() {
+    Cypress.on('before:mocha:hooks:seal', function(this: any) {
+      self.prependBeforeAllHookInAllSuites(this.mocha.getRootSuite().suites, function ctrAfterAllPerSuite(this: any) {
         if (
           this.test.parent === this.currentTest.parent // Since we have after all in each suite we need this for nested suites case.
           && this.currentTest.failedFromHookId // This is how we know a hook failed the suite.
@@ -179,7 +196,8 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     const self = this;
 
     // Logs commands from after all hooks that passed.
-    Cypress.mocha.getRunner().on('hook end', function (hook) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('hook end', function (hook: any) {
       if (hook.hookName === "after all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
@@ -197,7 +215,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     });
 
     // Logs after all hook commands when a command fails in the hook.
-    Cypress.prependListener('fail', function (error) {
+    Cypress.prependListener('fail', function(this: any, error: any) {
       const currentRunnable = this.mocha.getRunner().currentRunnable;
 
       if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsCurrentStack()) {
@@ -219,12 +237,14 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
         // Have to wait for debounce on log updates to have correct state information.
         // Done state is used as callback and awaited in Cypress.fail.
-        Cypress.state('done', async (error) => {
+        // @ts-expect-error TS(2339): Property 'state' does not exist on type 'Cypress &... Remove this comment to see the full error message
+        Cypress.state('done', async (error: any) => {
           await new Promise(resolve => setTimeout(resolve, 6));
           throw error;
         });
       }
 
+      // @ts-expect-error TS(2339): Property 'state' does not exist on type 'Cypress &... Remove this comment to see the full error message
       Cypress.state('error', error);
       throw error;
     });
@@ -233,7 +253,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
   registerTests() {
     const self = this;
 
-    const sendLogsToPrinterForATest = (test) => {
+    const sendLogsToPrinterForATest = (test: any) => {
       // We take over logging the passing test titles since we need to control when it gets printed so
       // that our logs come after it is printed.
       if (test.state === 'passed') {
@@ -244,7 +264,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
-    const testHasAfterEachHooks = (test) => {
+    const testHasAfterEachHooks = (test: any) => {
       do {
         if (test.parent._afterEach.length > 0) {
           return true;
@@ -254,7 +274,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       return false;
     };
 
-    const isLastAfterEachHookForTest = (test, hook) => {
+    const isLastAfterEachHookForTest = (test: any, hook: any) => {
       let suite = test.parent;
       do {
         if (suite._afterEach.length === 0) {
@@ -267,7 +287,8 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     };
 
     // Logs commands form each separate test when after each hooks are present.
-    Cypress.mocha.getRunner().on('hook end', function (hook) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('hook end', function (hook: any) {
       if (hook.hookName === 'after each') {
         if (isLastAfterEachHookForTest(self.collectorState.getCurrentTest(), hook)) {
           self.debugLog('extended: sending logs for ended test, just after the last after each hook: ' + self.collectorState.getCurrentTest().title);
@@ -276,14 +297,16 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
       }
     });
     // Logs commands form each separate test when there is no after each hook.
-    Cypress.mocha.getRunner().on('test end', function (test) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('test end', function (test: any) {
       if (!testHasAfterEachHooks(test)) {
         self.debugLog('extended: sending logs for ended test, that has not after each hooks: ' + self.collectorState.getCurrentTest().title);
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });
     // Logs commands if test was manually skipped.
-    Cypress.mocha.getRunner().on('pending', function (test) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('pending', function (test: any) {
       if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
         if (self.collectorState.hasLogsCurrentStack()) {
@@ -301,7 +324,8 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     });
   }
 
-  debounceNextMochaSuite(promise) {
+  debounceNextMochaSuite(promise: any) {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     const runner = Cypress.mocha.getRunner();
 
     // Hack to make mocha wait for our logs to be written to console before
@@ -309,7 +333,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // fire synchronously and thus we wouldn't get a window to display the
     // logs between the failed hook title and next suite title.
     const originalRunSuite = runner.runSuite;
-    runner.runSuite = function (...args) {
+    runner.runSuite = function (...args: any[]) {
       promise
         .catch(() => {/* noop */})
         // We need to wait here as for some reason the next suite title will be displayed to soon.
@@ -325,17 +349,19 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     // Hack to have dynamic after hook per suite.
     // The onSpecReady in cypress is called before the hooks are 'condensed', or so
     // to say sealed and thus in this phase we can register dynamically hooks.
+    // @ts-expect-error TS(2339): Property 'onSpecReady' does not exist on type 'Cyp... Remove this comment to see the full error message
     const oldOnSpecReady = Cypress.onSpecReady;
+    // @ts-expect-error TS(2339): Property 'onSpecReady' does not exist on type 'Cyp... Remove this comment to see the full error message
     Cypress.onSpecReady = function () {
       Cypress.emit('before:mocha:hooks:seal');
       oldOnSpecReady(...arguments);
     };
   }
 
-  prependBeforeAllHookInAllSuites(rootSuites, hookCallback) {
-    const recursiveSuites = (suites) => {
+  prependBeforeAllHookInAllSuites(rootSuites: any, hookCallback: any) {
+    const recursiveSuites = (suites: any) => {
       if (suites) {
-        suites.forEach((suite) => {
+        suites.forEach((suite: any) => {
           if (suite.isPending()) {
             return
           }
@@ -354,7 +380,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     recursiveSuites(rootSuites);
   }
 
-  printPassingMochaTestTitle(test) {
+  printPassingMochaTestTitle(test: any) {
     if (Cypress.config('isTextTerminal')) {
       Cypress.emit('mocha', 'pass', {
         "id": test.id,
@@ -376,7 +402,7 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
 
   preventNextMochaPassEmit() {
     const oldAction = Cypress.action;
-    Cypress.action = function (actionName, ...args) {
+    Cypress.action = function (actionName: any, ...args: any[]) {
       if (actionName === 'runner:pass') {
         Cypress.action = oldAction;
         return;
@@ -386,10 +412,9 @@ module.exports = class LogCollectExtendedControl extends LogCollectBaseControl {
     };
   }
 
-  debugLog(message) {
+  debugLog(message: any) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + message);
     }
   }
-
 };

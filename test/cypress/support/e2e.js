@@ -121,7 +121,7 @@ if (env.globalAfter == '1') {
 }
 
 if (env.disabled != '1') {
-  require('../../../src/installLogsCollector')(config);
+  require('../../../src/installLogsCollector.js')(config);
 }
 
 enableFetchWorkaround();

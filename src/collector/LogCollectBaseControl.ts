@@ -1,7 +1,9 @@
-const CtrError = require('../CtrError');
+import CtrError from '../CtrError';
 
-module.exports = class LogCollectBaseControl {
-  prepareLogs(logStackIndex, testData) {
+export default class LogCollectBaseControl {
+  collectorState: any;
+  config: any;
+  prepareLogs(logStackIndex: any, testData: any) {
     let logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
 
     if (logsCopy === null) {
@@ -23,7 +25,7 @@ module.exports = class LogCollectBaseControl {
     return logsCopy;
   }
 
-  getSpecFilePath(mochaRunnable) {
+  getSpecFilePath(mochaRunnable: any) {
     if (!mochaRunnable.invocationDetails && !mochaRunnable.parent.invocationDetails) {
       if (mochaRunnable.parent.file) {
         return mochaRunnable.parent.file;

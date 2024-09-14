@@ -1,11 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import CtrError from '../CtrError';
 
-const CtrError = require('../CtrError');
+export default class BaseOutputProcessor {
+  atChunk: any;
+  chunkSeparator: any;
+  file: any;
+  initialContent: any;
+  size: any;
+  specChunksWritten: any;
+  writeSpendTime: any;
 
-module.exports = class BaseOutputProcessor {
-
-  constructor(file) {
+  constructor(file: any) {
     this.file = file;
     this.initialContent = '';
     this.chunkSeparator = '';
@@ -43,7 +49,7 @@ module.exports = class BaseOutputProcessor {
   }
 
   /** @type { import('./BaseOutputProcessor')['writeSpecChunk']} */
-  writeSpecChunk(spec, chunk, pos = null) {
+  writeSpecChunk(spec: any, chunk: any, pos: number | null = null) {
     const startTime = new Date().getTime();
 
     if (typeof chunk !== 'string') {
@@ -71,11 +77,12 @@ module.exports = class BaseOutputProcessor {
     this.writeSpendTime += new Date().getTime() - startTime;
   }
 
-  replaceSpecChunk(spec, chunk) {
+  replaceSpecChunk(spec: any, chunk: any) {
     let oldChunkStart = this.specChunksWritten[spec][0];
     let oldChunkEnd = this.specChunksWritten[spec][1];
 
     let fd = fs.openSync(this.file, 'r+');
+    // @ts-expect-error TS(2552): Cannot find name 'Buffer'. Did you mean 'buffer'?
     let buffer = Buffer.alloc(this.size - oldChunkEnd, null, 'utf-8');
     fs.readSync(fd, buffer, 0, buffer.length, oldChunkEnd);
 
@@ -96,11 +103,11 @@ module.exports = class BaseOutputProcessor {
     }
   }
 
-  appendSeparator(pos) {
+  appendSeparator(pos: any) {
     this.writeAtPosition(this.chunkSeparator, pos)
   }
 
-  writeAtPosition(data, pos) {
+  writeAtPosition(data: any, pos: any) {
     let dataBuffer = new Buffer(data, 'utf-8');
     let finalBuffer = dataBuffer;
     let fd = fs.openSync(this.file, 'r+');
@@ -119,18 +126,17 @@ module.exports = class BaseOutputProcessor {
     return dataBuffer.length;
   }
 
-  getAbsolutePositionFromRelative(pos) {
+  getAbsolutePositionFromRelative(pos: any): number {
     if (pos === null) {
       return this.size;
     } else if (pos < 0) {
       return Math.min(this.size, Math.max(0, this.size + pos));
-    } else {
-      return Math.min(this.size, pos);
     }
+
+    return Math.min(this.size, pos);
   }
 
-  hasSpecChunkWritten(spec) {
+  hasSpecChunkWritten(spec: any) {
     return !!this.specChunksWritten[spec];
   }
-
 };

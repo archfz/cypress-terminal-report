@@ -1,11 +1,12 @@
-const semver = require("semver");
-const jsonPrune = require("./jsonPrune");
+import semver from "semver";
+import jsonPrune from "./jsonPrune";
 
 const utils = {
-  nonQueueTask: function (name, data) {
+  nonQueueTask: function (name: any, data: any) {
     if (Cypress.testingType === 'component' && semver.gte(Cypress.version, '12.15.0')) {
       // In component tests task commands don't need to be verified for some reason.
       return new Promise(resolve => setTimeout(resolve, 5))
+        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
         .then(() => Cypress.backend('run:privileged', {
           commandName: 'task',
           userArgs: [name, data],
@@ -19,8 +20,10 @@ const utils = {
     }
 
     if (semver.gte(Cypress.version, '12.17.0')) {
+      // @ts-expect-error TS(2339): Property 'args' does not exist on type '(...args: ... Remove this comment to see the full error message
       const { args, promise } = Cypress.emitMap('command:invocation', {name: 'task', args: [name, data]})[0]
       return new Promise((r) => promise.then(r))
+        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
         .then(() => Cypress.backend('run:privileged', {
           commandName: 'task',
           args,
@@ -36,6 +39,7 @@ const utils = {
     if (semver.gte(Cypress.version, '12.15.0')) {
       Cypress.emit('command:invocation', {name: 'task', args: [name, data]})
       return new Promise(resolve => setTimeout(resolve, 5))
+        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
         .then(() => Cypress.backend('run:privileged', {
           commandName: 'task',
           userArgs: [name, data],
@@ -48,15 +52,16 @@ const utils = {
         .catch(() => {/* noop */})
     }
 
+    // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
     return Cypress.backend('task', {
       task: name,
       arg: data,
     })
       // For some reason cypress throws empty error although the task indeed works.
-      .catch((error) => {/* noop */})
+      .catch((error: any) => {/* noop */});
   },
 
-  jsonStringify(value, format = true) {
+  jsonStringify(value: any, format = true) {
     let json = '';
 
     try {
@@ -81,4 +86,4 @@ const utils = {
   }
 }
 
-module.exports = utils;
+export default utils;

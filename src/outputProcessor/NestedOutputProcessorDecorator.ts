@@ -1,8 +1,13 @@
-const path = require('path');
+import * as path from 'path';
 
-module.exports = class NestedOutputProcessorDecorator {
+export default class NestedOutputProcessorDecorator {
+  decoratedFactory: any;
+  ext: any;
+  processors: any;
+  root: any;
+  specRoot: any;
 
-  constructor(root, specRoot, ext, decoratedFactory) {
+  constructor(root: any, specRoot: any, ext: any, decoratedFactory: any) {
     this.root = root;
     this.ext = ext;
     this.specRoot = specRoot || '';
@@ -15,7 +20,7 @@ module.exports = class NestedOutputProcessorDecorator {
     /* noop */
   }
 
-  getProcessor(spec) {
+  getProcessor(spec: any) {
     if (this.processors[spec]) {
       return this.processors[spec];
     }
@@ -30,7 +35,7 @@ module.exports = class NestedOutputProcessorDecorator {
     return processor;
   }
 
-  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages) {
+  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages: any) {
     Object.entries(allMessages).forEach(([spec, messages]) => {
       this.getProcessor(spec).write({[spec]: messages});
     });
@@ -41,6 +46,6 @@ module.exports = class NestedOutputProcessorDecorator {
   }
 
   getSpentTime() {
-    return Object.values(this.processors).reduce((count, processor) => count + processor.getSpentTime(), 0);
+    return Object.values(this.processors).reduce((count: any, processor: any) => count + processor.getSpentTime(), 0);
   }
 };

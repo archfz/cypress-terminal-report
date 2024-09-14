@@ -13,6 +13,9 @@ jobs:
           name: Install
           command: npm install --only prod && cd test && npm ci
       - run:
+          name: Build
+          command: npm run build
+      - run:
           name: Test
           command: cd test && npm run test-ci
 
@@ -28,6 +31,9 @@ jobs:
       - run:
           name: Install
           command: npm install --only prod
+      - run:
+          name: Build
+          command: npm run build
       - run:
           name: Install test
           command: cd test && npm i

@@ -1,19 +1,24 @@
-const CONSTANTS = require("../constants");
+import CONSTANTS from "../constants";
 
 const PADDING = '    ';
 const PADDING_LOGS = `${PADDING}`.repeat(6);
 
-const padTypeText = (text) => {
+const padTypeText = (text: any) => {
   return Array(Math.max(PADDING_LOGS.length - text.length + 1, 0)).join(' ')
     + text;
 }
 
-const padTimeText = (text) => {
+const padTimeText = (text: any) => {
   return PADDING_LOGS + text;
 }
 
-function logsTxtFormatter(logs, EOL = '\n') {
-  return logs.map(({type, message, severity, timeString}) => {
+function logsTxtFormatter(logs: any, EOL = '\n') {
+  return logs.map(({
+    type,
+    message,
+    severity,
+    timeString
+  }: any) => {
     let formattedLog = (padTypeText(`${type} (${{
         [CONSTANTS.SEVERITY.ERROR]: 'X',
         [CONSTANTS.SEVERITY.WARNING]: '!',
@@ -27,4 +32,4 @@ function logsTxtFormatter(logs, EOL = '\n') {
   }).join('');
 }
 
-module.exports = logsTxtFormatter;
+export default logsTxtFormatter;

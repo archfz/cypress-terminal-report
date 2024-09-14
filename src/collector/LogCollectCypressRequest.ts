@@ -1,11 +1,12 @@
-const LOG_TYPE = require('../constants').LOG_TYPES;
-const HTTP_METHODS = require('../constants').HTTP_METHODS;
-const CONSTANTS = require('../constants');
-const LogFormat = require("./LogFormat");
+import CONSTANTS from '../constants';
+import LogFormat from "./LogFormat";
 
-module.exports = class LogCollectCypressRequest {
+export default class LogCollectCypressRequest {
+  collectorState: any;
+  config: any;
+  format: any;
 
-  constructor(collectorState, config) {
+  constructor(collectorState: any, config: any) {
     this.config = config;
     this.collectorState = collectorState;
 
@@ -13,15 +14,13 @@ module.exports = class LogCollectCypressRequest {
   }
 
   register() {
-    const isValidHttpMethod = (str) =>
-      typeof str === 'string' && HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
+    const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s: any) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e) =>
-      e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+    const isNetworkError = (e: any) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e) => e.message && e.message.startsWith('`cy.request()` failed on:');
+    const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
 
-    const parseRequestStatusCodeFailureMessage = (message) => {
+    const parseRequestStatusCodeFailureMessage = (message: any) => {
       const responseStart = '\n\nThe response we got was:\n\n';
       const statusStart = 'Status: ';
       const headersStart = '\nHeaders: ';
@@ -47,7 +46,7 @@ module.exports = class LogCollectCypressRequest {
       return {status: statusStr, headers: headersStr, body: bodyStr.trimEnd()};
     };
 
-    const parseRequestNetworkError = (message) => {
+    const parseRequestNetworkError = (message: any) => {
       const errorPartStart = 'We received this error at the network level:\n\n  > ';
       const errorPrefix = 'Error: ';
       if (message.indexOf(errorPartStart) === -1) {
@@ -61,12 +60,12 @@ module.exports = class LogCollectCypressRequest {
       return errorPart.trim();
     };
 
-    Cypress.Commands.overwrite('request', (originalFn, ...args) => {
+    Cypress.Commands.overwrite('request', (originalFn: any, ...args: any[]) => {
       if (typeof args === 'object' && args !== null && args[0]['log'] === false){
         return originalFn(...args);
       }
 
-      let log;
+      let log: any;
       let requestBody;
       let requestHeaders;
 
@@ -93,7 +92,7 @@ module.exports = class LogCollectCypressRequest {
             body: formattedRequestBody,
           };
 
-          return originalFn(...args).catch(async (e) => {
+          return originalFn(...args).catch(async (e: any) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -119,10 +118,10 @@ module.exports = class LogCollectCypressRequest {
               log += `\n` + 'Cannot parse cy.request error content!';
             }
 
-            this.collectorState.addLog([LOG_TYPE.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
+            this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
             throw e;
           })
-            .then(response => {
+            .then((response: any) => {
               return Promise.all([
                 this.format.formatXhrBody(response.headers),
                 this.format.formatXhrBody(response.body)
@@ -139,12 +138,11 @@ module.exports = class LogCollectCypressRequest {
                       },
                     });
 
-                  this.collectorState.addLog([LOG_TYPE.CYPRESS_REQUEST, log]);
+                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log]);
                   return response;
                 });
             });
         });
     });
   }
-
 }

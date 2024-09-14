@@ -1,4 +1,4 @@
-module.exports = {
+const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
   TASK_NAME_OUTPUT: 'ctrLogFiles',
 
@@ -52,3 +52,5 @@ module.exports = {
     'UNSUBSCRIBE'
   ]
 };
+
+export default CONSTANTS;

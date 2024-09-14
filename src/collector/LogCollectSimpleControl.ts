@@ -1,13 +1,17 @@
-const CONSTANTS = require('../constants');
-const LogCollectBaseControl = require('./LogCollectBaseControl');
-const utils = require("../utils");
+import CONSTANTS from '../constants';
+import LogCollectBaseControl from './LogCollectBaseControl';
+import utils from "../utils";
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
+export default class LogCollectSimpleControl extends LogCollectBaseControl {
+  collectorState: any;
+  config: any;
+  getSpecFilePath: any;
+  prepareLogs: any;
 
-  constructor(collectorState, config) {
+  constructor(collectorState: any, config: any) {
     super();
     this.config = config;
     this.collectorState = collectorState;
@@ -19,8 +23,10 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
     this.registerLogToFiles();
   }
 
-  sendLogsToPrinter(logStackIndex, mochaRunnable, options = {}) {
+  sendLogsToPrinter(logStackIndex: any, mochaRunnable: any, options = {}) {
+    // @ts-expect-error TS(2339): Property 'state' does not exist on type '{}'.
     let testState = options.state || mochaRunnable.state;
+    // @ts-expect-error TS(2339): Property 'title' does not exist on type '{}'.
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
@@ -30,6 +36,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
       return;
     }
 
+    // @ts-expect-error TS(2339): Property 'wait' does not exist on type '{}'.
     let wait = typeof options.wait === 'number' ? options.wait : 6;
 
     {
@@ -49,6 +56,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
       return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
     };
 
+    // @ts-expect-error TS(2339): Property 'noQueue' does not exist on type '{}'.
     if (options.noQueue) {
       utils.nonQueueTask(CONSTANTS.TASK_NAME, {
         spec: spec,
@@ -56,7 +64,9 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
         messages: prepareLogs(),
         state: testState,
         level: testLevel,
+        // @ts-expect-error TS(2339): Property 'consoleTitle' does not exist on type '{}... Remove this comment to see the full error message
         consoleTitle: options.consoleTitle,
+        // @ts-expect-error TS(2339): Property 'isHook' does not exist on type '{}'.
         isHook: options.isHook,
         continuous: this.config.enableContinuousLogging,
       }).catch(console.error);
@@ -72,7 +82,9 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
               messages: prepareLogs(),
               state: testState,
               level: testLevel,
+              // @ts-expect-error TS(2339): Property 'consoleTitle' does not exist on type '{}... Remove this comment to see the full error message
               consoleTitle: options.consoleTitle,
+              // @ts-expect-error TS(2339): Property 'isHook' does not exist on type '{}'.
               isHook: options.isHook,
               continuous: this.config.enableContinuousLogging,
             },
@@ -83,17 +95,20 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
   }
 
   registerState() {
-    Cypress.on('log:changed', (options) => {
+    Cypress.on('log:changed', (options: any) => {
       if (options.state === 'failed') {
         this.collectorState.updateLogStatusForChainId(options.id);
       }
     });
-    Cypress.mocha.getRunner().on('test', (test) => {
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
+    Cypress.mocha.getRunner().on('test', (test: any) => {
       this.collectorState.startTest(test);
     });
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     Cypress.mocha.getRunner().on('suite', () => {
       this.collectorState.startSuite();
     });
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     Cypress.mocha.getRunner().on('suite end', () => {
       this.collectorState.endSuite();
     });
@@ -115,6 +130,7 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
     });
 
     // Logs commands if test was manually skipped.
+    // @ts-expect-error TS(2339): Property 'mocha' does not exist on type 'Cypress &... Remove this comment to see the full error message
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
       if (test && test.state === 'pending') {
@@ -133,5 +149,4 @@ module.exports = class LogCollectSimpleControl extends LogCollectBaseControl {
       cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
     });
   }
-
 };

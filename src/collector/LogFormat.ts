@@ -1,10 +1,11 @@
-module.exports = class LogFormat {
+export default class LogFormat {
+  config: any;
 
-  constructor(config) {
+  constructor(config: any) {
     this.config = config;
   }
 
-  formatXhrLog(xhrLog) {
+  formatXhrLog(xhrLog: any) {
     let logMessage = '';
     if (xhrLog.response) {
       logMessage += `Status: ${xhrLog.response.status}\n`;
@@ -35,7 +36,7 @@ module.exports = class LogFormat {
     return logMessage.trimEnd();
   }
 
-  formatXhrBody(body) {
+  formatXhrBody(body: any) {
     if (!body) {
       return Promise.resolve('<EMPTY>');
     } else if (typeof body === 'string') {
@@ -55,5 +56,4 @@ module.exports = class LogFormat {
     }
     return Promise.resolve('<UNKNOWN>');
   }
-
 }

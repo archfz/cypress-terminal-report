@@ -4,22 +4,22 @@ var DEFAULT_MAX_DEPTH = 6;
 var DEFAULT_ARRAY_MAX_LENGTH = 50;
 var DEFAULT_PRUNED_VALUE = '"[DepthPruned]"';
 var DEFAULT_CIRCULAR_VALUE = '"[Circular]"';
-var seen; // Same variable used for all stringifications
-var iterator; // either forEachEnumerableOwnProperty, forEachEnumerableProperty or forEachProperty
+var seen: any; // Same variable used for all stringifications
+var iterator: any; // either forEachEnumerableOwnProperty, forEachEnumerableProperty or forEachProperty
 
 // iterates on enumerable own properties (default behavior)
-var forEachEnumerableOwnProperty = function(obj, callback) {
+var forEachEnumerableOwnProperty = function(obj: any, callback: any) {
   for (var k in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, k)) callback(k);
   }
 };
 // iterates on enumerable properties
-var forEachEnumerableProperty = function(obj, callback) {
+var forEachEnumerableProperty = function(obj: any, callback: any) {
   for (var k in obj) callback(k);
 };
 // iterates on properties, even non enumerable and inherited ones
 // This is dangerous
-var forEachProperty = function(obj, callback, excluded) {
+var forEachProperty = function(obj: any, callback: any, excluded: any) {
   if (obj==null) return;
   excluded = excluded || {};
   Object.getOwnPropertyNames(obj).forEach(function(k){
@@ -45,9 +45,10 @@ var	cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f
     '\\': '\\\\'
   };
 
-function quote(string) {
+function quote(string: any) {
   escapable.lastIndex = 0;
-  return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+  return escapable.test(string) ? '"' + string.replace(escapable, function (a: any) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     var c = meta[a];
     return typeof c === 'string'
       ? c
@@ -56,9 +57,9 @@ function quote(string) {
 }
 
 
-var jsonPrune = function (value, depthDecr, arrayMaxLength) {
+const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
   var prunedString = DEFAULT_PRUNED_VALUE;
-  var replacer;
+  var replacer: any;
   if (typeof depthDecr == "object") {
     var options = depthDecr;
     depthDecr = options.depthDecr;
@@ -78,8 +79,8 @@ var jsonPrune = function (value, depthDecr, arrayMaxLength) {
   seen = [];
   depthDecr = depthDecr || DEFAULT_MAX_DEPTH;
   arrayMaxLength = arrayMaxLength || DEFAULT_ARRAY_MAX_LENGTH;
-  function str(key, holder, depthDecr) {
-    var i, k, v, length, partial, value = holder[key];
+  function str(key: any, holder: any, depthDecr: any) {
+    var i, k, v, length, partial: any, value = holder[key];
 
     if (value && typeof value === 'object' && typeof value.toPrunedJSON === 'function') {
       value = value.toPrunedJSON(key);
@@ -94,6 +95,7 @@ var jsonPrune = function (value, depthDecr, arrayMaxLength) {
       case 'number':
         return isFinite(value) ? String(value) : 'null';
       case 'boolean':
+      // @ts-expect-error TS(2678): Type '"null"' is not comparable to type '"string" ... Remove this comment to see the full error message
       case 'null':
         return String(value);
       case 'object':
@@ -121,7 +123,7 @@ var jsonPrune = function (value, depthDecr, arrayMaxLength) {
         if (value instanceof RegExp) {
           return quote(value.toString());
         }
-        iterator(value, function(k) {
+        iterator(value, function(k: any) {
           try {
             v = str(k, value, depthDecr-1);
             if (v) partial.push(quote(k) + ':' + v);
@@ -138,4 +140,4 @@ var jsonPrune = function (value, depthDecr, arrayMaxLength) {
   return str('', {'': value}, depthDecr);
 };
 
-module.exports = jsonPrune;
+export default jsonPrune;
