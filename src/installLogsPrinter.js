@@ -113,7 +113,7 @@ function installLogsPrinter(on, options = {}) {
         options.printLogsToConsole !== "never" && (
           options.printLogsToConsole === "always"
           || (options.printLogsToConsole === "onFail" && data.state !== "passed")
-          || isHookAndShouldLog
+        || isHookAndShouldLog
         )
       ) {
         logDebug(`Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
@@ -199,10 +199,7 @@ function installOutputProcessors(on, /** @type {PluginOptions} */ options) {
     }
 
     if (requiresNested) {
-      const parts = file.split('|');
-      const root = parts[0];
-      const ext = parts[1];
-      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot, ext, (nestedFile) => {
+      outputProcessors.push(new NestedOutputProcessorDecorator(file, options.specRoot, (nestedFile) => {
         return createProcessorFromType(nestedFile, type);
       }));
     } else {
