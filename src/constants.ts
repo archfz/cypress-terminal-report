@@ -1,3 +1,5 @@
+import {LogType, Severity} from "./types";
+
 const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
   TASK_NAME_OUTPUT: 'ctrLogFiles',
@@ -17,13 +19,13 @@ const CONSTANTS = {
     CYPRESS_COMMAND: 'cy:command',
 
     PLUGIN_LOG_TYPE: 'ctr:info',
-  },
+  } satisfies Record<string, LogType>,
 
   SEVERITY: {
     SUCCESS: 'success',
     ERROR: 'error',
     WARNING: 'warning',
-  },
+  } satisfies Record<string, Severity>,
 
   HOOK_TITLES: {
     BEFORE: '[[ before all {index} ]]',

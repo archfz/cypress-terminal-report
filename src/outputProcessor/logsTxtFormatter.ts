@@ -1,24 +1,25 @@
 import CONSTANTS from "../constants";
+import {Log} from "../types";
 
 const PADDING = '    ';
 const PADDING_LOGS = `${PADDING}`.repeat(6);
 
-const padTypeText = (text: any) => {
+const padTypeText = (text: string) => {
   return Array(Math.max(PADDING_LOGS.length - text.length + 1, 0)).join(' ')
     + text;
 }
 
-const padTimeText = (text: any) => {
+const padTimeText = (text: string) => {
   return PADDING_LOGS + text;
 }
 
-function logsTxtFormatter(logs: any, EOL = '\n') {
+function logsTxtFormatter(logs: Log[], EOL = '\n') {
   return logs.map(({
     type,
     message,
     severity,
     timeString
-  }: any) => {
+  }) => {
     let formattedLog = (padTypeText(`${type} (${{
         [CONSTANTS.SEVERITY.ERROR]: 'X',
         [CONSTANTS.SEVERITY.WARNING]: '!',

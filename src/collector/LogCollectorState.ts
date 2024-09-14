@@ -1,18 +1,27 @@
 import CONSTANTS from '../constants';
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import {Log, Severity} from "../types";
+
+type LogArray = [Log['type'], Log['message'], Log['severity']]
+
+interface StackLog extends Log {
+  timeString?: string;
+  chainId?: string;
+}
+
+export type StackLogArray = StackLog[] & { _ctr_before_each?: number }
 
 export default class LogCollectorState {
-  afterHookIndexes: any;
-  beforeHookIndexes: any;
-  config: any;
+  afterHookIndexes: number[];
+  beforeHookIndexes: number[];
   currentTest: any;
-  isStrict: any;
-  listeners: any;
-  logStacks: any;
-  suiteStartTime: any;
-  xhrIdsOfLoggedResponses: any;
-  constructor(config: any) {
-    this.config = config;
+  isStrict: boolean;
+  listeners: Record<string, CallableFunction[]>;
+  logStacks: Array<StackLogArray | null>;
+  suiteStartTime: Date | null;
+  xhrIdsOfLoggedResponses: string[];
 
+  constructor(protected config: ExtendedSupportOptions) {
     this.listeners = {};
     this.currentTest = null;
     this.logStacks = [];
@@ -23,7 +32,7 @@ export default class LogCollectorState {
     this.suiteStartTime = null;
   }
 
-  setStrict(strict: any) {
+  setStrict() {
     this.isStrict = true;
   }
 
@@ -46,7 +55,7 @@ export default class LogCollectorState {
     const stack = this.logStacks[index];
     this.logStacks[index] = null;
 
-    stack.forEach((log: any) => {
+    stack?.forEach((log) => {
       if (log.chainId) {
         delete log.chainId;
       }
@@ -55,7 +64,7 @@ export default class LogCollectorState {
     return stack;
   }
   hasLogsCurrentStack() {
-    return this.getCurrentLogStack() && !!(this.getCurrentLogStack().length);
+    return this.getCurrentLogStack() && !!(this.getCurrentLogStack()?.length);
   }
   getCurrentTest() {
     return this.currentTest;
@@ -64,7 +73,7 @@ export default class LogCollectorState {
     this.currentTest = test;
   }
 
-  addLog(entry: any, chainId: any, xhrIdOfLoggedResponse: any) {
+  addLog(entry: LogArray, chainId?: any, xhrIdOfLoggedResponse?: any) {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
     const currentStack = this.getCurrentLogStack();
@@ -75,22 +84,19 @@ export default class LogCollectorState {
       return;
     }
 
-    const structuredEntry = {
+    const structuredEntry: StackLog = {
       type: entry[0],
       message: entry[1],
       severity: entry[2],
     };
 
     if (chainId) {
-      // @ts-expect-error TS(2339): Property 'chainId' does not exist on type '{ type:... Remove this comment to see the full error message
       structuredEntry.chainId = chainId;
     }
     if (this.config.commandTimings) {
       if (this.config.commandTimings == 'timestamp') {
-        // @ts-expect-error TS(2339): Property 'timeString' does not exist on type '{ ty... Remove this comment to see the full error message
         structuredEntry.timeString = Date.now() + "";
-      } else if (this.config.commandTimings == 'seconds') {
-        // @ts-expect-error TS(2339): Property 'timeString' does not exist on type '{ ty... Remove this comment to see the full error message
+      } else if (this.config.commandTimings == 'seconds' && this.suiteStartTime) {
         structuredEntry.timeString = (Date.now() - this.suiteStartTime.getTime()) / 1000 + "s";
       }
     }
@@ -102,7 +108,7 @@ export default class LogCollectorState {
     this.emit('log');
   }
 
-  updateLog(log: any, severity: any, id: any) {
+  updateLog(log: string, severity: Severity, id: string) {
     this.loopLogStacks((entry: any) => {
       if (entry.chainId === id) {
         entry.message = log;
@@ -112,7 +118,7 @@ export default class LogCollectorState {
     this.emit('log');
   }
 
-  updateLogStatusForChainId(chainId: any, state = CONSTANTS.SEVERITY.ERROR) {
+  updateLogStatusForChainId(chainId: string, state: Severity = CONSTANTS.SEVERITY.ERROR) {
     this.loopLogStacks((entry: any) => {
         if (entry.chainId === chainId) {
           entry.severity = state;
@@ -120,31 +126,26 @@ export default class LogCollectorState {
     });
   }
 
-  loopLogStacks(callback: any) {
+  loopLogStacks(callback: (entry: StackLog) => void) {
     this.logStacks.forEach((logStack: any) => {
-      if (!logStack) {
-        return;
+      if (logStack) {
+        logStack.forEach((entry: any) => {
+          if (entry) {
+            callback(entry);
+          }
+        });
       }
-
-      logStack.forEach((entry: any) => {
-        if (!entry) {
-          return;
-        }
-
-        callback(entry);
-      });
     });
-  }
-
-  hasXhrResponseBeenLogged(xhrId: any) {
-    return this.xhrIdsOfLoggedResponses.includes(xhrId);
   }
 
   markCurrentStackFromBeforeEach() {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'current log stack is before each at ' + this.getCurrentLogStackIndex());
     }
-    this.getCurrentLogStack()._ctr_before_each = 1;
+    let stack = this.getCurrentLogStack();
+    if (stack) {
+      stack._ctr_before_each = 1;
+    }
   }
 
   incrementBeforeHookIndex() {
@@ -188,25 +189,23 @@ export default class LogCollectorState {
 
     this.addNewLogStack();
 
-    // Merge together before each logs.
+    // Merge together before each log.
     const currentIndex = this.getCurrentLogStackIndex();
     let previousIndex = currentIndex - 1;
-    while (
-      // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
-      this.getCurrentLogStack(previousIndex)
-      // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
-      && this.getCurrentLogStack(previousIndex)._ctr_before_each
-    ) {
-      this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
+    while (this.getCurrentLogStack()?._ctr_before_each) {
+      const previousStack = this.logStacks[previousIndex];
+      if (previousStack) {
+        this.logStacks[currentIndex] = previousStack.concat(this.logStacks[currentIndex] || []);
+      }
       --previousIndex;
     }
   }
 
-  emit(event: any) {
+  emit(event: 'log') {
     (this.listeners[event] || []).forEach((callback: any) => callback());
   }
 
-  on(event: any, callback: any) {
+  on(event: 'log', callback: () => void) {
     this.listeners[event] = this.listeners[event] || [];
     this.listeners[event].push(callback);
   }

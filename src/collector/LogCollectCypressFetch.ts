@@ -1,15 +1,12 @@
 import CONSTANTS from '../constants';
 import LogFormat from "./LogFormat";
+import LogCollectorState from "./LogCollectorState";
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressFetch {
-  collectorState: any;
-  config: any;
-  format: any;
+  format: LogFormat;
 
-  constructor(collectorState: any, config: any) {
-    this.config = config;
-    this.collectorState = collectorState;
-
+  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
     this.format = new LogFormat(config);
   }
 
@@ -21,17 +18,17 @@ export default class LogCollectCypressFetch {
       (consoleProps(options)["Request went to origin?"] !== 'yes' ? 'STUBBED ' : '') +
       consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
-    const formatDuration = (durationInMs: any) => durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
+    const formatDuration = (durationInMs: number) => durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
 
-    Cypress.on('log:added', (options: any) => {
+    Cypress.on('log:added', (options) => {
       if (options.instrument === 'command' && options.name === 'request' && options.displayName === 'fetch') {
         const log = formatFetch(options);
-        const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : '';
+        const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.WARNING : CONSTANTS.SEVERITY.SUCCESS;
         this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_FETCH, log, severity], options.id);
       }
     });
 
-    Cypress.on('log:changed', async (options: any) => {
+    Cypress.on('log:changed', async (options) => {
       if (
         options.instrument === 'command' && options.name === 'request' && options.displayName === 'fetch' &&
         options.state !== 'pending'

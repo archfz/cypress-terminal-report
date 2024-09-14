@@ -2,17 +2,20 @@ import chalk from 'chalk';
 import path from 'path';
 import tv4 from 'tv4';
 import schema from './installLogsPrinter.schema.json';
-import tv4ErrorTransformer from './tv4ErrorTransformer';
 import CtrError from './CtrError';
 import CONSTANTS from './constants';
 import CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
 import NestedOutputProcessorDecorator from './outputProcessor/NestedOutputProcessorDecorator';
 import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
 import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
+import {CustomOutputProcessorCallback, PluginOptions} from "./installLogsPrinter.types";
+import {Log, MessageData} from "./types";
+import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
+import utils from "./utils";
 
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
-const OUTPUT_PROCESSOR_TYPE = {
+const OUTPUT_PROCESSOR_TYPE: Record<string,  { new (file: string): IOutputProcecessor }> = {
   'json': JsonOutputProcessor,
   'txt': TextOutputProcessor,
 };
@@ -39,11 +42,11 @@ const LOG_SYMBOLS = (() => {
   }
 })();
 
-let writeToFileMessages = {};
-let outputProcessors: any = [];
+let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
+let outputProcessors: IOutputProcecessor[] = [];
 
-const createLogger = (enabled: any) => enabled
-  ? (message: any) => console.log(`[cypress-terminal-report:debug] ${message}`)
+const createLogger = (enabled: boolean) => enabled
+  ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
   : () => {}
 
 /**
@@ -54,69 +57,54 @@ const createLogger = (enabled: any) => enabled
  * @see ./installLogsPrinter.d.ts
  * @type {import('./installLogsPrinter')}
  */
-function installLogsPrinter(on: any, options = {}) {
-  // @ts-expect-error TS(2339): Property 'printLogsToFile' does not exist on type ... Remove this comment to see the full error message
+function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
-  // @ts-expect-error TS(2339): Property 'printLogsToConsole' does not exist on ty... Remove this comment to see the full error message
   options.printLogsToConsole = options.printLogsToConsole || "onFail";
   const result = tv4.validateMultiple(options, schema);
 
   if (!result.valid) {
-    throw new CtrError(`Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(result.errors)}`);
+    throw new CtrError(`Invalid plugin install options: ${utils.tv4ToString(result.errors)}`);
   }
 
   // @ts-expect-error TS(2339): Property 'debug' does not exist on type '{}'.
   const logDebug = createLogger(options.debug);
 
   on('task', {
-    [CONSTANTS.TASK_NAME]: function (/** @type {Data} */ data: any) {
+    [CONSTANTS.TASK_NAME]: function (data: MessageData) {
       logDebug(`${CONSTANTS.TASK_NAME}: Received ${data.messages.length} messages, for ${data.spec}:${data.test}, with state ${data.state}.`);
       let messages = data.messages;
 
       const terminalMessages =
-        // @ts-expect-error TS(2339): Property 'compactLogs' does not exist on type '{}'... Remove this comment to see the full error message
         typeof options.compactLogs === 'number' && options.compactLogs >= 0
-          // @ts-expect-error TS(2339): Property 'compactLogs' does not exist on type '{}'... Remove this comment to see the full error message
           ? compactLogs(messages, options.compactLogs, logDebug)
           : messages;
 
       const isHookAndShouldLog = data.isHook &&
-        // @ts-expect-error TS(2339): Property 'includeSuccessfulHookLogs' does not exis... Remove this comment to see the full error message
         (options.includeSuccessfulHookLogs || data.state === 'failed');
 
-      // @ts-expect-error TS(2339): Property 'outputTarget' does not exist on type '{}... Remove this comment to see the full error message
       if (options.outputTarget && options.printLogsToFile !== "never") {
         if (
           data.state === "failed" ||
-          // @ts-expect-error TS(2339): Property 'printLogsToFile' does not exist on type ... Remove this comment to see the full error message
           options.printLogsToFile === "always" ||
           isHookAndShouldLog
         ) {
           let outputFileMessages =
-            // @ts-expect-error TS(2339): Property 'outputCompactLogs' does not exist on typ... Remove this comment to see the full error message
             typeof options.outputCompactLogs === 'number'
-              // @ts-expect-error TS(2339): Property 'outputCompactLogs' does not exist on typ... Remove this comment to see the full error message
               ? compactLogs(messages, options.outputCompactLogs, logDebug)
-              // @ts-expect-error TS(2339): Property 'outputCompactLogs' does not exist on typ... Remove this comment to see the full error message
               : options.outputCompactLogs === false
               ? messages
               : terminalMessages;
 
           logDebug(`Storing for file logging ${outputFileMessages.length} messages, for ${data.spec}:${data.test}.`);
 
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           writeToFileMessages[data.spec][data.test] = outputFileMessages;
         }
       }
 
       if (
-        // @ts-expect-error TS(2339): Property 'printLogsToConsole' does not exist on ty... Remove this comment to see the full error message
         options.printLogsToConsole !== "never" && (
-          // @ts-expect-error TS(2339): Property 'printLogsToConsole' does not exist on ty... Remove this comment to see the full error message
           options.printLogsToConsole === "always"
-          // @ts-expect-error TS(2339): Property 'printLogsToConsole' does not exist on ty... Remove this comment to see the full error message
           || (options.printLogsToConsole === "onFail" && data.state !== "passed")
           || isHookAndShouldLog
         )
@@ -125,10 +113,8 @@ function installLogsPrinter(on: any, options = {}) {
         logToTerminal(terminalMessages, options, data);
       }
 
-      // @ts-expect-error TS(2339): Property 'collectTestLogs' does not exist on type ... Remove this comment to see the full error message
       if (options.collectTestLogs) {
         logDebug(`Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
-        // @ts-expect-error TS(2339): Property 'collectTestLogs' does not exist on type ... Remove this comment to see the full error message
         options.collectTestLogs(
           {spec: data.spec, test: data.test, state: data.state},
           terminalMessages
@@ -144,12 +130,8 @@ function installLogsPrinter(on: any, options = {}) {
     }
   });
 
-  // @ts-expect-error TS(2339): Property 'outputTarget' does not exist on type '{}... Remove this comment to see the full error message
-  if (options.outputTarget) {
-    installOutputProcessors(on, options);
-  }
+  installOutputProcessors(on, options);
 
-  // @ts-expect-error TS(2339): Property 'logToFilesOnAfterRun' does not exist on ... Remove this comment to see the full error message
   if (options.logToFilesOnAfterRun) {
     on('after:run', () => {
       logDebug(`after:run: Attempting file logging on after run.`);
@@ -158,8 +140,8 @@ function installLogsPrinter(on: any, options = {}) {
   }
 }
 
-function logToFiles(/** @type {PluginOptions} */ options: any) {
-  outputProcessors.forEach((processor: any) => {
+function logToFiles(options: PluginOptions) {
+  outputProcessors.forEach((processor) => {
     if (Object.entries(writeToFileMessages).length !== 0){
       processor.write(writeToFileMessages);
       if (options.outputVerbose !== false)
@@ -170,10 +152,9 @@ function logToFiles(/** @type {PluginOptions} */ options: any) {
 }
 
 
-function logOutputTarget(processor: any) {
+function logOutputTarget(processor: IOutputProcecessor) {
   let message;
   let standardOutputType = Object.keys(OUTPUT_PROCESSOR_TYPE).find(
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
@@ -183,26 +164,30 @@ function logOutputTarget(processor: any) {
   }
   console.log('cypress-terminal-report:', message);
 }
-function installOutputProcessors(on: any, /** @type {PluginOptions} */ options: any) {
+
+function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOptions) {
+  if (!options.outputTarget) {
+    return;
+  }
   if (!options.outputRoot) {
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  const createProcessorFromType = (file: any, type: any) => {
+  const createProcessorFromType = (file: string, type: string | CustomOutputProcessorCallback) => {
     if (typeof type === 'string') {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot, file));
+      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
     }
 
     if (typeof type === 'function') {
-      return new CustomOutputProcessor(path.join(options.outputRoot, file), type);
+      return new CustomOutputProcessor(path.join(options.outputRoot || '', file), type);
     }
+
+    throw new Error('Unexpected type case.');
   };
 
   Object.entries(options.outputTarget).forEach(([file, type]) => {
     const requiresNested = file.match(/^[^|]+\|.*$/);
 
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     if (typeof type === 'string' && !OUTPUT_PROCESSOR_TYPE[type]) {
       throw new CtrError(`Unknown output format '${type}'.`);
     }
@@ -214,7 +199,7 @@ function installOutputProcessors(on: any, /** @type {PluginOptions} */ options: 
       const parts = file.split('|');
       const root = parts[0];
       const ext = parts[1];
-      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot, ext, (nestedFile: any) => {
+      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot || '', ext, (nestedFile: string) => {
         return createProcessorFromType(nestedFile, type);
       }));
     } else {
@@ -222,25 +207,22 @@ function installOutputProcessors(on: any, /** @type {PluginOptions} */ options: 
     }
   });
 
-  outputProcessors.forEach((processor: any) => processor.initialize());
+  outputProcessors.forEach((processor) => processor.initialize());
 }
 
 function compactLogs(
-  /** @type {Log[]} */
-  logs: any,
-  /** @type {number} */
-  keepAroundCount: any,
-  /** @type {function} */
-  logDebug: any,
+  logs: Log[],
+  keepAroundCount: number,
+  logDebug: (message: string) => void,
 ) {
   logDebug(`Compacting ${logs.length} logs.`)
 
-  const failingIndexes = logs.filter((log: any) => log.severity === CONSTANTS.SEVERITY.ERROR)
-    .map((log: any) => logs.indexOf(log));
+  const failingIndexes = logs.filter((log) => log.severity === CONSTANTS.SEVERITY.ERROR)
+    .map((log) => logs.indexOf(log));
 
   const includeIndexes = new Array(logs.length);
 
-  failingIndexes.forEach((index: any) => {
+  failingIndexes.forEach((index) => {
     const from = Math.max(0, index - keepAroundCount);
     const to = Math.min(logs.length - 1, index + keepAroundCount);
     for (let i = from; i <= to; i++) {
@@ -249,7 +231,7 @@ function compactLogs(
   });
 
   const compactedLogs = [];
-  const addOmittedLog = (count: any) => compactedLogs.push({
+  const addOmittedLog = (count: number) => compactedLogs.push({
     type: CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
     message: `[ ... ${count} omitted logs ... ]`,
     severity: CONSTANTS.SEVERITY.SUCCESS
@@ -277,16 +259,14 @@ function compactLogs(
 }
 
 function logToTerminal(
-  /** @type {Log[]} */
-  messages: any,
-  /** @type {PluginOptions} */
-  options: any,
-  /** @type {Data} */
-  data: any) {
+  messages: Log[],
+  options: PluginOptions,
+  data: MessageData
+) {
   const tabLevel = data.level || 0;
   const levelPadding = '  '.repeat(Math.max(0, tabLevel - 1));
   const padding = CONSTANTS.PADDING.LOG + levelPadding;
-  const padType = (type: any) => new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
+  const padType = (type: string) => new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
 
   if (data.consoleTitle) {
     console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
@@ -297,7 +277,7 @@ function logToTerminal(
     message,
     severity,
     timeString
-  }: any) => {
+  }) => {
     let color = 'white',
       typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
       processedMessage = message,

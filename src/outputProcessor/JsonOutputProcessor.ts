@@ -1,6 +1,6 @@
-import BaseOutputProcessor from './BaseOutputProcessor';
+import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
 
-export default class JsonOutputProcessor extends BaseOutputProcessor {
+export default class JsonOutputProcessor extends BaseOutputProcessor implements IOutputProcecessor {
   chunkSeparator: any;
   initialContent: any;
   writeSpecChunk: any;

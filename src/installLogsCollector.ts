@@ -2,7 +2,6 @@ import tv4 from 'tv4';
 import semver from 'semver';
 import schema from './installLogsCollector.schema.json';
 import CtrError from './CtrError';
-import tv4ErrorTransformer from './tv4ErrorTransformer';
 import LogCollectBrowserConsole from "./collector/LogCollectBrowserConsole";
 import LogCollectCypressCommand from "./collector/LogCollectCypressCommand";
 import LogCollectCypressRequest from "./collector/LogCollectCypressRequest";
@@ -15,41 +14,45 @@ import LogCollectExtendedControl from "./collector/LogCollectExtendedControl";
 import LogCollectSimpleControl from "./collector/LogCollectSimpleControl";
 import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
 import CONSTANTS from "./constants";
+import {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
+import {LogType} from "./types";
+import utils from "./utils";
+
+declare global {
+  namespace Cypress {
+    interface TerminalReport {
+      getLogs(format: string): any;
+    }
+  }
+}
 
 /**
- * Installs the logs collector for cypress.
- *
- * Needs to be added to support file.
- *
- * @see ./installLogsCollector.d.ts
- * @type {import('./installLogsCollector')}
+ * Installs the logs collector for cypress. Needs to be added to support file.
  */
-function installLogsCollector(config = {}) {
+function installLogsCollector(config: SupportOptions = {}) {
   validateConfig(config);
 
-  // @ts-expect-error TS(2339): Property 'collectTypes' does not exist on type '{}... Remove this comment to see the full error message
-  config.collectTypes = config.collectTypes || Object.values(CONSTANTS.LOG_TYPES);
-  // @ts-expect-error TS(2339): Property 'collectBody' does not exist on type '{}'... Remove this comment to see the full error message
-  config.collectBody = config.xhr && config.xhr.printBody !== undefined ? !!config.xhr.printBody : true;
-  // @ts-expect-error TS(2339): Property 'collectRequestData' does not exist on ty... Remove this comment to see the full error message
-  config.collectRequestData = config.xhr && config.xhr.printRequestData;
-  // @ts-expect-error TS(2339): Property 'collectHeaderData' does not exist on typ... Remove this comment to see the full error message
-  config.collectHeaderData = config.xhr && config.xhr.printHeaderData;
+  const extendedConfig: ExtendedSupportOptions = {
+    ...config,
+    collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES) as LogType[],
+    collectBody: config.xhr && config.xhr.printBody !== undefined ? config.xhr.printBody : true,
+    collectRequestData: config.xhr && config.xhr.printRequestData,
+    collectHeaderData: config.xhr && config.xhr.printHeaderData,
+  };
 
-  let logCollectorState = new LogCollectorState(config);
-  registerLogCollectorTypes(logCollectorState, config);
+  let logCollectorState = new LogCollectorState(extendedConfig);
+  registerLogCollectorTypes(logCollectorState, extendedConfig);
 
-  // @ts-expect-error TS(2339): Property 'enableExtendedCollector' does not exist ... Remove this comment to see the full error message
-  if (config.enableExtendedCollector) {
-    (new LogCollectExtendedControl(logCollectorState, config)).register();
+  if (extendedConfig.enableExtendedCollector) {
+    (new LogCollectExtendedControl(logCollectorState, extendedConfig)).register();
   } else {
-    (new LogCollectSimpleControl(logCollectorState, config)).register();
+    (new LogCollectSimpleControl(logCollectorState, extendedConfig)).register();
   }
 
   registerGlobalApi(logCollectorState);
 }
 
-function registerLogCollectorTypes(logCollectorState: any, config: any) {
+function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSupportOptions) {
   (new LogCollectBrowserConsole(logCollectorState, config)).register()
 
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_LOG)) {
@@ -73,9 +76,8 @@ function registerLogCollectorTypes(logCollectorState: any, config: any) {
 }
 
 function registerGlobalApi(logCollectorState: any) {
-  // @ts-expect-error TS(2339): Property 'TerminalReport' does not exist on type '... Remove this comment to see the full error message
-  Cypress.TerminalReport = {
-    getLogs: (format: any) => {
+  (Cypress as any).TerminalReport = {
+    getLogs: (format: string) => {
       const logs = logCollectorState.getCurrentLogStack();
 
       if (format === 'txt') {
@@ -89,14 +91,12 @@ function registerGlobalApi(logCollectorState: any) {
   };
 }
 
-function validateConfig(config: any) {
+function validateConfig(config: SupportOptions) {
   const result = tv4.validateMultiple(config, schema);
 
   if (!result.valid) {
     throw new CtrError(
-      `Invalid plugin install options: ${tv4ErrorTransformer.toReadableString(
-        result.errors
-      )}`
+      `Invalid plugin install options: ${utils.tv4ToString(result.errors)}`
     );
   }
 

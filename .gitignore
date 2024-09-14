@@ -12,3 +12,4 @@ test/cypress/reports
 .vscode
 .aider*
 src/**/*.js
+src/**/*.d.ts

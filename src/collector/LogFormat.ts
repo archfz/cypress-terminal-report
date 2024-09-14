@@ -1,9 +1,7 @@
-export default class LogFormat {
-  config: any;
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
-  constructor(config: any) {
-    this.config = config;
-  }
+export default class LogFormat {
+  constructor(protected config: ExtendedSupportOptions) {}
 
   formatXhrLog(xhrLog: any) {
     let logMessage = '';

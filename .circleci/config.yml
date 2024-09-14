@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: Install
-          command: npm install --only prod && cd test && npm ci
+          command: npm ci && cd test && npm ci
       - run:
           name: Build
           command: npm run build
@@ -27,10 +27,10 @@ jobs:
       - checkout
       - run:
           name: Set backward package json
-          command: rm package-lock.json && cd test && rm package-lock.json && mv package.backward.json package.json
+          command: cd test && rm package-lock.json && mv package.backward.json package.json
       - run:
           name: Install
-          command: npm install --only prod
+          command: npm ci
       - run:
           name: Build
           command: npm run build

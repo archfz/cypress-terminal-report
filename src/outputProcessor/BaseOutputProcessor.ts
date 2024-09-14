@@ -1,15 +1,23 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import CtrError from '../CtrError';
+import {AllMessages} from "../installLogsPrinter.types";
+
+export interface IOutputProcecessor {
+  initialize(): void;
+  getTarget(): string;
+  getSpentTime(): number;
+  write(allMessages: AllMessages): void;
+}
 
 export default class BaseOutputProcessor {
-  atChunk: any;
-  chunkSeparator: any;
-  file: any;
-  initialContent: any;
-  size: any;
-  specChunksWritten: any;
-  writeSpendTime: any;
+  protected atChunk: any;
+  protected chunkSeparator: string;
+  protected file: any;
+  protected initialContent: any;
+  protected size: any;
+  protected specChunksWritten: any;
+  protected writeSpendTime: any;
 
   constructor(file: any) {
     this.file = file;

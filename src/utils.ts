@@ -1,5 +1,6 @@
 import semver from "semver";
 import jsonPrune from "./jsonPrune";
+import tv4 from "tv4";
 
 const utils = {
   nonQueueTask: function (name: any, data: any) {
@@ -83,6 +84,12 @@ const utils = {
     }
 
     return json;
+  },
+
+  tv4ToString: function (errorList: tv4.ValidationError[]) {
+    return '\n' + errorList.map((error: any) => {
+      return `=> ${error.dataPath.replace(/\//, '.')}: ${error.message}`;
+    }).join('\n') + '\n';
   }
 }
 

@@ -1,17 +1,13 @@
 import CONSTANTS from '../constants';
+import LogCollectorState from "./LogCollectorState";
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressLog {
-  collectorState: any;
-  config: any;
-
-  constructor(collectorState: any, config: any) {
-    this.config = config;
-    this.collectorState = collectorState;
-  }
+  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}
 
   register() {
-    Cypress.Commands.overwrite('log', (subject: any, ...args: any[]) => {
-      this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_LOG, args.join(' ')]);
+    Cypress.Commands.overwrite('log', (subject, ...args) => {
+      this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_LOG, args.join(' '), CONSTANTS.SEVERITY.SUCCESS]);
       subject(...args);
     });
   }

@@ -1,26 +1,23 @@
 import CONSTANTS from '../constants';
 import LogFormat from "./LogFormat";
+import LogCollectorState from "./LogCollectorState";
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressRequest {
-  collectorState: any;
-  config: any;
-  format: any;
+  format: LogFormat;
 
-  constructor(collectorState: any, config: any) {
-    this.config = config;
-    this.collectorState = collectorState;
-
+  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
     this.format = new LogFormat(config);
   }
 
   register() {
-    const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s: any) => str.toUpperCase().includes(s));
+    const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
     const isNetworkError = (e: any) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
     const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
 
-    const parseRequestStatusCodeFailureMessage = (message: any) => {
+    const parseRequestStatusCodeFailureMessage = (message: string) => {
       const responseStart = '\n\nThe response we got was:\n\n';
       const statusStart = 'Status: ';
       const headersStart = '\nHeaders: ';
@@ -46,7 +43,7 @@ export default class LogCollectCypressRequest {
       return {status: statusStr, headers: headersStr, body: bodyStr.trimEnd()};
     };
 
-    const parseRequestNetworkError = (message: any) => {
+    const parseRequestNetworkError = (message: string) => {
       const errorPartStart = 'We received this error at the network level:\n\n  > ';
       const errorPrefix = 'Error: ';
       if (message.indexOf(errorPartStart) === -1) {
@@ -138,7 +135,7 @@ export default class LogCollectCypressRequest {
                       },
                     });
 
-                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log]);
+                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
                   return response;
                 });
             });

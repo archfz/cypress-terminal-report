@@ -1,9 +1,13 @@
 import CtrError from '../CtrError';
+import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import LogCollectorState from "./LogCollectorState";
+import {TestData} from "../types";
 
-export default class LogCollectBaseControl {
-  collectorState: any;
-  config: any;
-  prepareLogs(logStackIndex: any, testData: any) {
+export default abstract class LogCollectBaseControl {
+  protected abstract collectorState: LogCollectorState;
+  protected abstract config: ExtendedSupportOptions;
+
+  prepareLogs(logStackIndex: number, testData: TestData) {
     let logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
 
     if (logsCopy === null) {
