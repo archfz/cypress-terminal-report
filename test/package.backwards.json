@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha --require @babel/register specs/*.spec.js",
     "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
-    "test-backwards-ci": "npm run test-ci -- --fgrep '[backward-compatibility-skip]' -i"
+    "test-backwards-ci": "npm run test-ci -- --fgrep '[backward-compatibility-skip]' -i",
+    "swap-to-main": "mv package.json package.backwards.json && mv package.back.json package.json && git checkout package-lock.json"
   },
   "author": "Fodor Zoltan",
   "license": "MIT",
@@ -24,9 +25,10 @@
     "@cypress/grep": "^4.0.1",
     "babel-loader": "^8.3.0",
     "chai": "^4.2.0",
+    "cors": "^2.8.5",
     "cypress": "^10.0.0",
-    "express": "^4.19.2",
     "esbuild": "^0.23.1",
+    "express": "^4.19.2",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "html-webpack-plugin": "^5.5.3",

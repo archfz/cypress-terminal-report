@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha --require @babel/register specs/*.spec.js",
     "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
+    "swap-to-backwards": "mv package.json package.back.json && mv package.backward.json package.json",
     "cypress-open-files": "cypress open --env enableCucumber=1,printLogsToConsoleAlways=1,printLogsToFileAlways=1,generateNestedOutput=1",
     "cypress-open-collect": "cypress open --env collectTestLogsSupport=1",
     "cypress-open": "cypress open --env enableExtendedCollector=1,ctrDebug=1",
@@ -29,6 +30,7 @@
     "@cypress/grep": "^4.0.1",
     "babel-loader": "^9.1.3",
     "chai": "^4.2.0",
+    "cors": "^2.8.5",
     "cypress": "13.14.1",
     "express": "^4.19.2",
     "fs-extra": "^10.1.0",
