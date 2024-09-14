@@ -67,10 +67,14 @@ function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSuppo
   }
 }
 
-function registerGlobalApi(logCollectorState: any) {
+function registerGlobalApi(logCollectorState: LogCollectorState) {
   (Cypress as any).TerminalReport = {
     getLogs: (format: string) => {
       const logs = logCollectorState.getCurrentLogStack();
+
+      if (!logs) {
+        return null;
+      }
 
       if (format === 'txt') {
         return logsTxtFormatter(logs);

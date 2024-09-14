@@ -34,15 +34,16 @@ export default class LogCollectCypressFetch {
         options.state !== 'pending'
       ) {
         let statusCode;
+        let consoleProp = consoleProps(options);
 
-        statusCode = consoleProps(options)["Response Status Code"];
+        statusCode = consoleProp["Response Status Code"];
 
         const isSuccess = statusCode && (statusCode + '')[0] === '2';
         const severity = isSuccess ? CONSTANTS.SEVERITY.SUCCESS : CONSTANTS.SEVERITY.WARNING;
         let log = formatFetch(options);
 
-        if (consoleProps(options).Duration) {
-          log += ` (${formatDuration(consoleProps(options).Duration)})`;
+        if (consoleProp.Duration) {
+          log += ` (${formatDuration(consoleProp.Duration)})`;
         }
         if (statusCode) {
           log += `\nStatus: ${statusCode}`;
@@ -51,13 +52,11 @@ export default class LogCollectCypressFetch {
           log += ' - ' + options.err.message;
         }
 
-        if (
-          !isSuccess &&
-          consoleProps(options)["Response Body"]
-        ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(consoleProps(options)["Response Body"])}`;
+        if (!isSuccess && consoleProp["Response Body"]) {
+          log += `\nResponse body: ${await this.format.formatXhrData(consoleProp["Response Body"])}`;
         }
 
+        console.log(consoleProps(options))
         this.collectorState.updateLog(log, severity, options.id);
       }
     });

@@ -80,8 +80,8 @@ export default class LogCollectCypressRequest {
       }
 
       return Promise.all([
-        this.format.formatXhrBody(requestHeaders),
-        this.format.formatXhrBody(requestBody)
+        this.format.formatXhrData(requestHeaders),
+        this.format.formatXhrData(requestBody)
       ])
         .then(([formattedRequestHeaders, formattedRequestBody]) => {
           const requestData = {
@@ -105,8 +105,8 @@ export default class LogCollectCypressRequest {
                   request: requestData,
                   response: {
                     status: xhr.status,
-                    headers: await this.format.formatXhrBody(xhr.headers),
-                    body: await this.format.formatXhrBody(xhr.body),
+                    headers: await this.format.formatXhrData(xhr.headers),
+                    body: await this.format.formatXhrData(xhr.body),
                   },
                 });
             } else if (e.message.match(/timed out/)) {
@@ -120,8 +120,8 @@ export default class LogCollectCypressRequest {
           })
             .then((response: any) => {
               return Promise.all([
-                this.format.formatXhrBody(response.headers),
-                this.format.formatXhrBody(response.body)
+                this.format.formatXhrData(response.headers),
+                this.format.formatXhrData(response.body)
               ])
                 .then(([formattedResponseHeaders, formattedResponseBody]) => {
                   log +=

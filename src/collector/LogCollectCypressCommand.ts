@@ -5,13 +5,14 @@ import LogCollectorState from "./LogCollectorState";
 import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressCommand {
+  ignoredCommands = ['xhr', 'log', 'request'];
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}
 
   register() {
     const isOfInterest = (options: any) => options.instrument === 'command' &&
-    options.consoleProps &&
-    !['xhr', 'log', 'request'].includes(options.name) &&
-    !(options.name === 'task' && options.message.match(/ctrLogMessages/));
+      options.consoleProps &&
+      !this.ignoredCommands.includes(options.name) &&
+      !(options.name === 'task' && options.message.match(/ctrLogMessages/));
 
     const formatLogMessage = (options: any) => {
       let message = options.name + '\t' + options.message;

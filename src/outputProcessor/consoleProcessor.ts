@@ -1,5 +1,5 @@
 import CONSTANTS from "../constants";
-import {Log, MessageData} from "../types";
+import {Log, LogType, MessageData} from "../types";
 import {PluginOptions} from "../installLogsPrinter.types";
 import chalk from "chalk";
 
@@ -28,6 +28,85 @@ const LOG_SYMBOLS = (() => {
   }
 })();
 
+const BOLD_COLORS = ['red', 'yellow'];
+
+const TYPE_COMPUTE: {[key in typeof LOG_TYPES[keyof typeof LOG_TYPES]]: (options: PluginOptions) => {icon: string, color: string, trim?: number}} = {
+  [LOG_TYPES.PLUGIN_LOG_TYPE]: () => ({
+    color: 'white',
+    icon: '-',
+  }),
+  [LOG_TYPES.BROWSER_CONSOLE_WARN]: () => ({
+    color: 'yellow',
+    icon: LOG_SYMBOLS.warning,
+  }),
+  [LOG_TYPES.BROWSER_CONSOLE_ERROR]: () => ({
+    color: 'red',
+    icon: LOG_SYMBOLS.warning,
+  }),
+  [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: () => ({
+    color: 'blue',
+    icon: LOG_SYMBOLS.debug,
+  }),
+  [LOG_TYPES.BROWSER_CONSOLE_LOG]: () => ({
+    color: 'white',
+    icon: LOG_SYMBOLS.info,
+  }),
+  [LOG_TYPES.BROWSER_CONSOLE_INFO]: () => ({
+    color: 'white',
+    icon: LOG_SYMBOLS.info,
+  }),
+  [LOG_TYPES.CYPRESS_LOG]: () => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.info,
+  }),
+  [LOG_TYPES.CYPRESS_XHR]: (options) => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.route,
+    trim: options.routeTrimLength || 5000,
+  }),
+  [LOG_TYPES.CYPRESS_FETCH]: (options) => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.route,
+    trim: options.routeTrimLength || 5000,
+  }),
+  [LOG_TYPES.CYPRESS_INTERCEPT]: (options) => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.route,
+    trim: options.routeTrimLength || 5000,
+  }),
+  [LOG_TYPES.CYPRESS_REQUEST]: (options) => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.success,
+    trim: options.routeTrimLength || 5000,
+  }),
+  [LOG_TYPES.CYPRESS_COMMAND]: (options) => ({
+    color: 'green',
+    icon: LOG_SYMBOLS.success,
+    trim: options.routeTrimLength || 5000,
+  }),
+}
+
+const TYPE_STRING_CACHE: Record<string, string> = {};
+
+const padType = (type: string, padding: string) =>
+  ' '.repeat(Math.max(padding.length - type.length - 4, 0)) + type + ' ';
+
+const getTypeString = (type: LogType, icon: string, color: string, padding: string) => {
+  const key = `${type}:${icon}:${color}:${padding}`;
+
+  if (TYPE_STRING_CACHE[key]) {
+    return TYPE_STRING_CACHE[key];
+  }
+
+  const typeString = KNOWN_TYPES.includes(type) ? padType(type, padding) : padType('[unknown]', padding)
+  const coloredTypeString = BOLD_COLORS.includes(color) ?
+    (chalk as any)[color].bold(typeString + icon + ' ') :
+    (chalk as any)[color](typeString + icon + ' ');
+
+  TYPE_STRING_CACHE[key] = coloredTypeString;
+  return coloredTypeString;
+}
+
 function consoleProcessor(
   messages: Log[],
   options: PluginOptions,
@@ -36,10 +115,10 @@ function consoleProcessor(
   const tabLevel = data.level || 0;
   const levelPadding = '  '.repeat(Math.max(0, tabLevel - 1));
   const padding = CONSTANTS.PADDING.LOG + levelPadding;
-  const padType = (type: string) => new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
+  let output = '';
 
   if (data.consoleTitle) {
-    console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
+    output += ' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle) + '\n';
   }
 
   messages.forEach(({
@@ -48,51 +127,10 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let color = 'white',
-      typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
-      processedMessage = message,
-      trim = options.defaultTrimLength || 800,
-      icon = '-';
+    let processedMessage = message;
 
-    if (type === LOG_TYPES.BROWSER_CONSOLE_WARN) {
-      color = 'yellow';
-      icon = LOG_SYMBOLS.warning;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_ERROR) {
-      color = 'red';
-      icon = LOG_SYMBOLS.warning;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_DEBUG) {
-      color = 'blue';
-      icon = LOG_SYMBOLS.debug;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_LOG) {
-      color = 'white';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_INFO) {
-      color = 'white';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.CYPRESS_LOG) {
-      color = 'green';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.CYPRESS_XHR) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_FETCH) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_INTERCEPT) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_REQUEST) {
-      color = 'green';
-      icon = LOG_SYMBOLS.success;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_COMMAND) {
-      color = 'green';
-      icon = LOG_SYMBOLS.success;
-      trim = options.commandTrimLength || 800;
-    }
+    let {color, icon, trim} = TYPE_COMPUTE[type](options);
+    trim = trim || options.defaultTrimLength || 800;
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
       color = 'red';
@@ -106,22 +144,17 @@ function consoleProcessor(
       processedMessage = message.substring(0, trim) + ' ...';
     }
 
-    const coloredTypeString = ['red', 'yellow'].includes(color) ?
-      (chalk as any)[color].bold(typeString + icon + ' ') :
-      (chalk as any)[color](typeString + icon + ' ');
-
     if (timeString) {
-      console.log(chalk.gray(`${padding}Time: ${timeString}`));
+      output += chalk.gray(`${padding}Time: ${timeString}`) + '\n';
     }
 
-    console.log(
-      coloredTypeString,
-      processedMessage.replace(/\n/g, '\n' + padding)
-    );
+    output += getTypeString(type, icon, color, padding) + ' ' + processedMessage.replace(/\n/g, '\n' + padding) + '\n'
   });
 
   if (messages.length !== 0 && !data.continuous) {
-    console.log('\n');
+    console.log(output + '\n');
+  } else if (output !== '') {
+    console.log(output.substring(-1));
   }
 }
 

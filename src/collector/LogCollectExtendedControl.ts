@@ -3,6 +3,7 @@ import LogCollectBaseControl from './LogCollectBaseControl';
 import utils from "../utils";
 import LogCollectorState from "./LogCollectorState";
 import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import {MessageData} from "../types";
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -23,57 +24,12 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
     this.registerLogToFiles();
   }
 
-  sendLogsToPrinter(
-    logStackIndex: number,
-    mochaRunnable: Mocha.Runnable,
-    options: {
-      state?: string,
-      title?: string,
-      noQueue?: boolean,
-      consoleTitle?: string,
-      isHook?: boolean,
-      wait?: number,
-    } = {}
+  triggerSendTask(
+    buildDataMessage: () => MessageData,
+    noQueue: boolean,
+    wait: number
   ) {
-    let testState = options.state || mochaRunnable.state;
-    let testTitle = options.title || mochaRunnable.title;
-    let testLevel = 0;
-
-    let spec = this.getSpecFilePath(mochaRunnable);
-
-    if (!spec) {
-      return;
-    }
-
-    let wait = typeof options.wait === 'number' ? options.wait : 6;
-
-    {
-      let parent = mochaRunnable.parent;
-      while (parent && parent.title) {
-        testTitle = `${parent.title} -> ${testTitle}`
-        parent = parent.parent;
-        ++testLevel;
-      }
-    }
-
-    const prepareLogs = () => {
-      const logs = this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
-      this.debugLog('Sending logs: ' + logs.length);
-      return logs;
-    };
-
-    const buildDataMessage = () => ({
-      spec: spec,
-      test: testTitle,
-      messages: prepareLogs(),
-      state: testState,
-      level: testLevel,
-      consoleTitle: options.consoleTitle,
-      isHook: options.isHook,
-      continuous: false,
-    });
-
-    if (options.noQueue) {
+    if (noQueue) {
       this.debugLog('Sending with debounce.');
       this.debounceNextMochaSuite(Promise.resolve()
         // Need to wait for command log update debounce.
@@ -95,7 +51,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
 
     Cypress.on('log:changed', (options) => {
       if (options.state === 'failed') {
-        this.collectorState.updateLogStatusForChainId(options.id);
+        this.collectorState.updateLogStatus(options.id);
       }
     });
     // @ts-ignore
@@ -140,7 +96,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands from before all hook if the hook passed.
     // @ts-ignore
     Cypress.mocha.getRunner().on('hook end', function(this: any, hook: any) {
-      if (hook.hookName === "before all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
+      if (hook.hookName === "before all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
@@ -161,7 +117,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
         if (
           this.test.parent === this.currentTest.parent // Since we have after all in each suite we need this for nested suites case.
           && this.currentTest.failedFromHookId // This is how we know a hook failed the suite.
-          && self.collectorState.hasLogsCurrentStack()
+          && self.collectorState.hasLogsInCurrentStack()
         ) {
           self.debugLog('extended: sending logs of failed before all hook');
           self.sendLogsToPrinter(
@@ -184,7 +140,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
     // Logs commands from after all hooks that passed.
     // @ts-ignore
     Cypress.mocha.getRunner().on('hook end', function (hook: any) {
-      if (hook.hookName === "after all" && self.collectorState.hasLogsCurrentStack() && !hook._ctr_hook) {
+      if (hook.hookName === "after all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
@@ -204,7 +160,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
     Cypress.prependListener('fail', function(this: any, error: any) {
       const currentRunnable = this.mocha.getRunner().currentRunnable;
 
-      if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsCurrentStack()) {
+      if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsInCurrentStack()) {
         // We only have the full list of commands when the suite ends.
         this.mocha.getRunner().prependOnceListener('suite end', () => {
           self.debugLog('extended: sending logs of failed after all hook');
@@ -295,7 +251,7 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
     Cypress.mocha.getRunner().on('pending', function (test: any) {
       if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
-        if (self.collectorState.hasLogsCurrentStack()) {
+        if (self.collectorState.hasLogsInCurrentStack()) {
           self.debugLog('extended: sending logs for skipped test: ' + test.title);
           sendLogsToPrinterForATest(test);
         }
@@ -401,4 +357,4 @@ export default class LogCollectExtendedControl extends LogCollectBaseControl {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + message);
     }
   }
-};
+}

@@ -85,8 +85,7 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
     let oldChunkEnd = this.specChunksWritten[spec][1];
 
     let fd = fs.openSync(this.file, 'r+');
-    // @ts-expect-error TS(2552): Cannot find name 'Buffer'. Did you mean 'buffer'?
-    let buffer = Buffer.alloc(this.size - oldChunkEnd, null, 'utf-8');
+    let buffer = Buffer.alloc(this.size - oldChunkEnd, undefined, 'utf-8');
     fs.readSync(fd, buffer, 0, buffer.length, oldChunkEnd);
 
     let chunkBuffer = Buffer.from(chunk, 'utf8');

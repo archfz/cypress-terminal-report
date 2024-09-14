@@ -1,6 +1,5 @@
 import './commands';
 import registerCypressGrep from "@cypress/grep";
-import 'cypress-mochawesome-reporter/register';
 import utils from "../../../src/utils";
 
 const env = Cypress.env();
@@ -105,6 +104,8 @@ if (env.commandTimings) {
 }
 
 if (env.mochawesome == '1') {
+  require('cypress-mochawesome-reporter/register');
+
   afterEach(() => {
     cy.wait(50, {log: false}).then(() => {
       const logs = Cypress.TerminalReport.getLogs('txt');
@@ -121,7 +122,7 @@ if (env.globalAfter == '1') {
 }
 
 if (env.disabled != '1') {
-  require('../../../src/installLogsCollector.js')(config);
+  require('../../../src/installLogsCollector')(config);
 }
 
 enableFetchWorkaround();

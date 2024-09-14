@@ -26,8 +26,9 @@ export default class LogCollectBrowserConsole {
       }
       (appWindow as any)._ctr_registered = true;
 
+      const stringableTypes = ['string', 'number', 'undefined', 'function'];
       const processArg = (arg: any) => {
-        if (['string', 'number', 'undefined', 'function'].includes(typeof arg)) {
+        if (stringableTypes.includes(typeof arg)) {
           return arg ? arg.toString() : arg === undefined ? 'undefined' : '';
         }
 

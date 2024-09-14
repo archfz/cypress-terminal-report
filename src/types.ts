@@ -23,7 +23,7 @@ export type Log = {
 export type MessageData = {
   spec: string,
   test: string,
-  state: 'failed' | 'passed',
+  state: 'failed' | 'passed' | 'running',
   messages: Log[],
   consoleTitle?: string;
   level?: number,

@@ -5,24 +5,43 @@ import {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressXhr {
   format: LogFormat;
+  protected messageProcessors: Array<(props: any, isSuccess: boolean) => Promise<string>> = []
 
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
-    this.format = new LogFormat(config);
+    let format;
+    this.format = format = new LogFormat(config);
+
+    if (this.config.collectRequestData && this.config.collectHeaderData) {
+      this.messageProcessors.push(async (props) =>
+        props['Request Headers'] ? `\nRequest headers: ${await format.formatXhrData(props['Request Headers'])}` : '');
+    }
+    if (this.config.collectRequestData && this.config.collectBody) {
+      this.messageProcessors.push(async (props) =>
+        props['Request Body'] ? `\nRequest body: ${await format.formatXhrData(props['Request Body'])}` : '');
+    }
+    if (this.config.collectHeaderData) {
+      this.messageProcessors.push(async (props) =>
+        props['Response Headers'] ? `\nResponse headers: ${await format.formatXhrData(props['Response Headers'])}` : '');
+    }
+    if (this.config.collectBody) {
+      this.messageProcessors.push(async (props, isSuccess) =>
+        props['Response Body'] && !isSuccess ? `\nResponse body: ${await format.formatXhrData(props['Response Body'])}` : '');
+    }
   }
 
   register() {
     // In Cypress 13+ this is under an extra props key
-    const consoleProps = (options: any) => options.consoleProps && options.consoleProps.props ? options.consoleProps.props : options.consoleProps
+    const getConsoleProps = (options: any) => options.consoleProps?.props ? options.consoleProps.props : options.consoleProps
 
     const formatXhr = (options: any) => (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
-    consoleProps(options).Method + ' ' + consoleProps(options).URL;
+      getConsoleProps(options).Method + ' ' + getConsoleProps(options).URL;
 
     const formatDuration = (durationInMs: number) => durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
 
     Cypress.on('log:added', (options) => {
       if (
         options.instrument === 'command' &&
-        consoleProps(options) &&
+        getConsoleProps(options) &&
         options.displayName === 'xhr'
       ) {
         const log = formatXhr(options);
@@ -35,13 +54,15 @@ export default class LogCollectCypressXhr {
       if (
         options.instrument === 'command' &&
         ['request', 'xhr'].includes(options.name) &&
-        consoleProps(options) &&
+        options.displayName !== 'fetch' &&
+        getConsoleProps(options) &&
         options.state !== 'pending'
       ) {
         let statusCode;
+        let consoleProp = getConsoleProps(options);
 
-        if (consoleProps(options)['Response Status Code']) {
-          statusCode = consoleProps(options)['Response Status Code'];
+        if (consoleProp['Response Status Code']) {
+          statusCode = consoleProp['Response Status Code'];
         }
 
         const isSuccess = statusCode && (statusCode + '')[0] === '2';
@@ -49,8 +70,8 @@ export default class LogCollectCypressXhr {
         let log = formatXhr(options);
 
         // @TODO: Not supported anymore :(
-        if (consoleProps(options).Duration) {
-          log += ` (${formatDuration(consoleProps(options).Duration)})`;
+        if (consoleProp.Duration) {
+          log += ` (${formatDuration(consoleProp.Duration)})`;
         }
         if (statusCode) {
           log += `\nStatus: ${statusCode}`;
@@ -58,30 +79,11 @@ export default class LogCollectCypressXhr {
         if (options.err && options.err.message.match(/abort/)) {
           log += ' - ABORTED';
         }
-        if (
-          this.config.collectRequestData && this.config.collectHeaderData &&
-          consoleProps(options)['Request Headers']
-        ) {
-          log += `\nRequest headers: ${await this.format.formatXhrBody(consoleProps(options)['Request Headers'])}`;
-        }
-        if (
-          this.config.collectRequestData && this.config.collectBody &&
-          consoleProps(options)['Request Body']
-        ) {
-          log += `\nRequest body: ${await this.format.formatXhrBody(consoleProps(options)['Request Body'])}`;
-        }
-        if (
-          this.config.collectHeaderData &&
-          consoleProps(options)['Response Headers']
-        ) {
-          log += `\nResponse headers: ${await this.format.formatXhrBody(consoleProps(options)['Response Headers'])}`;
-        }
-        if (
-          !isSuccess && this.config.collectBody &&
-          consoleProps(options)['Response Body']
-        ) {
-          log += `\nResponse body: ${await this.format.formatXhrBody(consoleProps(options)['Response Body'])}`;
-        }
+
+        await Promise.all(this.messageProcessors.map((proc) => proc(consoleProp, isSuccess)))
+          .then(results => {
+            log += results.join('');
+          });
 
         this.collectorState.updateLog(log, severity, options.id);
       }

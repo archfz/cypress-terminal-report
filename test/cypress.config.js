@@ -7,7 +7,6 @@ module.exports = defineConfig({
   screenshotOnRunFailure: false,
   e2e: {
     "baseUrl": "https://example.cypress.io",
-    reporter: 'cypress-mochawesome-reporter',
     specPattern: 'cypress/integration/**/*.spec.{js,jsx,ts,tsx}',
     async setupNodeEvents(on, config) {
       let options = {
@@ -142,10 +141,11 @@ module.exports = defineConfig({
 
       if (config.env.mochawesome == '1') {
         require('cypress-mochawesome-reporter/plugin')(on);
+        config.reporter = 'cypress-mochawesome-reporter';
       }
 
       if (config.env.disabled != '1') {
-        require('../src/installLogsPrinter.js')(on, options);
+        require('../src/installLogsPrinter')(on, options);
       }
 
       return config;

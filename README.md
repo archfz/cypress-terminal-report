@@ -376,7 +376,7 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
-- Migrate `src` to typescript.
+- Migrate `src` to typescript and refactor code for performance improvements.
 
 #### 6.2.0
 

@@ -19,17 +19,24 @@ export default class LogCollectorState {
   listeners: Record<string, CallableFunction[]>;
   logStacks: Array<StackLogArray | null>;
   suiteStartTime: Date | null;
-  xhrIdsOfLoggedResponses: string[];
+  logProcessors: Array<(log: StackLog) => void> = [];
 
   constructor(protected config: ExtendedSupportOptions) {
     this.listeners = {};
     this.currentTest = null;
     this.logStacks = [];
-    this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes = [];
     this.afterHookIndexes = [];
     this.isStrict = false;
     this.suiteStartTime = null;
+
+    if (this.config.commandTimings == 'timestamp') {
+      this.logProcessors.push((log) => { log.timeString = Date.now() + ""});
+    } else if (this.config.commandTimings == 'seconds') {
+      this.logProcessors.push((log) => {
+        log.timeString = (Date.now() - (this.suiteStartTime?.getTime() || 0)) / 1000 + "s"
+      });
+    }
   }
 
   setStrict() {
@@ -42,41 +49,46 @@ export default class LogCollectorState {
     }
     this.logStacks.push([]);
   }
+
+  ensureLogStack() {
+    if (!this.hasLogsInCurrentStack()) {
+      this.addNewLogStack();
+    }
+  }
+
   getCurrentLogStackIndex() {
     return this.logStacks.length - 1;
   }
+
   getCurrentLogStack() {
     return this.logStacks[this.getCurrentLogStackIndex()];
   }
+
   consumeLogStacks(index: number) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'consuming log stack at ' + index);
     }
     const stack = this.logStacks[index];
-    this.logStacks[index] = null;
 
     stack?.forEach((log) => {
-      if (log.chainId) {
-        delete log.chainId;
-      }
+      delete log.chainId;
     });
 
+    this.logStacks[index] = null;
     return stack;
   }
-  hasLogsCurrentStack() {
+
+  hasLogsInCurrentStack() {
     return this.getCurrentLogStack() && !!(this.getCurrentLogStack()?.length);
   }
+
   getCurrentTest() {
     return this.currentTest;
   }
-  setCurrentTest(test: any) {
-    this.currentTest = test;
-  }
 
-  addLog(entry: LogArray, chainId?: string, xhrIdOfLoggedResponse?: any) {
-    entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
-
+  addLog(entry: LogArray, chainId?: string) {
     const currentStack = this.getCurrentLogStack();
+
     if (!currentStack) {
       if (this.isStrict) {
         console.warn('cypress-terminal-report: Attempted to collect logs while no stack was defined.');
@@ -87,55 +99,48 @@ export default class LogCollectorState {
     const structuredEntry: StackLog = {
       type: entry[0],
       message: entry[1],
-      severity: entry[2],
+      severity: entry[2] || CONSTANTS.SEVERITY.SUCCESS,
+      chainId,
     };
 
-    if (chainId) {
-      structuredEntry.chainId = chainId;
-    }
-    if (this.config.commandTimings) {
-      if (this.config.commandTimings == 'timestamp') {
-        structuredEntry.timeString = Date.now() + "";
-      } else if (this.config.commandTimings == 'seconds' && this.suiteStartTime) {
-        structuredEntry.timeString = (Date.now() - this.suiteStartTime.getTime()) / 1000 + "s";
-      }
-    }
-    if (xhrIdOfLoggedResponse) {
-      this.xhrIdsOfLoggedResponses.push(xhrIdOfLoggedResponse);
-    }
-
+    this.logProcessors.forEach((processor) => processor(structuredEntry));
     currentStack.push(structuredEntry);
+
     this.emit('log');
   }
 
   updateLog(log: string, severity: Severity, id: string) {
-    this.loopLogStacks((entry: any) => {
-      if (entry.chainId === id) {
-        entry.message = log;
-        entry.severity = severity;
-      }
-    });
+    const entry = this.findReversed(id);
+    if (entry) {
+      entry.message = log;
+      entry.severity = severity;
+    }
     this.emit('log');
   }
 
-  updateLogStatusForChainId(chainId: string, state: Severity = CONSTANTS.SEVERITY.ERROR) {
-    this.loopLogStacks((entry: any) => {
-        if (entry.chainId === chainId) {
-          entry.severity = state;
-        }
-    });
+  updateLogStatus(id: string, state: Severity = CONSTANTS.SEVERITY.ERROR) {
+    const entry = this.findReversed(id);
+    if (entry) {
+      entry.severity = state;
+    }
   }
 
-  loopLogStacks(callback: (entry: StackLog) => void) {
-    this.logStacks.forEach((logStack) => {
+  findReversed(id: string): StackLog | null {
+    if (!id) {
+      return null;
+    }
+
+    for (let i = this.logStacks.length - 1; i >= 0; i--) {
+      const logStack = this.logStacks[i];
       if (logStack) {
-        logStack.forEach((entry) => {
-          if (entry) {
-            callback(entry);
+        for (let j = logStack.length - 1; j >= 0; j--) {
+          if (logStack[j].chainId === id) {
+            return logStack[j]
           }
-        });
+        }
       }
-    });
+    }
+    return null;
   }
 
   markCurrentStackFromBeforeEach() {
@@ -151,6 +156,7 @@ export default class LogCollectorState {
   incrementBeforeHookIndex() {
     ++this.beforeHookIndexes[0];
   }
+
   incrementAfterHookIndex() {
     ++this.afterHookIndexes[0];
   }
@@ -159,6 +165,7 @@ export default class LogCollectorState {
     return CONSTANTS.HOOK_TITLES.BEFORE
       .replace('{index}', `#${this.beforeHookIndexes[0]}`);
   }
+
   getAfterHookTestTile() {
     return CONSTANTS.HOOK_TITLES.AFTER
       .replace('{index}', `#${this.afterHookIndexes[0]}`);
@@ -169,10 +176,10 @@ export default class LogCollectorState {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting suite');
     }
     this.suiteStartTime = new Date();
-    this.xhrIdsOfLoggedResponses = [];
     this.beforeHookIndexes.unshift(0);
     this.afterHookIndexes.unshift(0);
   }
+
   endSuite() {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'ending suite');
@@ -180,29 +187,26 @@ export default class LogCollectorState {
     this.beforeHookIndexes.shift();
     this.afterHookIndexes.shift();
   }
+
   startTest(test: any) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting test: ' + test.title);
     }
-    this.setCurrentTest(test);
-    this.xhrIdsOfLoggedResponses = [];
 
+    this.currentTest = test;
     this.addNewLogStack();
 
-    // Merge together before each log.
     const currentIndex = this.getCurrentLogStackIndex();
-    let previousIndex = currentIndex - 1;
-    while (this.getCurrentLogStack()?._ctr_before_each) {
-      const previousStack = this.logStacks[previousIndex];
-      if (previousStack) {
-        this.logStacks[currentIndex] = previousStack.concat(this.logStacks[currentIndex] || []);
-      }
-      --previousIndex;
+    const previousIndex = currentIndex - 1;
+
+    // Merge together before each log.
+    if (this.logStacks[currentIndex]?._ctr_before_each && this.logStacks[previousIndex]) {
+      this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
     }
   }
 
   emit(event: 'log') {
-    (this.listeners[event] || []).forEach((callback: any) => callback());
+    (this.listeners[event] || []).forEach((callback) => callback());
   }
 
   on(event: 'log', callback: () => void) {
