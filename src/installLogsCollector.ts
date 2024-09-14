@@ -15,16 +15,8 @@ import LogCollectSimpleControl from "./collector/LogCollectSimpleControl";
 import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
 import CONSTANTS from "./constants";
 import {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
-import {LogType} from "./types";
+import {LogType, Log, Severity} from "./types";
 import utils from "./utils";
-
-declare global {
-  namespace Cypress {
-    interface TerminalReport {
-      getLogs(format: string): any;
-    }
-  }
-}
 
 /**
  * Installs the logs collector for cypress. Needs to be added to support file.
@@ -109,6 +101,11 @@ function validateConfig(config: SupportOptions) {
   if (config.collectTestLogs && typeof config.collectTestLogs !== 'function') {
     throw new CtrError(`Collect test logs option expected to be a function.`);
   }
+}
+
+// Ensures backwards compatibility type imports.
+declare namespace installLogsCollector {
+  export {LogType, Log, Severity, SupportOptions}
 }
 
 export = installLogsCollector;

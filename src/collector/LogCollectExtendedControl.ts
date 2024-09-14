@@ -8,9 +8,6 @@ import {ExtendedSupportOptions} from "../installLogsCollector.types";
  * Collects and dispatches all logs from all tests and hooks.
  */
 export default class LogCollectExtendedControl extends LogCollectBaseControl {
-  getSpecFilePath: any;
-  prepareLogs: any;
-
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
     super();
     this.registerCypressBeforeMochaHooksSealEvent();

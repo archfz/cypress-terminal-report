@@ -3,63 +3,63 @@
     "All hooks. -> [[ before all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from before"
+        "message": "from before",
+        "severity": "success"
       }
     ],
     "All hooks. -> passed it": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from beforeEach"
+        "message": "from beforeEach",
+        "severity": "success"
       },
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from it"
+        "message": "from it",
+        "severity": "success"
       },
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from afterEach"
+        "message": "from afterEach",
+        "severity": "success"
       }
     ],
     "All hooks. -> passed it 2": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from beforeEach"
+        "message": "from beforeEach",
+        "severity": "success"
       },
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from it 2"
+        "message": "from it 2",
+        "severity": "success"
       },
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from afterEach"
+        "message": "from afterEach",
+        "severity": "success"
       }
     ],
     "All hooks. -> [[ after all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from after"
+        "message": "from after",
+        "severity": "success"
       }
     ],
     "All hooks. -> [[ after all #2 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "from after 2"
+        "message": "from after 2",
+        "severity": "success"
       }
     ],
     "[[ after all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "global after"
+        "message": "global after",
+        "severity": "success"
       }
     ]
   }

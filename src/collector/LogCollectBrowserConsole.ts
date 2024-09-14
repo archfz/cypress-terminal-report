@@ -4,11 +4,13 @@ import LogCollectorState from "./LogCollectorState";
 import {ExtendedSupportOptions} from "../installLogsCollector.types";
 import {Severity} from "../types";
 
+type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
+
 export default class LogCollectBrowserConsole {
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}
 
   register() {
-    const oldConsoleMethods = {};
+    const oldConsoleMethods: { [k in Methods]?: Console[k] } = {};
     const event = Cypress.testingType === 'component'
       ? 'test:before:run'
       : 'window:before:load';
@@ -44,17 +46,17 @@ export default class LogCollectBrowserConsole {
       };
 
       const createWrapper = (
-        method: 'warn' | 'error' | 'debug' | 'info' | 'log',
+        method: Methods,
         logType: any,
         type: Severity = CONSTANTS.SEVERITY.SUCCESS
       ) => {
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         oldConsoleMethods[method] = appWindow.console[method];
 
         appWindow.console[method] = (...args: any[]) => {
           this.collectorState.addLog([logType, args.map(processArg).join(`,\n`), type]);
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-          oldConsoleMethods[method](...args);
+          if (oldConsoleMethods[method]) {
+            oldConsoleMethods[method](...args);
+          }
         };
       };
 

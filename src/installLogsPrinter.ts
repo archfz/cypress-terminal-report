@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import path from 'path';
 import tv4 from 'tv4';
 import schema from './installLogsPrinter.schema.json';
@@ -8,44 +7,21 @@ import CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
 import NestedOutputProcessorDecorator from './outputProcessor/NestedOutputProcessorDecorator';
 import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
 import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
-import {CustomOutputProcessorCallback, PluginOptions} from "./installLogsPrinter.types";
-import {Log, MessageData} from "./types";
+import {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
+import {Log, LogType, MessageData, Severity} from "./types";
 import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
 import utils from "./utils";
+import consoleProcessor from "./outputProcessor/consoleProcessor";
 
-const LOG_TYPES = CONSTANTS.LOG_TYPES;
-const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
 const OUTPUT_PROCESSOR_TYPE: Record<string,  { new (file: string): IOutputProcecessor }> = {
   'json': JsonOutputProcessor,
   'txt': TextOutputProcessor,
 };
 
-const LOG_SYMBOLS = (() => {
-  if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
-    return {
-      error: '✘',
-      warning: '❖',
-      success: '✔',
-      info: '✱',
-      debug: '⚈',
-      route: '➟'
-    }
-  } else {
-    return {
-      error: 'x',
-      warning: '!',
-      success: '+',
-      info: 'i',
-      debug: '%',
-      route: '~'
-    }
-  }
-})();
-
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
 let outputProcessors: IOutputProcecessor[] = [];
 
-const createLogger = (enabled: boolean) => enabled
+const createLogger = (enabled?: boolean) => enabled
   ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
   : () => {}
 
@@ -66,7 +42,6 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
     throw new CtrError(`Invalid plugin install options: ${utils.tv4ToString(result.errors)}`);
   }
 
-  // @ts-expect-error TS(2339): Property 'debug' does not exist on type '{}'.
   const logDebug = createLogger(options.debug);
 
   on('task', {
@@ -110,7 +85,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
         )
       ) {
         logDebug(`Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
-        logToTerminal(terminalMessages, options, data);
+        consoleProcessor(terminalMessages, options, data);
       }
 
       if (options.collectTestLogs) {
@@ -235,7 +210,7 @@ function compactLogs(
     type: CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
     message: `[ ... ${count} omitted logs ... ]`,
     severity: CONSTANTS.SEVERITY.SUCCESS
-});
+  });
 
   let excludeCount = 0;
   for (let i = 0; i < includeIndexes.length; i++) {
@@ -258,101 +233,9 @@ function compactLogs(
   return compactedLogs;
 }
 
-function logToTerminal(
-  messages: Log[],
-  options: PluginOptions,
-  data: MessageData
-) {
-  const tabLevel = data.level || 0;
-  const levelPadding = '  '.repeat(Math.max(0, tabLevel - 1));
-  const padding = CONSTANTS.PADDING.LOG + levelPadding;
-  const padType = (type: string) => new Array(Math.max(padding.length - type.length - 3, 0)).join(' ') + type + ' ';
-
-  if (data.consoleTitle) {
-    console.log(' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle));
-  }
-
-  messages.forEach(({
-    type,
-    message,
-    severity,
-    timeString
-  }) => {
-    let color = 'white',
-      typeString = KNOWN_TYPES.includes(type) ? padType(type) : padType('[unknown]'),
-      processedMessage = message,
-      trim = options.defaultTrimLength || 800,
-      icon = '-';
-
-    if (type === LOG_TYPES.BROWSER_CONSOLE_WARN) {
-      color = 'yellow';
-      icon = LOG_SYMBOLS.warning;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_ERROR) {
-      color = 'red';
-      icon = LOG_SYMBOLS.warning;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_DEBUG) {
-      color = 'blue';
-      icon = LOG_SYMBOLS.debug;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_LOG) {
-      color = 'white';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.BROWSER_CONSOLE_INFO) {
-      color = 'white';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.CYPRESS_LOG) {
-      color = 'green';
-      icon = LOG_SYMBOLS.info;
-    } else if (type === LOG_TYPES.CYPRESS_XHR) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_FETCH) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_INTERCEPT) {
-      color = 'green';
-      icon = LOG_SYMBOLS.route;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_REQUEST) {
-      color = 'green';
-      icon = LOG_SYMBOLS.success;
-      trim = options.routeTrimLength || 5000;
-    } else if (type === LOG_TYPES.CYPRESS_COMMAND) {
-      color = 'green';
-      icon = LOG_SYMBOLS.success;
-      trim = options.commandTrimLength || 800;
-    }
-
-    if (severity === CONSTANTS.SEVERITY.ERROR) {
-      color = 'red';
-      icon = LOG_SYMBOLS.error;
-    } else if (severity === CONSTANTS.SEVERITY.WARNING) {
-      color = 'yellow';
-      icon = LOG_SYMBOLS.warning;
-    }
-
-    if (message.length > trim) {
-      processedMessage = message.substring(0, trim) + ' ...';
-    }
-
-    const coloredTypeString = ['red', 'yellow'].includes(color) ?
-      (chalk as any)[color].bold(typeString + icon + ' ') :
-      (chalk as any)[color](typeString + icon + ' ');
-
-    if (timeString) {
-      console.log(chalk.gray(`${padding}Time: ${timeString}`));
-    }
-
-    console.log(
-      coloredTypeString,
-      processedMessage.replace(/\n/g, '\n' + padding)
-    );
-  });
-
-  if (messages.length !== 0 && !data.continuous) {
-    console.log('\n');
-  }
+// Ensures backwards compatibility type imports.
+declare namespace installLogsPrinter {
+  export {LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback}
 }
 
 export = installLogsPrinter;

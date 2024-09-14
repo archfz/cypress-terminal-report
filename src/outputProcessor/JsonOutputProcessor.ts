@@ -1,40 +1,21 @@
 import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
+import {AllMessages} from "../installLogsPrinter.types";
+import {Log} from "../types";
 
 export default class JsonOutputProcessor extends BaseOutputProcessor implements IOutputProcecessor {
-  chunkSeparator: any;
-  initialContent: any;
-  writeSpecChunk: any;
+  chunkSeparator: string = ',\n';
+  initialContent: string = "{\n\n}";
 
-  constructor(file: any) {
-    super(file);
-    this.initialContent = "{\n\n}";
-    this.chunkSeparator = ',\n';
-  }
-
-  write(/** @type {import('../installLogsPrinter').AllMessages} */ allMessages: any) {
+  write(allMessages: AllMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {
-      let data = {[spec]: {}};
+      let data: Record<string, Record<string, Log[]>> = {[spec]: {}};
 
-      // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
       Object.entries(tests).forEach(([test, messages]) => {
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-        data[spec][test] = messages.map(({
-          type,
-          message,
-          severity,
-          timeString
-        }: any) => {
-          const data = {
-            type: type,
-            severity: severity,
-            message: message,
-          };
-
+        data[spec][test] = messages.map((message) => {
+          const {timeString, ...data} = message;
           if (timeString) {
-            // @ts-expect-error TS(2339): Property 'timeString' does not exist on type '{ ty... Remove this comment to see the full error message
-            data.timeString = timeString;
+            (data as Log).timeString = timeString;
           }
-
           return data;
         });
       });

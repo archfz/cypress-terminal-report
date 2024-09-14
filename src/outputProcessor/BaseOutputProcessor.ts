@@ -10,20 +10,15 @@ export interface IOutputProcecessor {
   write(allMessages: AllMessages): void;
 }
 
-export default class BaseOutputProcessor {
-  protected atChunk: any;
-  protected chunkSeparator: string;
-  protected file: any;
-  protected initialContent: any;
-  protected size: any;
-  protected specChunksWritten: any;
-  protected writeSpendTime: any;
+export default abstract class BaseOutputProcessor implements IOutputProcecessor {
+  protected atChunk: number = 0;
+  protected chunkSeparator: string = '';
+  protected initialContent: string = '';
+  protected size: number = 0;
+  protected specChunksWritten: Record<string, [number, number]> = {};
+  protected writeSpendTime: number = 0;
 
-  constructor(file: any) {
-    this.file = file;
-    this.initialContent = '';
-    this.chunkSeparator = '';
-  }
+  constructor(protected file: string) {}
 
   getTarget() {
     return this.file;
@@ -34,7 +29,7 @@ export default class BaseOutputProcessor {
   }
 
   initialize() {
-    // Unlink file on initialize to start clean. Also this is required for custom
+    // Unlink file on initialize to start clean. Also, this is required for custom
     // output processors provided as config to be able to define custom initial
     // content.
     if (fs.existsSync(this.file)) {
@@ -57,7 +52,7 @@ export default class BaseOutputProcessor {
   }
 
   /** @type { import('./BaseOutputProcessor')['writeSpecChunk']} */
-  writeSpecChunk(spec: any, chunk: any, pos: number | null = null) {
+  writeSpecChunk(spec: string, chunk: any, pos: number | null = null) {
     const startTime = new Date().getTime();
 
     if (typeof chunk !== 'string') {
@@ -85,7 +80,7 @@ export default class BaseOutputProcessor {
     this.writeSpendTime += new Date().getTime() - startTime;
   }
 
-  replaceSpecChunk(spec: any, chunk: any) {
+  replaceSpecChunk(spec: string, chunk: string) {
     let oldChunkStart = this.specChunksWritten[spec][0];
     let oldChunkEnd = this.specChunksWritten[spec][1];
 
@@ -111,11 +106,11 @@ export default class BaseOutputProcessor {
     }
   }
 
-  appendSeparator(pos: any) {
+  appendSeparator(pos: number | null) {
     this.writeAtPosition(this.chunkSeparator, pos)
   }
 
-  writeAtPosition(data: any, pos: any) {
+  writeAtPosition(data: string, pos: number | null) {
     let dataBuffer = new Buffer(data, 'utf-8');
     let finalBuffer = dataBuffer;
     let fd = fs.openSync(this.file, 'r+');
@@ -134,7 +129,7 @@ export default class BaseOutputProcessor {
     return dataBuffer.length;
   }
 
-  getAbsolutePositionFromRelative(pos: any): number {
+  getAbsolutePositionFromRelative(pos: number | null): number {
     if (pos === null) {
       return this.size;
     } else if (pos < 0) {
@@ -144,7 +139,9 @@ export default class BaseOutputProcessor {
     return Math.min(this.size, pos);
   }
 
-  hasSpecChunkWritten(spec: any) {
+  hasSpecChunkWritten(spec: string) {
     return !!this.specChunksWritten[spec];
   }
+
+  abstract write(allMessages: AllMessages): void;
 };

@@ -17,7 +17,7 @@ export default class LogCollectCypressXhr {
     const formatXhr = (options: any) => (options.renderProps.wentToOrigin ? '' : 'STUBBED ') +
     consoleProps(options).Method + ' ' + consoleProps(options).URL;
 
-    const formatDuration = (durationInMs: any) => durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
+    const formatDuration = (durationInMs: number) => durationInMs < 1000 ? `${durationInMs} ms` : `${durationInMs / 1000} s`;
 
     Cypress.on('log:added', (options) => {
       if (

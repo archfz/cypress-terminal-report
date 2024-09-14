@@ -48,7 +48,7 @@ export default class LogCollectorState {
   getCurrentLogStack() {
     return this.logStacks[this.getCurrentLogStackIndex()];
   }
-  consumeLogStacks(index: any) {
+  consumeLogStacks(index: number) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'consuming log stack at ' + index);
     }
@@ -73,7 +73,7 @@ export default class LogCollectorState {
     this.currentTest = test;
   }
 
-  addLog(entry: LogArray, chainId?: any, xhrIdOfLoggedResponse?: any) {
+  addLog(entry: LogArray, chainId?: string, xhrIdOfLoggedResponse?: any) {
     entry[2] = entry[2] || CONSTANTS.SEVERITY.SUCCESS;
 
     const currentStack = this.getCurrentLogStack();
@@ -127,9 +127,9 @@ export default class LogCollectorState {
   }
 
   loopLogStacks(callback: (entry: StackLog) => void) {
-    this.logStacks.forEach((logStack: any) => {
+    this.logStacks.forEach((logStack) => {
       if (logStack) {
-        logStack.forEach((entry: any) => {
+        logStack.forEach((entry) => {
           if (entry) {
             callback(entry);
           }

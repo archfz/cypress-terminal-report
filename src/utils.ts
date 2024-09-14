@@ -3,63 +3,59 @@ import jsonPrune from "./jsonPrune";
 import tv4 from "tv4";
 
 const utils = {
-  nonQueueTask: function (name: any, data: any) {
+  nonQueueTask: async (name: string, data: Record<string, any>) => {
     if (Cypress.testingType === 'component' && semver.gte(Cypress.version, '12.15.0')) {
       // In component tests task commands don't need to be verified for some reason.
-      return new Promise(resolve => setTimeout(resolve, 5))
-        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
-        .then(() => Cypress.backend('run:privileged', {
-          commandName: 'task',
-          userArgs: [name, data],
-          options: {
-            task: name,
-            arg: data
-          },
-        }))
-        // For some reason cypress throws empty error although the task indeed works.
+      await new Promise(resolve => setTimeout(resolve, 5));
+      // @ts-ignore
+      return await Cypress.backend('run:privileged', {
+        commandName: 'task',
+        userArgs: [name, data],
+        options: {
+          task: name,
+          arg: data
+        },
+      }) // For some reason cypress throws empty error although the task indeed works.
         .catch(() => {/* noop */})
     }
 
     if (semver.gte(Cypress.version, '12.17.0')) {
-      // @ts-expect-error TS(2339): Property 'args' does not exist on type '(...args: ... Remove this comment to see the full error message
-      const { args, promise } = Cypress.emitMap('command:invocation', {name: 'task', args: [name, data]})[0]
-      return new Promise((r) => promise.then(r))
-        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
-        .then(() => Cypress.backend('run:privileged', {
-          commandName: 'task',
-          args,
-          options: {
-            task: name,
-            arg: data
-          },
-        }))
-        // For some reason cypress throws empty error although the task indeed works.
+      // @ts-ignore
+      const {args, promise} = Cypress.emitMap('command:invocation', {name: 'task', args: [name, data]})[0]
+      await new Promise((r) => promise.then(r));
+      // @ts-ignore
+      return await Cypress.backend('run:privileged', {
+        commandName: 'task',
+        args,
+        options: {
+          task: name,
+          arg: data
+        },
+      }) // For some reason cypress throws empty error although the task indeed works.
         .catch(() => {/* noop */})
     }
 
     if (semver.gte(Cypress.version, '12.15.0')) {
       Cypress.emit('command:invocation', {name: 'task', args: [name, data]})
-      return new Promise(resolve => setTimeout(resolve, 5))
-        // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
-        .then(() => Cypress.backend('run:privileged', {
-          commandName: 'task',
-          userArgs: [name, data],
-          options: {
-            task: name,
-            arg: data
-          },
-        }))
-        // For some reason cypress throws empty error although the task indeed works.
-        .catch(() => {/* noop */})
+      await new Promise(resolve_1 => setTimeout(resolve_1, 5));
+      // @ts-ignore
+      return await Cypress.backend('run:privileged', {
+        commandName: 'task',
+        userArgs: [name, data],
+        options: {
+          task: name,
+          arg: data
+        },
+      })// For some reason cypress throws empty error although the task indeed works.
+        .catch(() => {/* noop */});
     }
 
-    // @ts-expect-error TS(2575): No overload expects 2 arguments, but overloads do ... Remove this comment to see the full error message
-    return Cypress.backend('task', {
+    // @ts-ignore
+    return await Cypress.backend('task', {
       task: name,
       arg: data,
-    })
-      // For some reason cypress throws empty error although the task indeed works.
-      .catch((error: any) => {/* noop */});
+    }) // For some reason cypress throws empty error although the task indeed works.
+      .catch(() => {/* noop */});
   },
 
   jsonStringify(value: any, format = true) {
@@ -69,8 +65,8 @@ const utils = {
       json = JSON.stringify(value, null, format ? 2 : undefined);
     } catch (e) {
       try {
-        let prunned = JSON.parse(jsonPrune(value, 20, 1000));
-        json = JSON.stringify(prunned, null, format ? 2 : undefined);
+        let pruned = JSON.parse(jsonPrune(value, 20, 1000));
+        json = JSON.stringify(pruned, null, format ? 2 : undefined);
       } catch (e) {
         if (typeof value.toString === 'function') {
           return '[unprocessable=' + value.toString() + ']';
@@ -87,8 +83,8 @@ const utils = {
   },
 
   tv4ToString: function (errorList: tv4.ValidationError[]) {
-    return '\n' + errorList.map((error: any) => {
-      return `=> ${error.dataPath.replace(/\//, '.')}: ${error.message}`;
+    return '\n' + errorList.map((error) => {
+      return `=> ${error.dataPath?.replace(/\//, '.')}: ${error.message}`;
     }).join('\n') + '\n';
   }
 }
