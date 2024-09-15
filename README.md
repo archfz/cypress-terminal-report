@@ -376,6 +376,11 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 7.0.1 - 7.0.2
+
+- Fix `d.ts` files not published.
+- Fix incorrectly published files.
+
 #### 7.0.0
 
 - Align `xhr` and `fetch` log processing.
