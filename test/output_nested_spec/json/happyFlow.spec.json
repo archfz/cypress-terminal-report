@@ -3,213 +3,213 @@
     "Happy flow. -> Happy flow": [
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "visit\t/commands/network-requests"
+        "message": "visit\t/commands/network-requests",
+        "severity": "success"
       },
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Method: GET\nMatcher: \"comments/*\""
+        "message": "Method: GET\nMatcher: \"comments/*\"",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-btn"
+        "message": "get\t.network-btn",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "click\t"
+        "message": "click\t",
+        "severity": "success"
       },
       {
         "type": "cy:xhr",
-        "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200"
+        "message": "(getComment) GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "wait\t@getComment"
+        "message": "wait\t@getComment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "its\t.response.statusCode"
+        "message": "its\t.response.statusCode",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **200** to equal **200**\nActual: \t200\nExpected: \t200"
+        "message": "assert\texpected **200** to equal **200**\nActual: \t200\nExpected: \t200",
+        "severity": "success"
       },
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Method: POST\nMatcher: \"/comments\""
+        "message": "Method: POST\nMatcher: \"/comments\"",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-post"
+        "message": "get\t.network-post",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "click\t"
+        "message": "click\t",
+        "severity": "success"
       },
       {
         "type": "cy:xhr",
-        "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201"
+        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "wait\t@postComment"
+        "message": "wait\t@postComment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**"
+        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **content-type**"
+        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **content-type**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **name=Using+POST+in+cy.intercept()**"
+        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **name=Using+POST+in+cy.intercept()**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:error",
-        "severity": "error",
-        "message": "null,\nundefined,\n,\nfalse,\nfunction () {}"
+        "message": "null,\nundefined,\n,\nfalse,\nfunction () {}",
+        "severity": "error"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:log",
-        "severity": "success",
-        "message": "{\n  \"a\": \"b\"\n},\n{\n  \"c\": \"d\"\n},\n10,\nstring"
+        "message": "{\n  \"a\": \"b\"\n},\n{\n  \"c\": \"d\"\n},\n10,\nstring",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:warn",
-        "severity": "warning",
-        "message": "This is a warning message"
+        "message": "This is a warning message",
+        "severity": "warning"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:error",
-        "severity": "error",
-        "message": "This is an error message"
+        "message": "This is an error message",
+        "severity": "error"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:error",
-        "severity": "error",
-        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)"
+        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)",
+        "severity": "error"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:log",
-        "severity": "success",
-        "message": "This should console.log appear."
+        "message": "This should console.log appear.",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:log",
-        "severity": "success",
-        "message": "{\n  \"this\": \"Is an object\",\n  \"with\": {\n    \"keys\": 12512\n  }\n}"
+        "message": "{\n  \"this\": \"Is an object\",\n  \"with\": {\n    \"keys\": 12512\n  }\n}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:info",
-        "severity": "success",
-        "message": "This should console.info appear."
+        "message": "This should console.info appear.",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "window\t"
+        "message": "window\t",
+        "severity": "success"
       },
       {
         "type": "cons:debug",
-        "severity": "success",
-        "message": "This should console.debug appear."
+        "message": "This should console.debug appear.",
+        "severity": "success"
       },
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Matcher: {\"method\":\"PUT\",\"url\":\"comments/*\"}\nMocked Response: {\"statusCode\":404,\"body\":{\"error\":\"whoa, this comment does not exist\"},\"delayMs\":500}"
+        "message": "Matcher: {\"method\":\"PUT\",\"url\":\"comments/*\"}\nMocked Response: {\"statusCode\":404,\"body\":{\"error\":\"whoa, this comment does not exist\"},\"delayMs\":500}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-put"
+        "message": "get\t.network-put",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "click\t"
+        "message": "click\t",
+        "severity": "success"
       },
       {
         "type": "cy:xhr",
-        "severity": "warning",
-        "message": "STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}"
+        "message": "(putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\nStatus: 404\nResponse body: {\n  \"error\": \"whoa, this comment does not exist\"\n}",
+        "severity": "warning"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "wait\t@putComment"
+        "message": "wait\t@putComment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-put-comment"
+        "message": "get\t.network-put-comment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **<div.network-put-comment>** to contain **whoa, this comment does not exist**"
+        "message": "assert\texpected **<div.network-put-comment>** to contain **whoa, this comment does not exist**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-get"
+        "message": "get\t.breaking-get",
+        "severity": "error"
       }
     ]
   }

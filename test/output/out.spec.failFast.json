@@ -3,38 +3,38 @@
     "Requests. -> GET 200": [
       {
         "type": "cy:request",
-        "severity": "success",
-        "message": "https://jsonplaceholder.cypress.io/todos/1\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"delectus aut autem\",\n  \"completed\": false\n}"
+        "message": "https://jsonplaceholder.cypress.io/todos/1\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"delectus aut autem\",\n  \"completed\": false\n}",
+        "severity": "success"
       },
       {
         "type": "cy:request",
-        "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/todos/2\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 2,\n  \"title\": \"quis ut nam facilis et officia qui\",\n  \"completed\": false\n}"
+        "message": "GET https://jsonplaceholder.cypress.io/todos/2\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 2,\n  \"title\": \"quis ut nam facilis et officia qui\",\n  \"completed\": false\n}",
+        "severity": "success"
       },
       {
         "type": "cy:request",
-        "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/todos/3\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 3,\n  \"title\": \"fugiat veniam minus\",\n  \"completed\": false\n}"
+        "message": "GET https://jsonplaceholder.cypress.io/todos/3\nStatus: 200\nResponse body: {\n  \"userId\": 1,\n  \"id\": 3,\n  \"title\": \"fugiat veniam minus\",\n  \"completed\": false\n}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-get"
+        "message": "get\t.breaking-get",
+        "severity": "error"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "task\tfailFastLog, Failed tests: 1/1"
+        "message": "task\tfailFastLog, Failed tests: 1/1",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "task\tfailFastLog, Enabling skip mode"
+        "message": "task\tfailFastLog, Enabling skip mode",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "task\tfailFastShouldSkip, true"
+        "message": "task\tfailFastShouldSkip, true",
+        "severity": "success"
       }
     ]
   }

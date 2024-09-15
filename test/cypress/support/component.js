@@ -10,4 +10,4 @@ if (env.enableContinuousLogging == '1') {
   config.enableContinuousLogging = true;
 }
 
-require('../../../src/installLogsCollector')(config);
+require('../../../src/installLogsCollector.js')(config);

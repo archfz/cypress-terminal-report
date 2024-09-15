@@ -3,150 +3,150 @@
     "The Happy -> Opening happy page and getting comments": [
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Method: GET\nMatcher: \"comments/*\""
+        "message": "Method: GET\nMatcher: \"comments/*\"",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Before\t"
+        "message": "Before\t",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **0** to be below **2**"
+        "message": "assert\texpected **0** to be below **2**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "then\tfunction(){}"
+        "message": "then\tfunction(){}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Given \t**I open Happy page**"
+        "message": "Given \t**I open Happy page**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "visit\t/commands/network-requests"
+        "message": "visit\t/commands/network-requests",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "then\tfunction(){}"
+        "message": "then\tfunction(){}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Then \t**I can load comments**"
+        "message": "Then \t**I can load comments**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-btn"
+        "message": "get\t.network-btn",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "click\t"
+        "message": "click\t",
+        "severity": "success"
       },
       {
         "type": "cy:xhr",
-        "severity": "success",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200"
+        "message": "(getComment) GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "wait\t@getComment"
+        "message": "wait\t@getComment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "its\t.status"
+        "message": "its\t.status",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "assert\texpected **undefined** to equal **200**"
+        "message": "assert\texpected **undefined** to equal **200**",
+        "severity": "error"
       }
     ],
     "The Happy -> Opening happy page and posting comments": [
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Method: GET\nMatcher: \"comments/*\""
+        "message": "Method: GET\nMatcher: \"comments/*\"",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Before\t"
+        "message": "Before\t",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **1** to be below **2**\nActual: \t1\nExpected: \t2"
+        "message": "assert\texpected **1** to be below **2**\nActual: \t1\nExpected: \t2",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "then\tfunction(){}"
+        "message": "then\tfunction(){}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Given \t**I open Happy page**"
+        "message": "Given \t**I open Happy page**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "visit\t/commands/network-requests"
+        "message": "visit\t/commands/network-requests",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "then\tfunction(){}"
+        "message": "then\tfunction(){}",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "Then \t**I can post comment**"
+        "message": "Then \t**I can post comment**",
+        "severity": "success"
       },
       {
         "type": "cy:intercept",
-        "severity": "success",
-        "message": "Method: POST\nMatcher: \"/comments\""
+        "message": "Method: POST\nMatcher: \"/comments\"",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "get\t.network-post"
+        "message": "get\t.network-post",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "click\t"
+        "message": "click\t",
+        "severity": "success"
       },
       {
         "type": "cy:xhr",
-        "severity": "success",
-        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201"
+        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "wait\t@postComment"
+        "message": "wait\t@postComment",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**"
+        "message": "assert\texpected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **Content-Type**"
+        "message": "assert\texpected **{ Object (host, connection, ...) }** to have property **Content-Type**",
+        "severity": "error"
       }
     ]
   }

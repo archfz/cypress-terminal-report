@@ -3,46 +3,46 @@
     "fail but win (Attempt 1)": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "Hello. currentRetry: 0"
+        "message": "Hello. currentRetry: 0",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "contains\tFoobar"
+        "message": "contains\tFoobar",
+        "severity": "error"
       }
     ],
     "fail but win (Attempt 2)": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "Hello. currentRetry: 1"
+        "message": "Hello. currentRetry: 1",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "contains\tFoobar"
+        "message": "contains\tFoobar",
+        "severity": "error"
       }
     ],
     "Retries -> fails (Attempt 1)": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tbreaking"
+        "message": "get\tbreaking",
+        "severity": "error"
       }
     ],
     "Retries -> fails (Attempt 2)": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tbreaking"
+        "message": "get\tbreaking",
+        "severity": "error"
       }
     ],
     "Retries -> fails (Attempt 3)": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tbreaking"
+        "message": "get\tbreaking",
+        "severity": "error"
       }
     ]
   }

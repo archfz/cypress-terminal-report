@@ -5,7 +5,7 @@ cypress/integration/happyFlow.spec.js:
                         Matcher: "comments/*"
         cy:command (K): get	.network-btn
         cy:command (K): click
-            cy:xhr (K): GET https://jsonplaceholder.cypress.io/comments/1
+            cy:xhr (K): (getComment) GET https://jsonplaceholder.cypress.io/comments/1
                         Status: 200
         cy:command (K): wait	@getComment
         cy:command (K): its	.response.statusCode
@@ -16,7 +16,7 @@ cypress/integration/happyFlow.spec.js:
                         Matcher: "/comments"
         cy:command (K): get	.network-post
         cy:command (K): click
-            cy:xhr (K): POST https://jsonplaceholder.cypress.io/comments
+            cy:xhr (K): (postComment) POST https://jsonplaceholder.cypress.io/comments
                         Status: 201
         cy:command (K): wait	@postComment
         cy:command (K): assert	expected **name=Using+POST+in+cy.intercept()&email=hello%40cypress.io&body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**
@@ -61,7 +61,7 @@ cypress/integration/happyFlow.spec.js:
                         Mocked Response: {"statusCode":404,"body":{"error":"whoa, this comment does not exist"},"delayMs":500}
         cy:command (K): get	.network-put
         cy:command (K): click
-            cy:xhr (!): STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+            cy:xhr (!): (putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
                         Status: 404
                         Response body: {
                           "error": "whoa, this comment does not exist"
