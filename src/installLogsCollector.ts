@@ -1,22 +1,21 @@
-import tv4 from 'tv4';
-import semver from 'semver';
-import schema from './installLogsCollector.schema.json';
 import CtrError from './CtrError';
 import LogCollectBrowserConsole from "./collector/LogCollectBrowserConsole";
 import LogCollectCypressCommand from "./collector/LogCollectCypressCommand";
 import LogCollectCypressRequest from "./collector/LogCollectCypressRequest";
 import LogCollectCypressIntercept from "./collector/LogCollectCypressIntercept";
-import LogCollectCypressXhr from "./collector/LogCollectCypressXhr";
-import LogCollectCypressFetch from "./collector/LogCollectCypressFetch";
+import LogCollectCypressBrowserNetwork from "./collector/LogCollectCypressBrowserNetwork";
 import LogCollectCypressLog from "./collector/LogCollectCypressLog";
 import LogCollectorState from "./collector/LogCollectorState";
-import LogCollectExtendedControl from "./collector/LogCollectExtendedControl";
-import LogCollectSimpleControl from "./collector/LogCollectSimpleControl";
+import LogCollectControlExtended from "./collector/LogCollectControlExtended";
+import LogCollectControlSimple from "./collector/LogCollectControlSimple";
 import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
 import CONSTANTS from "./constants";
 import type {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
 import type {LogType, Log, Severity} from "./types";
 import utils from "./utils";
+import {validate} from "superstruct";
+import {InstallLogsCollectorSchema} from "./installLogsCollector.schema";
+import {compare} from "compare-versions";
 
 /**
  * Installs the logs collector for cypress. Needs to be added to support file.
@@ -36,9 +35,9 @@ function installLogsCollector(config: SupportOptions = {}) {
   registerLogCollectorTypes(logCollectorState, extendedConfig);
 
   if (extendedConfig.enableExtendedCollector) {
-    (new LogCollectExtendedControl(logCollectorState, extendedConfig)).register();
+    (new LogCollectControlExtended(logCollectorState, extendedConfig)).register();
   } else {
-    (new LogCollectSimpleControl(logCollectorState, extendedConfig)).register();
+    (new LogCollectControlSimple(logCollectorState, extendedConfig)).register();
   }
 
   registerGlobalApi(logCollectorState);
@@ -51,10 +50,10 @@ function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSuppo
     (new LogCollectCypressLog(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_XHR)) {
-    (new LogCollectCypressXhr(logCollectorState, config)).register();
+    (new LogCollectCypressBrowserNetwork('xhr', logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_FETCH)) {
-    (new LogCollectCypressFetch(logCollectorState, config)).register();
+    (new LogCollectCypressBrowserNetwork('fetch', logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_REQUEST)) {
     (new LogCollectCypressRequest(logCollectorState, config)).register();
@@ -62,7 +61,10 @@ function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSuppo
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_COMMAND)) {
     (new LogCollectCypressCommand(logCollectorState, config)).register();
   }
-  if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_INTERCEPT) && semver.gte(Cypress.version, '6.0.0')) {
+  if (
+    config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_INTERCEPT)
+    && compare(Cypress.version, '6.0.0', '>=')
+  ) {
     (new LogCollectCypressIntercept(logCollectorState, config)).register();
   }
 }
@@ -88,11 +90,11 @@ function registerGlobalApi(logCollectorState: LogCollectorState) {
 }
 
 function validateConfig(config: SupportOptions) {
-  const result = tv4.validateMultiple(config, schema);
+  const [error] = validate(config, InstallLogsCollectorSchema);
 
-  if (!result.valid) {
+  if (error) {
     throw new CtrError(
-      `Invalid plugin install options: ${utils.tv4ToString(result.errors)}`
+      `Invalid plugin install options: ${utils.validatorErrToStr(error.failures())}`
     );
   }
 

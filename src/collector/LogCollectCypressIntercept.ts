@@ -2,18 +2,13 @@ import CONSTANTS from '../constants';
 import LogFormat from "./LogFormat";
 import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import LogCollectBase from "./LogCollectBase";
 
 Object.defineProperty(RegExp.prototype, "toJSON", {
   value: RegExp.prototype.toString
 });
 
-export default class LogCollectCypressIntercept {
-  format: LogFormat;
-
-  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
-    this.format = new LogFormat(config);
-  }
-
+export default class LogCollectCypressIntercept extends LogCollectBase {
   register() {
     Cypress.Commands.overwrite('intercept', (originalFn, ...args) => {
       let message = '';

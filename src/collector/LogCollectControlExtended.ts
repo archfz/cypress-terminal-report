@@ -1,5 +1,5 @@
 import CONSTANTS from '../constants';
-import LogCollectBaseControl from './LogCollectBaseControl';
+import LogCollectControlBase from './LogCollectControlBase';
 import utils from "../utils";
 import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
@@ -8,7 +8,7 @@ import type {MessageData} from "../types";
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-export default class LogCollectExtendedControl extends LogCollectBaseControl {
+export default class LogCollectControlExtended extends LogCollectControlBase {
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
     super();
     this.registerCypressBeforeMochaHooksSealEvent();

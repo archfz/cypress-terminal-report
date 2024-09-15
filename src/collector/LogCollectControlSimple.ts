@@ -1,5 +1,5 @@
 import CONSTANTS from '../constants';
-import LogCollectBaseControl from './LogCollectBaseControl';
+import LogCollectControlBase from './LogCollectControlBase';
 import utils from "../utils";
 import type LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
@@ -8,7 +8,7 @@ import type {MessageData} from "../types";
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
-export default class LogCollectSimpleControl extends LogCollectBaseControl {
+export default class LogCollectControlSimple extends LogCollectControlBase {
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
     super();
     this.config = config;
@@ -86,7 +86,7 @@ export default class LogCollectSimpleControl extends LogCollectBaseControl {
   registerTestsContinuous() {
     const self = this;
 
-    this.collectorState.on('log', () => {
+    this.collectorState.addEventListener('log', () => {
       self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {
         noQueue: true,
         continuous: true,

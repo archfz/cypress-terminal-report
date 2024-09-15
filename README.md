@@ -376,7 +376,9 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Align `xhr` and `fetch` log processing.
 - Migrate `src` to typescript and refactor code for performance improvements.
+- Swap internal dependencies for faster and smaller packages.
 
 #### 6.2.0
 

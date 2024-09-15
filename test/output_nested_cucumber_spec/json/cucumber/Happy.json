@@ -53,7 +53,7 @@
       },
       {
         "type": "cy:xhr",
-        "message": "GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200",
+        "message": "(getComment) GET https://jsonplaceholder.cypress.io/comments/1\nStatus: 200",
         "severity": "success"
       },
       {
@@ -130,7 +130,7 @@
       },
       {
         "type": "cy:xhr",
-        "message": "POST https://jsonplaceholder.cypress.io/comments\nStatus: 201",
+        "message": "(postComment) POST https://jsonplaceholder.cypress.io/comments\nStatus: 201",
         "severity": "success"
       },
       {

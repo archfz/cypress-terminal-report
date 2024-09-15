@@ -1,11 +1,9 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import LogCollectBase from "./LogCollectBase";
 
-export default class LogCollectCypressCommand {
+export default class LogCollectCypressCommand extends LogCollectBase {
   ignoredCommands = ['xhr', 'log', 'request'];
-  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}
 
   register() {
     const isOfInterest = (options: any) => options.instrument === 'command' &&

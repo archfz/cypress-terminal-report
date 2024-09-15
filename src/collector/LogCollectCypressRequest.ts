@@ -2,14 +2,9 @@ import CONSTANTS from '../constants';
 import LogFormat from "./LogFormat";
 import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import LogCollectBase from "./LogCollectBase";
 
-export default class LogCollectCypressRequest {
-  format: LogFormat;
-
-  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
-    this.format = new LogFormat(config);
-  }
-
+export default class LogCollectCypressRequest extends LogCollectBase {
   register() {
     const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
@@ -17,42 +12,43 @@ export default class LogCollectCypressRequest {
 
     const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
 
+    const RESPONSE_START = '\n\nThe response we got was:\n\n';
+    const STATUS_START = 'Status: ';
+    const HEADERS_START = '\nHeaders: ';
+    const BODY_START = '\nBody: ';
+    const ERROR_START_PART = 'We received this error at the network level:\n\n  > ';
+    const ERROR_PREFIX = 'Error: ';
+
     const parseRequestStatusCodeFailureMessage = (message: string) => {
-      const responseStart = '\n\nThe response we got was:\n\n';
-      const statusStart = 'Status: ';
-      const headersStart = '\nHeaders: ';
-      const bodyStart = '\nBody: ';
       if (
-        message.indexOf(responseStart) === -1 ||
-        message.indexOf(statusStart) === -1 ||
-        message.indexOf(headersStart) === -1 ||
-        message.indexOf(bodyStart) === -1
+        message.indexOf(RESPONSE_START) === -1 ||
+        message.indexOf(STATUS_START) === -1 ||
+        message.indexOf(HEADERS_START) === -1 ||
+        message.indexOf(BODY_START) === -1
       ) {
         return {status: 'Cannot parse cy.request status code failure message!'};
       }
-      const response = message.substr(message.indexOf(responseStart) + responseStart.length);
+      const response = message.substr(message.indexOf(RESPONSE_START) + RESPONSE_START.length);
       const statusStr = response.substr(
-        response.indexOf(statusStart) + statusStart.length,
-        response.indexOf(headersStart) - (response.indexOf(statusStart) + statusStart.length)
+        response.indexOf(STATUS_START) + STATUS_START.length,
+        response.indexOf(HEADERS_START) - (response.indexOf(STATUS_START) + STATUS_START.length)
       );
       const headersStr = response.substr(
-        response.indexOf(headersStart) + headersStart.length,
-        response.indexOf(bodyStart) - (response.indexOf(headersStart) + headersStart.length)
+        response.indexOf(HEADERS_START) + HEADERS_START.length,
+        response.indexOf(BODY_START) - (response.indexOf(HEADERS_START) + HEADERS_START.length)
       );
-      const bodyStr = response.substr(response.indexOf(bodyStart) + bodyStart.length);
+      const bodyStr = response.substr(response.indexOf(BODY_START) + BODY_START.length);
       return {status: statusStr, headers: headersStr, body: bodyStr.trimEnd()};
     };
 
     const parseRequestNetworkError = (message: string) => {
-      const errorPartStart = 'We received this error at the network level:\n\n  > ';
-      const errorPrefix = 'Error: ';
-      if (message.indexOf(errorPartStart) === -1) {
+      if (message.indexOf(ERROR_START_PART) === -1) {
         return {status: 'Cannot parse cy.request network error message!'};
       }
-      let fromError = message.substr(message.indexOf(errorPartStart) + errorPartStart.length);
+      let fromError = message.substr(message.indexOf(ERROR_START_PART) + ERROR_START_PART.length);
       let errorPart = fromError.substr(0, fromError.indexOf('\n'));
-      if (errorPart.startsWith(errorPrefix)) {
-        return errorPart.substr(errorPrefix.length).trim();
+      if (errorPart.startsWith(ERROR_PREFIX)) {
+        return errorPart.substr(ERROR_PREFIX.length).trim();
       }
       return errorPart.trim();
     };
@@ -62,7 +58,7 @@ export default class LogCollectCypressRequest {
         return originalFn(...args);
       }
 
-      let log: any;
+      let log: string;
       let requestBody;
       let requestHeaders;
 

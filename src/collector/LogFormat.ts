@@ -1,10 +1,7 @@
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogFormat {
-  protected messageProcessors: Array<(log: any) => string> = [
-    (log) => log.response ? `Status: ${log.response.status}\n`
-      : log.networkError ? `Network error: ${log.networkError}\n` : ''
-  ]
+  protected messageProcessors: Array<(log: any) => string> = [];
 
   constructor(protected config: ExtendedSupportOptions) {
     if (this.config.collectRequestData) {
@@ -25,8 +22,11 @@ export default class LogFormat {
   }
 
   formatXhrLog(xhrLog: any) {
-    let logMessage = '';
-    this.messageProcessors.forEach((processor) => (logMessage += processor(xhrLog)))
+    let logMessage = xhrLog.response ? `Status: ${xhrLog.response.status}\n`
+      : xhrLog.networkError ? `Network error: ${xhrLog.networkError}\n` : '';
+
+    this.messageProcessors.forEach((processor) => (logMessage += processor(xhrLog)));
+
     return logMessage.trimEnd();
   }
 

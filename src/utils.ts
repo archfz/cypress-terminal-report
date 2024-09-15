@@ -1,10 +1,10 @@
-import semver from "semver";
 import jsonPrune from "./jsonPrune";
-import tv4 from "tv4";
+import {compare} from "compare-versions";
+import {Failure} from "superstruct";
 
 const utils = {
   nonQueueTask: async (name: string, data: Record<string, any>) => {
-    if (Cypress.testingType === 'component' && semver.gte(Cypress.version, '12.15.0')) {
+    if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {
       // In component tests task commands don't need to be verified for some reason.
       await new Promise(resolve => setTimeout(resolve, 5));
       // @ts-ignore
@@ -19,7 +19,7 @@ const utils = {
         .catch(() => {/* noop */})
     }
 
-    if (semver.gte(Cypress.version, '12.17.0')) {
+    if (compare(Cypress.version, '12.17.0', '>=')) {
       // @ts-ignore
       const {args, promise} = Cypress.emitMap('command:invocation', {name: 'task', args: [name, data]})[0]
       await new Promise((r) => promise.then(r));
@@ -35,7 +35,7 @@ const utils = {
         .catch(() => {/* noop */})
     }
 
-    if (semver.gte(Cypress.version, '12.15.0')) {
+    if (compare(Cypress.version, '12.15.0', '>=')) {
       Cypress.emit('command:invocation', {name: 'task', args: [name, data]})
       await new Promise(resolve_1 => setTimeout(resolve_1, 5));
       // @ts-ignore
@@ -82,9 +82,9 @@ const utils = {
     return json;
   },
 
-  tv4ToString: function (errorList: tv4.ValidationError[]) {
+  validatorErrToStr: function (errorList: Failure[]) {
     return '\n' + errorList.map((error) => {
-      return `=> ${error.dataPath?.replace(/\//, '.')}: ${error.message}`;
+      return ` => ${error.path.join('.')}: ${error.message}`;
     }).join('\n') + '\n';
   }
 }

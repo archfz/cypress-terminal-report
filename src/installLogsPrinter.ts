@@ -1,6 +1,4 @@
 import path from 'path';
-import tv4 from 'tv4';
-import schema from './installLogsPrinter.schema.json';
 import CtrError from './CtrError';
 import CONSTANTS from './constants';
 import CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
@@ -12,6 +10,8 @@ import type {Log, LogType, MessageData, Severity} from "./types";
 import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
 import utils from "./utils";
 import consoleProcessor from "./outputProcessor/consoleProcessor";
+import {validate} from "superstruct";
+import {InstallLogsPrinterSchema} from "./installLogsPrinter.schema";
 
 const OUTPUT_PROCESSOR_TYPE: Record<string,  { new (file: string): IOutputProcecessor }> = {
   'json': JsonOutputProcessor,
@@ -36,10 +36,10 @@ const createLogger = (enabled?: boolean) => enabled
 function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {}) {
   options.printLogsToFile = options.printLogsToFile || "onFail";
   options.printLogsToConsole = options.printLogsToConsole || "onFail";
-  const result = tv4.validateMultiple(options, schema);
+  const [error] = validate(options, InstallLogsPrinterSchema);
 
-  if (!result.valid) {
-    throw new CtrError(`Invalid plugin install options: ${utils.tv4ToString(result.errors)}`);
+  if (error) {
+    throw new CtrError(`Invalid plugin install options: ${utils.validatorErrToStr(error.failures())}`);
   }
 
   const logDebug = createLogger(options.debug);

@@ -11,7 +11,7 @@ interface StackLog extends Log {
 
 export type StackLogArray = StackLog[] & { _ctr_before_each?: number }
 
-export default class LogCollectorState {
+export default class LogCollectorState extends EventTarget {
   afterHookIndexes: number[];
   beforeHookIndexes: number[];
   currentTest: any;
@@ -22,6 +22,8 @@ export default class LogCollectorState {
   logProcessors: Array<(log: StackLog) => void> = [];
 
   constructor(protected config: ExtendedSupportOptions) {
+    super();
+
     this.listeners = {};
     this.currentTest = null;
     this.logStacks = [];
@@ -106,7 +108,7 @@ export default class LogCollectorState {
     this.logProcessors.forEach((processor) => processor(structuredEntry));
     currentStack.push(structuredEntry);
 
-    this.emit('log');
+    this.dispatchEvent(new Event('log'));
   }
 
   updateLog(log: string, severity: Severity, id: string) {
@@ -115,7 +117,7 @@ export default class LogCollectorState {
       entry.message = log;
       entry.severity = severity;
     }
-    this.emit('log');
+    this.dispatchEvent(new Event('log'));
   }
 
   updateLogStatus(id: string, state: Severity = CONSTANTS.SEVERITY.ERROR) {
@@ -203,14 +205,5 @@ export default class LogCollectorState {
     if (this.logStacks[currentIndex]?._ctr_before_each && this.logStacks[previousIndex]) {
       this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
     }
-  }
-
-  emit(event: 'log') {
-    (this.listeners[event] || []).forEach((callback) => callback());
-  }
-
-  on(event: 'log', callback: () => void) {
-    this.listeners[event] = this.listeners[event] || [];
-    this.listeners[event].push(callback);
   }
 }

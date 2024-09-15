@@ -3,7 +3,7 @@ import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectorState from "./LogCollectorState";
 import type {MessageData, TestData} from "../types";
 
-export default abstract class LogCollectBaseControl {
+export default abstract class LogCollectControlBase {
   protected abstract collectorState: LogCollectorState;
   protected abstract config: ExtendedSupportOptions;
 

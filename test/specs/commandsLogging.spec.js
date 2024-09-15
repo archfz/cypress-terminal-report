@@ -22,7 +22,7 @@ describe('Commands logging.', () => {
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/commands/network-requests\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  get\t.network-post\n`);
       expect(clean(stdout)).to.contain(
-        `cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n${PADDING}Status: 404\n`
+        `cy:xhr ${ICONS.warning}  (putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n${PADDING}Status: 404\n`
       );
       // cy.intercept logs.
       expect(stdout).to.contain(`cy:intercept ${ICONS.route}  Method: GET
@@ -45,19 +45,19 @@ describe('Commands logging.', () => {
   it('Should log fetch api routes. [backward-compatibility-skip]', async () => {
     await runTest(commandBase([], ['apiRoutes.spec.js']), (error, stdout, stderr) => {
       // cy.route empty body.
-      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  STUBBED GET https://jsonplaceholder.cypress.io/comments/1
+      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  (getComment) STUBBED GET https://jsonplaceholder.cypress.io/comments/1
                     Status: 200
       cy:command ${ICONS.success}  wait\t@getComment`);
       // cy.route text.
-      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  (putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
                     Status: 403
                     Response body: This is plain text data.`);
       // cy.route unknown.
-      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  (putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
                     Status: 401
                     Response body: <UNKNOWN>`);
       // cy.route logs.
-      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  STUBBED PUT https://example.cypress.io/comments/10
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  (putComment) STUBBED PUT https://example.cypress.io/comments/10
                     Status: 404
                     Response body: {
                       "error": "Test message."

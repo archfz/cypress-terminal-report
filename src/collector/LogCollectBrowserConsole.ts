@@ -3,12 +3,11 @@ import utils from '../utils';
 import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import type {Severity} from "../types";
+import LogCollectBase from "./LogCollectBase";
 
 type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
 
-export default class LogCollectBrowserConsole {
-  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}
-
+export default class LogCollectBrowserConsole extends LogCollectBase {
   register() {
     const oldConsoleMethods: { [k in Methods]?: Console[k] } = {};
     const event = Cypress.testingType === 'component'
