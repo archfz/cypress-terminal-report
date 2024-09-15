@@ -18,7 +18,7 @@ export type Log = {
   message: string,
   severity: Severity,
   timeString?: string,
-};
+}
 
 export type MessageData = {
   spec: string,

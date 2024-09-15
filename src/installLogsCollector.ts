@@ -14,8 +14,8 @@ import LogCollectExtendedControl from "./collector/LogCollectExtendedControl";
 import LogCollectSimpleControl from "./collector/LogCollectSimpleControl";
 import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
 import CONSTANTS from "./constants";
-import {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
-import {LogType, Log, Severity} from "./types";
+import type {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
+import type {LogType, Log, Severity} from "./types";
 import utils from "./utils";
 
 /**

@@ -12,11 +12,11 @@ var forEachEnumerableOwnProperty = function(obj: any, callback: any) {
   for (var k in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, k)) callback(k);
   }
-};
+}
 // iterates on enumerable properties
 var forEachEnumerableProperty = function(obj: any, callback: any) {
   for (var k in obj) callback(k);
-};
+}
 // iterates on properties, even non enumerable and inherited ones
 // This is dangerous
 var forEachProperty = function(obj: any, callback: any, excluded: any) {
@@ -29,7 +29,7 @@ var forEachProperty = function(obj: any, callback: any, excluded: any) {
     }
   });
   forEachProperty(Object.getPrototypeOf(obj), callback, excluded);
-};
+}
 
 Object.defineProperty(Date.prototype, "toPrunedJSON", {value:Date.prototype.toJSON});
 
@@ -138,6 +138,6 @@ const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
     }
   }
   return str('', {'': value}, depthDecr);
-};
+}
 
 export default jsonPrune;

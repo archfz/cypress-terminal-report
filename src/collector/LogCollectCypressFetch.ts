@@ -1,7 +1,7 @@
 import CONSTANTS from '../constants';
 import LogFormat from "./LogFormat";
 import LogCollectorState from "./LogCollectorState";
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressFetch {
   format: LogFormat;

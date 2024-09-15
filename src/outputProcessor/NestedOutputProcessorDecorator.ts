@@ -1,6 +1,6 @@
 import * as path from 'path';
 import {IOutputProcecessor} from "./BaseOutputProcessor";
-import {AllMessages} from "../installLogsPrinter.types";
+import type {AllMessages} from "../installLogsPrinter.types";
 
 export default class NestedOutputProcessorDecorator implements IOutputProcecessor {
   protected decoratedFactory: (directory: string) => IOutputProcecessor;
@@ -51,4 +51,4 @@ export default class NestedOutputProcessorDecorator implements IOutputProcecesso
     return Object.values(this.processors)
       .reduce((count: number, processor: IOutputProcecessor) => count + processor.getSpentTime(), 0);
   }
-};
+}

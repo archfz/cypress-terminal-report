@@ -1,6 +1,6 @@
 import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
-import {AllMessages} from "../installLogsPrinter.types";
-import {Log} from "../types";
+import type {AllMessages} from "../installLogsPrinter.types";
+import type {Log} from "../types";
 
 export default class JsonOutputProcessor extends BaseOutputProcessor implements IOutputProcecessor {
   chunkSeparator: string = ',\n';
@@ -26,4 +26,4 @@ export default class JsonOutputProcessor extends BaseOutputProcessor implements 
       this.writeSpecChunk(spec, chunk, -2);
     });
   }
-};
+}

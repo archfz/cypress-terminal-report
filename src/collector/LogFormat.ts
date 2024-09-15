@@ -1,4 +1,4 @@
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogFormat {
   protected messageProcessors: Array<(log: any) => string> = [

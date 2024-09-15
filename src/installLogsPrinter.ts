@@ -7,8 +7,8 @@ import CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
 import NestedOutputProcessorDecorator from './outputProcessor/NestedOutputProcessorDecorator';
 import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
 import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
-import {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
-import {Log, LogType, MessageData, Severity} from "./types";
+import type {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
+import type {Log, LogType, MessageData, Severity} from "./types";
 import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
 import utils from "./utils";
 import consoleProcessor from "./outputProcessor/consoleProcessor";
@@ -16,7 +16,7 @@ import consoleProcessor from "./outputProcessor/consoleProcessor";
 const OUTPUT_PROCESSOR_TYPE: Record<string,  { new (file: string): IOutputProcecessor }> = {
   'json': JsonOutputProcessor,
   'txt': TextOutputProcessor,
-};
+}
 
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
 let outputProcessors: IOutputProcecessor[] = [];

@@ -1,6 +1,6 @@
 import CONSTANTS from '../constants';
 import LogCollectorState from "./LogCollectorState";
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressLog {
   constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {}

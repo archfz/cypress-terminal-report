@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 import type CustomOutputProcessor from "./outputProcessor/CustomOutputProcessor";
-import {Log} from "./types";
+import type {Log} from "./types";
 
 export type AllMessages = {
   [specPath: string]: {
     [testTitle: string]: Log[]
   }
-};
+}
 
 export type CustomOutputProcessorCallback = (this: CustomOutputProcessor, allMessages: AllMessages) => void;
 

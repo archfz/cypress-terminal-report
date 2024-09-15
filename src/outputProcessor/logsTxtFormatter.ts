@@ -1,5 +1,5 @@
 import CONSTANTS from "../constants";
-import {Log} from "../types";
+import type {Log} from "../types";
 
 const PADDING = '    ';
 const PADDING_LOGS = `${PADDING}`.repeat(6);
@@ -7,7 +7,7 @@ const SEVERITY_ICON = {
   [CONSTANTS.SEVERITY.ERROR]: 'X',
   [CONSTANTS.SEVERITY.WARNING]: '!',
   [CONSTANTS.SEVERITY.SUCCESS]: 'K',
-};
+}
 
 const padTypeText = (text: string) => {
   return ' '.repeat(Math.max(PADDING_LOGS.length - text.length, 0)) + text;

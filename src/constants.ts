@@ -1,4 +1,4 @@
-import {LogType, Severity} from "./types";
+import type {LogType, Severity} from "./types";
 
 const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
@@ -53,6 +53,6 @@ const CONSTANTS = {
     'UNBIND',      'UNLINK',     'UNLOCK',
     'UNSUBSCRIBE'
   ]
-};
+}
 
 export default CONSTANTS;

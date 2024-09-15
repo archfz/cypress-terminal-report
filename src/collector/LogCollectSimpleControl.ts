@@ -2,8 +2,8 @@ import CONSTANTS from '../constants';
 import LogCollectBaseControl from './LogCollectBaseControl';
 import utils from "../utils";
 import type LogCollectorState from "./LogCollectorState";
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
-import {MessageData} from "../types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {MessageData} from "../types";
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -100,4 +100,4 @@ export default class LogCollectSimpleControl extends LogCollectBaseControl {
       cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
     });
   }
-};
+}

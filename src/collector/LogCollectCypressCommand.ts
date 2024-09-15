@@ -1,8 +1,7 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import LogFormat from "./LogFormat";
 import LogCollectorState from "./LogCollectorState";
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 
 export default class LogCollectCypressCommand {
   ignoredCommands = ['xhr', 'log', 'request'];

@@ -1,7 +1,7 @@
 import CtrError from '../CtrError';
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectorState from "./LogCollectorState";
-import {MessageData, TestData} from "../types";
+import type {MessageData, TestData} from "../types";
 
 export default abstract class LogCollectBaseControl {
   protected abstract collectorState: LogCollectorState;

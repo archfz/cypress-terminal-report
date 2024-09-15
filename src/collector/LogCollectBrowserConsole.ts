@@ -1,8 +1,8 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
 import LogCollectorState from "./LogCollectorState";
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
-import {Severity} from "../types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {Severity} from "../types";
 
 type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
 

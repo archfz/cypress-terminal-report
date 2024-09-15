@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import CtrError from '../CtrError';
-import {AllMessages} from "../installLogsPrinter.types";
+import type {AllMessages} from "../installLogsPrinter.types";
 
 export interface IOutputProcecessor {
   initialize(): void;
@@ -143,4 +143,4 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
   }
 
   abstract write(allMessages: AllMessages): void;
-};
+}

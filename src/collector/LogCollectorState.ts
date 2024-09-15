@@ -1,6 +1,6 @@
 import CONSTANTS from '../constants';
-import {ExtendedSupportOptions} from "../installLogsCollector.types";
-import {Log, Severity} from "../types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {Log, Severity} from "../types";
 
 type LogArray = [Log['type'], Log['message'], Log['severity']]
 

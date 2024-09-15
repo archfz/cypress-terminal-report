@@ -1,4 +1,4 @@
-import {Log, LogType, TestData} from "./types";
+import type {Log, LogType, TestData} from "./types";
 
 export interface SupportOptions {
   /**
