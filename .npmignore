@@ -3,3 +3,5 @@ test
 .travis.yml
 .prettierrc.js
 *.png
+src/**/*.ts
+tsconfig.json

@@ -3,11 +3,10 @@ const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 require('./mock_server.js');
 
 module.exports = defineConfig({
+  video: false,
+  screenshotOnRunFailure: false,
   e2e: {
     "baseUrl": "https://example.cypress.io",
-    "video": false,
-    "screenshotOnRunFailure": false,
-    reporter: 'cypress-mochawesome-reporter',
     specPattern: 'cypress/integration/**/*.spec.{js,jsx,ts,tsx}',
     async setupNodeEvents(on, config) {
       let options = {
@@ -142,6 +141,7 @@ module.exports = defineConfig({
 
       if (config.env.mochawesome == '1') {
         require('cypress-mochawesome-reporter/plugin')(on);
+        config.reporter = 'cypress-mochawesome-reporter';
       }
 
       if (config.env.disabled != '1') {
@@ -153,10 +153,11 @@ module.exports = defineConfig({
   },
   component: {
     devServer: {
+      framework: 'react',
       bundler: 'webpack',
     },
     setupNodeEvents(on, config) {
-      require('../src/installLogsPrinter')(on, {});
+      require('../src/installLogsPrinter.js')(on, {});
       return config;
     }
   },

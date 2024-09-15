@@ -3,32 +3,32 @@
     "after fails -> [[ after all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "after log simple"
+        "message": "after log simple",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tafter simple"
+        "message": "get\tafter simple",
+        "severity": "error"
       }
     ],
     "nested after fails -> nested context -> [[ after all #1 ]]": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tafter nested"
+        "message": "get\tafter nested",
+        "severity": "error"
       }
     ],
     "nested after fails -> [[ after all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "log after root"
+        "message": "log after root",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\tafter root"
+        "message": "get\tafter root",
+        "severity": "error"
       }
     ]
   },
@@ -36,37 +36,37 @@
     "before fails -> [[ before all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "some before command"
+        "message": "some before command",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
+        "message": "get\t.breaking.get",
+        "severity": "error"
       }
     ],
     "before succeeds -> the test fails": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "log"
+        "message": "log",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
+        "message": "get\t.breaking.get",
+        "severity": "error"
       }
     ],
     "nested before fails -> nested context -> [[ before all #1 ]]": [
       {
         "type": "cy:log",
-        "severity": "success",
-        "message": "some before command in nested"
+        "message": "some before command in nested",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking.get"
+        "message": "get\t.breaking.get",
+        "severity": "error"
       }
     ]
   },
@@ -74,22 +74,22 @@
     "main context -> first level test": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-get 1"
+        "message": "get\t.breaking-get 1",
+        "severity": "error"
       }
     ],
     "main context -> second context -> second level test": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-get 2"
+        "message": "get\t.breaking-get 2",
+        "severity": "error"
       }
     ],
     "main context -> second context -> third context -> third level test": [
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-get 3"
+        "message": "get\t.breaking-get 3",
+        "severity": "error"
       }
     ]
   }

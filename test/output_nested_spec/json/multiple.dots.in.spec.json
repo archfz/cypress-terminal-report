@@ -3,13 +3,13 @@
     "Multiple dots. -> Multiple dots.": [
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "visit\t/commands/network-requests"
+        "message": "visit\t/commands/network-requests",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "error",
-        "message": "get\t.breaking-wait"
+        "message": "get\t.breaking-wait",
+        "severity": "error"
       }
     ]
   }

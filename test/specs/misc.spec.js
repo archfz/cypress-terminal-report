@@ -31,7 +31,7 @@ describe('Misc.', () => {
   it('Should properly set the breaking command in logs.', async () => {
     await runTest(commandBase([], [`waitFail.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
-      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  GET https://jsonplaceholder.cypress.io/comments/1
+      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1
                     Status: 200`);
     });
   }).timeout(60000);
@@ -56,7 +56,7 @@ describe('Misc.', () => {
     this.retries(2);
     await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
-      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | STUBBED PUT https://example.cypress.io/comments/10
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | (putComment) STUBBED PUT https://example.cypress.io/comments/10
                     Status: 404
                     Response body: {
                       "error": "Test message."
@@ -84,23 +84,27 @@ describe('Misc.', () => {
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
     await runTest(commandBase(['breaking=1', 'generateOutput=1'], ['retries.spec.js']), (error, stdout, stderr) => {
-      // @TODO: Attempt lines are not displayed anymore: (Attempt 1 of 3) fails
       expect(stdout).to.contain(`
+  Retries
+    (Attempt 1 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking
 
 
-      cy:command ${ICONS.error}  get\tbreaking
-
-
-    1) fails
+    (Attempt 2 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking`);
+
       expect(stdout).to.contain(`
+  (Attempt 1 of 3) fail but win
           cy:log ${ICONS.info}  Hello. currentRetry: 0
       cy:command ${ICONS.error}  contains\tFoobar
 
 
+  (Attempt 2 of 3) fail but win
           cy:log ${ICONS.info}  Hello. currentRetry: 1
-      cy:command ${ICONS.error}  contains\tFoobar`);
+      cy:command ${ICONS.error}  contains\tFoobar
+
+
+  ✓ fail but win`);
 
       expectOutputFilesToBeCorrect(testOutputs, outRoot, 'retries');
     });

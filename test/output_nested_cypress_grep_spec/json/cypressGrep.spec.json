@@ -3,13 +3,13 @@
     "Cypress grep -> run only this": [
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "visit\t/"
+        "message": "visit\t/",
+        "severity": "success"
       },
       {
         "type": "cy:command",
-        "severity": "success",
-        "message": "contains\tcypress"
+        "message": "contains\tcypress",
+        "severity": "success"
       }
     ]
   }

@@ -15,15 +15,16 @@ describe('Validation.', () => {
 
   it('Should print proper validation error on invalid plugin install options.', async () => {
     await runTest(commandBase(['pluginBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`Error: cypress-terminal-report: Invalid plugin install options:`);
-      expect(stdout).to.contain(`=> .outputRoot: Invalid type: number (expected string)`);
-      expect(stdout).to.contain(`=> .outputTarget/any: Invalid type: number (expected string/function)`);
-      expect(stdout).to.contain(`=> .outputVerbose: Invalid type: string (expected boolean)`);
-      expect(stdout).to.contain(`=> .compactLogs: Invalid type: boolean (expected number)`);
-      expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
-      expect(stdout).to.contain(`=> .printLogsToFile: Invalid type: boolean (expected string)`);
-      expect(stdout).to.contain(`=> .printLogsToConsole: Invalid type: boolean (expected string)`);
-      expect(stdout).to.contain(`=> .collectTestLogs: Invalid type: string (expected function)`);
+      expect(stdout).to.contain(` => printLogsToConsole: Expected one of \`"onFail","always","never"\`, but received: true
+ => printLogsToFile: Expected one of \`"onFail","always","never"\`, but received: true
+ => compactLogs: Expected a number, but received: false
+ => outputRoot: Expected a string, but received: 0
+ => outputTarget.any: Expected the value to satisfy a union of \`string | func\`, but received: 100
+ => outputTarget.any: Expected a string, but received: 100
+ => outputTarget.any: Expected a function, but received: 100
+ => collectTestLogs: Expected a function, but received: ""
+ => outputVerbose: Expected a value of type \`boolean\`, but received: \`"false"\`
+ => shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\``);
     });
   }).timeout(60000);
 
@@ -35,15 +36,14 @@ describe('Validation.', () => {
 
   it('Should print proper validation error on invalid support install options.', async () => {
     await runTest(commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
-      expect(stdout).to.contain(`cypress-terminal-report: Invalid plugin install options:`);
-      expect(stdout).to.contain(`=> .collectTypes: Invalid type: number (expected array)`);
-      expect(stdout).to.contain(`=> .filterLog: Invalid type: string (expected function)`);
-      expect(stdout).to.contain(`=> .processLog: Invalid type: boolean (expected function)`);
-      expect(stdout).to.contain(`=> .collectTestLogs: Invalid type: string (expected function)`);
-      expect(stdout).to.contain(`=> .xhr/printRequestData: Invalid type: string (expected boolean)`);
-      expect(stdout).to.contain(`=> .xhr/printHeaderData: Invalid type: string (expected boolean)`);
-      expect(stdout).to.contain(`=> .xhr/shouldNotBeHere: Additional properties not allowed`);
-      expect(stdout).to.contain(`=> .shouldNotBeHere: Additional properties not allowed`);
+      expect(stdout).to.contain(` => collectTypes: Expected an array value, but received: 0
+ => filterLog: Expected a function, but received: "string"
+ => processLog: Expected a function, but received: true
+ => collectTestLogs: Expected a function, but received: "string"
+ => xhr.printHeaderData: Expected a value of type \`boolean\`, but received: \`""\`
+ => xhr.printRequestData: Expected a value of type \`boolean\`, but received: \`""\`
+ => xhr.shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\`
+ => shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\``);
     });
   }).timeout(60000);
 
