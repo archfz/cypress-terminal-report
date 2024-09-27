@@ -1,6 +1,6 @@
 {
   "name": "cypress-terminal-report",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "description": "Better terminal and file output for cypress test logs.",
   "main": "index.js",
   "scripts": {
@@ -45,7 +45,6 @@
     "compare-versions": "^6.1.1",
     "fs-extra": "^10.1.0",
     "process": "^0.11.10",
-    "save": "^2.9.0",
     "superstruct": "0.14.2"
   },
   "peerDependencies": {
