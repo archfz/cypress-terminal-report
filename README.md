@@ -376,6 +376,10 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 7.0.4
+
+- Fix incorrect `.npmignore` rule that including some ts files. [issue](https://github.com/archfz/cypress-terminal-report/issues/259) 
+
 #### 7.0.3
 
 - Remove incorrectly installed `save` dependency.

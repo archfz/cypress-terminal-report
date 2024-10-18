@@ -4,5 +4,5 @@ test
 .prettierrc.js
 *.png
 src/**/*.ts
-!src/**/*d.ts
+!src/**/*.d.ts
 tsconfig.json
