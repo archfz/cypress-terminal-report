@@ -75,7 +75,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     // @ts-ignore
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
-      if (test && test.state === 'pending') {
+      if (test?.state === 'pending') {
         // In case of fully skipped tests we might not yet have a log stack.
         self.collectorState.ensureLogStack();
         self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});

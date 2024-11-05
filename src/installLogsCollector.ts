@@ -26,9 +26,9 @@ function installLogsCollector(config: SupportOptions = {}) {
   const extendedConfig: ExtendedSupportOptions = {
     ...config,
     collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES) as LogType[],
-    collectBody: config.xhr && config.xhr.printBody !== undefined ? config.xhr.printBody : true,
-    collectRequestData: config.xhr && config.xhr.printRequestData,
-    collectHeaderData: config.xhr && config.xhr.printHeaderData,
+    collectBody: config.xhr?.printBody ?? true,
+    collectRequestData: config.xhr?.printRequestData,
+    collectHeaderData: config.xhr?.printHeaderData,
   };
 
   let logCollectorState = new LogCollectorState(extendedConfig);
@@ -43,7 +43,7 @@ function installLogsCollector(config: SupportOptions = {}) {
   registerGlobalApi(logCollectorState);
 }
 
-function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSupportOptions) {
+function registerLogCollectorTypes(logCollectorState: LogCollectorState, config: ExtendedSupportOptions) {
   (new LogCollectBrowserConsole(logCollectorState, config)).register()
 
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_LOG)) {

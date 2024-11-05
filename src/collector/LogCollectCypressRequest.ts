@@ -1,16 +1,13 @@
 import CONSTANTS from '../constants';
-import LogFormat from "./LogFormat";
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectBase from "./LogCollectBase";
 
 export default class LogCollectCypressRequest extends LogCollectBase {
   register() {
     const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e: any) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+    const isNetworkError = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
+    const isStatusCodeFailure = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed on:');
 
     const RESPONSE_START = '\n\nThe response we got was:\n\n';
     const STATUS_START = 'Status: ';
@@ -85,7 +82,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
             body: formattedRequestBody,
           };
 
-          return originalFn(...args).catch(async (e: any) => {
+          return originalFn(...args).catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +

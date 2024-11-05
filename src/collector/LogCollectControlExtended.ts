@@ -157,7 +157,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
 
     // Logs after all hook commands when a command fails in the hook.
-    Cypress.prependListener('fail', function(this: any, error: any) {
+    Cypress.prependListener('fail', function(this: any, error: Error) {
       const currentRunnable = this.mocha.getRunner().currentRunnable;
 
       if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsInCurrentStack()) {
@@ -180,7 +180,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         // Have to wait for debounce on log updates to have correct state information.
         // Done state is used as callback and awaited in Cypress.fail.
         // @ts-ignore
-        Cypress.state('done', async (error: any) => {
+        Cypress.state('done', async (error: Error) => {
           await new Promise(resolve => setTimeout(resolve, 6));
           throw error;
         });
@@ -195,7 +195,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
   registerTests() {
     const self = this;
 
-    const sendLogsToPrinterForATest = (test: any) => {
+    const sendLogsToPrinterForATest = (test: Mocha.Test) => {
       // We take over logging the passing test titles since we need to control when it gets printed so
       // that our logs come after it is printed.
       if (test.state === 'passed') {
@@ -206,25 +206,27 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
-    const testHasAfterEachHooks = (test: any) => {
+    const testHasAfterEachHooks = (test: Mocha.Test) => {
       do {
-        if (test.parent._afterEach.length > 0) {
+        const _afterEach = (test.parent as any)?._afterEach
+        if (_afterEach.length > 0) {
           return true;
         }
-        test = test.parent;
+        test = test.parent as any as Mocha.Test;
       } while(test.parent);
       return false;
     };
 
-    const isLastAfterEachHookForTest = (test: any, hook: any) => {
+    const isLastAfterEachHookForTest = (test: Mocha.Test, hook: Mocha.Hook) => {
       let suite = test.parent;
-      do {
-        if (suite._afterEach.length === 0) {
+      while (suite) {
+        const _afterEach = (suite as any)._afterEach
+        if (_afterEach.length === 0) {
           suite = suite.parent;
         } else {
-          return suite._afterEach.indexOf(hook) === suite._afterEach.length - 1;
+          return _afterEach.indexOf(hook) === _afterEach.length - 1;
         }
-      } while (suite);
+      };
       return false;
     };
 
@@ -240,7 +242,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
     // Logs commands form each separate test when there is no after each hook.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('test end', function (test: any) {
+    Cypress.mocha.getRunner().on('test end', function (test: Mocha.Test) {
       if (!testHasAfterEachHooks(test)) {
         self.debugLog('extended: sending logs for ended test, that has not after each hooks: ' + self.collectorState.getCurrentTest().title);
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
@@ -248,7 +250,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
     // Logs commands if test was manually skipped.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('pending', function (test: any) {
+    Cypress.mocha.getRunner().on('pending', function (test: Mocha.Test) {
       if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
         if (self.collectorState.hasLogsInCurrentStack()) {
@@ -298,18 +300,18 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     };
   }
 
-  prependBeforeAllHookInAllSuites(rootSuites: any, hookCallback: (this: any) => void) {
-    const recursiveSuites = (suites: any) => {
+  prependBeforeAllHookInAllSuites(rootSuites: Mocha.Suite[], hookCallback: (this: any) => void) {
+    const recursiveSuites = (suites: Mocha.Suite[]) => {
       if (suites) {
-        suites.forEach((suite: any) => {
+        suites.forEach((suite) => {
           if (suite.isPending()) {
             return
           }
           suite.afterAll(hookCallback);
           // Make sure our hook is first so that other after all hook logs come after
           // the failed before all hooks logs.
-          const hook = suite._afterAll.pop();
-          suite._afterAll.unshift(hook);
+          const hook = (suite as any)._afterAll.pop();
+          (suite as any)._afterAll.unshift(hook);
           // Don't count this in the hook index and logs.
           hook._ctr_hook = true;
 
@@ -352,7 +354,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     };
   }
 
-  debugLog(message: any) {
+  debugLog(message: string) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + message);
     }

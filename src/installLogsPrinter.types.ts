@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import type CustomOutputProcessor from "./outputProcessor/CustomOutputProcessor";
-import type {Log} from "./types";
+import type {Log, LogOccurrence, State} from "./types";
 
 export type AllMessages = {
   [specPath: string]: {
@@ -83,13 +83,13 @@ export interface PluginOptions {
    * When set to always logs will be printed for console for successful test as well as failing ones.
    * @default 'onFail'
    */
-  printLogsToConsole?: 'onFail' | 'always' | 'never';
+  printLogsToConsole?: LogOccurrence;
 
   /**
    * When set to always logs will be printed to file for successful test as well as failing ones.
    * @default 'onFail'
    */
-  printLogsToFile?: 'onFail' | 'always' | 'never';
+  printLogsToFile?: LogOccurrence;
 
   /**
    * Whether to log commands from hooks that passed.
@@ -109,5 +109,5 @@ export interface PluginOptions {
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (context: {spec: string, test: string, state: string}, messages: Log[]) => void;
+  collectTestLogs?: (context: {spec: string, test: string, state: State}, messages: Log[]) => void;
 }

@@ -1,8 +1,6 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
-import type {Severity} from "../types";
+import type {LogType, Severity} from "../types";
 import LogCollectBase from "./LogCollectBase";
 
 type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
@@ -47,7 +45,7 @@ export default class LogCollectBrowserConsole extends LogCollectBase {
 
       const createWrapper = (
         method: Methods,
-        logType: any,
+        logType: LogType,
         type: Severity = CONSTANTS.SEVERITY.SUCCESS
       ) => {
         oldConsoleMethods[method] = appWindow.console[method];

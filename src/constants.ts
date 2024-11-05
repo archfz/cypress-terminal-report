@@ -1,5 +1,3 @@
-import type {LogType, Severity} from "./types";
-
 const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
   TASK_NAME_OUTPUT: 'ctrLogFiles',
@@ -18,14 +16,52 @@ const CONSTANTS = {
     CYPRESS_INTERCEPT: 'cy:intercept',
     CYPRESS_COMMAND: 'cy:command',
 
-    PLUGIN_LOG_TYPE: 'ctr:info',
-  } satisfies Record<string, LogType>,
+    PLUGIN_LOG_TYPE: 'ctr:info'
+  },
 
   SEVERITY: {
     SUCCESS: 'success',
     ERROR: 'error',
     WARNING: 'warning',
-  } satisfies Record<string, Severity>,
+  },
+
+  LOG_SYMBOLS: {
+    ERROR: '✘',
+    WARNING: '❖',
+    SUCCESS: '✔',
+    INFO: '✱',
+    DEBUG: '⚈',
+    ROUTE: '➟'
+  },
+  LOG_SYMBOLS_CONSOLE: {
+    ERROR: 'x',
+    WARNING: '!',
+    SUCCESS: '+',
+    INFO: 'i',
+    DEBUG: '%',
+    ROUTE: '~'
+  },
+
+  LOG_OCCURRENCE: {
+    ON_FAIL: 'onFail',
+    ALWAYS: 'always',
+    NEVER: 'never'
+  },
+
+  COLORS: {
+    WHITE: 'white',
+    YELLOW: 'yellow',
+    RED: 'red',
+    BLUE: 'blue',
+    GREEN: 'green',
+    GREY: 'grey',
+  },
+
+  STATE: {
+    FAILED: 'failed',
+    PASSED: 'passed',
+    RUNNING: 'running'
+  },
 
   HOOK_TITLES: {
     BEFORE: '[[ before all {index} ]]',
@@ -52,7 +88,13 @@ const CONSTANTS = {
     'SOURCE',      'SUBSCRIBE',  'TRACE',
     'UNBIND',      'UNLINK',     'UNLOCK',
     'UNSUBSCRIBE'
-  ]
-}
+  ],
+
+  COMMAND_TIMINGS: {
+    TIMESTAMP: 'timestamp',
+    SECONDS: 'seconds'
+  }
+} as const
+
 
 export default CONSTANTS;
