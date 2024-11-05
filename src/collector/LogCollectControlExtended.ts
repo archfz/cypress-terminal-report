@@ -209,7 +209,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const testHasAfterEachHooks = (test: Mocha.Runnable) => {
       let suite = test.parent
       while (suite) {
-        const _afterEach = (suite as any)._afterEach
+        const _afterEach: any[] = (suite as any)._afterEach
         if (_afterEach.length > 0) {
           return true;
         }
@@ -221,7 +221,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const isLastAfterEachHookForTest = (test: Mocha.Runnable, hook: Mocha.Hook) => {
       let suite = test.parent;
       while (suite) {
-        const _afterEach = (suite as any)._afterEach
+        const _afterEach: any[] = (suite as any)._afterEach
         if (_afterEach.length === 0) {
           suite = suite.parent;
         } else {
