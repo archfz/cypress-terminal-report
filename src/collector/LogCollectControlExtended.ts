@@ -55,7 +55,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       }
     });
     // @ts-ignore
-    Cypress.mocha.getRunner().on('test', (test) => {
+    Cypress.mocha.getRunner().on('test', (test: Mocha.Runnable) => {
       this.collectorState.startTest(test);
     });
     // @ts-ignore
@@ -195,7 +195,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
   registerTests() {
     const self = this;
 
-    const sendLogsToPrinterForATest = (test: Mocha.Test) => {
+    const sendLogsToPrinterForATest = (test: Mocha.Runnable) => {
       // We take over logging the passing test titles since we need to control when it gets printed so
       // that our logs come after it is printed.
       if (test.state === 'passed') {
@@ -206,18 +206,19 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
-    const testHasAfterEachHooks = (test: Mocha.Test) => {
+    const testHasAfterEachHooks = (test: Mocha.Runnable) => {
       do {
         const _afterEach = (test.parent as any)?._afterEach
         if (_afterEach.length > 0) {
           return true;
         }
-        test = test.parent as any as Mocha.Test;
+        // @ts-ignore
+        test = test.parent;
       } while(test.parent);
       return false;
     };
 
-    const isLastAfterEachHookForTest = (test: Mocha.Test, hook: Mocha.Hook) => {
+    const isLastAfterEachHookForTest = (test: Mocha.Runnable, hook: Mocha.Hook) => {
       let suite = test.parent;
       while (suite) {
         const _afterEach = (suite as any)._afterEach
@@ -242,7 +243,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
     // Logs commands form each separate test when there is no after each hook.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('test end', function (test: Mocha.Test) {
+    Cypress.mocha.getRunner().on('test end', function (test: Mocha.Runnable) {
       if (!testHasAfterEachHooks(test)) {
         self.debugLog('extended: sending logs for ended test, that has not after each hooks: ' + self.collectorState.getCurrentTest().title);
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
@@ -250,7 +251,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
     // Logs commands if test was manually skipped.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('pending', function (test: Mocha.Test) {
+    Cypress.mocha.getRunner().on('pending', function (test: Mocha.Runnable) {
       if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
         if (self.collectorState.hasLogsInCurrentStack()) {

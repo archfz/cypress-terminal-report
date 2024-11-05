@@ -60,7 +60,7 @@ const CONSTANTS = {
   STATE: {
     FAILED: 'failed',
     PASSED: 'passed',
-    RUNNING: 'running'
+    RUNNING: 'running',
   },
 
   HOOK_TITLES: {
