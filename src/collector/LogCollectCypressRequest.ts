@@ -50,7 +50,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
       return errorPart.trim();
     };
 
-    Cypress.Commands.overwrite('request', (originalFn: any, ...args: any[]) => {
+    // @ts-ignore
+    Cypress.Commands.overwrite('request', (originalFn, ...args) => {
       if (typeof args === 'object' && args !== null && args[0]['log'] === false){
         return originalFn(...args);
       }
@@ -66,7 +67,9 @@ export default class LogCollectCypressRequest extends LogCollectBase {
         requestBody = args[0].body;
         requestHeaders = args[0].headers;
       } else if (isValidHttpMethod(args[0])) {
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         log = `${args[0]} ${args[1]}`;
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         requestBody = args[3];
       } else {
         log = `${args[0]}`;
@@ -82,7 +85,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
             body: formattedRequestBody,
           };
 
-          return originalFn(...args).catch(async (e: Error) => {
+          // cy.request is a Cypress.Chainable, so originalFn doesn't have a "catch"
+          return ((originalFn(...args) as any as Promise<any>).catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -110,8 +114,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
 
             this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
             throw e;
-          })
-            .then((response: any) => {
+          }) as any as ReturnType<typeof originalFn>).then((response) => {
               return Promise.all([
                 this.format.formatXhrData(response.headers),
                 this.format.formatXhrData(response.body)

@@ -49,9 +49,8 @@ export default abstract class LogCollectControlBase {
       testTitle += ` (Attempt ${mochaRunnable && (mochaRunnable as any)._currentRetry + 1})`
     }
 
-    const prepareLogs = () => {
-      return this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
-    };
+    const prepareLogs = () => 
+      this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
 
     const buildDataMessage = () => ({
       spec: spec,
