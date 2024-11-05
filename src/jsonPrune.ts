@@ -8,18 +8,18 @@ var seen: any; // Same variable used for all stringifications
 var iterator: any; // either forEachEnumerableOwnProperty, forEachEnumerableProperty or forEachProperty
 
 // iterates on enumerable own properties (default behavior)
-var forEachEnumerableOwnProperty = function(obj: Record<string,any>, callback: (arg:any)=>void) {
+var forEachEnumerableOwnProperty = function(obj: any, callback: any) {
   for (var k in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, k)) callback(k);
   }
 }
 // iterates on enumerable properties
-var forEachEnumerableProperty = function(obj: Record<string,any>, callback: (arg:any)=>void) {
+var forEachEnumerableProperty = function(obj: any, callback: any) {
   for (var k in obj) callback(k);
 }
 // iterates on properties, even non enumerable and inherited ones
 // This is dangerous
-var forEachProperty = function(obj: Record<string,any>, callback: (arg:any)=>void, excluded: Record<string,any>) {
+var forEachProperty = function(obj: any, callback: any, excluded: any) {
   if (obj==null) return;
   excluded = excluded || {};
   Object.getOwnPropertyNames(obj).forEach(function(k){
@@ -57,7 +57,7 @@ function quote(string: any) {
 }
 
 
-const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: number) {
+const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
   var prunedString = DEFAULT_PRUNED_VALUE;
   var replacer: any;
   if (typeof depthDecr == "object") {

@@ -5,6 +5,8 @@ import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import type {MessageData} from "../types";
 
+type MochaHook = Mocha.Hook & {hookName:string; _ctr_hook: boolean}
+
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
@@ -69,7 +71,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Keeps track of before and after all hook indexes.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('hook', function (hook: any) {
+    Cypress.mocha.getRunner().on('hook', function (hook: MochaHook) {
+      // @ts-ignore
       if (!hook._ctr_hook && !hook.fn._ctr_hook) {
         // After each hooks get merged with the test.
         if (hook.hookName !== "after each") {
@@ -95,7 +98,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Logs commands from before all hook if the hook passed.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function(this: any, hook: any) {
+    Cypress.mocha.getRunner().on('hook end', function(this: any, hook: MochaHook) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
@@ -139,7 +142,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Logs commands from after all hooks that passed.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function (hook: any) {
+    Cypress.mocha.getRunner().on('hook end', function (hook: MochaHook) {
       if (hook.hookName === "after all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
@@ -233,7 +236,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Logs commands form each separate test when after each hooks are present.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function (hook: any) {
+    Cypress.mocha.getRunner().on('hook end', function (hook: MochaHook) {
       if (hook.hookName === 'after each') {
         if (isLastAfterEachHookForTest(self.collectorState.getCurrentTest(), hook)) {
           self.debugLog('extended: sending logs for ended test, just after the last after each hook: ' + self.collectorState.getCurrentTest().title);
