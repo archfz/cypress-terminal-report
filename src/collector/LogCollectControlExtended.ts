@@ -207,14 +207,14 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     };
 
     const testHasAfterEachHooks = (test: Mocha.Runnable) => {
-      do {
-        const _afterEach = (test.parent as any)?._afterEach
+      let suite = test.parent
+      while (suite) {
+        const _afterEach = (suite as any)._afterEach
         if (_afterEach.length > 0) {
           return true;
         }
-        // @ts-ignore
-        test = test.parent;
-      } while(test.parent);
+        suite = suite.parent;
+      };
       return false;
     };
 
