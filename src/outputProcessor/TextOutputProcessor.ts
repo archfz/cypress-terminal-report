@@ -1,7 +1,7 @@
 import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
 import logsTxtFormatter from './logsTxtFormatter';
-import { EOL } from 'os';
-import type {AllMessages} from "../installLogsPrinter.types";
+import {EOL} from 'os';
+import type {AllMessages} from '../installLogsPrinter.types';
 
 const PADDING = '    ';
 

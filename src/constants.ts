@@ -1,4 +1,4 @@
-import type {LogType, Severity} from "./types";
+import type {LogType, Severity} from './types';
 
 const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
@@ -39,6 +39,7 @@ const CONSTANTS = {
   DEBUG_LOG_PREFIX: 'CTR-DEBUG: ',
 
   // HTTP methods defined by the `node:http` module
+  // prettier-ignore
   HTTP_METHODS: [
     'ACL',         'BIND',       'CHECKOUT',
     'CONNECT',     'COPY',       'DELETE',
@@ -52,7 +53,7 @@ const CONSTANTS = {
     'SOURCE',      'SUBSCRIBE',  'TRACE',
     'UNBIND',      'UNLINK',     'UNLOCK',
     'UNSUBSCRIBE'
-  ]
-}
+  ],
+};
 
 export default CONSTANTS;

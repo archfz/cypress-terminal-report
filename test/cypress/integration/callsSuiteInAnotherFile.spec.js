@@ -1,4 +1,4 @@
-import {callSuite} from './suiteInOtherFile'
+import {callSuite} from './suiteInOtherFile';
 
 describe('Calls function in another file that creates a sub-suite.', () => {
   it('the test 1', () => {
@@ -10,5 +10,5 @@ describe('Calls function in another file that creates a sub-suite.', () => {
     expect(1).to.equal(2);
   });
 
-  callSuite()
+  callSuite();
 });
