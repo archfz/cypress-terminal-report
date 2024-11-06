@@ -4,6 +4,8 @@ version: 2.1
 
 jobs:
   install-deps:
+    docker:
+      - image: cypress/base:20.5.0
     steps:
       - checkout
       - run:
@@ -11,6 +13,8 @@ jobs:
           command: npm ci && cd test && npm ci
 
   lint:
+    docker:
+      - image: cypress/base:20.5.0
     steps:
       - run:
           name: 'Prettier Check'
