@@ -204,7 +204,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const testHasAfterEachHooks = (test: Mocha.Runnable) => {
       let suite = test.parent
       while (suite) {
-        const _afterEach: any[] = suite['_afterEach']
+        const _afterEach: Mocha.Hook[] = suite['_afterEach']
         if (_afterEach.length > 0) {
           return true;
         }
@@ -216,7 +216,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const isLastAfterEachHookForTest = (test: Mocha.Runnable, hook: Mocha.Hook) => {
       let suite = test.parent;
       while (suite) {
-        const _afterEach: any[] = suite['_afterEach']
+        const _afterEach: Mocha.Hook[] = suite['_afterEach']
         if (_afterEach.length > 0) {
           return _afterEach.indexOf(hook) === _afterEach.length - 1;
         }
@@ -301,7 +301,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
           suite.afterAll(hookCallback);
           // Make sure our hook is first so that other after all hook logs come after
           // the failed before all hooks logs.
-          const hook = suite["_afterAll"].pop();
+          const hook: Mocha.Hook = suite["_afterAll"].pop();
           suite["_afterAll"].unshift(hook);
           // Don't count this in the hook index and logs.
           hook._ctr_hook = true;
