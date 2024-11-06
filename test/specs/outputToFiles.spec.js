@@ -8,6 +8,7 @@ import {
 } from "../utils";
 import { expect } from 'chai'
 import * as fs from 'fs'
+import * as path from 'path'
 import * as glob from 'glob'
 import fsExtra from 'fs-extra'
 
