@@ -63,8 +63,7 @@ jobs:
       - run:
           name: Install Dependencies
           command: npm i --only=prod
-      - attach_workspace:
-          at: src
+      - attach_workspace: {at: src}
       - run:
           name: Set backward package json
           command: cd test && rm package-lock.json && mv package.backward.json package.json
