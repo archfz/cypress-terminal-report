@@ -75,11 +75,10 @@ export default class LogCollectCypressBrowserNetwork extends LogCollectBase {
         if (statusCode) {
           log += `\nStatus: ${statusCode}`;
         }
-        if (options.err) {
+        if (options.err?.message) {
           if (options.err.message.match(/abort/)) {
             log += ' - ABORTED';
-          }
-          else if (options.err.message) {
+          } else {
             log += ' - ' + options.err.message;
           }
         }

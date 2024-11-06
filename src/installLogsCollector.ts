@@ -70,21 +70,23 @@ function registerLogCollectorTypes(logCollectorState: LogCollectorState, config:
 }
 
 function registerGlobalApi(logCollectorState: LogCollectorState) {
-  (Cypress as any).TerminalReport = {
-    getLogs: (format: string) => {
+  Cypress.TerminalReport = {
+    //@ts-ignore there is no error, this works correctly.
+    getLogs: (format = 'none') => {
       const logs = logCollectorState.getCurrentLogStack();
 
       if (!logs) {
         return null;
       }
 
-      if (format === 'txt') {
-        return logsTxtFormatter(logs);
-      } else if (format === 'json') {
-        return JSON.stringify(logs, null, 2);
+      switch (format) {
+        case "txt":
+          return logsTxtFormatter(logs);
+        case "json":
+          return JSON.stringify(logs, null, 2);
+        default:
+          return logs;
       }
-
-      return logs;
     },
   };
 }

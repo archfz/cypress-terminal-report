@@ -3,11 +3,9 @@ declare namespace Cypress {
 
   interface Cypress {
     TerminalReport: {
-      getLogs<T extends 'txt' | 'json' | 'none' = 'none'>(format?: T): {
-        txt: string,
-        json: string,
-        none: CtrLog[],
-      }[T];
+      getLogs(format: 'txt'): string | null;
+      getLogs(format: 'json'): string | null;
+      getLogs(format?: 'none' = 'none'):  CtrLog[] | null;
     }
   }
 }
