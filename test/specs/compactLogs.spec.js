@@ -3,8 +3,7 @@ import {
   runTest,
   commandBase, logLastRun,
 } from "../utils";
-
-const {expect} = require('chai');
+import { expect } from 'chai'
 
 describe('Compact logs.', () => {
 

@@ -3,9 +3,7 @@ import {
   runTest,
   commandBase, logLastRun,
 } from "../utils";
-
-const {expect} = require('chai');
-const chalk = require('chalk');
+import { expect } from 'chai'
 
 describe('Filtering and conditional logging.', () => {
 

@@ -6,12 +6,10 @@ import {
   expectOutFilesMatch,
   outputCleanUpAndInitialization, logLastRun,
 } from "../utils";
-
-const {expect} = require('chai');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
-const path = require('path');
-const glob = require('glob');
+import { expect } from 'chai'
+import * as fs from 'fs'
+import * as glob from 'glob'
+import fsExtra from 'fs-extra'
 
 describe('Output to files.', () => {
 
@@ -86,21 +84,21 @@ describe('Output to files.', () => {
       'callsSuiteInAnotherFile.spec.js'
     ];
     await runTest(commandBase(['generateNestedOutput=1'], specFiles), (error, stdout) => {
-      const specs = glob.sync('./output_nested_spec/**/*', {nodir: true});
+      const specs = glob.sync('./output_nested_spec/**/*', { nodir: true });
       specs.forEach(specFile => {
         const actualFile = specFile.replace('output_nested_spec', 'output_nested');
         expect(fs.existsSync(actualFile), `Expected output file ${actualFile} to exist.`).to.be.true;
         expectOutFilesMatch(actualFile, specFile);
       });
 
-      const shouldNotExist = glob.sync('./output_nested/**/suiteInOtherFile*', {nodir: true});
+      const shouldNotExist = glob.sync('./output_nested/**/suiteInOtherFile*', { nodir: true });
       expect(shouldNotExist, `Expect no output file for suiteInOtherFile to exist.`).to.have.length(0);
     });
   }).timeout(90000);
 
   it('Should generate output only for failing tests if set to onFail.', async () => {
-    const outRoot = {value: path.join(__dirname, '../output')};
-    const testOutputs = {value: ["out.txt"]};
+    const outRoot = { value: path.join(__dirname, '../output') };
+    const testOutputs = { value: ["out.txt"] };
 
     const specFiles = ['printLogsOnFail.spec.js'];
     await runTest(commandBase(['generateSimpleOutput=1'], specFiles), (error, stdout, stderr) => {
