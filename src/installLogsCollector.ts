@@ -1,21 +1,21 @@
 import CtrError from './CtrError';
-import LogCollectBrowserConsole from './collector/LogCollectBrowserConsole';
-import LogCollectCypressCommand from './collector/LogCollectCypressCommand';
-import LogCollectCypressRequest from './collector/LogCollectCypressRequest';
-import LogCollectCypressIntercept from './collector/LogCollectCypressIntercept';
-import LogCollectCypressBrowserNetwork from './collector/LogCollectCypressBrowserNetwork';
-import LogCollectCypressLog from './collector/LogCollectCypressLog';
-import LogCollectorState from './collector/LogCollectorState';
-import LogCollectControlExtended from './collector/LogCollectControlExtended';
-import LogCollectControlSimple from './collector/LogCollectControlSimple';
-import logsTxtFormatter from './outputProcessor/logsTxtFormatter';
-import CONSTANTS from './constants';
-import type {ExtendedSupportOptions, SupportOptions} from './installLogsCollector.types';
-import type {LogType, Log, Severity} from './types';
-import utils from './utils';
-import {validate} from 'superstruct';
-import {InstallLogsCollectorSchema} from './installLogsCollector.schema';
-import {compare} from 'compare-versions';
+import LogCollectBrowserConsole from "./collector/LogCollectBrowserConsole";
+import LogCollectCypressCommand from "./collector/LogCollectCypressCommand";
+import LogCollectCypressRequest from "./collector/LogCollectCypressRequest";
+import LogCollectCypressIntercept from "./collector/LogCollectCypressIntercept";
+import LogCollectCypressBrowserNetwork from "./collector/LogCollectCypressBrowserNetwork";
+import LogCollectCypressLog from "./collector/LogCollectCypressLog";
+import LogCollectorState from "./collector/LogCollectorState";
+import LogCollectControlExtended from "./collector/LogCollectControlExtended";
+import LogCollectControlSimple from "./collector/LogCollectControlSimple";
+import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
+import CONSTANTS from "./constants";
+import type {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
+import type {LogType, Log, Severity} from "./types";
+import utils from "./utils";
+import {validate} from "superstruct";
+import {InstallLogsCollectorSchema} from "./installLogsCollector.schema";
+import {compare} from "compare-versions";
 
 /**
  * Installs the logs collector for cypress. Needs to be added to support file.
@@ -25,7 +25,7 @@ function installLogsCollector(config: SupportOptions = {}) {
 
   const extendedConfig: ExtendedSupportOptions = {
     ...config,
-    collectTypes: config.collectTypes || (Object.values(CONSTANTS.LOG_TYPES) as LogType[]),
+    collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES) as LogType[],
     collectBody: config.xhr && config.xhr.printBody !== undefined ? config.xhr.printBody : true,
     collectRequestData: config.xhr && config.xhr.printRequestData,
     collectHeaderData: config.xhr && config.xhr.printHeaderData,
@@ -35,37 +35,37 @@ function installLogsCollector(config: SupportOptions = {}) {
   registerLogCollectorTypes(logCollectorState, extendedConfig);
 
   if (extendedConfig.enableExtendedCollector) {
-    new LogCollectControlExtended(logCollectorState, extendedConfig).register();
+    (new LogCollectControlExtended(logCollectorState, extendedConfig)).register();
   } else {
-    new LogCollectControlSimple(logCollectorState, extendedConfig).register();
+    (new LogCollectControlSimple(logCollectorState, extendedConfig)).register();
   }
 
   registerGlobalApi(logCollectorState);
 }
 
 function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSupportOptions) {
-  new LogCollectBrowserConsole(logCollectorState, config).register();
+  (new LogCollectBrowserConsole(logCollectorState, config)).register()
 
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_LOG)) {
-    new LogCollectCypressLog(logCollectorState, config).register();
+    (new LogCollectCypressLog(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_XHR)) {
-    new LogCollectCypressBrowserNetwork('xhr', logCollectorState, config).register();
+    (new LogCollectCypressBrowserNetwork('xhr', logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_FETCH)) {
-    new LogCollectCypressBrowserNetwork('fetch', logCollectorState, config).register();
+    (new LogCollectCypressBrowserNetwork('fetch', logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_REQUEST)) {
-    new LogCollectCypressRequest(logCollectorState, config).register();
+    (new LogCollectCypressRequest(logCollectorState, config)).register();
   }
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_COMMAND)) {
-    new LogCollectCypressCommand(logCollectorState, config).register();
+    (new LogCollectCypressCommand(logCollectorState, config)).register();
   }
   if (
-    config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_INTERCEPT) &&
-    compare(Cypress.version, '6.0.0', '>=')
+    config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_INTERCEPT)
+    && compare(Cypress.version, '6.0.0', '>=')
   ) {
-    new LogCollectCypressIntercept(logCollectorState, config).register();
+    (new LogCollectCypressIntercept(logCollectorState, config)).register();
   }
 }
 
@@ -111,7 +111,7 @@ function validateConfig(config: SupportOptions) {
 
 // Ensures backwards compatibility type imports.
 declare namespace installLogsCollector {
-  export {LogType, Log, Severity, SupportOptions};
+  export {LogType, Log, Severity, SupportOptions}
 }
 
 export = installLogsCollector;

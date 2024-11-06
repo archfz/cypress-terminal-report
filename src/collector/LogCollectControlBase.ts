@@ -1,7 +1,7 @@
 import CtrError from '../CtrError';
-import type {ExtendedSupportOptions} from '../installLogsCollector.types';
-import LogCollectorState from './LogCollectorState';
-import type {MessageData, TestData} from '../types';
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import LogCollectorState from "./LogCollectorState";
+import type {MessageData, TestData} from "../types";
 
 export default abstract class LogCollectControlBase {
   protected abstract collectorState: LogCollectorState;
@@ -11,17 +11,16 @@ export default abstract class LogCollectControlBase {
     logStackIndex: number,
     mochaRunnable: Mocha.Runnable,
     options: {
-      state?: string;
-      title?: string;
-      noQueue?: boolean;
-      consoleTitle?: string;
-      isHook?: boolean;
-      wait?: number;
-      continuous?: boolean;
+      state?: string,
+      title?: string,
+      noQueue?: boolean,
+      consoleTitle?: string,
+      isHook?: boolean,
+      wait?: number,
+      continuous?: boolean,
     } = {}
   ) {
-    let testState: MessageData['state'] =
-      ((options.state || mochaRunnable.state) as MessageData['state']) || 'running';
+    let testState: MessageData['state'] = (options.state || mochaRunnable.state) as MessageData['state'] || 'running';
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
@@ -36,14 +35,14 @@ export default abstract class LogCollectControlBase {
     {
       let parent = mochaRunnable.parent;
       while (parent && parent.title) {
-        testTitle = `${parent.title} -> ${testTitle}`;
+        testTitle = `${parent.title} -> ${testTitle}`
         parent = parent.parent;
         ++testLevel;
       }
     }
 
     if (testState === 'failed' && mochaRunnable && (mochaRunnable as any)._retries > 0) {
-      testTitle += ` (Attempt ${mochaRunnable && (mochaRunnable as any)._currentRetry + 1})`;
+      testTitle += ` (Attempt ${mochaRunnable && (mochaRunnable as any)._currentRetry + 1})`
     }
 
     const prepareLogs = () => {
@@ -64,11 +63,7 @@ export default abstract class LogCollectControlBase {
     this.triggerSendTask(buildDataMessage, options.noQueue || false, wait);
   }
 
-  protected abstract triggerSendTask(
-    buildDataMessage: (continuous?: boolean) => MessageData,
-    noQueue: boolean,
-    wait: number
-  ): void;
+  protected abstract triggerSendTask(buildDataMessage: (continuous?: boolean) => MessageData, noQueue: boolean, wait: number): void;
 
   prepareLogs(logStackIndex: number, testData: TestData) {
     let logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
@@ -104,14 +99,12 @@ export default abstract class LogCollectControlBase {
     let parent = mochaRunnable.parent;
     // always get top-most spec to determine the called .spec file
     while (parent && parent.invocationDetails) {
-      invocationDetails = parent.invocationDetails;
+      invocationDetails = parent.invocationDetails
       parent = parent.parent;
     }
 
-    return (
-      parent.file || // Support for cypress-grep.
+    return parent.file || // Support for cypress-grep.
       invocationDetails.relativeFile ||
-      (invocationDetails.fileUrl && invocationDetails.fileUrl.replace(/^[^?]+\?p=/, ''))
-    );
+      (invocationDetails.fileUrl && invocationDetails.fileUrl.replace(/^[^?]+\?p=/, ''));
   }
 }

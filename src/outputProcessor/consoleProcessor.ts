@@ -1,7 +1,7 @@
-import CONSTANTS from '../constants';
-import type {Log, LogType, MessageData} from '../types';
-import type {PluginOptions} from '../installLogsPrinter.types';
-import chalk from 'chalk';
+import CONSTANTS from "../constants";
+import type {Log, LogType, MessageData} from "../types";
+import type {PluginOptions} from "../installLogsPrinter.types";
+import chalk from "chalk";
 
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
@@ -14,8 +14,8 @@ const LOG_SYMBOLS = (() => {
       success: '✔',
       info: '✱',
       debug: '⚈',
-      route: '➟',
-    };
+      route: '➟'
+    }
   } else {
     return {
       error: 'x',
@@ -23,20 +23,14 @@ const LOG_SYMBOLS = (() => {
       success: '+',
       info: 'i',
       debug: '%',
-      route: '~',
-    };
+      route: '~'
+    }
   }
 })();
 
 const BOLD_COLORS = ['red', 'yellow'];
 
-const TYPE_COMPUTE: {
-  [key in (typeof LOG_TYPES)[keyof typeof LOG_TYPES]]: (options: PluginOptions) => {
-    icon: string;
-    color: string;
-    trim?: number;
-  };
-} = {
+const TYPE_COMPUTE: {[key in typeof LOG_TYPES[keyof typeof LOG_TYPES]]: (options: PluginOptions) => {icon: string, color: string, trim?: number}} = {
   [LOG_TYPES.PLUGIN_LOG_TYPE]: () => ({
     color: 'white',
     icon: '-',
@@ -90,7 +84,7 @@ const TYPE_COMPUTE: {
     icon: LOG_SYMBOLS.success,
     trim: options.routeTrimLength || 5000,
   }),
-};
+}
 
 const TYPE_STRING_CACHE: Record<string, string> = {};
 
@@ -104,18 +98,20 @@ const getTypeString = (type: LogType, icon: string, color: string, padding: stri
     return TYPE_STRING_CACHE[key];
   }
 
-  const typeString = KNOWN_TYPES.includes(type)
-    ? padType(type, padding)
-    : padType('[unknown]', padding);
-  const coloredTypeString = BOLD_COLORS.includes(color)
-    ? (chalk as any)[color].bold(typeString + icon + ' ')
-    : (chalk as any)[color](typeString + icon + ' ');
+  const typeString = KNOWN_TYPES.includes(type) ? padType(type, padding) : padType('[unknown]', padding)
+  const coloredTypeString = BOLD_COLORS.includes(color) ?
+    (chalk as any)[color].bold(typeString + icon + ' ') :
+    (chalk as any)[color](typeString + icon + ' ');
 
   TYPE_STRING_CACHE[key] = coloredTypeString;
   return coloredTypeString;
-};
+}
 
-function consoleProcessor(messages: Log[], options: PluginOptions, data: MessageData) {
+function consoleProcessor(
+  messages: Log[],
+  options: PluginOptions,
+  data: MessageData
+) {
   const tabLevel = data.level || 0;
   const levelPadding = '  '.repeat(Math.max(0, tabLevel - 1));
   const padding = CONSTANTS.PADDING.LOG + levelPadding;
@@ -125,7 +121,12 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
     output += ' '.repeat(4) + levelPadding + chalk.gray(data.consoleTitle) + '\n';
   }
 
-  messages.forEach(({type, message, severity, timeString}) => {
+  messages.forEach(({
+    type,
+    message,
+    severity,
+    timeString
+  }) => {
     let processedMessage = message;
 
     let {color, icon, trim} = TYPE_COMPUTE[type](options);
@@ -147,11 +148,7 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
       output += chalk.gray(`${padding}Time: ${timeString}`) + '\n';
     }
 
-    output +=
-      getTypeString(type, icon, color, padding) +
-      ' ' +
-      processedMessage.replace(/\n/g, '\n' + padding) +
-      '\n';
+    output += getTypeString(type, icon, color, padding) + ' ' + processedMessage.replace(/\n/g, '\n' + padding) + '\n'
   });
 
   if (messages.length !== 0 && !data.continuous) {

@@ -1,4 +1,4 @@
-import type {Log, LogType, TestData} from './types';
+import type {Log, LogType, TestData} from "./types";
 
 export interface SupportOptions {
   /**
@@ -27,7 +27,10 @@ export interface SupportOptions {
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (context: TestData, messages: Log[]) => void;
+  collectTestLogs?: (
+    context: TestData,
+    messages: Log[]
+  ) => void;
 
   xhr?: {
     /**
@@ -68,7 +71,7 @@ export interface SupportOptions {
    * Adds time information to logs.
    * @default null
    */
-  commandTimings?: null | 'timestamp' | 'seconds';
+  commandTimings?: null | 'timestamp' | 'seconds'
 
   /**
    * Enabled debug logging.

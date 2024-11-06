@@ -1,16 +1,18 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import LogCollectorState from './LogCollectorState';
-import type {ExtendedSupportOptions} from '../installLogsCollector.types';
-import type {Severity} from '../types';
-import LogCollectBase from './LogCollectBase';
+import LogCollectorState from "./LogCollectorState";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {Severity} from "../types";
+import LogCollectBase from "./LogCollectBase";
 
 type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
 
 export default class LogCollectBrowserConsole extends LogCollectBase {
   register() {
-    const oldConsoleMethods: {[k in Methods]?: Console[k]} = {};
-    const event = Cypress.testingType === 'component' ? 'test:before:run' : 'window:before:load';
+    const oldConsoleMethods: { [k in Methods]?: Console[k] } = {};
+    const event = Cypress.testingType === 'component'
+      ? 'test:before:run'
+      : 'window:before:load';
 
     Cypress.on(event, () => {
       const docIframe = (window.parent.document.querySelector("[id*='Your project: ']") ||

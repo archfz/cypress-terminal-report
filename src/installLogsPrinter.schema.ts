@@ -1,15 +1,4 @@
-import {
-  boolean,
-  enums,
-  func,
-  min,
-  number,
-  object,
-  optional,
-  record,
-  string,
-  union,
-} from 'superstruct';
+import {boolean, enums, func, min, number, object, optional, record, string, union} from "superstruct";
 
 const InstallLogsPrinterSchema = object({
   printLogsToConsole: optional(enums(['onFail', 'always', 'never'])),

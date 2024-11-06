@@ -1,13 +1,12 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import LogCollectBase from './LogCollectBase';
+import LogCollectBase from "./LogCollectBase";
 
 export default class LogCollectCypressCommand extends LogCollectBase {
   ignoredCommands = ['xhr', 'log', 'request'];
 
   register() {
-    const isOfInterest = (options: any) =>
-      options.instrument === 'command' &&
+    const isOfInterest = (options: any) => options.instrument === 'command' &&
       options.consoleProps &&
       !this.ignoredCommands.includes(options.name) &&
       !(options.name === 'task' && options.message.match(/ctrLogMessages/));
@@ -26,20 +25,15 @@ export default class LogCollectCypressCommand extends LogCollectBase {
     Cypress.on('log:added', (options) => {
       if (isOfInterest(options)) {
         const log = formatLogMessage(options);
-        const severity =
-          options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
-        this.collectorState.addLog(
-          [CONSTANTS.LOG_TYPES.CYPRESS_COMMAND, log, severity],
-          options.id
-        );
+        const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
+        this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_COMMAND, log, severity], options.id);
       }
     });
 
     Cypress.on('log:changed', (options) => {
       if (isOfInterest(options)) {
         const log = formatLogMessage(options);
-        const severity =
-          options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
+        const severity = options.state === 'failed' ? CONSTANTS.SEVERITY.ERROR : CONSTANTS.SEVERITY.SUCCESS;
         this.collectorState.updateLog(log, severity, options.id);
       }
     });

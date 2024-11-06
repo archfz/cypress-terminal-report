@@ -1,6 +1,6 @@
 import * as path from 'path';
-import {IOutputProcecessor} from './BaseOutputProcessor';
-import type {AllMessages} from '../installLogsPrinter.types';
+import {IOutputProcecessor} from "./BaseOutputProcessor";
+import type {AllMessages} from "../installLogsPrinter.types";
 
 export default class NestedOutputProcessorDecorator implements IOutputProcecessor {
   protected decoratedFactory: (directory: string) => IOutputProcecessor;
@@ -9,12 +9,7 @@ export default class NestedOutputProcessorDecorator implements IOutputProcecesso
   protected root: string;
   protected specRoot: string;
 
-  constructor(
-    root: string,
-    specRoot: string,
-    ext: string,
-    decoratedFactory: (directory: string) => IOutputProcecessor
-  ) {
+  constructor(root: string, specRoot: string, ext: string, decoratedFactory: (directory: string) => IOutputProcecessor) {
     this.root = root;
     this.ext = ext;
     this.specRoot = specRoot;
@@ -33,10 +28,7 @@ export default class NestedOutputProcessorDecorator implements IOutputProcecesso
     }
 
     const relativeSpec = path.relative(this.specRoot, spec);
-    const outPath = path.join(
-      this.root,
-      relativeSpec.replace(new RegExp(path.extname(relativeSpec) + '$'), `.${this.ext}`)
-    );
+    const outPath = path.join(this.root, relativeSpec.replace(new RegExp(path.extname(relativeSpec) + '$'), `.${this.ext}`));
     const processor = this.decoratedFactory(outPath);
 
     processor.initialize();
@@ -56,9 +48,7 @@ export default class NestedOutputProcessorDecorator implements IOutputProcecesso
   }
 
   getSpentTime() {
-    return Object.values(this.processors).reduce(
-      (count: number, processor: IOutputProcecessor) => count + processor.getSpentTime(),
-      0
-    );
+    return Object.values(this.processors)
+      .reduce((count: number, processor: IOutputProcecessor) => count + processor.getSpentTime(), 0);
   }
 }
