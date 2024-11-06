@@ -97,23 +97,30 @@ const utils = {
    * https://github.com/cypress-io/cypress-documentation/issues/778
    */
   checkMessageMarkdown(message: string) {
-    const coloredMarkup = message.match(/^\[(.*)\]\((.*)\)/) // ie [blue](http://example.com)
-    const color = coloredMarkup?.at(1)
-    const coloredMessage = coloredMarkup?.at(2)
-    if (coloredMessage) {
-      message = coloredMessage
+    const colorMatch = message.match(/^\[(.*)\]\((.*)\)/) // ie [blue](http://example.com)
+    let color: string | undefined = undefined;
+    if (colorMatch) {
+      color = colorMatch[1]
+      message = colorMatch[2]
     }
 
     const italicMatch = message.match(/^_(.*?)_$/); // ie _italic_
-    const isItalic = Boolean(italicMatch)
-    message = italicMatch?.at(1) ?? message;
+    if (italicMatch) {
+      message = italicMatch[1]
+    }
 
     const boldMatch = message.match(/^\*\*(.*?)\*\*$/);   // ie **bold**
-    const isBold = Boolean(boldMatch)
-    message = boldMatch?.at(1) ?? message;
+    if (boldMatch) {
+      message = boldMatch[1]
+    }
 
     // TODO: account for both bold and italic?
-    return { isItalic, isBold, color, processedMessage: message }
+    return {
+      isItalic: Boolean(italicMatch),
+      isBold: Boolean(boldMatch),
+      color,
+      processedMessage: message
+    }
   }
 }
 
