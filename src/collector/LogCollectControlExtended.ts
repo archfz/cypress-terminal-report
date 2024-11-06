@@ -268,7 +268,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     // fire synchronously and thus we wouldn't get a window to display the
     // logs between the failed hook title and next suite title.
     const originalRunSuite = runner['runSuite'];
-    runner['runSuite'] = function (...args: Parameters<typeof originalRunSuite>) {
+    runner['runSuite'] = function (...args) {
       promise
         .catch(() => {/* noop */})
         // We need to wait here as for some reason the next suite title will be displayed to soon.
