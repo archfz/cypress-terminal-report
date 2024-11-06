@@ -21,7 +21,6 @@ export default abstract class LogCollectControlBase {
     } = {}
   ) {
     let testState = options.state || mochaRunnable.state;
-
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
