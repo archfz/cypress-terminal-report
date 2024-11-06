@@ -19,7 +19,7 @@ describe('utils', () => {
             tests.forEach(({message, ...expected}) => {
                 expect(checkMessageMarkdown(message)).to.deep.equal({
                     color: undefined,
-                    isItalic: false,
+                    isItalic: false, 
                     isBold: false,
                     processedMessage: message,
                     ...expected
