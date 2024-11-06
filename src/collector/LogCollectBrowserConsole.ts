@@ -58,20 +58,16 @@ export default class LogCollectBrowserConsole extends LogCollectBase {
         };
       };
 
-      if (this.config.collectTypes.includes(CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_WARN)) {
-        createWrapper('warn', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_WARN, CONSTANTS.SEVERITY.WARNING);
-      }
-      if (this.config.collectTypes.includes(CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_ERROR)) {
-        createWrapper('error', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_ERROR, CONSTANTS.SEVERITY.ERROR);
-      }
-      if (this.config.collectTypes.includes(CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_INFO)) {
-        createWrapper('info', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_INFO);
-      }
-      if (this.config.collectTypes.includes(CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_DEBUG)) {
-        createWrapper('debug', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_DEBUG);
-      }
-      if (this.config.collectTypes.includes(CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_LOG)) {
-        createWrapper('log', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_LOG);
+      for (const [method, logType, severity] of [
+        ['warn', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_WARN, CONSTANTS.SEVERITY.WARNING],
+        ['error', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_ERROR, CONSTANTS.SEVERITY.ERROR],
+        ['info', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_INFO],
+        ['debug', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_DEBUG],
+        ['log', CONSTANTS.LOG_TYPES.BROWSER_CONSOLE_LOG],
+      ] as const) {
+        if (this.config.collectTypes.includes(logType)) {
+          createWrapper(method, logType, severity);
+        }
       }
     });
   }
