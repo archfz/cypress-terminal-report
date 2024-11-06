@@ -20,11 +20,7 @@ export default abstract class LogCollectControlBase {
       continuous?: boolean,
     } = {}
   ) {
-    let testState = options.state || mochaRunnable.state;
-    if (!testState) {
-      return;
-    }
-
+    let testState = options.state || mochaRunnable.state as State;
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
