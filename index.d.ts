@@ -5,11 +5,11 @@
 
 declare namespace Cypress {
   import {Log} from "./src/installLogsCollector";
+  import {BuiltinOutputProcessorsTypes} from "./src/types";
 
   interface Cypress {
     TerminalReport: {
-      getLogs(format: 'txt'): string | null;
-      getLogs(format: 'json'): string | null;
+      getLogs(format: BuiltinOutputProcessorsTypes): string | null;
       getLogs(format?: 'none' = 'none'): Log[] | null;
     }
 
