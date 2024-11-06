@@ -1,8 +1,8 @@
 import CONSTANTS from "../constants";
 import type {Log, LogType, MessageData} from "../types";
+import utils from "../utils";
 import type {PluginOptions} from "../installLogsPrinter.types";
 import chalk from "chalk";
-import utils from "utils";
 
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
