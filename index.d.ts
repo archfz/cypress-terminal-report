@@ -19,10 +19,13 @@ declare namespace Cypress {
       getRunner(): Mocha.Runner
       getRootSuite(): Mocha.Suite
     }
+
+    state(key: 'done', callback: (error: Error) => Promise<void>): void
+    state(key: 'error', error: Error): void
   }
 
   interface Chainable {
-    catch: Promise<any>['catch']
+    catch: Promise<void>['catch']
   }
 }
 

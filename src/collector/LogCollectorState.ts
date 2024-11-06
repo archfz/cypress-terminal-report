@@ -25,7 +25,7 @@ export default class LogCollectorState extends EventTarget {
     super();
 
     this.listeners = {};
-    // @ts-ignore
+    // @ts-ignore gets initialized to the correct state anyways
     this.currentTest = null;
     this.logStacks = [];
     this.beforeHookIndexes = [];

@@ -66,8 +66,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Keeps track of before and after all hook indexes.
     Cypress.mocha.getRunner().on('hook', function (hook) {
-      // @ts-ignore
-      if (!hook._ctr_hook && !hook.fn._ctr_hook) {
+      if (!hook._ctr_hook && !(hook.fn as any)._ctr_hook) {
         // After each hooks get merged with the test.
         if (hook.hookName !== "after each") {
           self.collectorState.addNewLogStack();
@@ -174,14 +173,12 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
         // Have to wait for debounce on log updates to have correct state information.
         // Done state is used as callback and awaited in Cypress.fail.
-        // @ts-ignore
         Cypress.state('done', async (error: Error) => {
           await new Promise(resolve => setTimeout(resolve, 6));
           throw error;
         });
       }
 
-      // @ts-ignore
       Cypress.state('error', error);
       throw error;
     });

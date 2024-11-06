@@ -69,7 +69,6 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     });
 
     // Logs commands if test was manually skipped.
-    // @ts-ignore
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
       if (test?.state === ('pending' as State)) {
