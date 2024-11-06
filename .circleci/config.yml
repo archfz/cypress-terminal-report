@@ -48,6 +48,7 @@ jobs:
     parallelism: 3
     steps:
       - checkout
+      - attach_workspace: {at: src}
       - run:
           name: Install Test Dependencies
           command: cd test && npm ci
