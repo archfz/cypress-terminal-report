@@ -108,11 +108,11 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
 
     // Logs commands from before all hooks that failed.
-    Cypress.on('before:mocha:hooks:seal', function(this: any) {
-      self.prependBeforeAllHookInAllSuites(this.mocha.getRootSuite().suites, function ctrAfterAllPerSuite(this: any) {
+    Cypress.on('before:mocha:hooks:seal', function(this: Cypress.Cypress) {
+      self.prependBeforeAllHookInAllSuites(this.mocha.getRootSuite().suites, function ctrAfterAllPerSuite(this: Mocha.Context) {
         if (
-          this.test.parent === this.currentTest.parent // Since we have after all in each suite we need this for nested suites case.
-          && this.currentTest.failedFromHookId // This is how we know a hook failed the suite.
+          this.test?.parent === this.currentTest?.parent // Since we have after all in each suite we need this for nested suites case.
+          && this.currentTest?.failedFromHookId // This is how we know a hook failed the suite.
           && self.collectorState.hasLogsInCurrentStack()
         ) {
           self.debugLog('extended: sending logs of failed before all hook');
@@ -291,7 +291,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     };
   }
 
-  prependBeforeAllHookInAllSuites(rootSuites: Mocha.Suite[], hookCallback: (this: any) => void) {
+  prependBeforeAllHookInAllSuites(rootSuites: Mocha.Suite[], hookCallback: Mocha.Func) {
     const recursiveSuites = (suites: Mocha.Suite[]) => {
       if (suites) {
         suites.forEach((suite) => {
@@ -313,7 +313,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     recursiveSuites(rootSuites);
   }
 
-  printPassingMochaTestTitle(test: any) {
+  printPassingMochaTestTitle(test: Mocha.Runnable) {
     if (Cypress.config('isTextTerminal')) {
       Cypress.emit('mocha', 'pass', {
         "id": test.id,
@@ -327,7 +327,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         "file": null,
         "invocationDetails": test.invocationDetails,
         "final": true,
-        "currentRetry": test.currentRetry(),
+        "currentRetry": test["currentRetry"](),
         "retries": test.retries(),
       })
     }

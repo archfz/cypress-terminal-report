@@ -84,12 +84,9 @@ export default abstract class LogCollectControlBase {
     return logsCopy;
   }
 
-  getSpecFilePath(mochaRunnable: any) {
-    if (!mochaRunnable.invocationDetails && !mochaRunnable.parent.invocationDetails) {
-      if (mochaRunnable.parent.file) {
-        return mochaRunnable.parent.file;
-      }
-      return null;
+  getSpecFilePath(mochaRunnable: Mocha.Runnable) {
+    if (!mochaRunnable.invocationDetails && !mochaRunnable.parent?.invocationDetails) {
+      return mochaRunnable.parent?.file ?? null;
     }
 
     let invocationDetails = mochaRunnable.invocationDetails;
@@ -100,7 +97,7 @@ export default abstract class LogCollectControlBase {
       parent = parent.parent;
     }
 
-    return parent.file || // Support for cypress-grep.
+    return parent?.file || // Support for cypress-grep.
       invocationDetails.relativeFile ||
       invocationDetails.fileUrl?.replace(/^[^?]+\?p=/, '');
   }
