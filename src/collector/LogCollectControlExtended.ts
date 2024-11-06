@@ -2,10 +2,10 @@ import CONSTANTS from '../constants';
 import LogCollectControlBase from './LogCollectControlBase';
 import utils from "../utils";
 import LogCollectorState from "./LogCollectorState";
-import type { ExtendedSupportOptions } from "../installLogsCollector.types";
-import type { MessageData } from "../types";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
+import type {MessageData} from "../types";
 
-type MochaHook = Mocha.Hook & { hookName: string; _ctr_hook: boolean }
+type MochaHook = Mocha.Hook & {hookName: string; _ctr_hook: boolean}
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -41,9 +41,9 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       );
     } else {
       // Need to wait for command log update debounce.
-      cy.wait(wait, { log: false })
+      cy.wait(wait, {log: false})
         .then(() => {
-          cy.task(CONSTANTS.TASK_NAME, buildDataMessage(), { log: false });
+          cy.task(CONSTANTS.TASK_NAME, buildDataMessage(), {log: false});
         });
     }
   }
@@ -98,7 +98,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Logs commands from before all hook if the hook passed.
     // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function (this: any, hook: MochaHook) {
+    Cypress.mocha.getRunner().on('hook end', function(this: any, hook: MochaHook) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
@@ -115,7 +115,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
 
     // Logs commands from before all hooks that failed.
-    Cypress.on('before:mocha:hooks:seal', function (this: any) {
+    Cypress.on('before:mocha:hooks:seal', function(this: any) {
       self.prependBeforeAllHookInAllSuites(this.mocha.getRootSuite().suites, function ctrAfterAllPerSuite(this: any) {
         if (
           this.test.parent === this.currentTest.parent // Since we have after all in each suite we need this for nested suites case.
@@ -160,7 +160,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
 
     // Logs after all hook commands when a command fails in the hook.
-    Cypress.prependListener('fail', function (this: any, error: Error) {
+    Cypress.prependListener('fail', function(this: any, error: Error) {
       const currentRunnable = this.mocha.getRunner().currentRunnable;
 
       if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsInCurrentStack()) {
@@ -206,7 +206,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         this.preventNextMochaPassEmit();
       }
 
-      this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, { noQueue: true });
+      this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
     const testHasAfterEachHooks = (test: any) => {
@@ -218,7 +218,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       } while(test.parent);
       return false;
     };
-    
+
     const isLastAfterEachHookForTest = (test: any, hook: any) => {
       let suite = test.parent;
       do {
@@ -264,8 +264,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
   registerLogToFiles() {
     after(function () {
-      cy.wait(50, { log: false });
-      cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, { log: false });
+      cy.wait(50, {log: false});
+      cy.task(CONSTANTS.TASK_NAME_OUTPUT, null, {log: false});
     });
   }
 
@@ -280,7 +280,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const originalRunSuite = runner.runSuite;
     runner.runSuite = function (...args: any[]) {
       promise
-        .catch(() => {/* noop */ })
+        .catch(() => {/* noop */})
         // We need to wait here as for some reason the next suite title will be displayed to soon.
         .then(() => new Promise(resolve => setTimeout(resolve, 6)))
         .then(() => {
