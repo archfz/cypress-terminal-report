@@ -50,9 +50,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
       return errorPart.trim();
     };
 
-    // @ts-ignore
     Cypress.Commands.overwrite('request', (originalFn, ...args) => {
-      if (typeof args === 'object' && args !== null && args[0]['log'] === false){
+      if (typeof args === 'object' && args !== null && args[0]['log'] === false) {
         return originalFn(...args);
       }
 
@@ -84,9 +83,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
             headers: formattedRequestHeaders,
             body: formattedRequestBody,
           };
-
-          // cy.request is a Cypress.Chainable, so originalFn doesn't have a "catch"
-          return ((originalFn(...args) as any as Promise<any>).catch(async (e: Error) => {
+          
+          return originalFn(...args).catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -114,28 +112,28 @@ export default class LogCollectCypressRequest extends LogCollectBase {
 
             this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
             throw e;
-          }) as any as ReturnType<typeof originalFn>).then((response) => {
-              return Promise.all([
-                this.format.formatXhrData(response.headers),
-                this.format.formatXhrData(response.body)
-              ])
-                .then(([formattedResponseHeaders, formattedResponseBody]) => {
-                  log +=
-                    `\n` +
-                    this.format.formatXhrLog({
-                      request: requestData,
-                      response: {
-                        status: response.status,
-                        headers: formattedResponseHeaders,
-                        body: formattedResponseBody,
-                      },
-                    });
+          }).then((response) => {
+            return Promise.all([
+              this.format.formatXhrData(response.headers),
+              this.format.formatXhrData(response.body)
+            ])
+              .then(([formattedResponseHeaders, formattedResponseBody]) => {
+                log +=
+                  `\n` +
+                  this.format.formatXhrLog({
+                    request: requestData,
+                    response: {
+                      status: response.status,
+                      headers: formattedResponseHeaders,
+                      body: formattedResponseBody,
+                    },
+                  });
 
-                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
-                  return response;
-                });
-            });
-        });
+                this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
+                return response;
+              });
+          });
+        }) as any as ReturnType<typeof originalFn>;
     });
   }
 }

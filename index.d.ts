@@ -1,10 +1,10 @@
 /**
- * This file used for adding types to package interfaces that are not included
- * in the package's types.
+ * This file used for adding types to package interfaces that are not documented
+ * by the package (not included in the package's types).
  */
 
 declare namespace Cypress {
-  import { Log } from "./src/installLogsCollector";
+  import {Log} from "./src/installLogsCollector";
 
   interface Cypress {
     TerminalReport: {
@@ -19,6 +19,10 @@ declare namespace Cypress {
       getRunner(): Mocha.Runner
       getRootSuite(): Mocha.Suite
     }
+  }
+
+  interface Chainable {
+    catch: Promise<any>['catch']
   }
 }
 
