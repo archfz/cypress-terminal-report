@@ -152,7 +152,7 @@ function consoleProcessor(
     }
     if (messageColor) {
       try {
-        processedMessage = chalk.keyword(messageColor)(processedMessage)
+        processedMessage = chalk[messageColor as "red"]?.(processedMessage)
       }
       catch {
       }
