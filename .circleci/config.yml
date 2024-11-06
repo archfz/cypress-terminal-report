@@ -40,25 +40,20 @@ jobs:
           name: Build
           command: npm run build
       - persist_to_workspace:
-          root: '.'
-          paths: [src]
+          root: 'src'
+          paths: [.]
 
   test:
     executor: cypress-v20
     parallelism: 3
     steps:
       - checkout
-      - attach_workspace: {at: '.'}
       - run:
           name: Install Test Dependencies
           command: cd test && npm ci
       - run:
           name: Test
           command: cd test && npm run test-ci
-      - persist_to_workspace:
-          root: src
-          paths:
-            - .
 
   backwards-compatibility:
     executor: cypress-v12
