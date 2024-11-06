@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import type CustomOutputProcessor from "./outputProcessor/CustomOutputProcessor";
-import type {Log, LogOccurrence, State} from "./types";
+import type {BuiltinOutputProcessorsTypes, Log, LogOccurrence, State} from "./types";
 
 export type AllMessages = {
   [specPath: string]: {
@@ -56,8 +56,7 @@ export interface PluginOptions {
    */
   outputTarget?: Record<
     string,
-    | 'json'
-    | 'txt'
+    | BuiltinOutputProcessorsTypes
     | CustomOutputProcessorCallback
     >;
 
