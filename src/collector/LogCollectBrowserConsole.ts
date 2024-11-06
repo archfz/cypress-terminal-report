@@ -1,5 +1,7 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
+import LogCollectorState from "./LogCollectorState";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import type {LogType, Severity} from "../types";
 import LogCollectBase from "./LogCollectBase";
 

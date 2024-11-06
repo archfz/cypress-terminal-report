@@ -3,7 +3,7 @@ import LogCollectControlBase from './LogCollectControlBase';
 import utils from "../utils";
 import type LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
-import type {MessageData} from "../types";
+import type {MessageData, State} from "../types";
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -75,7 +75,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     // @ts-ignore
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
-      if ((test?.state as string) === 'pending') {
+      if (test && test.state === ('pending' as State)) {
         // In case of fully skipped tests we might not yet have a log stack.
         self.collectorState.ensureLogStack();
         self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});

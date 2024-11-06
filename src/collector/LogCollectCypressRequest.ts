@@ -1,4 +1,7 @@
 import CONSTANTS from '../constants';
+import LogFormat from "./LogFormat";
+import LogCollectorState from "./LogCollectorState";
+import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectBase from "./LogCollectBase";
 
 export default class LogCollectCypressRequest extends LogCollectBase {

@@ -82,8 +82,11 @@ const utils = {
     return json;
   },
 
-  validatorErrToStr: (errorList: Failure[]) => 
-     '\n' + errorList.map((error) => ` => ${error.path.join('.')}: ${error.message}`).join('\n') + '\n'
+  validatorErrToStr: function (errorList: Failure[]) {
+    return '\n' + errorList.map((error) => {
+      return ` => ${error.path.join('.')}: ${error.message}`;
+    }).join('\n') + '\n';
+  }
 }
 
 export default utils;
