@@ -1,16 +1,19 @@
 import CONSTANTS from '../constants';
-import LogFormat from "./LogFormat";
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
-import LogCollectBase from "./LogCollectBase";
+import LogFormat from './LogFormat';
+import LogCollectorState from './LogCollectorState';
+import type {ExtendedSupportOptions} from '../installLogsCollector.types';
+import LogCollectBase from './LogCollectBase';
 
 export default class LogCollectCypressRequest extends LogCollectBase {
   register() {
-    const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
+    const isValidHttpMethod = (str: any) =>
+      typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e: any) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+    const isNetworkError = (e: any) =>
+      e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
+    const isStatusCodeFailure = (e: any) =>
+      e.message && e.message.startsWith('`cy.request()` failed on:');
 
     const RESPONSE_START = '\n\nThe response we got was:\n\n';
     const STATUS_START = 'Status: ';
@@ -54,7 +57,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
     };
 
     Cypress.Commands.overwrite('request', (originalFn: any, ...args: any[]) => {
-      if (typeof args === 'object' && args !== null && args[0]['log'] === false){
+      if (typeof args === 'object' && args !== null && args[0]['log'] === false) {
         return originalFn(...args);
       }
 
@@ -77,15 +80,15 @@ export default class LogCollectCypressRequest extends LogCollectBase {
 
       return Promise.all([
         this.format.formatXhrData(requestHeaders),
-        this.format.formatXhrData(requestBody)
-      ])
-        .then(([formattedRequestHeaders, formattedRequestBody]) => {
-          const requestData = {
-            headers: formattedRequestHeaders,
-            body: formattedRequestBody,
-          };
+        this.format.formatXhrData(requestBody),
+      ]).then(([formattedRequestHeaders, formattedRequestBody]) => {
+        const requestData = {
+          headers: formattedRequestHeaders,
+          body: formattedRequestBody,
+        };
 
-          return originalFn(...args).catch(async (e: any) => {
+        return originalFn(...args)
+          .catch(async (e: any) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -111,31 +114,38 @@ export default class LogCollectCypressRequest extends LogCollectBase {
               log += `\n` + 'Cannot parse cy.request error content!';
             }
 
-            this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
+            this.collectorState.addLog([
+              CONSTANTS.LOG_TYPES.CYPRESS_REQUEST,
+              log,
+              CONSTANTS.SEVERITY.ERROR,
+            ]);
             throw e;
           })
-            .then((response: any) => {
-              return Promise.all([
-                this.format.formatXhrData(response.headers),
-                this.format.formatXhrData(response.body)
-              ])
-                .then(([formattedResponseHeaders, formattedResponseBody]) => {
-                  log +=
-                    `\n` +
-                    this.format.formatXhrLog({
-                      request: requestData,
-                      response: {
-                        status: response.status,
-                        headers: formattedResponseHeaders,
-                        body: formattedResponseBody,
-                      },
-                    });
-
-                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
-                  return response;
+          .then((response: any) => {
+            return Promise.all([
+              this.format.formatXhrData(response.headers),
+              this.format.formatXhrData(response.body),
+            ]).then(([formattedResponseHeaders, formattedResponseBody]) => {
+              log +=
+                `\n` +
+                this.format.formatXhrLog({
+                  request: requestData,
+                  response: {
+                    status: response.status,
+                    headers: formattedResponseHeaders,
+                    body: formattedResponseBody,
+                  },
                 });
+
+              this.collectorState.addLog([
+                CONSTANTS.LOG_TYPES.CYPRESS_REQUEST,
+                log,
+                CONSTANTS.SEVERITY.SUCCESS,
+              ]);
+              return response;
             });
-        });
+          });
+      });
     });
   }
 }

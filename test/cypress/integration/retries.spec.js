@@ -10,7 +10,7 @@ it('fail but win', () => {
   cy.log('Hello. currentRetry:', currentRetry);
 
   if (currentRetry < 2) {
-    cy.contains('Foobar', { timeout: 0 });
+    cy.contains('Foobar', {timeout: 0});
   }
 
   cy.log('Done.');

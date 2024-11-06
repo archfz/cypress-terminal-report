@@ -1,4 +1,4 @@
-import { Then, Before } from "@badeball/cypress-cucumber-preprocessor";
+import {Then, Before} from '@badeball/cypress-cucumber-preprocessor';
 
 let myBeforeCount = 0;
 
@@ -15,7 +15,7 @@ Then(`I can post comment`, () => {
   // we have code that posts a comment when
   // the button is clicked in scripts.js
   cy.get('.network-post').click();
-  cy.wait('@postComment').should(xhr => {
+  cy.wait('@postComment').should((xhr) => {
     expect(xhr.request.body).to.include('email');
     expect(xhr.request.headers).to.have.property('Content-Type');
     expect(xhr.request.body).to.have.property('name', 'Using POST in cy.intercept()');

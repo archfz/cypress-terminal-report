@@ -3,15 +3,24 @@
 version: 2.1
 
 jobs:
-  test:
-    docker:
-      - image: cypress/base:20.5.0
-    parallelism: 3
+  install-deps:
     steps:
       - checkout
       - run:
           name: Install
           command: npm ci && cd test && npm ci
+
+  lint:
+    steps:
+      - run:
+          name: 'Prettier Check'
+          command: npm run format:check
+
+  test:
+    docker:
+      - image: cypress/base:20.5.0
+    parallelism: 3
+    steps:
       - run:
           name: Build
           command: npm run build
@@ -21,7 +30,7 @@ jobs:
       - persist_to_workspace:
           root: src
           paths:
-              - .
+            - .
 
   backwards-compatibility:
     docker:
@@ -51,7 +60,13 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   sample:
     jobs:
-      - test
+      - install-deps
+      - lint:
+          requires:
+            - install-deps
+      - test:
+          requires:
+            - install-deps
       - backwards-compatibility:
-            requires:
-                - test
+          requires:
+            - test

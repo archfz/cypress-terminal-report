@@ -1,3 +1,3 @@
 describe('bug', () => {
-  cy.log('not in a test')
+  cy.log('not in a test');
 });
