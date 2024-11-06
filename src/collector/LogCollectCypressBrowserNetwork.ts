@@ -1,5 +1,4 @@
 import CONSTANTS from '../constants';
-import LogFormat from "./LogFormat";
 import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectBase from "./LogCollectBase";
@@ -39,7 +38,7 @@ export default class LogCollectCypressBrowserNetwork extends LogCollectBase {
   register() {
     // In Cypress 13+ this is under an extra props key
     const getConsoleProps = (options: Cypress.ObjectLike) =>
-      options.consoleProps?.props ? options.consoleProps.props : options.consoleProps
+      options.consoleProps?.props || options.consoleProps
 
     const formatXhr = (options: Cypress.ObjectLike, props: Cypress.ObjectLike) =>
       (options.alias !== undefined ? '(' + options.alias + ') ' : '') +

@@ -191,7 +191,7 @@ export default class LogCollectorState extends EventTarget {
     this.afterHookIndexes.shift();
   }
 
-  startTest(test: Mocha.Runnable) {
+  startTest(test: Mocha.Test) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting test: ' + test.title);
     }

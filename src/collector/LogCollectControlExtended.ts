@@ -5,8 +5,6 @@ import LogCollectorState from "./LogCollectorState";
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import type {MessageData} from "../types";
 
-type MochaHook = Mocha.Hook & {hookName: string; _ctr_hook: boolean}
-
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
@@ -56,22 +54,18 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         this.collectorState.updateLogStatus(options.id);
       }
     });
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('test', (test: Mocha.Runnable) => {
+    Cypress.mocha.getRunner().on('test', (test) => {
       this.collectorState.startTest(test);
     });
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite', () => {
       this.collectorState.startSuite();
     });
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite end', () => {
       this.collectorState.endSuite();
     });
 
     // Keeps track of before and after all hook indexes.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('hook', function (hook: MochaHook) {
+    Cypress.mocha.getRunner().on('hook', function (hook) {
       // @ts-ignore
       if (!hook._ctr_hook && !hook.fn._ctr_hook) {
         // After each hooks get merged with the test.
@@ -97,13 +91,12 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const self = this;
 
     // Logs commands from before all hook if the hook passed.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function(this: any, hook: MochaHook) {
+    Cypress.mocha.getRunner().on('hook end', function(this: Mocha.Runner, hook) {
       if (hook.hookName === "before all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed before all hook');
         self.sendLogsToPrinter(
           self.collectorState.getCurrentLogStackIndex(),
-          this.currentRunnable,
+          this.currentRunnable!,
           {
             state: 'passed',
             isHook: true,
@@ -141,8 +134,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     const self = this;
 
     // Logs commands from after all hooks that passed.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function (hook: MochaHook) {
+    Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === "after all" && self.collectorState.hasLogsInCurrentStack() && !hook._ctr_hook) {
         self.debugLog('extended: sending logs of passed after all hook');
         self.sendLogsToPrinter(
@@ -160,8 +152,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     });
 
     // Logs after all hook commands when a command fails in the hook.
-    Cypress.prependListener('fail', function(this: any, error: Error) {
-      const currentRunnable = this.mocha.getRunner().currentRunnable;
+    Cypress.prependListener('fail', function(this: Cypress.Cypress, error: Error) {
+      const currentRunnable = this.mocha.getRunner().currentRunnable!;
 
       if (currentRunnable.hookName === 'after all' && self.collectorState.hasLogsInCurrentStack()) {
         // We only have the full list of commands when the suite ends.
@@ -234,8 +226,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     };
 
     // Logs commands form each separate test when after each hooks are present.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('hook end', function (hook: MochaHook) {
+    Cypress.mocha.getRunner().on('hook end', function (hook) {
       if (hook.hookName === 'after each') {
         if (isLastAfterEachHookForTest(self.collectorState.getCurrentTest(), hook)) {
           self.debugLog('extended: sending logs for ended test, just after the last after each hook: ' + self.collectorState.getCurrentTest().title);
@@ -244,16 +235,14 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       }
     });
     // Logs commands form each separate test when there is no after each hook.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('test end', function (test: Mocha.Runnable) {
+    Cypress.mocha.getRunner().on('test end', function (test) {
       if (!testHasAfterEachHooks(test)) {
         self.debugLog('extended: sending logs for ended test, that has not after each hooks: ' + self.collectorState.getCurrentTest().title);
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });
     // Logs commands if test was manually skipped.
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('pending', function (test: Mocha.Runnable) {
+    Cypress.mocha.getRunner().on('pending', function (test) {
       if (self.collectorState.getCurrentTest() === test) {
         // In case of fully skipped tests we might not yet have a log stack.
         if (self.collectorState.hasLogsInCurrentStack()) {
@@ -272,22 +261,21 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
   }
 
   debounceNextMochaSuite(promise: Promise<any>) {
-    // @ts-ignore
     const runner = Cypress.mocha.getRunner();
 
     // Hack to make mocha wait for our logs to be written to console before
     // going to the next suite. This is because 'fail' and 'suite begin' both
     // fire synchronously and thus we wouldn't get a window to display the
     // logs between the failed hook title and next suite title.
-    const originalRunSuite = runner.runSuite;
-    runner.runSuite = function (...args: any[]) {
+    const originalRunSuite = runner['runSuite'];
+    runner['runSuite'] = function (...args: Parameters<typeof originalRunSuite>) {
       promise
         .catch(() => {/* noop */})
         // We need to wait here as for some reason the next suite title will be displayed to soon.
         .then(() => new Promise(resolve => setTimeout(resolve, 6)))
         .then(() => {
           originalRunSuite.apply(runner, args);
-          runner.runSuite = originalRunSuite;
+          runner['runSuite'] = originalRunSuite;
         });
     }
   }

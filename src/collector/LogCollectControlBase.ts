@@ -32,7 +32,7 @@ export default abstract class LogCollectControlBase {
 
     {
       let parent = mochaRunnable.parent;
-      while (parent && parent.title) {
+      while (parent?.title) {
         testTitle = `${parent.title} -> ${testTitle}`
         parent = parent.parent;
         ++testLevel;
@@ -95,13 +95,13 @@ export default abstract class LogCollectControlBase {
     let invocationDetails = mochaRunnable.invocationDetails;
     let parent = mochaRunnable.parent;
     // always get top-most spec to determine the called .spec file
-    while (parent && parent.invocationDetails) {
+    while (parent?.invocationDetails) {
       invocationDetails = parent.invocationDetails
       parent = parent.parent;
     }
 
     return parent.file || // Support for cypress-grep.
       invocationDetails.relativeFile ||
-      (invocationDetails.fileUrl && invocationDetails.fileUrl?.replace(/^[^?]+\?p=/, ''));
+      invocationDetails.fileUrl?.replace(/^[^?]+\?p=/, '');
   }
 }

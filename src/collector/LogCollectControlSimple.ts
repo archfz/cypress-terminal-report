@@ -48,17 +48,14 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       }
     });
 
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('test', (test: Mocha.Runnable) => {
+    Cypress.mocha.getRunner().on('test', (test) => {
       this.collectorState.startTest(test);
     });
 
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite', () => {
       this.collectorState.startSuite();
     });
 
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite end', () => {
       this.collectorState.endSuite();
     });
@@ -75,7 +72,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     // @ts-ignore
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
-      if (test && test.state === ('pending' as State)) {
+      if (test?.state === ('pending' as State)) {
         // In case of fully skipped tests we might not yet have a log stack.
         self.collectorState.ensureLogStack();
         self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});

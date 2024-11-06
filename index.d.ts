@@ -9,5 +9,20 @@ declare namespace Cypress {
     }
 
     onSpecReady(...args: any[]): void;
+
+    mocha: {
+      getRunner(): Mocha.Runner
+    }
+  }
+}
+
+declare namespace Mocha {
+  interface Hook {
+    hookName: string
+    _ctr_hook: boolean
+  }
+
+  interface Runnable {
+    hookName: string
   }
 }

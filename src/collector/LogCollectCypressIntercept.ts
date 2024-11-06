@@ -1,7 +1,4 @@
 import CONSTANTS from '../constants';
-import LogFormat from "./LogFormat";
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectBase from "./LogCollectBase";
 
 Object.defineProperty(RegExp.prototype, "toJSON", {
