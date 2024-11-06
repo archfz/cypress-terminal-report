@@ -18,6 +18,9 @@ jobs:
       - run:
           name: Install Dependencies
           command: npm ci
+      - run:
+          name: Build
+          command: npm run build
 
   lint:
     executor: cypress-v20
@@ -26,15 +29,6 @@ jobs:
       - run:
           name: Prettier Check
           command: npm run format:check
-
-  build:
-    executor: cypress-v20
-    steps:
-      - checkout
-      - run:
-          name: Build
-          command: npm run build
-
 
   test:
     executor: cypress-v20
@@ -83,12 +77,9 @@ workflows:
       - lint:
           requires:
             - install-deps
-      - build:
-          requires:
-            - install-deps
       - test:
           requires:
-            - build
+            - install-deps
       - backwards-compatibility:
           requires:
             - test
