@@ -209,25 +209,27 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       this.sendLogsToPrinter(this.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
     };
 
-    const testHasAfterEachHooks = (test: any) => {
-      do {
-        if (test.parent._afterEach.length > 0) {
+    const testHasAfterEachHooks = (test: Mocha.Runnable) => {
+      let suite = test.parent
+      while (suite) {
+        const _afterEach: any[] = suite['_afterEach']
+        if (_afterEach.length > 0) {
           return true;
         }
-        test = test.parent;
-      } while(test.parent);
+        suite = suite.parent;
+      };
       return false;
     };
 
-    const isLastAfterEachHookForTest = (test: any, hook: any) => {
+    const isLastAfterEachHookForTest = (test: Mocha.Runnable, hook: Mocha.Hook) => {
       let suite = test.parent;
-      do {
-        if (suite._afterEach.length === 0) {
-          suite = suite.parent;
-        } else {
-          return suite._afterEach.indexOf(hook) === suite._afterEach.length - 1;
+      while (suite) {
+        const _afterEach: any[] = suite['_afterEach']
+        if (_afterEach.length > 0) {
+          return _afterEach.indexOf(hook) === _afterEach.length - 1;
         }
-      } while (suite);
+        suite = suite.parent;
+      };
       return false;
     };
 
@@ -294,8 +296,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     // Hack to have dynamic after hook per suite.
     // The onSpecReady in cypress is called before the hooks are 'condensed', or so
     // to say sealed and thus in this phase we can register dynamically hooks.
-    const oldOnSpecReady = (Cypress as any).onSpecReady;
-    (Cypress as any).onSpecReady = function () {
+    const oldOnSpecReady = Cypress.onSpecReady;
+    Cypress.onSpecReady = function () {
       Cypress.emit('before:mocha:hooks:seal');
       oldOnSpecReady(...arguments);
     };
@@ -311,8 +313,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
           suite.afterAll(hookCallback);
           // Make sure our hook is first so that other after all hook logs come after
           // the failed before all hooks logs.
-          const hook = (suite as any)._afterAll.pop();
-          (suite as any)._afterAll.unshift(hook);
+          const hook = suite["_afterAll"].pop();
+          suite["_afterAll"].unshift(hook);
           // Don't count this in the hook index and logs.
           hook._ctr_hook = true;
 

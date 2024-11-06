@@ -7,5 +7,7 @@ declare namespace Cypress {
       getLogs(format: 'json'): string | null;
       getLogs(format?: 'none' = 'none'):  CtrLog[] | null;
     }
+
+    onSpecReady(...args: any[]): void;
   }
 }

@@ -17,13 +17,13 @@ export default class LogCollectBrowserConsole extends LogCollectBase {
     Cypress.on(event, () => {
       const docIframe = (window.parent.document.querySelector("[id*='Your project: ']") ||
         window.parent.document.querySelector("[id*='Your App']")) as HTMLIFrameElement;
-      const appWindow = docIframe.contentWindow as Window & typeof globalThis;
+      const appWindow = docIframe.contentWindow as Window & typeof globalThis & {_ctr_registered: boolean};
 
       // In case of component tests the even will be called multiple times. Prevent registering multiple times.
-      if (!appWindow || (appWindow as any)._ctr_registered) {
+      if (!appWindow || appWindow._ctr_registered) {
         return;
       }
-      (appWindow as any)._ctr_registered = true;
+      appWindow._ctr_registered = true;
 
       const stringableTypes = ['string', 'number', 'undefined', 'function'];
       const processArg = (arg: any) => {

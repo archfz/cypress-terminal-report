@@ -39,8 +39,8 @@ export default abstract class LogCollectControlBase {
       }
     }
 
-    if (testState === 'failed' && mochaRunnable && (mochaRunnable as any)._retries > 0) {
-      testTitle += ` (Attempt ${mochaRunnable && (mochaRunnable as any)._currentRetry + 1})`
+    if (testState === 'failed' && mochaRunnable && mochaRunnable["_retries"] > 0) {
+      testTitle += ` (Attempt ${mochaRunnable &&  mochaRunnable["_currentRetry"] + 1})`
     }
 
     const prepareLogs = () => 
