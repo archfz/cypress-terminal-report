@@ -1,5 +1,5 @@
-const utils = require('../../src/utils').default
-const {expect} = require('chai');
+import utils from '../../src/utils'
+import {expect} from 'chai'
 
 const {checkMessageMarkdown} = utils
 
