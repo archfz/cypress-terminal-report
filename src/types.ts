@@ -1,6 +1,16 @@
 import CONSTANTS from "./constants";
 
-type ValueOf<T> = T[keyof T];
+// *****************************************************************************
+// Type operations
+// *****************************************************************************
+
+export type ValueOf<T> = T[keyof T];
+
+export type SetOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// *****************************************************************************
+// String unions
+// *****************************************************************************
 
 export type Severity = ValueOf<typeof CONSTANTS.SEVERITY>
 
@@ -16,6 +26,10 @@ export type Colors = ValueOf<typeof CONSTANTS.COLORS>
 export type State = ValueOf<typeof CONSTANTS.STATE>
 
 export type CommandTimings = ValueOf<typeof CONSTANTS.COMMAND_TIMINGS>
+
+// *****************************************************************************
+// Objects
+// *****************************************************************************
 
 export type Log = {
   type: LogType,

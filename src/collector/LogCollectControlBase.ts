@@ -1,7 +1,7 @@
 import CtrError from '../CtrError';
 import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectorState from "./LogCollectorState";
-import type {MessageData, State, TestData} from "../types";
+import type {MessageData, SetOptional, State, TestData} from "../types";
 
 export default abstract class LogCollectControlBase {
   protected abstract collectorState: LogCollectorState;
@@ -21,7 +21,6 @@ export default abstract class LogCollectControlBase {
     } = {}
   ) {
     let testState = options.state || mochaRunnable.state;
-    if (!testState) return;
 
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
@@ -61,7 +60,7 @@ export default abstract class LogCollectControlBase {
     this.triggerSendTask(buildDataMessage, options.noQueue || false, wait);
   }
 
-  protected abstract triggerSendTask(buildDataMessage: (continuous?: boolean) => MessageData, noQueue: boolean, wait: number): void;
+  protected abstract triggerSendTask(buildDataMessage: (continuous?: boolean) => SetOptional<MessageData, 'state'>, noQueue: boolean, wait: number): void;
 
   prepareLogs(logStackIndex: number, testData: TestData) {
     let logsCopy = this.collectorState.consumeLogStacks(logStackIndex);
