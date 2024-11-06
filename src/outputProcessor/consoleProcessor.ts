@@ -8,7 +8,7 @@ const KNOWN_LOG_TYPES = Object.values(LOG_TYPES);
 
 const LOG_SYMBOLS = (() =>
   process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color'
-    ? CONSTANTS.LOG_SYMBOLS : CONSTANTS.LOG_SYMBOLS_CONSOLE)();
+    ? CONSTANTS.LOG_SYMBOLS : CONSTANTS.LOG_SYMBOLS_BASIC)();
 
 const BOLD_COLORS: Colors[] = [COLORS.RED, COLORS.YELLOW];
 

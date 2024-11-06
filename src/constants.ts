@@ -25,6 +25,9 @@ const CONSTANTS = {
     WARNING: 'warning',
   },
 
+  /**
+   * Unicode log symbols
+   */
   LOG_SYMBOLS: {
     ERROR: '✘',
     WARNING: '❖',
@@ -33,7 +36,10 @@ const CONSTANTS = {
     DEBUG: '⚈',
     ROUTE: '➟'
   },
-  LOG_SYMBOLS_CONSOLE: {
+  /**
+   * Non-unicode log symbols
+   */
+  LOG_SYMBOLS_BASIC: {
     ERROR: 'x',
     WARNING: '!',
     SUCCESS: '+',

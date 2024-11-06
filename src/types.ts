@@ -17,7 +17,7 @@ export type Severity = ValueOf<typeof CONSTANTS.SEVERITY>
 export type LogType = ValueOf<typeof CONSTANTS.LOG_TYPES>
 
 export type LogSymbols = ValueOf<typeof CONSTANTS.LOG_SYMBOLS> |
-  ValueOf<typeof CONSTANTS.LOG_SYMBOLS_CONSOLE> | '-'
+  ValueOf<typeof CONSTANTS.LOG_SYMBOLS_BASIC> | '-'
 
 export type LogOccurrence = ValueOf<typeof CONSTANTS.LOG_OCCURRENCE>
 
