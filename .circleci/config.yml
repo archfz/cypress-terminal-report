@@ -16,6 +16,7 @@ jobs:
     docker:
       - image: cypress/base:20.5.0
     steps:
+      - checkout
       - run:
           name: 'Prettier Check'
           command: npm run format:check
@@ -25,6 +26,7 @@ jobs:
       - image: cypress/base:20.5.0
     parallelism: 3
     steps:
+      - checkout
       - run:
           name: Build
           command: npm run build
