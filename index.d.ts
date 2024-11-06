@@ -24,8 +24,7 @@ declare namespace Cypress {
     state(key: 'error', error: Error): void
   }
 
-  interface Chainable {
-    catch: Promise<void>['catch']
+  interface Chainable<Subject = any> extends Pick<Promise<Subject>, 'catch'> {
   }
 }
 
