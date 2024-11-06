@@ -2,6 +2,7 @@ import CONSTANTS from "../constants";
 import type {Log, LogType, MessageData} from "../types";
 import type {PluginOptions} from "../installLogsPrinter.types";
 import chalk from "chalk";
+import utils from "utils";
 
 const LOG_TYPES = CONSTANTS.LOG_TYPES;
 const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
@@ -127,7 +128,7 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let processedMessage = message;
+    let {isItalic, isBold, processedMessage} = utils.checkMessageMarkdown(message);
 
     let {color, icon, trim} = TYPE_COMPUTE[type](options);
     trim = trim || options.defaultTrimLength || 800;
@@ -142,6 +143,12 @@ function consoleProcessor(
 
     if (message.length > trim) {
       processedMessage = message.substring(0, trim) + ' ...';
+    }
+    if (isItalic) {
+      processedMessage = chalk.italic(processedMessage)
+    }
+    if (isBold) {
+      processedMessage = chalk.bold(processedMessage)
     }
 
     if (timeString) {

@@ -82,10 +82,31 @@ const utils = {
     return json;
   },
 
-  validatorErrToStr: function (errorList: Failure[]) {
+  validatorErrToStr(errorList: Failure[]) {
     return '\n' + errorList.map((error) => {
       return ` => ${error.path.join('.')}: ${error.message}`;
     }).join('\n') + '\n';
+  },
+
+  /**
+   * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
+   * into account for our loggers as well.
+   */
+  checkMessageMarkdown(message: string) {
+    let processedMessage = message
+    const isItalic = message.startsWith('_') && message.endsWith('_')
+    const isBold = message.startsWith('**') && message.endsWith('**')
+  
+    // TODO: account for both bold and italic?
+    if (isItalic) {
+      processedMessage = processedMessage.replace(/^_*/,"").replace(/_*$/,"")
+    }
+  
+    if (isBold) {
+      processedMessage = processedMessage.replace(/^(\*\*)*/,"").replace(/(\*\*)*$/,"")
+    }
+
+    return {isItalic, isBold, processedMessage}
   }
 }
 
