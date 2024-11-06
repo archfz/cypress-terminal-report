@@ -20,15 +20,14 @@ export default abstract class LogCollectControlBase {
       continuous?: boolean,
     } = {}
   ) {
-    let testState = options.state || mochaRunnable.state as State;
+    let testState = options.state || mochaRunnable.state;
+    if (!testState) return;
+
     let testTitle = options.title || mochaRunnable.title;
     let testLevel = 0;
 
     let spec = this.getSpecFilePath(mochaRunnable);
-
-    if (!spec) {
-      return;
-    }
+    if (!spec) return;
 
     let wait = typeof options.wait === 'number' ? options.wait : 5;
 
