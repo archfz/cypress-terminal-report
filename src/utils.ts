@@ -91,22 +91,29 @@ const utils = {
   /**
    * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
    * into account for our loggers as well.
+   * - italic: _text_
+   * - bold: **text**
+   * - colored: [color](text)
+   * https://github.com/cypress-io/cypress-documentation/issues/778
    */
   checkMessageMarkdown(message: string) {
-    let processedMessage = message
-    const isItalic = message.startsWith('_') && message.endsWith('_')
-    const isBold = message.startsWith('**') && message.endsWith('**')
-  
-    // TODO: account for both bold and italic?
-    if (isItalic) {
-      processedMessage = processedMessage.replace(/^_*/,"").replace(/_*$/,"")
-    }
-  
-    if (isBold) {
-      processedMessage = processedMessage.replace(/^(\*\*)*/,"").replace(/(\*\*)*$/,"")
+    const coloredMarkup = message.match(/^\[(.*)\]\((.*)\)/) // ie [blue](http://example.com)
+    const color = coloredMarkup?.at(1)
+    const coloredMessage = coloredMarkup?.at(2)
+    if (coloredMessage) {
+      message = coloredMessage
     }
 
-    return {isItalic, isBold, processedMessage}
+    const italicMatch = message.match(/^_(.*?)_$/); // ie _italic_
+    const isItalic = Boolean(italicMatch)
+    message = italicMatch?.at(1) ?? message;
+
+    const boldMatch = message.match(/^\*\*(.*?)\*\*$/);   // ie **bold**
+    const isBold = Boolean(boldMatch)
+    message = boldMatch?.at(1) ?? message;
+
+    // TODO: account for both bold and italic?
+    return { isItalic, isBold, color, processedMessage: message }
   }
 }
 

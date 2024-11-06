@@ -128,8 +128,8 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let {isItalic, isBold, processedMessage} = utils.checkMessageMarkdown(message);
-
+    let {isItalic, isBold, color: messageColor, processedMessage} = utils.checkMessageMarkdown(message);
+    
     let {color, icon, trim} = TYPE_COMPUTE[type](options);
     trim = trim || options.defaultTrimLength || 800;
 
@@ -141,14 +141,21 @@ function consoleProcessor(
       icon = LOG_SYMBOLS.warning;
     }
 
-    if (message.length > trim) {
-      processedMessage = message.substring(0, trim) + ' ...';
+    if (processedMessage.length > trim) {
+      processedMessage = processedMessage.substring(0, trim) + ' ...';
     }
     if (isItalic) {
       processedMessage = chalk.italic(processedMessage)
     }
     if (isBold) {
       processedMessage = chalk.bold(processedMessage)
+    }
+    if (messageColor) {
+      try {
+        processedMessage = chalk.keyword(messageColor)(processedMessage)
+      }
+      catch {
+      }
     }
 
     if (timeString) {
