@@ -1,8 +1,13 @@
-import {ICONS, runTest, commandBase, logLastRun} from '../utils';
+import {
+  ICONS,
+  runTest,
+  commandBase, logLastRun,
+} from "../utils";
 
 const {expect} = require('chai');
 
 describe('Component testing support.', () => {
+
   afterEach(function () {
     if (this.currentTest.state === 'failed') {
       logLastRun();

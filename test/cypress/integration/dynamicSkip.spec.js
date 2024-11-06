@@ -14,10 +14,10 @@ describe('Dynamic skip', () => {
   it('test3', () => {
     cy.log('test3 1');
     cy.log('test3 2');
-    cy.log('test3 3');
+    cy.log('test3 3')
     cy.wrap({}).then(() => {
       cy.state('runnable').ctx.skip();
-    });
+    })
     cy.log('test3 skipped log');
   });
 

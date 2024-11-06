@@ -24,31 +24,33 @@ describe('Fetch Api', () => {
     cy.wait('@putComment', {timeout: 1000});
 
     cy.get('.breaking-get', {timeout: 100});
-  });
+  })
 
   context('Timeout', () => {
+
     it('forceNetworkError ', () => {
       cy.visit('/commands/network-requests');
-
+  
       cy.intercept(
         {
           method: 'PUT',
           url: 'comments/*',
+  
         },
         {
           forceNetworkError: true,
         }
       ).as('putComment');
-
+  
       cy.window().then((w) => {
         fetch('/comments/10', {
           method: 'PUT',
           body: 'test',
         }).catch(console.error);
       });
-
+  
       cy.wait('@putComment', {timeout: 1000});
-
+  
       cy.get('.breaking-get', {timeout: 100});
     });
 
@@ -56,33 +58,36 @@ describe('Fetch Api', () => {
     // cy:command ✘  uncaught exception        AbortError: The user aborted a request.
     it('timeout using AbortController', () => {
       cy.visit('/commands/network-requests');
-
+  
       cy.intercept(
         {
           method: 'PUT',
           url: 'comments/*',
+  
         },
         {
           delay: 500,
         }
       ).as('putComment');
-
+  
       cy.window().then((w) => {
+  
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 100);
-
+  
         fetch('/comments/10', {
           method: 'PUT',
           body: 'test',
-          signal: controller.signal,
+          signal: controller.signal
         }).catch(console.error);
       });
-
+  
       cy.wait('@putComment', {timeout: 1000});
-
+  
       cy.get('.breaking-get', {timeout: 1});
     });
   });
+ 
 
   context('Real Fetch Requests', () => {
     const testRealFetchRequest = (options) => {
@@ -107,11 +112,9 @@ describe('Fetch Api', () => {
         button.className = 'network-request btn btn-primary';
         button.innerHTML = 'Fetch Request ';
         button.addEventListener('click', () =>
-          fetch(options.url)
-            .then(() => {
-              containerDiv.innerHTML = 'received response';
-            })
-            .catch(console.error)
+          fetch(options.url).then(() => {
+            containerDiv.innerHTML = 'received response';
+          }).catch(console.error)
         );
         containerDiv.before(button);
       });

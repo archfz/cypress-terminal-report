@@ -1,22 +1,20 @@
 describe('XHR all types.', () => {
+
   it('XHR body formats', () => {
     cy.visit('/commands/network-requests');
 
-    cy.intercept(
-      {
-        method: 'PUT',
-        url: 'comments/*',
+    cy.intercept({
+      method: 'PUT',
+      url: 'comments/*',
+    }, {
+      statusCode: 403,
+      headers: {
+        'Test-Header': 'data',
       },
-      {
-        statusCode: 403,
-        headers: {
-          'Test-Header': 'data',
-        },
-        body: {
-          key: 'data',
-        },
-      }
-    ).as('putComment');
+      body: {
+        'key': 'data'
+      },
+    }).as('putComment');
 
     cy.get('.network-put').click();
     cy.wait('@putComment');
@@ -29,11 +27,11 @@ describe('XHR all types.', () => {
       method: 'POST',
       url: 'http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431',
       headers: {
-        token: 'test',
+        'token': 'test',
       },
       body: {
-        testitem: 'ha',
-      },
+        testitem: 'ha'
+      }
     });
 
     cy.get('.breaking-get', {timeout: 1});
@@ -63,10 +61,10 @@ describe('XHR all types.', () => {
       networkErrorButton.className = 'network-error btn btn-primary';
       networkErrorButton.innerHTML = 'Request error';
       networkErrorButton.addEventListener('click', () =>
-        window.fetch('http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431').then(() => {
-          networkErrorMessage.innerHTML = 'received response';
-        })
-      );
+        window.fetch('http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431')
+          .then(() => {
+            networkErrorMessage.innerHTML = 'received response';
+          }));
       networkErrorMessage.before(networkErrorButton);
     });
     cy.get('.network-error-message').should('not.contain', 'received response');
@@ -89,9 +87,9 @@ describe('XHR all types.', () => {
 
     cy.window().then((w) => {
       const controller = new AbortController();
-      const {signal} = controller;
+      const { signal } = controller;
 
-      fetch('/comments/10', {signal}).catch((e) => {
+      fetch("/comments/10", { signal }).catch(e => {
         console.warn(`Fetch 1 error: ${e.message}`);
       });
       controller.abort();
@@ -100,4 +98,5 @@ describe('XHR all types.', () => {
     cy.log('asd');
     cy.get('.breaking-get', {timeout: 1000});
   });
+
 });

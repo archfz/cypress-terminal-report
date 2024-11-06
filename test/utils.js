@@ -22,7 +22,7 @@ export const ICONS = (() => {
 export const PADDING = '                    ';
 
 export const commandBase = (env = [], specs = [], component = false) =>
-  `${commandPrefix} run --env "${env.join(',')}" --headless ${component ? '--component' : ''} --config video=false -s ${specs.map((s) => (component ? `cypress/component/${s}` : `cypress/integration/${s}`))}`;
+  `${commandPrefix} run --env "${env.join(',')}" --headless ${component ? '--component' : ''} --config video=false -s ${specs.map(s => component ? `cypress/component/${s}` : `cypress/integration/${s}`)}`;
 
 let lastRunOutput = '';
 let lastRunCommand = '';
@@ -35,54 +35,50 @@ export const logLastRun = () => {
 };
 
 export const runTest = async (command, callback) => {
-  await new Promise((resolve) => {
-    exec(
-      command,
-      {encoding: 'UTF-8', env: {...process.env, NO_COLOR: 1}},
-      (error, stdout, stderr) => {
-        if (stderr) {
-          console.error(stderr);
-        }
-
-        let from = stdout.indexOf('Running:  ');
-        let to = stdout.lastIndexOf('(Results)');
-        if (from !== -1 && to !== -1) {
-          stdout = stdout.slice(from, to);
-        }
-
-        lastRunOutput = stdout;
-        lastRunCommand = command;
-        // Normalize line endings for unix.
-        const normalizedStdout = stdout.replace(/\r\n/g, '\n');
-        callback(error, normalizedStdout, stderr);
-        expect(normalizedStdout).to.not.contain("CypressError: `cy.task('ctrLogMessages')` failed");
-
-        resolve();
+  await new Promise(resolve => {
+    exec(command, {encoding: "UTF-8", env: {...process.env, NO_COLOR: 1}}, (error, stdout, stderr) => {
+      if (stderr) {
+        console.error(stderr);
       }
-    );
+
+      let from = stdout.indexOf('Running:  ');
+      let to = stdout.lastIndexOf('(Results)');
+      if (from !== -1 && to !== -1) {
+        stdout = stdout.slice(from, to);
+      }
+
+      lastRunOutput = stdout;
+      lastRunCommand = command;
+      // Normalize line endings for unix.
+      const normalizedStdout = stdout.replace(/\r\n/g, "\n");
+      callback(error, normalizedStdout, stderr);
+      expect(normalizedStdout).to.not.contain("CypressError: `cy.task('ctrLogMessages')` failed");
+
+      resolve();
+    });
   });
 };
 
 export const runTestContinuous = async (command, afterOutput, callback) => {
-  await new Promise((resolve) => {
+  await new Promise(resolve => {
     let allData = '';
     let startTime;
     const mainCommand = command.split(' ')[0];
-    const args = command.split(' ').map((arg) => arg.replace(/^"/, '').replace(/"$/, ''));
+    const args = command.split(' ').map(arg => arg.replace(/^"/, '').replace(/"$/, ''));
     args.shift();
 
-    const child = spawn(mainCommand, args, {encoding: 'UTF-8', env: {...process.env, NO_COLOR: 1}});
+    const child = spawn(mainCommand, args, {encoding: "UTF-8", env: {...process.env, NO_COLOR: 1}});
 
     child.on('close', resolve);
 
     const dataCallback = (data) => {
       if (data.toString().includes(afterOutput)) {
-        startTime = new Date().getTime();
+        startTime = (new Date()).getTime();
       }
 
       if (startTime) {
         allData += data.toString();
-        callback(allData, (new Date().getTime() - startTime) / 1000);
+        callback(allData, ((new Date()).getTime() - startTime) / 1000);
       }
     };
 
@@ -101,22 +97,21 @@ export const outputCleanUpAndInitialization = (testOutputs, outRoot) => {
       fs.unlinkSync(path.join(outRoot.value, out));
     }
   });
-};
+}
 
 const osSpecificEol = (str) =>
   // Change line endings to win32 if needed
-  os.EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str;
+  (os.EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str);
 
 export const clean = (str, removeSlow = false) =>
   // Clean error trace as it changes from test to test.
-  str
-    .replace(/at [^(]+ \([^)]+\)/g, '')
+  str.replace(/at [^(]+ \([^)]+\)/g, '')
     // Clean new line of white space at the end.
     .replace(/\s+$/, '')
     // Clean slow test.
     .replace(/ \([\d.]+ ?m?s\)/g, removeSlow ? '' : ' (X ms)')
     // Normalize line endings across os.
-    .replace(/\r\n/g, '\n');
+    .replace(/\r\n/g, "\n");
 
 export const expectOutFilesMatch = (outputPath, specPath) => {
   const expectedBuffer = fs.readFileSync(specPath);
@@ -136,7 +131,7 @@ export const expectOutFilesMatch = (outputPath, specPath) => {
   }
 
   expect(clean(value), `Check ${outputPath} matched ${specPath}.`).to.eq(clean(expected));
-};
+}
 
 export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specExtName) => {
   testOutputs.value.forEach((out) => {
@@ -145,7 +140,7 @@ export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specExtName) 
       path.join(outRoot.value, out.replace(/\.([a-z]+)$/, '.spec.' + specExtName + '.$1'))
     );
   });
-};
+}
 
 export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
   fileNames.forEach((fileName) => {
@@ -153,8 +148,8 @@ export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toN
     if (!['json', 'txt'].includes(ext)) {
       ext = 'custom';
     }
-    let logString =
-      'cypress-terminal-report: Wrote ' + ext + ' logs to ' + path.join(outRoot.value, fileName);
+    let logString = 'cypress-terminal-report: Wrote ' + ext +
+      ' logs to ' + path.join(outRoot.value, fileName);
 
     if (toNot) {
       expect(stdout).to.not.contain(logString);
@@ -162,4 +157,4 @@ export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toN
       expect(stdout).to.contain(logString);
     }
   });
-};
+}

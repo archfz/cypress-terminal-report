@@ -8,11 +8,12 @@ import {
   outputCleanUpAndInitialization,
   expectOutputFilesToBeCorrect,
   PADDING,
-} from '../utils';
+} from "../utils";
 
 const {expect} = require('chai');
 
 describe('Misc.', () => {
+
   afterEach(function () {
     if (this.currentTest.state == 'failed') {
       logLastRun();
@@ -30,21 +31,17 @@ describe('Misc.', () => {
   it('Should properly set the breaking command in logs.', async () => {
     await runTest(commandBase([], [`waitFail.spec.js`]), (error, stdout, stderr) => {
       expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.breaking-wait`);
-      expect(stdout).to
-        .contain(`cy:xhr ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1
+      expect(stdout).to.contain(`cy:xhr ${ICONS.route}  (getComment) GET https://jsonplaceholder.cypress.io/comments/1
                     Status: 200`);
     });
   }).timeout(60000);
 
   it('Should be able to disable verbose.', async () => {
-    await runTest(
-      commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']),
-      (error, stdout) => {
-        expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to txt.`);
-        expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to json.`);
-        expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to custom.`);
-      }
-    );
+    await runTest(commandBase(['generateNestedOutput=1', 'disableVerbose=1'], ['multiple.dots.in.spec.js']), (error, stdout) => {
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to txt.`);
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to json.`);
+      expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to custom.`);
+    });
   }).timeout(60000);
 
   it('Should display correctly in console with multiple contexts.', async () => {
@@ -55,23 +52,16 @@ describe('Misc.', () => {
     });
   }).timeout(60000);
 
-  it('Should filter and process late update logs correctly. [backward-compatibility-skip]', async function () {
+  it('Should filter and process late update logs correctly. [backward-compatibility-skip]', async function() {
     this.retries(2);
-    await runTest(
-      commandBase(
-        ['filterKeepOnlyWarningAndError=1,processAllLogs=1'],
-        ['lateCommandUpdate.spec.js']
-      ),
-      (error, stdout, stderr) => {
-        expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
-        expect(stdout).to
-          .contain(`cy:xhr ${ICONS.warning}  | (putComment) STUBBED PUT https://example.cypress.io/comments/10
+    await runTest(commandBase(['filterKeepOnlyWarningAndError=1,processAllLogs=1'], ['lateCommandUpdate.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`cy:command ${ICONS.error}  | get\t.breaking-get`);
+      expect(stdout).to.contain(`cy:xhr ${ICONS.warning}  | (putComment) STUBBED PUT https://example.cypress.io/comments/10
                     Status: 404
                     Response body: {
                       "error": "Test message."
                     }`);
-      }
-    );
+    });
   }).timeout(30000);
 
   it('Should not send logs outside of tests and it should not break cypress errors.', async () => {
@@ -84,9 +74,7 @@ describe('Misc.', () => {
   it('Should not overlap error throw outside of spec.', async () => {
     await runTest(commandBase([], ['errorsOutside2.spec.js']), (error, stdout, stderr) => {
       expect(stdout).to.contain(`> Error thrown outside of describe.`);
-      expect(stdout).to.not.contain(
-        `TypeError: Cannot read properties of undefined (reading 'replace')`
-      );
+      expect(stdout).to.not.contain(`TypeError: Cannot read properties of undefined (reading 'replace')`);
     });
   }).timeout(30000);
 
@@ -95,10 +83,8 @@ describe('Misc.', () => {
     const testOutputs = {};
     outputCleanUpAndInitialization(testOutputs, outRoot);
 
-    await runTest(
-      commandBase(['breaking=1', 'generateOutput=1'], ['retries.spec.js']),
-      (error, stdout, stderr) => {
-        expect(stdout).to.contain(`
+    await runTest(commandBase(['breaking=1', 'generateOutput=1'], ['retries.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`
   Retries
     (Attempt 1 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking
@@ -107,7 +93,7 @@ describe('Misc.', () => {
     (Attempt 2 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking`);
 
-        expect(stdout).to.contain(`
+      expect(stdout).to.contain(`
   (Attempt 1 of 3) fail but win
           cy:log ${ICONS.info}  Hello. currentRetry: 0
       cy:command ${ICONS.error}  contains\tFoobar
@@ -120,9 +106,8 @@ describe('Misc.', () => {
 
   ✓ fail but win`);
 
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'retries');
-      }
-    );
+      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'retries');
+    });
   }).timeout(30000);
 
   it('Should work correctly with skipped tests.', async function () {
@@ -156,61 +141,37 @@ describe('Misc.', () => {
           expect(clean(data)).to.contain(`cy:log ${ICONS.info}  log again 1`);
           expect(clean(data)).to.not.contain(`cy:log ${ICONS.info}  log again 2`);
         }
-      }
-    );
+      });
 
-    expect(
-      checksMade,
-      'No checks where made. The process might have ended too early.'
-    ).to.be.greaterThan(0);
+    expect(checksMade, "No checks where made. The process might have ended too early.").to.be.greaterThan(0)
   }).timeout(60000);
 
   it('Should log command times in timestamp.', async function () {
-    await runTest(
-      commandBase(['commandTimings=timestamp'], ['happyFlow.spec.js']),
-      (error, stdout, stderr) => {
-        expect(clean(stdout, true)).to.match(/Time: \d+\n      cy:command/);
-      }
-    );
+    await runTest(commandBase(['commandTimings=timestamp'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\n      cy:command/);
+    });
   }).timeout(60000);
 
   it('Should log command times in seconds.', async function () {
-    await runTest(
-      commandBase(['commandTimings=seconds'], ['happyFlow.spec.js']),
-      (error, stdout, stderr) => {
-        expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
-      }
-    );
+    await runTest(commandBase(['commandTimings=seconds'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+    });
   }).timeout(60000);
 
   it('Should log command times in seconds with extended collector and before hooks.', async function () {
-    await runTest(
-      commandBase(['commandTimings=seconds', 'enableExtendedCollector=1'], ['beforeLogs.spec.js']),
-      (error, stdout, stderr) => {
-        expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
-      }
-    );
+    await runTest(commandBase(['commandTimings=seconds', 'enableExtendedCollector=1'], ['beforeLogs.spec.js']), (error, stdout, stderr) => {
+      expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+    });
   }).timeout(60000);
 
   it('Should output debug logs when enabled.', async () => {
-    await runTest(
-      commandBase(
-        ['debug=1', 'outputCompactLogs=1', 'generateSimpleOutput=1', 'collectTestLogsPlugin=1'],
-        ['happyFlow.spec.js']
-      ),
-      (error, stdout, stderr) => {
-        expect(stdout).to.contain(
-          `[cypress-terminal-report:debug] ctrLogMessages: Received 42 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow, with state failed.`
-        );
-        expect(stdout).to.contain(`[cypress-terminal-report:debug] Compacting 42 logs.`);
-        expect(stdout).to.contain(
-          `[cypress-terminal-report:debug] Logging to console 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`
-        );
-        expect(stdout).to.contain(
-          `[cypress-terminal-report:debug] Running \`collectTestLogs\` on 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`
-        );
-        expect(stdout).to.contain(`[cypress-terminal-report:debug] ctrLogFiles: Triggered.`);
-      }
-    );
+    await runTest(commandBase(['debug=1', 'outputCompactLogs=1', 'generateSimpleOutput=1', 'collectTestLogsPlugin=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] ctrLogMessages: Received 42 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow, with state failed.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Compacting 42 logs.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Logging to console 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] Running \`collectTestLogs\` on 13 messages, for cypress/integration/happyFlow.spec.js:Happy flow. -> Happy flow.`);
+      expect(stdout).to.contain(`[cypress-terminal-report:debug] ctrLogFiles: Triggered.`);
+    });
   }).timeout(60000);
+
 });

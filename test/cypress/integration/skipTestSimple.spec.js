@@ -1,9 +1,11 @@
 describe('Error repro', () => {
   it('Test1', () => {
-    cy.log('What');
+    cy.log('What')
   });
 
-  it.skip('test2', () => {});
+  it.skip('test2', () => {
+  });
 
-  it.skip('test3', () => {});
+  it.skip('test3', () => {
+  });
 });

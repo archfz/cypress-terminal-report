@@ -1,8 +1,12 @@
-import {runTest, commandBase, logLastRun} from '../utils';
+import {
+  runTest,
+  commandBase, logLastRun,
+} from "../utils";
 
 const {expect} = require('chai');
 
 describe('Validation.', () => {
+
   afterEach(function () {
     if (this.currentTest.state == 'failed') {
       logLastRun();
@@ -10,11 +14,8 @@ describe('Validation.', () => {
   });
 
   it('Should print proper validation error on invalid plugin install options.', async () => {
-    await runTest(
-      commandBase(['pluginBadConfig=1'], ['happyFlow.spec.js']),
-      (error, stdout, stderr) => {
-        expect(stdout).to
-          .contain(` => printLogsToConsole: Expected one of \`"onFail","always","never"\`, but received: true
+    await runTest(commandBase(['pluginBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(` => printLogsToConsole: Expected one of \`"onFail","always","never"\`, but received: true
  => printLogsToFile: Expected one of \`"onFail","always","never"\`, but received: true
  => compactLogs: Expected a number, but received: false
  => outputRoot: Expected a string, but received: 0
@@ -24,24 +25,18 @@ describe('Validation.', () => {
  => collectTestLogs: Expected a function, but received: ""
  => outputVerbose: Expected a value of type \`boolean\`, but received: \`"false"\`
  => shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\``);
-      }
-    );
+    });
   }).timeout(60000);
 
   it('Should not fail with proper config.', async () => {
-    await runTest(
-      commandBase(['supportGoodConfig=1'], ['happyFlow.spec.js']),
-      (error, stdout, stderr) => {
-        expect(stdout).to.not.contain(`cypress-terminal-report: Invalid plugin install options:`);
-      }
-    );
+    await runTest(commandBase(['supportGoodConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.not.contain(`cypress-terminal-report: Invalid plugin install options:`);
+    });
   }).timeout(60000);
 
   it('Should print proper validation error on invalid support install options.', async () => {
-    await runTest(
-      commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']),
-      (error, stdout, stderr) => {
-        expect(stdout).to.contain(` => collectTypes: Expected an array value, but received: 0
+    await runTest(commandBase(['supportBadConfig=1'], ['happyFlow.spec.js']), (error, stdout, stderr) => {
+      expect(stdout).to.contain(` => collectTypes: Expected an array value, but received: 0
  => filterLog: Expected a function, but received: "string"
  => processLog: Expected a function, but received: true
  => collectTestLogs: Expected a function, but received: "string"
@@ -49,7 +44,7 @@ describe('Validation.', () => {
  => xhr.printRequestData: Expected a value of type \`boolean\`, but received: \`""\`
  => xhr.shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\`
  => shouldNotBeHere: Expected a value of type \`never\`, but received: \`""\``);
-      }
-    );
+    });
   }).timeout(60000);
+
 });
