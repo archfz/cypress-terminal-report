@@ -15,6 +15,8 @@ describe('utils', () => {
                 {message: '**text text*'},
                 {message: '*text text*'},
                 {message: '[blue](text text)', color: 'blue', processedMessage: 'text text'},
+                {message: '[orange](text text)', color: 'orange', processedMessage: 'text text'},
+                {message: '[noncolor](text text)', processedMessage: 'text text'},
             ]
             tests.forEach(({message, ...expected}) => {
                 expect(checkMessageMarkdown(message)).to.deep.equal({

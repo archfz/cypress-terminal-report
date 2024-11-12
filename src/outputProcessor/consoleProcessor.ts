@@ -152,7 +152,10 @@ function consoleProcessor(
     }
     if (messageColor) {
       try {
-        processedMessage = chalk[messageColor as "red"]?.(processedMessage)
+        const colorFunction = chalk[messageColor as keyof typeof chalk]
+        if (colorFunction === chalk) {
+          processedMessage = colorFunction(processedMessage)
+        }
       }
       catch {
       }
