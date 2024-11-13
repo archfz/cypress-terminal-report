@@ -147,7 +147,7 @@ function consoleProcessor(
       processedMessage = utils.applyMessageMarkdown(processedMessage, {
         bold: chalk.bold,
         italic: chalk.italic,
-        color: (str, color) => {
+        colored: (str, color) => {
           try {
             const colorFunction = chalk[color as keyof typeof chalk]
             if (colorFunction === chalk) {

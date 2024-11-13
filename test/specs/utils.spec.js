@@ -29,7 +29,7 @@ describe('utils', () => {
                 expect(applyMessageMarkdown(message, {
                     bold: (str) => `B${str}B`,
                     italic: (str) => `I${str}I`,
-                    color: (str, color) => `<${color}>${str}<>`
+                    colored: (str, color) => `<${color}>${str}<>`
                 })).to.deep.equal(expected)
             })
         })

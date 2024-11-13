@@ -2,6 +2,20 @@ import jsonPrune from "./jsonPrune";
 import {compare} from "compare-versions";
 import {Failure} from "superstruct";
 
+function getMarkdownRegex(numWrapperChars:number){
+  // allow for escape characters
+  const asteriskWrapper=`(?:(?<!\\\\)\\*){${numWrapperChars}}`
+  const underscoreWrapper=`(?:(?<!\\\\)_){${numWrapperChars}}`
+  return new RegExp(`${asteriskWrapper}(.+?)${asteriskWrapper}|${underscoreWrapper}(.+?)${underscoreWrapper}`)
+}
+
+const MARKDOWN_REGEX = {
+  BOLD_AND_ITALIC : getMarkdownRegex(3),
+  BOLD: getMarkdownRegex(2),
+  ITALIC: getMarkdownRegex(1),
+  COLORED: new RegExp(/\[(.*)\]\((.*)\)/)
+}
+
 const utils = {
   nonQueueTask: async (name: string, data: Record<string, any>) => {
     if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {
@@ -92,29 +106,29 @@ const utils = {
    * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
    * into account for our loggers as well.
    */
-  applyMessageMarkdown(message: string, {bold, italic, color}: {
+  applyMessageMarkdown(message: string, {bold, italic, colored}: {
     bold: (str: string) => string,
     italic: (str: string) => string,
-    color?: (str: string, color: string) => string
+    colored?: (str: string, color: string) => string
   }) {
     // Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
 
     // bold and italic, i.e. ***text*** or ___text___
-    message = message.replace(new RegExp(/\*\*\*(.+?)\*\*\*|___(.+?)___/),
+    message = message.replace(MARKDOWN_REGEX.BOLD_AND_ITALIC,
       (str, group1, group2) => bold(italic(group1 || group2)))
 
     // bold, i.e. **text** or __text__
-    message = message.replace(new RegExp(/\*\*(.+?)\*\*|__(.+?)__/),
+    message = message.replace(MARKDOWN_REGEX.BOLD,
       (str, group1, group2) => bold(group1 || group2))
 
     // italic, i.e. *text* or _text_
-    message = message.replace(new RegExp(/\*(.+?)\*|_(.+?)_/),
+    message = message.replace(MARKDOWN_REGEX.ITALIC,
       (str, group1, group2) => italic(group1 || group2))
 
-    if (color) {
+    if (colored) {
       // colored, i.e. [blue](http://example.com)
-      message = message.replace(new RegExp(/\[(.*)\]\((.*)\)/),
-        (str, group1: string, group2: string) => color(group2, group1))
+      message = message.replace(MARKDOWN_REGEX.COLORED,
+        (str, group1: string, group2: string) => colored(group2, group1))
     }
 
     return message
