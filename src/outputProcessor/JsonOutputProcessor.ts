@@ -10,6 +10,7 @@ export default class JsonOutputProcessor extends BaseOutputProcessor implements 
     Object.entries(allMessages).forEach(([spec, tests]) => {
       let data: Record<string, Record<string, Log[]>> = {[spec]: {}};
 
+      
       Object.entries(tests).forEach(([test, messages]) => {
         data[spec][test] = messages.map((message) => {
           const {timeString, ...data} = message;
