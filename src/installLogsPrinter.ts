@@ -10,17 +10,19 @@ import type {
   PluginOptions,
   AllMessages,
 } from './installLogsPrinter.types';
-import type {Log, LogType, MessageData, Severity} from './types';
-import {IOutputProcecessor} from './outputProcessor/BaseOutputProcessor';
+import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from './types';
+import type {IOutputProcecessor} from './outputProcessor/BaseOutputProcessor';
 import utils from './utils';
 import consoleProcessor from './outputProcessor/consoleProcessor';
 import {validate} from 'superstruct';
 import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
 
-// prettier-ignore
-const OUTPUT_PROCESSOR_TYPE: Record<string, {new (file: string): IOutputProcecessor}> = {
-  'json': JsonOutputProcessor,
-  'txt': TextOutputProcessor,
+const OUTPUT_PROCESSOR_TYPE: Record<
+  BuiltinOutputProcessorsTypes,
+  {new (file: string): IOutputProcecessor}
+> = {
+  json: JsonOutputProcessor,
+  txt: TextOutputProcessor,
 };
 
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
@@ -138,9 +140,9 @@ function logToFiles(options: PluginOptions) {
 
 function logOutputTarget(processor: IOutputProcecessor) {
   let message;
-  let standardOutputType = Object.keys(OUTPUT_PROCESSOR_TYPE).find(
-    (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
-  );
+  let standardOutputType = (
+    Object.keys(OUTPUT_PROCESSOR_TYPE) as BuiltinOutputProcessorsTypes[]
+  ).find((type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]);
   if (standardOutputType) {
     message = `Wrote ${standardOutputType} logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   } else {
@@ -157,7 +159,10 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  const createProcessorFromType = (file: string, type: string | CustomOutputProcessorCallback) => {
+  const createProcessorFromType = (
+    file: string,
+    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
+  ) => {
     if (typeof type === 'string') {
       return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
     }

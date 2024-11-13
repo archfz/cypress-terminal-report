@@ -1,7 +1,4 @@
 import CONSTANTS from '../constants';
-import LogFormat from './LogFormat';
-import LogCollectorState from './LogCollectorState';
-import type {ExtendedSupportOptions} from '../installLogsCollector.types';
 import LogCollectBase from './LogCollectBase';
 
 export default class LogCollectCypressRequest extends LogCollectBase {
@@ -9,10 +6,10 @@ export default class LogCollectCypressRequest extends LogCollectBase {
     const isValidHttpMethod = (str: any) =>
       typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e: any) =>
+    const isNetworkError = (e: Error) =>
       e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e: any) =>
+    const isStatusCodeFailure = (e: Error) =>
       e.message && e.message.startsWith('`cy.request()` failed on:');
 
     const RESPONSE_START = '\n\nThe response we got was:\n\n';
@@ -56,7 +53,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
       return errorPart.trim();
     };
 
-    Cypress.Commands.overwrite('request', (originalFn: any, ...args: any[]) => {
+    Cypress.Commands.overwrite('request', (originalFn, ...args) => {
       if (typeof args === 'object' && args !== null && args[0]['log'] === false) {
         return originalFn(...args);
       }
@@ -72,7 +69,9 @@ export default class LogCollectCypressRequest extends LogCollectBase {
         requestBody = args[0].body;
         requestHeaders = args[0].headers;
       } else if (isValidHttpMethod(args[0])) {
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         log = `${args[0]} ${args[1]}`;
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         requestBody = args[3];
       } else {
         log = `${args[0]}`;
@@ -88,7 +87,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
         };
 
         return originalFn(...args)
-          .catch(async (e: any) => {
+          .catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -121,7 +120,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
             ]);
             throw e;
           })
-          .then((response: any) => {
+          .then((response) => {
             return Promise.all([
               this.format.formatXhrData(response.headers),
               this.format.formatXhrData(response.body),
@@ -145,7 +144,7 @@ export default class LogCollectCypressRequest extends LogCollectBase {
               return response;
             });
           });
-      });
+      }) as any as ReturnType<typeof originalFn>;
     });
   }
 }

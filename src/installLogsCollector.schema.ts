@@ -1,21 +1,12 @@
+import CONSTANTS from './constants';
 import {array, boolean, enums, func, object, optional} from 'superstruct';
 
 const InstallLogsCollectorSchema = object({
   collectTypes: optional(
     array(
-      enums([
-        'cons:log',
-        'cons:info',
-        'cons:warn',
-        'cons:error',
-        'cons:debug',
-        'cy:log',
-        'cy:xhr',
-        'cy:fetch',
-        'cy:request',
-        'cy:intercept',
-        'cy:command',
-      ])
+      enums(
+        Object.values(CONSTANTS.LOG_TYPES).filter((t) => t !== CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE)
+      )
     )
   ),
   filterLog: optional(func()),
@@ -30,7 +21,7 @@ const InstallLogsCollectorSchema = object({
   ),
   enableExtendedCollector: optional(boolean()),
   enableContinuousLogging: optional(boolean()),
-  commandTimings: optional(enums(['timestamp', 'seconds'])),
+  commandTimings: optional(enums(Object.values(CONSTANTS.COMMAND_TIMINGS))),
   debug: optional(boolean()),
 });
 

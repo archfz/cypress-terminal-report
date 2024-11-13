@@ -14,7 +14,7 @@ export type StackLogArray = StackLog[] & {_ctr_before_each?: number};
 export default class LogCollectorState extends EventTarget {
   afterHookIndexes: number[];
   beforeHookIndexes: number[];
-  currentTest: any;
+  currentTest: Mocha.Runnable;
   isStrict: boolean;
   listeners: Record<string, CallableFunction[]>;
   logStacks: Array<StackLogArray | null>;
@@ -25,6 +25,7 @@ export default class LogCollectorState extends EventTarget {
     super();
 
     this.listeners = {};
+    // @ts-ignore gets initialized to the correct state anyways
     this.currentTest = null;
     this.logStacks = [];
     this.beforeHookIndexes = [];
@@ -198,7 +199,7 @@ export default class LogCollectorState extends EventTarget {
     this.afterHookIndexes.shift();
   }
 
-  startTest(test: any) {
+  startTest(test: Mocha.Test) {
     if (this.config.debug) {
       console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'starting test: ' + test.title);
     }

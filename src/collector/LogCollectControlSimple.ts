@@ -3,7 +3,7 @@ import LogCollectControlBase from './LogCollectControlBase';
 import utils from '../utils';
 import type LogCollectorState from './LogCollectorState';
 import type {ExtendedSupportOptions} from '../installLogsCollector.types';
-import type {MessageData} from '../types';
+import type {MessageData, State} from '../types';
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
@@ -52,17 +52,14 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       }
     });
 
-    // @ts-ignore
-    Cypress.mocha.getRunner().on('test', (test: Mocha.Runnable) => {
+    Cypress.mocha.getRunner().on('test', (test) => {
       this.collectorState.startTest(test);
     });
 
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite', () => {
       this.collectorState.startSuite();
     });
 
-    // @ts-ignore
     Cypress.mocha.getRunner().on('suite end', () => {
       this.collectorState.endSuite();
     });
@@ -79,10 +76,9 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     });
 
     // Logs commands if test was manually skipped.
-    // @ts-ignore
     Cypress.mocha.getRunner().on('pending', function () {
       let test = self.collectorState.getCurrentTest();
-      if (test && test.state === 'pending') {
+      if (test?.state === ('pending' as State)) {
         // In case of fully skipped tests we might not yet have a log stack.
         self.collectorState.ensureLogStack();
         self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {

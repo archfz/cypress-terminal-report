@@ -6,13 +6,13 @@ export default class LogCollectCypressCommand extends LogCollectBase {
   ignoredCommands = ['xhr', 'log', 'request'];
 
   register() {
-    const isOfInterest = (options: any) =>
+    const isOfInterest = (options: Cypress.ObjectLike) =>
       options.instrument === 'command' &&
       options.consoleProps &&
       !this.ignoredCommands.includes(options.name) &&
       !(options.name === 'task' && options.message.match(/ctrLogMessages/));
 
-    const formatLogMessage = (options: any) => {
+    const formatLogMessage = (options: Cypress.ObjectLike) => {
       let message = options.name + '\t' + options.message;
 
       if (options.expected && options.actual) {

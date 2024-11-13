@@ -41,7 +41,7 @@ export default class LogFormat {
     return logMessage.trimEnd();
   }
 
-  formatXhrData(body: any) {
+  formatXhrData(body: any): Promise<string> {
     if (!body) {
       return Promise.resolve('<EMPTY>');
     } else if (typeof body === 'string') {
