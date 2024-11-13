@@ -128,7 +128,7 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let processedMessage = message
+    let processedMessage = message;
     let {color, icon, trim = options.defaultTrimLength || 800} = TYPE_COMPUTE[type](options);
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
@@ -140,7 +140,7 @@ function consoleProcessor(
     }
 
     if (message.length > trim) {
-      processedMessage = processedMessage.substring(0, trim) + ' ...';
+      processedMessage = message.substring(0, trim) + ' ...';
     }
 
     if (type == "cy:log") {
