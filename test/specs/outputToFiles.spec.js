@@ -6,12 +6,11 @@ import {
   expectOutFilesMatch,
   outputCleanUpAndInitialization, logLastRun,
 } from "../utils";
-
-const {expect} = require('chai');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
-const path = require('path');
-const glob = require('glob');
+import { expect } from 'chai'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as glob from 'glob'
+import fsExtra from 'fs-extra'
 
 describe('Output to files.', () => {
 
