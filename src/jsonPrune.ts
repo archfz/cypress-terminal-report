@@ -1,25 +1,26 @@
 // From https://github.com/Canop/JSON.prune/blob/master/JSON.prune.js
+// @ts-nocheck - Copied from js file, so don't need to add types.
 
 var DEFAULT_MAX_DEPTH = 6;
 var DEFAULT_ARRAY_MAX_LENGTH = 50;
 var DEFAULT_PRUNED_VALUE = '"[DepthPruned]"';
 var DEFAULT_CIRCULAR_VALUE = '"[Circular]"';
-var seen: any; // Same variable used for all stringifications
-var iterator: any; // either forEachEnumerableOwnProperty, forEachEnumerableProperty or forEachProperty
+var seen; // Same variable used for all stringifications
+var iterator; // either forEachEnumerableOwnProperty, forEachEnumerableProperty or forEachProperty
 
 // iterates on enumerable own properties (default behavior)
-var forEachEnumerableOwnProperty = function(obj: any, callback: any) {
+var forEachEnumerableOwnProperty = function(obj, callback) {
   for (var k in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, k)) callback(k);
   }
 }
 // iterates on enumerable properties
-var forEachEnumerableProperty = function(obj: any, callback: any) {
+var forEachEnumerableProperty = function(obj, callback) {
   for (var k in obj) callback(k);
 }
 // iterates on properties, even non enumerable and inherited ones
 // This is dangerous
-var forEachProperty = function(obj: any, callback: any, excluded: any) {
+var forEachProperty = function(obj, callback, excluded) {
   if (obj==null) return;
   excluded = excluded || {};
   Object.getOwnPropertyNames(obj).forEach(function(k){
@@ -45,10 +46,9 @@ var	cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f
     '\\': '\\\\'
   };
 
-function quote(string: any) {
+function quote(string) {
   escapable.lastIndex = 0;
-  return escapable.test(string) ? '"' + string.replace(escapable, function (a: any) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+  return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
     var c = meta[a];
     return typeof c === 'string'
       ? c
@@ -57,9 +57,9 @@ function quote(string: any) {
 }
 
 
-const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
+const jsonPrune = function (value, depthDecr, arrayMaxLength) {
   var prunedString = DEFAULT_PRUNED_VALUE;
-  var replacer: any;
+  var replacer;
   if (typeof depthDecr == "object") {
     var options = depthDecr;
     depthDecr = options.depthDecr;
@@ -79,8 +79,8 @@ const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
   seen = [];
   depthDecr = depthDecr || DEFAULT_MAX_DEPTH;
   arrayMaxLength = arrayMaxLength || DEFAULT_ARRAY_MAX_LENGTH;
-  function str(key: any, holder: any, depthDecr: any) {
-    var i, k, v, length, partial: any, value = holder[key];
+  function str(key, holder, depthDecr) {
+    var i, k, v, length, partial, value = holder[key];
 
     if (value && typeof value === 'object' && typeof value.toPrunedJSON === 'function') {
       value = value.toPrunedJSON(key);
@@ -123,7 +123,7 @@ const jsonPrune = function (value: any, depthDecr: any, arrayMaxLength: any) {
         if (value instanceof RegExp) {
           return quote(value.toString());
         }
-        iterator(value, function(k: any) {
+        iterator(value, function(k) {
           try {
             v = str(k, value, depthDecr-1);
             if (v) partial.push(quote(k) + ':' + v);

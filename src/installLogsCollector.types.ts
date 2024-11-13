@@ -1,4 +1,4 @@
-import type {Log, LogType, TestData} from "./types";
+import type {CommandTimings, Log, LogType, TestData} from "./types";
 
 export interface SupportOptions {
   /**
@@ -71,7 +71,7 @@ export interface SupportOptions {
    * Adds time information to logs.
    * @default null
    */
-  commandTimings?: null | 'timestamp' | 'seconds'
+  commandTimings?: null | CommandTimings
 
   /**
    * Enabled debug logging.

@@ -1,6 +1,6 @@
 import jsonPrune from "./jsonPrune";
 import {compare} from "compare-versions";
-import {Failure} from "superstruct";
+import type {Failure} from "superstruct";
 
 // Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
 function getMarkdownRegex(numWrapperChars: number) {
@@ -95,11 +95,10 @@ const utils = {
     return json;
   },
 
-  validatorErrToStr(errorList: Failure[]) {
-    return '\n' + errorList.map((error) => {
-      return ` => ${error.path.join('.')}: ${error.message}`;
-    }).join('\n') + '\n';
-  },
+  validatorErrToStr: (errorList: Failure[]) => 
+    '\n' + 
+    errorList.map((error) => ` => ${error.path.join('.')}: ${error.message}`).join('\n') + 
+    '\n',
 
   /**
    * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this

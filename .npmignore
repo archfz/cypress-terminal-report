@@ -5,4 +5,5 @@ test
 *.png
 src/**/*.ts
 !src/**/*.d.ts
+*.internal.*
 tsconfig.json

@@ -1,16 +1,13 @@
 import CONSTANTS from '../constants';
-import LogFormat from "./LogFormat";
-import LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
 import LogCollectBase from "./LogCollectBase";
 
 export default class LogCollectCypressRequest extends LogCollectBase {
   register() {
     const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e: any) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+    const isNetworkError = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e: any) => e.message && e.message.startsWith('`cy.request()` failed on:');
+    const isStatusCodeFailure = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed on:');
 
     const RESPONSE_START = '\n\nThe response we got was:\n\n';
     const STATUS_START = 'Status: ';
@@ -53,8 +50,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
       return errorPart.trim();
     };
 
-    Cypress.Commands.overwrite('request', (originalFn: any, ...args: any[]) => {
-      if (typeof args === 'object' && args !== null && args[0]['log'] === false){
+    Cypress.Commands.overwrite('request', (originalFn, ...args) => {
+      if (typeof args === 'object' && args !== null && args[0]['log'] === false) {
         return originalFn(...args);
       }
 
@@ -69,7 +66,9 @@ export default class LogCollectCypressRequest extends LogCollectBase {
         requestBody = args[0].body;
         requestHeaders = args[0].headers;
       } else if (isValidHttpMethod(args[0])) {
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         log = `${args[0]} ${args[1]}`;
+        // @ts-ignore there are more than 1 cy.request types, but .overwrite only infers one.
         requestBody = args[3];
       } else {
         log = `${args[0]}`;
@@ -84,8 +83,8 @@ export default class LogCollectCypressRequest extends LogCollectBase {
             headers: formattedRequestHeaders,
             body: formattedRequestBody,
           };
-
-          return originalFn(...args).catch(async (e: any) => {
+          
+          return originalFn(...args).catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -113,29 +112,28 @@ export default class LogCollectCypressRequest extends LogCollectBase {
 
             this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
             throw e;
-          })
-            .then((response: any) => {
-              return Promise.all([
-                this.format.formatXhrData(response.headers),
-                this.format.formatXhrData(response.body)
-              ])
-                .then(([formattedResponseHeaders, formattedResponseBody]) => {
-                  log +=
-                    `\n` +
-                    this.format.formatXhrLog({
-                      request: requestData,
-                      response: {
-                        status: response.status,
-                        headers: formattedResponseHeaders,
-                        body: formattedResponseBody,
-                      },
-                    });
+          }).then((response) => {
+            return Promise.all([
+              this.format.formatXhrData(response.headers),
+              this.format.formatXhrData(response.body)
+            ])
+              .then(([formattedResponseHeaders, formattedResponseBody]) => {
+                log +=
+                  `\n` +
+                  this.format.formatXhrLog({
+                    request: requestData,
+                    response: {
+                      status: response.status,
+                      headers: formattedResponseHeaders,
+                      body: formattedResponseBody,
+                    },
+                  });
 
-                  this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
-                  return response;
-                });
-            });
-        });
+                this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
+                return response;
+              });
+          });
+        }) as any as ReturnType<typeof originalFn>;
     });
   }
 }

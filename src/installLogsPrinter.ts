@@ -6,14 +6,14 @@ import NestedOutputProcessorDecorator from './outputProcessor/NestedOutputProces
 import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
 import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
 import type {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
-import type {Log, LogType, MessageData, Severity} from "./types";
-import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
+import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from "./types";
+import type {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
 import utils from "./utils";
 import consoleProcessor from "./outputProcessor/consoleProcessor";
 import {validate} from "superstruct";
 import {InstallLogsPrinterSchema} from "./installLogsPrinter.schema";
 
-const OUTPUT_PROCESSOR_TYPE: Record<string,  { new (file: string): IOutputProcecessor }> = {
+const OUTPUT_PROCESSOR_TYPE: Record<BuiltinOutputProcessorsTypes,  { new (file: string): IOutputProcecessor }> = {
   'json': JsonOutputProcessor,
   'txt': TextOutputProcessor,
 }
@@ -129,7 +129,7 @@ function logToFiles(options: PluginOptions) {
 
 function logOutputTarget(processor: IOutputProcecessor) {
   let message;
-  let standardOutputType = Object.keys(OUTPUT_PROCESSOR_TYPE).find(
+  let standardOutputType = (Object.keys(OUTPUT_PROCESSOR_TYPE) as BuiltinOutputProcessorsTypes[]).find(
     (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
   );
   if (standardOutputType) {
@@ -148,7 +148,7 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  const createProcessorFromType = (file: string, type: string | CustomOutputProcessorCallback) => {
+  const createProcessorFromType = (file: string, type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback) => {
     if (typeof type === 'string') {
       return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
     }
@@ -174,9 +174,9 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
       const parts = file.split('|');
       const root = parts[0];
       const ext = parts[1];
-      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot || '', ext, (nestedFile: string) => {
-        return createProcessorFromType(nestedFile, type);
-      }));
+      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot || '', ext, (nestedFile: string) => 
+        createProcessorFromType(nestedFile, type)
+      ));
     } else {
       outputProcessors.push(createProcessorFromType(file, type));
     }
