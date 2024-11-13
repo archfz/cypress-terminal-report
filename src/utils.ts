@@ -2,18 +2,17 @@ import jsonPrune from "./jsonPrune";
 import {compare} from "compare-versions";
 import {Failure} from "superstruct";
 
-function getMarkdownRegex(numWrapperChars:number){
-  // allow for escape characters
-  const asteriskWrapper=`(?:(?<!\\\\)\\*){${numWrapperChars}}`
-  const underscoreWrapper=`(?:(?<!\\\\)_){${numWrapperChars}}`
-  return new RegExp(`${asteriskWrapper}(.+?)${asteriskWrapper}|${underscoreWrapper}(.+?)${underscoreWrapper}`)
+// Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
+function getMarkdownRegex(numWrapperChars: number) {
+  const asteriskWrapper = `(?:\\*){${numWrapperChars}}`
+  const underscoreWrapper = `(?:_){${numWrapperChars}}`
+  return new RegExp(`^${asteriskWrapper}(.+?)${asteriskWrapper}$|^${underscoreWrapper}(.+?)${underscoreWrapper}$`)
 }
 
 const MARKDOWN_REGEX = {
-  BOLD_AND_ITALIC : getMarkdownRegex(3),
+  BOLD_AND_ITALIC: getMarkdownRegex(3),
   BOLD: getMarkdownRegex(2),
   ITALIC: getMarkdownRegex(1),
-  COLORED: new RegExp(/\[(.*)\]\((.*)\)/)
 }
 
 const utils = {
@@ -106,32 +105,31 @@ const utils = {
    * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
    * into account for our loggers as well.
    */
-  applyMessageMarkdown(message: string, {bold, italic, colored}: {
+  applyMessageMarkdown(message: string, {bold, italic, processContents}: {
     bold: (str: string) => string,
     italic: (str: string) => string,
-    colored?: (str: string, color: string) => string
+    processContents?: (str: string) => string
   }) {
-    // Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
+    let contentsHaveBeenProcessed = false
+    const maybeProcessContents = (str: string) => {
+      if (contentsHaveBeenProcessed || !processContents) return str
+      contentsHaveBeenProcessed = true
+      return processContents(str)
+    }
 
     // bold and italic, i.e. ***text*** or ___text___
     message = message.replace(MARKDOWN_REGEX.BOLD_AND_ITALIC,
-      (str, group1, group2) => bold(italic(group1 || group2)))
+      (str, group1, group2) => bold(italic(maybeProcessContents(group1 || group2))))
 
     // bold, i.e. **text** or __text__
     message = message.replace(MARKDOWN_REGEX.BOLD,
-      (str, group1, group2) => bold(group1 || group2))
+      (str, group1, group2) => bold(maybeProcessContents(group1 || group2)))
 
     // italic, i.e. *text* or _text_
     message = message.replace(MARKDOWN_REGEX.ITALIC,
-      (str, group1, group2) => italic(group1 || group2))
+      (str, group1, group2) => italic(maybeProcessContents(group1 || group2)))
 
-    if (colored) {
-      // colored, i.e. [blue](http://example.com)
-      message = message.replace(MARKDOWN_REGEX.COLORED,
-        (str, group1: string, group2: string) => colored(group2, group1))
-    }
-
-    return message
+    return maybeProcessContents(message)
   }
 }
 

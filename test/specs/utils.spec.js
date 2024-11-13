@@ -13,24 +13,16 @@ describe('utils', () => {
                ['__text text__', 'Btext textB'],
                ['***text text***', 'BItext textIB'],
                ['___text text___', 'BItext textIB'],
-               ['__*text text*__', 'BItext textIB'],
-               ['*__text text__*', 'IBtext textBI'],
-               ['text text __text text__', 'text text Btext textB'],
-               ['_text text_ __text text__', 'Itext textI Btext textB'],
-               ['_text text_text_', 'Itext textItext_'],
+               ['_text text_text_', 'Itext text_textI'],
                ['text text_','text text_'],
-               ['**text **text**', 'Btext Btext**'],
-               ['*text text**', 'Itext textI*'],
+               ['*text text**', 'Itext text*I'],
                ['**text text*',  'I*text textI'],
-               ['[blue](text text)', '<blue>text text<>'],
-               ['[blue](*text text*)', '<blue>Itext textI<>'],
             ]
             tests.forEach(([message, expected]) => {
                 expect(applyMessageMarkdown(message, {
                     bold: (str) => `B${str}B`,
                     italic: (str) => `I${str}I`,
-                    colored: (str, color) => `<${color}>${str}<>`
-                })).to.deep.equal(expected)
+                }), message).to.deep.equal(expected)
             })
         })
     })

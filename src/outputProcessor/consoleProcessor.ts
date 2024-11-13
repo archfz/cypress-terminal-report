@@ -139,25 +139,17 @@ function consoleProcessor(
       icon = LOG_SYMBOLS.warning;
     }
 
-    if (message.length > trim) {
-      processedMessage = message.substring(0, trim) + ' ...';
-    }
+    const maybeTrimLength = (msg: string) => msg.length > trim ?
+        (msg.substring(0, trim) + ' ...') : msg
 
     if (type == "cy:log") {
       processedMessage = utils.applyMessageMarkdown(processedMessage, {
         bold: chalk.bold,
         italic: chalk.italic,
-        colored: (str, color) => {
-          try {
-            const colorFunction = chalk[color as keyof typeof chalk]
-            if (colorFunction === chalk) {
-              return colorFunction(str)
-            }
-          }
-          catch {/* noop */ }
-          return str
-        }
+        processContents: maybeTrimLength
       })
+    } else {
+      processedMessage = maybeTrimLength(processedMessage)
     }
 
     if (timeString) {
