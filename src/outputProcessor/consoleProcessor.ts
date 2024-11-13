@@ -128,10 +128,7 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let {isItalic = false,
-        isBold = false,
-        color: messageColor = undefined,
-        processedMessage = message} = type == "cy:log" ? utils.checkMessageMarkdown(message) : {};
+    let processedMessage = message
     let {color, icon, trim = options.defaultTrimLength || 800} = TYPE_COMPUTE[type](options);
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
@@ -142,24 +139,25 @@ function consoleProcessor(
       icon = LOG_SYMBOLS.warning;
     }
 
-    if (processedMessage.length > trim) {
+    if (message.length > trim) {
       processedMessage = processedMessage.substring(0, trim) + ' ...';
     }
-    if (isItalic) {
-      processedMessage = chalk.italic(processedMessage)
-    }
-    if (isBold) {
-      processedMessage = chalk.bold(processedMessage)
-    }
-    if (messageColor) {
-      try {
-        const colorFunction = chalk[messageColor as keyof typeof chalk]
-        if (colorFunction === chalk) {
-          processedMessage = colorFunction(processedMessage)
+
+    if (type == "cy:log") {
+      processedMessage = utils.applyMessageMarkdown(processedMessage, {
+        bold: chalk.bold,
+        italic: chalk.italic,
+        color: (str, color) => {
+          try {
+            const colorFunction = chalk[color as keyof typeof chalk]
+            if (colorFunction === chalk) {
+              return colorFunction(str)
+            }
+          }
+          catch {/* noop */ }
+          return str
         }
-      }
-      catch {
-      }
+      })
     }
 
     if (timeString) {

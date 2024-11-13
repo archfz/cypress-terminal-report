@@ -1,30 +1,35 @@
 import utils from '../../src/utils'
 import {expect} from 'chai'
 
-const {checkMessageMarkdown} = utils
+const {applyMessageMarkdown} = utils
 
 describe('utils', () => {
-    describe('checkMessageMarkdown', () => {
-        it('correctly detects cypress log message markdown and returns processed message with markdown removed', () => {
+    describe('applyMessageMarkdown', () => {
+        it('correctly detects markdown and returns processed message with functions applied', () => {
             const tests = [
-                {message: '_text text_text_', isItalic: true, processedMessage: 'text text_text'},
-                {message: '_text _text'},
-                {message: 'text text_'},
-                {message: '**text **text**', isBold: true, processedMessage: 'text **text'},
-                {message: '*text text**'},
-                {message: '**text text*'},
-                {message: '*text text*'},
-                {message: '[blue](text text)', color: 'blue', processedMessage: 'text text'},
+               ['*text text*', 'Itext textI'],
+               ['_text text_', 'Itext textI'],
+               ['**text text**', 'Btext textB'],
+               ['__text text__', 'Btext textB'],
+               ['***text text***', 'BItext textIB'],
+               ['___text text___', 'BItext textIB'],
+               ['__*text text*__', 'BItext textIB'],
+               ['*__text text__*', 'IBtext textBI'],
+               ['_text text_text_', 'Itext textItext_'],
+               ['text text_','text text_'],
+               ['**text **text**', 'Btext Btext**'],
+               ['*text text**', 'Itext textI*'],
+               ['**text text*',  'I*text textI'],
+               ['[blue](text text)', '<blue>text text<>'],
+               ['[blue](*text text*)', '<blue>Itext textI<>'],
             ]
-            tests.forEach(({message, ...expected}) => {
-                expect(checkMessageMarkdown(message)).to.deep.equal({
-                    color: undefined,
-                    isItalic: false, 
-                    isBold: false,
-                    processedMessage: message,
-                    ...expected
-               })
-           })
-       })
-   })
+            tests.forEach(([message, expected]) => {
+                expect(applyMessageMarkdown(message, {
+                    bold: (str) => `B${str}B`,
+                    italic: (str) => `I${str}I`,
+                    color: (str, color) => `<${color}>${str}<>`
+                })).to.deep.equal(expected)
+            })
+        })
+    })
 })

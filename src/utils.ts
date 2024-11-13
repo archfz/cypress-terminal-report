@@ -91,36 +91,33 @@ const utils = {
   /**
    * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
    * into account for our loggers as well.
-   * - italic: _text_
-   * - bold: **text**
-   * - colored: [color](text)
-   * https://github.com/cypress-io/cypress-documentation/issues/778
    */
-  checkMessageMarkdown(message: string) {
-    const colorMatch = message.match(/^\[(.*)\]\((.*)\)/) // ie [blue](http://example.com)
-    let color: string | undefined = undefined;
-    if (colorMatch) {
-      color = colorMatch[1]
-      message = colorMatch[2]
+  applyMessageMarkdown(message: string, {bold, italic, color}: {
+    bold: (str: string) => string,
+    italic: (str: string) => string,
+    color?: (str: string, color: string) => string
+  }) {
+    // Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
+
+    // bold and italic, i.e. ***text*** or ___text___
+    message = message.replace(new RegExp(/\*\*\*(.+?)\*\*\*|___(.+?)___/),
+      (str, group1, group2) => bold(italic(group1 || group2)))
+
+    // bold, i.e. **text** or __text__
+    message = message.replace(new RegExp(/\*\*(.+?)\*\*|__(.+?)__/),
+      (str, group1, group2) => bold(group1 || group2))
+
+    // italic, i.e. *text* or _text_
+    message = message.replace(new RegExp(/\*(.+?)\*|_(.+?)_/),
+      (str, group1, group2) => italic(group1 || group2))
+
+    if (color) {
+      // colored, i.e. [blue](http://example.com)
+      message = message.replace(new RegExp(/\[(.*)\]\((.*)\)/),
+        (str, group1: string, group2: string) => color(group2, group1))
     }
 
-    const italicMatch = message.match(/^_(.*?)_$/); // ie _italic_
-    if (italicMatch) {
-      message = italicMatch[1]
-    }
-
-    const boldMatch = message.match(/^\*\*(.*?)\*\*$/);   // ie **bold**
-    if (boldMatch) {
-      message = boldMatch[1]
-    }
-
-    // TODO: account for both bold and italic?
-    return {
-      isItalic: Boolean(italicMatch),
-      isBold: Boolean(boldMatch),
-      color,
-      processedMessage: message
-    }
+    return message
   }
 }
 
