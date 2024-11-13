@@ -1,17 +1,37 @@
-export type Severity = 'success' | 'error' | 'warning';
+import CONSTANTS from "./constants";
 
-export type LogType = 'cons:log' |
-  'cons:info' |
-  'cons:warn' |
-  'cons:error' |
-  'cons:debug' |
-  'cy:log' |
-  'cy:xhr' |
-  'cy:fetch' |
-  'cy:request' |
-  'cy:intercept' |
-  'cy:command' |
-  'ctr:info';
+// *****************************************************************************
+// Type operations
+// *****************************************************************************
+
+export type ValueOf<T> = T[keyof T];
+
+export type SetOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// *****************************************************************************
+// String unions
+// *****************************************************************************
+
+export type Severity = ValueOf<typeof CONSTANTS.SEVERITY>
+
+export type LogType = ValueOf<typeof CONSTANTS.LOG_TYPES>
+
+export type LogSymbols = ValueOf<typeof CONSTANTS.LOG_SYMBOLS> |
+  ValueOf<typeof CONSTANTS.LOG_SYMBOLS_BASIC> | '-'
+
+export type LogOccurrence = ValueOf<typeof CONSTANTS.LOG_OCCURRENCE>
+
+export type Colors = ValueOf<typeof CONSTANTS.COLORS>
+
+export type State = ValueOf<typeof CONSTANTS.STATE>
+
+export type CommandTimings = ValueOf<typeof CONSTANTS.COMMAND_TIMINGS>
+
+export type BuiltinOutputProcessorsTypes = 'txt' | 'json'
+
+// *****************************************************************************
+// Objects
+// *****************************************************************************
 
 export type Log = {
   type: LogType,
@@ -23,7 +43,7 @@ export type Log = {
 export type MessageData = {
   spec: string,
   test: string,
-  state: 'failed' | 'passed' | 'running',
+  state: State,
   messages: Log[],
   consoleTitle?: string;
   level?: number,

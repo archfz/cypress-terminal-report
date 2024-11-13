@@ -11,7 +11,7 @@ import LogCollectControlSimple from "./collector/LogCollectControlSimple";
 import logsTxtFormatter from "./outputProcessor/logsTxtFormatter";
 import CONSTANTS from "./constants";
 import type {ExtendedSupportOptions, SupportOptions} from "./installLogsCollector.types";
-import type {LogType, Log, Severity} from "./types";
+import type {LogType, Log, Severity, BuiltinOutputProcessorsTypes} from "./types";
 import utils from "./utils";
 import {validate} from "superstruct";
 import {InstallLogsCollectorSchema} from "./installLogsCollector.schema";
@@ -25,10 +25,10 @@ function installLogsCollector(config: SupportOptions = {}) {
 
   const extendedConfig: ExtendedSupportOptions = {
     ...config,
-    collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES) as LogType[],
-    collectBody: config.xhr && config.xhr.printBody !== undefined ? config.xhr.printBody : true,
-    collectRequestData: config.xhr && config.xhr.printRequestData,
-    collectHeaderData: config.xhr && config.xhr.printHeaderData,
+    collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES),
+    collectBody: config.xhr?.printBody ?? true,
+    collectRequestData: config.xhr?.printRequestData,
+    collectHeaderData: config.xhr?.printHeaderData,
   };
 
   let logCollectorState = new LogCollectorState(extendedConfig);
@@ -43,7 +43,7 @@ function installLogsCollector(config: SupportOptions = {}) {
   registerGlobalApi(logCollectorState);
 }
 
-function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSupportOptions) {
+function registerLogCollectorTypes(logCollectorState: LogCollectorState, config: ExtendedSupportOptions) {
   (new LogCollectBrowserConsole(logCollectorState, config)).register()
 
   if (config.collectTypes.includes(CONSTANTS.LOG_TYPES.CYPRESS_LOG)) {
@@ -70,21 +70,23 @@ function registerLogCollectorTypes(logCollectorState: any, config: ExtendedSuppo
 }
 
 function registerGlobalApi(logCollectorState: LogCollectorState) {
-  (Cypress as any).TerminalReport = {
-    getLogs: (format: string) => {
+  Cypress.TerminalReport = {
+    //@ts-ignore there is no error, this works correctly.
+    getLogs: (format: BuiltinOutputProcessorsTypes | "none" = "none") => {
       const logs = logCollectorState.getCurrentLogStack();
 
       if (!logs) {
         return null;
       }
 
-      if (format === 'txt') {
-        return logsTxtFormatter(logs);
-      } else if (format === 'json') {
-        return JSON.stringify(logs, null, 2);
+      switch (format) {
+        case "txt":
+          return logsTxtFormatter(logs);
+        case "json":
+          return JSON.stringify(logs, null, 2);
+        default:
+          return logs;
       }
-
-      return logs;
     },
   };
 }

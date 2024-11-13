@@ -1,6 +1,6 @@
 import jsonPrune from "./jsonPrune";
 import {compare} from "compare-versions";
-import {Failure} from "superstruct";
+import type {Failure} from "superstruct";
 
 const utils = {
   nonQueueTask: async (name: string, data: Record<string, any>) => {
@@ -82,11 +82,10 @@ const utils = {
     return json;
   },
 
-  validatorErrToStr: function (errorList: Failure[]) {
-    return '\n' + errorList.map((error) => {
-      return ` => ${error.path.join('.')}: ${error.message}`;
-    }).join('\n') + '\n';
-  }
+ validatorErrToStr: (errorList: Failure[]) => 
+     '\n' + 
+     errorList.map((error) => ` => ${error.path.join('.')}: ${error.message}`).join('\n') + 
+     '\n'
 }
 
 export default utils;

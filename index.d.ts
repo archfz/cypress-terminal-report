@@ -1,13 +1,11 @@
 declare namespace Cypress {
-  import {Log as CtrLog} from "./src/installLogsCollector";
+  import type {Log} from "./src/installLogsCollector";
+  import type {BuiltinOutputProcessorsTypes} from "./src/types";
 
   interface Cypress {
     TerminalReport: {
-      getLogs<T extends 'txt' | 'json' | 'none' = 'none'>(format?: T): {
-        txt: string,
-        json: string,
-        none: CtrLog[],
-      }[T];
+      getLogs(format: BuiltinOutputProcessorsTypes): string | null;
+      getLogs(format?: 'none' = 'none'): Log[] | null;
     }
   }
 }

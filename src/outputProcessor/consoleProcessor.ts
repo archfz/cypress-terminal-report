@@ -1,87 +1,73 @@
 import CONSTANTS from "../constants";
-import type {Log, LogType, MessageData} from "../types";
+import type {Colors, Log, LogSymbols, LogType, MessageData} from "../types";
 import type {PluginOptions} from "../installLogsPrinter.types";
 import chalk from "chalk";
 
-const LOG_TYPES = CONSTANTS.LOG_TYPES;
-const KNOWN_TYPES = Object.values(CONSTANTS.LOG_TYPES);
+const {LOG_TYPES, COLORS} = CONSTANTS;
+const KNOWN_LOG_TYPES = Object.values(LOG_TYPES);
 
-const LOG_SYMBOLS = (() => {
-  if (process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color') {
-    return {
-      error: '✘',
-      warning: '❖',
-      success: '✔',
-      info: '✱',
-      debug: '⚈',
-      route: '➟'
-    }
-  } else {
-    return {
-      error: 'x',
-      warning: '!',
-      success: '+',
-      info: 'i',
-      debug: '%',
-      route: '~'
-    }
-  }
-})();
+const LOG_SYMBOLS = (() =>
+  process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color'
+    ? CONSTANTS.LOG_SYMBOLS : CONSTANTS.LOG_SYMBOLS_BASIC)();
 
-const BOLD_COLORS = ['red', 'yellow'];
+const BOLD_COLORS: Colors[] = [COLORS.RED, COLORS.YELLOW];
 
-const TYPE_COMPUTE: {[key in typeof LOG_TYPES[keyof typeof LOG_TYPES]]: (options: PluginOptions) => {icon: string, color: string, trim?: number}} = {
+const TYPE_COMPUTE: Record<LogType, (options: PluginOptions) => {
+  icon: LogSymbols,
+  color: Colors,
+  trim?: number
+}> = {
   [LOG_TYPES.PLUGIN_LOG_TYPE]: () => ({
-    color: 'white',
+    color: COLORS.WHITE,
     icon: '-',
   }),
   [LOG_TYPES.BROWSER_CONSOLE_WARN]: () => ({
-    color: 'yellow',
-    icon: LOG_SYMBOLS.warning,
+    color: COLORS.YELLOW,
+    icon: LOG_SYMBOLS.WARNING,
   }),
   [LOG_TYPES.BROWSER_CONSOLE_ERROR]: () => ({
-    color: 'red',
-    icon: LOG_SYMBOLS.warning,
+    color: COLORS.RED,
+    icon: LOG_SYMBOLS.WARNING,
   }),
   [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: () => ({
-    color: 'blue',
-    icon: LOG_SYMBOLS.debug,
+    color: COLORS.BLUE,
+    icon: LOG_SYMBOLS.DEBUG,
   }),
   [LOG_TYPES.BROWSER_CONSOLE_LOG]: () => ({
-    color: 'white',
-    icon: LOG_SYMBOLS.info,
+    color: COLORS.WHITE,
+    icon: LOG_SYMBOLS.INFO,
   }),
   [LOG_TYPES.BROWSER_CONSOLE_INFO]: () => ({
-    color: 'white',
-    icon: LOG_SYMBOLS.info,
+    color: COLORS.WHITE,
+    icon: LOG_SYMBOLS.INFO,
   }),
   [LOG_TYPES.CYPRESS_LOG]: () => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.info,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.INFO,
   }),
   [LOG_TYPES.CYPRESS_XHR]: (options) => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.route,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength || 5000,
   }),
   [LOG_TYPES.CYPRESS_FETCH]: (options) => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.route,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength || 5000,
   }),
   [LOG_TYPES.CYPRESS_INTERCEPT]: (options) => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.route,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength || 5000,
   }),
   [LOG_TYPES.CYPRESS_REQUEST]: (options) => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.success,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.SUCCESS,
     trim: options.routeTrimLength || 5000,
   }),
   [LOG_TYPES.CYPRESS_COMMAND]: (options) => ({
-    color: 'green',
-    icon: LOG_SYMBOLS.success,
+    color: COLORS.GREEN,
+    icon: LOG_SYMBOLS.SUCCESS,
     trim: options.routeTrimLength || 5000,
   }),
 }
@@ -91,17 +77,18 @@ const TYPE_STRING_CACHE: Record<string, string> = {};
 const padType = (type: string, padding: string) =>
   ' '.repeat(Math.max(padding.length - type.length - 4, 0)) + type + ' ';
 
-const getTypeString = (type: LogType, icon: string, color: string, padding: string) => {
+const getTypeString = (type: LogType, icon: LogSymbols, color: Colors, padding: string) => {
   const key = `${type}:${icon}:${color}:${padding}`;
 
   if (TYPE_STRING_CACHE[key]) {
     return TYPE_STRING_CACHE[key];
   }
 
-  const typeString = KNOWN_TYPES.includes(type) ? padType(type, padding) : padType('[unknown]', padding)
+  const typeString = padType(KNOWN_LOG_TYPES.includes(type) ? type : '[unknown]', padding)
+  const fullString = typeString + icon + ' '
   const coloredTypeString = BOLD_COLORS.includes(color) ?
-    (chalk as any)[color].bold(typeString + icon + ' ') :
-    (chalk as any)[color](typeString + icon + ' ');
+    chalk[color].bold(fullString) :
+    chalk[color](fullString);
 
   TYPE_STRING_CACHE[key] = coloredTypeString;
   return coloredTypeString;
@@ -133,11 +120,11 @@ function consoleProcessor(
     trim = trim || options.defaultTrimLength || 800;
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
-      color = 'red';
-      icon = LOG_SYMBOLS.error;
+      color = COLORS.RED;
+      icon = LOG_SYMBOLS.ERROR;
     } else if (severity === CONSTANTS.SEVERITY.WARNING) {
-      color = 'yellow';
-      icon = LOG_SYMBOLS.warning;
+      color = COLORS.YELLOW;
+      icon = LOG_SYMBOLS.WARNING;
     }
 
     if (message.length > trim) {
