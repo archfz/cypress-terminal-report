@@ -128,10 +128,11 @@ function consoleProcessor(
     severity,
     timeString
   }) => {
-    let {isItalic, isBold, color: messageColor, processedMessage} = utils.checkMessageMarkdown(message);
-    
-    let {color, icon, trim} = TYPE_COMPUTE[type](options);
-    trim = trim || options.defaultTrimLength || 800;
+    let {isItalic = false,
+        isBold = false,
+        color: messageColor = undefined,
+        processedMessage = message} = type == "cy:log" ? utils.checkMessageMarkdown(message) : {};
+    let {color, icon, trim = options.defaultTrimLength || 800} = TYPE_COMPUTE[type](options);
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
       color = 'red';
