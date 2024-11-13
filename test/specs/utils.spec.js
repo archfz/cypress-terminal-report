@@ -6,22 +6,26 @@ const {applyMessageMarkdown} = utils
 describe('utils', () => {
     describe('applyMessageMarkdown', () => {
         it('correctly detects markdown and returns processed message with functions applied', () => {
+            const LONG_MSG = "abc123".repeat(5)
             const tests = [
-               ['*text text*', 'Itext textI'],
-               ['_text text_', 'Itext textI'],
-               ['**text text**', 'Btext textB'],
-               ['__text text__', 'Btext textB'],
-               ['***text text***', 'BItext textIB'],
-               ['___text text___', 'BItext textIB'],
-               ['_text text_text_', 'Itext text_textI'],
+               ['*text text*', '<i>text text<i>'],
+               ['_text text_', '<i>text text<i>'],
+               ['**text text**', '<b>text text<b>'],
+               ['__text text__', '<b>text text<b>'],
+               ['***text text***', '<b><i>text text<i><b>'],
+               ['___text text___', '<b><i>text text<i><b>'],
+               ['_text text_text_', '<i>text text_text<i>'],
                ['text text_','text text_'],
-               ['*text text**', 'Itext text*I'],
-               ['**text text*',  'I*text textI'],
+               ['*text text','*text text'],
+               ['*text text**', '<i>text text*<i>'],
+               ['**text text*', '<i>*text text<i>'],
+               [`**${LONG_MSG}**`, `<b>${LONG_MSG.substring(0, 20)}...<b>`],
             ]
             tests.forEach(([message, expected]) => {
                 expect(applyMessageMarkdown(message, {
-                    bold: (str) => `B${str}B`,
-                    italic: (str) => `I${str}I`,
+                    bold: (str) => `<b>${str}<b>`,
+                    italic: (str) => `<i>${str}<i>`,
+                    processContents: (c) => c.length > 20 ? (c.substring(0, 20) + '...') : c
                 }), message).to.deep.equal(expected)
             })
         })
