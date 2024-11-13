@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {IOutputProcecessor} from "./BaseOutputProcessor";
+import type {IOutputProcecessor} from "./BaseOutputProcessor";
 import type {AllMessages} from "../installLogsPrinter.types";
 
 export default class NestedOutputProcessorDecorator implements IOutputProcecessor {

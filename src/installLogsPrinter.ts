@@ -7,7 +7,7 @@ import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
 import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
 import type {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
 import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from "./types";
-import {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
+import type {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
 import utils from "./utils";
 import consoleProcessor from "./outputProcessor/consoleProcessor";
 import {validate} from "superstruct";

@@ -1,6 +1,6 @@
 declare namespace Cypress {
-  import {Log} from "./src/installLogsCollector";
-  import {BuiltinOutputProcessorsTypes} from "./src/types";
+  import type {Log} from "./src/installLogsCollector";
+  import type {BuiltinOutputProcessorsTypes} from "./src/types";
 
   interface Cypress {
     TerminalReport: {

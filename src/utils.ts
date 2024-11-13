@@ -1,6 +1,6 @@
 import jsonPrune from "./jsonPrune";
 import {compare} from "compare-versions";
-import {Failure} from "superstruct";
+import type {Failure} from "superstruct";
 
 const utils = {
   nonQueueTask: async (name: string, data: Record<string, any>) => {
