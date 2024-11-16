@@ -2,43 +2,74 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-jobs:
-  test:
+executors:
+  cypress-v20:
     docker:
       - image: cypress/base:20.5.0
-    parallelism: 3
+  cypress-v12:
+    docker:
+      - image: cypress/base:12
+
+jobs:
+  install-deps:
+    executor: cypress-v20
     steps:
       - checkout
       - run:
-          name: Install
-          command: npm ci && cd test && npm ci
+          name: Install Dependencies
+          command: npm ci
+      - persist_to_workspace:
+          root: '.'
+          paths: [node_modules]
+
+  lint:
+    executor: cypress-v20
+    steps:
+      - checkout
+      - attach_workspace: {at: '.'}
+      - run:
+          name: Prettier Check
+          command: npm run format:check
+
+  build:
+    executor: cypress-v20
+    steps:
+      - checkout
+      - attach_workspace: {at: '.'}
       - run:
           name: Build
           command: npm run build
+      - persist_to_workspace:
+          root: 'src'
+          paths: [.]
+
+  test:
+    executor: cypress-v20
+    parallelism: 3
+    steps:
+      - checkout
+      - attach_workspace: {at: src}
+      - run:
+          name: Install Test Dependencies
+          command: cd test && npm ci
       - run:
           name: Test
           command: cd test && npm run test-ci
-      - persist_to_workspace:
-          root: src
-          paths:
-              - .
 
   backwards-compatibility:
-    docker:
-      - image: cypress/base:12
+    executor: cypress-v12
     parallelism: 3
     steps:
       - checkout
       - run:
-          name: Install
+          name: Install Dependencies
           command: npm i --only=prod
-      - attach_workspace:
-          at: src
+      - attach_workspace: {at: src}
       - run:
           name: Set backward package json
           command: cd test && rm package-lock.json && mv package.backward.json package.json
       - run:
-          name: Install test
+          name: Install Test Dependencies
           command: cd test && npm i
       - run:
           name: Test
@@ -49,9 +80,18 @@ workflows:
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample:
+  build_lint_test:
     jobs:
-      - test
+      - install-deps
+      - lint:
+          requires:
+            - install-deps
+      - build:
+          requires:
+            - install-deps
+      - test:
+          requires:
+            - build
       - backwards-compatibility:
-            requires:
-                - test
+          requires:
+            - build

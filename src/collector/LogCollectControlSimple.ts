@@ -1,15 +1,18 @@
 import CONSTANTS from '../constants';
 import LogCollectControlBase from './LogCollectControlBase';
-import utils from "../utils";
-import type LogCollectorState from "./LogCollectorState";
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
-import type {MessageData, State} from "../types";
+import utils from '../utils';
+import type LogCollectorState from './LogCollectorState';
+import type {ExtendedSupportOptions} from '../installLogsCollector.types';
+import type {MessageData, State} from '../types';
 
 /**
  * Collects and dispatches all logs from all tests and hooks.
  */
 export default class LogCollectControlSimple extends LogCollectControlBase {
-  constructor(protected collectorState: LogCollectorState, protected config: ExtendedSupportOptions) {
+  constructor(
+    protected collectorState: LogCollectorState,
+    protected config: ExtendedSupportOptions
+  ) {
     super();
     this.config = config;
     this.collectorState = collectorState;
@@ -36,8 +39,9 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       utils.nonQueueTask(CONSTANTS.TASK_NAME, buildDataMessage()).catch(console.error);
     } else {
       // Need to wait for command log update debounce.
-      cy.wait(wait, {log: false})
-        .then(() => cy.task(CONSTANTS.TASK_NAME, buildDataMessage(), {log: false}));
+      cy.wait(wait, {log: false}).then(() =>
+        cy.task(CONSTANTS.TASK_NAME, buildDataMessage(), {log: false})
+      );
     }
   }
 
@@ -65,7 +69,10 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     const self = this;
 
     afterEach(function () {
-      self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest());
+      self.sendLogsToPrinter(
+        self.collectorState.getCurrentLogStackIndex(),
+        self.collectorState.getCurrentTest()
+      );
     });
 
     // Logs commands if test was manually skipped.
@@ -74,7 +81,9 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       if (test?.state === ('pending' as State)) {
         // In case of fully skipped tests we might not yet have a log stack.
         self.collectorState.ensureLogStack();
-        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
+        self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {
+          noQueue: true,
+        });
       }
     });
   }
@@ -83,10 +92,11 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     const self = this;
 
     this.collectorState.addEventListener('log', () => {
-      self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), self.collectorState.getCurrentTest(), {
-        noQueue: true,
-        continuous: true,
-      });
+      self.sendLogsToPrinter(
+        self.collectorState.getCurrentLogStackIndex(),
+        self.collectorState.getCurrentTest(),
+        {noQueue: true, continuous: true}
+      );
       this.collectorState.addNewLogStack();
     });
   }

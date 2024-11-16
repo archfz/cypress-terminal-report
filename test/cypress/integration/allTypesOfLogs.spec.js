@@ -15,8 +15,8 @@ describe('All types of logs.', () => {
 
     cy.log('This is a cypress log. [filter-out-string]');
 
-    cy.window().then(w => w.console.warn('This is a warning message'));
-    cy.window().then(w => w.console.error(new Error('This is an error message')));
+    cy.window().then((w) => w.console.warn('This is a warning message'));
+    cy.window().then((w) => w.console.error(new Error('This is an error message')));
     cy.window().then((w) => w.console.log('This should console.log appear. [filter-out-string]'));
     cy.window().then((w) => w.console.info('This should console.info appear.'));
 

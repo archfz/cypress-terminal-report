@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import CtrError from '../CtrError';
-import type {AllMessages} from "../installLogsPrinter.types";
+import type {AllMessages} from '../installLogsPrinter.types';
 
 export interface IOutputProcecessor {
   initialize(): void;
@@ -91,7 +91,6 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
     let chunkBuffer = Buffer.from(chunk, 'utf8');
     let finalBuffer = Buffer.concat([chunkBuffer, buffer]);
 
-
     fs.writeSync(fd, finalBuffer, 0, finalBuffer.length, oldChunkStart);
     fs.closeSync(fd);
 
@@ -106,7 +105,7 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
   }
 
   appendSeparator(pos: number | null) {
-    this.writeAtPosition(this.chunkSeparator, pos)
+    this.writeAtPosition(this.chunkSeparator, pos);
   }
 
   writeAtPosition(data: string, pos: number | null) {

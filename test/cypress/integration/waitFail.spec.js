@@ -11,7 +11,7 @@ describe('Wait fail.', () => {
     cy.window().then((w) => {
       setTimeout(() => {
         w.document.querySelector('.network-btn').click();
-      }, 1000)
+      }, 1000);
     });
     cy.get('.breaking-wait', {timeout: 3000});
   });

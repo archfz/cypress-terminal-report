@@ -37,6 +37,6 @@ describe('nested after fails', () => {
   });
   after(() => {
     cy.log('log after root');
-    cy.get('after root', {timeout: 5})
+    cy.get('after root', {timeout: 5});
   });
 });

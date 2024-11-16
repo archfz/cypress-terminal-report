@@ -1,12 +1,12 @@
 import './commands';
-import registerCypressGrep from "@cypress/grep";
-import utils from "../../../src/utils";
+import registerCypressGrep from '@cypress/grep';
+import utils from '../../../src/utils';
 
 const env = Cypress.env();
 let config = {};
 
 if (env.failFast == '1') {
-  require("cypress-fail-fast");
+  require('cypress-fail-fast');
 }
 if (env.cypressGrep == '1') {
   registerCypressGrep();
@@ -23,29 +23,30 @@ if (env.setFilterLogs == '1') {
 }
 if (env.setProcessLogs == '1') {
   config.processLog = ({type, message, severity}) => {
-    if (type == 'cy:request'){
+    if (type == 'cy:request') {
       message = message.length.toString();
-    }
-    else{
+    } else {
       let reg = /\[[^\[]+]/;
       let secret = message.match(reg);
-      if (secret){
+      if (secret) {
         message = message.replace(reg, '[******]');
       }
     }
     return {type, message, severity};
-  }
+  };
 }
 if (env.collectTestLogsSupport == '1') {
   config.collectTestLogs = ({mochaRunnable, testTitle, testState, testLevel}, logs) =>
     utils.nonQueueTask('ctrLogMessages', {
       spec: mochaRunnable.invocationDetails.relativeFile,
       test: testTitle,
-      messages: [{
-        type: 'cy:log',
-        message: `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${JSON.stringify(logs[logs.length - 1])}`,
-        severity: '',
-      }],
+      messages: [
+        {
+          type: 'cy:log',
+          message: `Collected ${logs.length} logs for test "${mochaRunnable.title}", last log: ${JSON.stringify(logs[logs.length - 1])}`,
+          severity: '',
+        },
+      ],
       state: testState,
       level: testLevel,
     });
@@ -69,28 +70,38 @@ if (env.filterKeepOnlyWarningAndError == '1') {
   config.filterLog = ({severity}) => severity === 'error' || severity === 'warning';
 }
 if (env.processAllLogs == '1') {
-  config.processLog = ({type,message,severity}) => ({type, message: '| ' + message, severity});
+  config.processLog = ({type, message, severity}) => ({type, message: '| ' + message, severity});
 }
 if (env.supportBadConfig == '1') {
   config = {
     collectTypes: 0,
-    filterLog: "string",
+    filterLog: 'string',
     processLog: true,
-    collectTestLogs: "string",
+    collectTestLogs: 'string',
     xhr: {
-      printRequestData: "",
-      printHeaderData: "",
-      shouldNotBeHere: ""
+      printRequestData: '',
+      printHeaderData: '',
+      shouldNotBeHere: '',
     },
-    shouldNotBeHere: ""
+    shouldNotBeHere: '',
   };
 }
 if (env.supportGoodConfig == '1') {
   config = {
-    collectTypes: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command'],
+    collectTypes: [
+      'cons:log',
+      'cons:info',
+      'cons:warn',
+      'cons:error',
+      'cy:log',
+      'cy:xhr',
+      'cy:request',
+      'cy:intercept',
+      'cy:command',
+    ],
     xhr: {
       printBody: false,
-    }
+    },
   };
 }
 if (env.enableExtendedCollector == '1') {
@@ -111,7 +122,7 @@ if (env.mochawesome == '1') {
       const logs = Cypress.TerminalReport.getLogs('txt');
       cy.addTestContext(logs);
       cy.log('Global API logs: ' + logs);
-    })
+    });
   });
 }
 
@@ -131,12 +142,19 @@ function enableFetchWorkaround() {
 
   before(() => {
     console.info('Load fetch XHR polyfill.');
-    cy.request({url: 'https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js', log: false, method: 'GET'}).then(response => {
-      polyfill = response.body;
-    }, {log: false});
+    cy.request({
+      url: 'https://cdn.jsdelivr.net/npm/fetch-polyfill@0.8.2/fetch.min.js',
+      log: false,
+      method: 'GET',
+    }).then(
+      (response) => {
+        polyfill = response.body;
+      },
+      {log: false}
+    );
   });
 
-  Cypress.on('window:before:load', win => {
+  Cypress.on('window:before:load', (win) => {
     delete win.fetch;
     win.eval(polyfill);
   });

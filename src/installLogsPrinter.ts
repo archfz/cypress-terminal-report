@@ -3,27 +3,35 @@ import CtrError from './CtrError';
 import CONSTANTS from './constants';
 import CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
 import NestedOutputProcessorDecorator from './outputProcessor/NestedOutputProcessorDecorator';
-import JsonOutputProcessor from "./outputProcessor/JsonOutputProcessor";
-import TextOutputProcessor from "./outputProcessor/TextOutputProcessor";
-import type {CustomOutputProcessorCallback, PluginOptions, AllMessages} from "./installLogsPrinter.types";
-import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from "./types";
-import type {IOutputProcecessor} from "./outputProcessor/BaseOutputProcessor";
-import utils from "./utils";
-import consoleProcessor from "./outputProcessor/consoleProcessor";
-import {validate} from "superstruct";
-import {InstallLogsPrinterSchema} from "./installLogsPrinter.schema";
+import JsonOutputProcessor from './outputProcessor/JsonOutputProcessor';
+import TextOutputProcessor from './outputProcessor/TextOutputProcessor';
+import type {
+  CustomOutputProcessorCallback,
+  PluginOptions,
+  AllMessages,
+} from './installLogsPrinter.types';
+import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from './types';
+import type {IOutputProcecessor} from './outputProcessor/BaseOutputProcessor';
+import utils from './utils';
+import consoleProcessor from './outputProcessor/consoleProcessor';
+import {validate} from 'superstruct';
+import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
 
-const OUTPUT_PROCESSOR_TYPE: Record<BuiltinOutputProcessorsTypes,  { new (file: string): IOutputProcecessor }> = {
-  'json': JsonOutputProcessor,
-  'txt': TextOutputProcessor,
-}
+const OUTPUT_PROCESSOR_TYPE: Record<
+  BuiltinOutputProcessorsTypes,
+  {new (file: string): IOutputProcecessor}
+> = {
+  json: JsonOutputProcessor,
+  txt: TextOutputProcessor,
+};
 
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
 let outputProcessors: IOutputProcecessor[] = [];
 
-const createLogger = (enabled?: boolean) => enabled
-  ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
-  : () => {}
+const createLogger = (enabled?: boolean) =>
+  enabled
+    ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
+    : () => {};
 
 /**
  * Installs the cypress plugin for printing logs to terminal.
@@ -34,19 +42,23 @@ const createLogger = (enabled?: boolean) => enabled
  * @type {import('./installLogsPrinter')}
  */
 function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {}) {
-  options.printLogsToFile = options.printLogsToFile || "onFail";
-  options.printLogsToConsole = options.printLogsToConsole || "onFail";
+  options.printLogsToFile = options.printLogsToFile || 'onFail';
+  options.printLogsToConsole = options.printLogsToConsole || 'onFail';
   const [error] = validate(options, InstallLogsPrinterSchema);
 
   if (error) {
-    throw new CtrError(`Invalid plugin install options: ${utils.validatorErrToStr(error.failures())}`);
+    throw new CtrError(
+      `Invalid plugin install options: ${utils.validatorErrToStr(error.failures())}`
+    );
   }
 
   const logDebug = createLogger(options.debug);
 
   on('task', {
     [CONSTANTS.TASK_NAME]: function (data: MessageData) {
-      logDebug(`${CONSTANTS.TASK_NAME}: Received ${data.messages.length} messages, for ${data.spec}:${data.test}, with state ${data.state}.`);
+      logDebug(
+        `${CONSTANTS.TASK_NAME}: Received ${data.messages.length} messages, for ${data.spec}:${data.test}, with state ${data.state}.`
+      );
       let messages = data.messages;
 
       const terminalMessages =
@@ -54,23 +66,21 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
           ? compactLogs(messages, options.compactLogs, logDebug)
           : messages;
 
-      const isHookAndShouldLog = data.isHook &&
-        (options.includeSuccessfulHookLogs || data.state === 'failed');
+      const isHookAndShouldLog =
+        data.isHook && (options.includeSuccessfulHookLogs || data.state === 'failed');
 
-      if (options.outputTarget && options.printLogsToFile !== "never") {
-        if (
-          data.state === "failed" ||
-          options.printLogsToFile === "always" ||
-          isHookAndShouldLog
-        ) {
+      if (options.outputTarget && options.printLogsToFile !== 'never') {
+        if (data.state === 'failed' || options.printLogsToFile === 'always' || isHookAndShouldLog) {
           let outputFileMessages =
             typeof options.outputCompactLogs === 'number'
               ? compactLogs(messages, options.outputCompactLogs, logDebug)
               : options.outputCompactLogs === false
-              ? messages
-              : terminalMessages;
+                ? messages
+                : terminalMessages;
 
-          logDebug(`Storing for file logging ${outputFileMessages.length} messages, for ${data.spec}:${data.test}.`);
+          logDebug(
+            `Storing for file logging ${outputFileMessages.length} messages, for ${data.spec}:${data.test}.`
+          );
 
           writeToFileMessages[data.spec] = writeToFileMessages[data.spec] || {};
           writeToFileMessages[data.spec][data.test] = outputFileMessages;
@@ -78,18 +88,21 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       }
 
       if (
-        options.printLogsToConsole !== "never" && (
-          options.printLogsToConsole === "always"
-          || (options.printLogsToConsole === "onFail" && data.state !== "passed")
-          || isHookAndShouldLog
-        )
+        options.printLogsToConsole !== 'never' &&
+        (options.printLogsToConsole === 'always' ||
+          (options.printLogsToConsole === 'onFail' && data.state !== 'passed') ||
+          isHookAndShouldLog)
       ) {
-        logDebug(`Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
+        logDebug(
+          `Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
+        );
         consoleProcessor(terminalMessages, options, data);
       }
 
       if (options.collectTestLogs) {
-        logDebug(`Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`);
+        logDebug(
+          `Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
+        );
         options.collectTestLogs(
           {spec: data.spec, test: data.test, state: data.state},
           terminalMessages
@@ -102,7 +115,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       logDebug(`${CONSTANTS.TASK_NAME_OUTPUT}: Triggered.`);
       logToFiles(options);
       return null;
-    }
+    },
   });
 
   installOutputProcessors(on, options);
@@ -117,21 +130,19 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
 
 function logToFiles(options: PluginOptions) {
   outputProcessors.forEach((processor) => {
-    if (Object.entries(writeToFileMessages).length !== 0){
+    if (Object.entries(writeToFileMessages).length !== 0) {
       processor.write(writeToFileMessages);
-      if (options.outputVerbose !== false)
-        logOutputTarget(processor);
+      if (options.outputVerbose !== false) logOutputTarget(processor);
     }
   });
   writeToFileMessages = {};
 }
 
-
 function logOutputTarget(processor: IOutputProcecessor) {
   let message;
-  let standardOutputType = (Object.keys(OUTPUT_PROCESSOR_TYPE) as BuiltinOutputProcessorsTypes[]).find(
-    (type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]
-  );
+  let standardOutputType = (
+    Object.keys(OUTPUT_PROCESSOR_TYPE) as BuiltinOutputProcessorsTypes[]
+  ).find((type) => processor instanceof OUTPUT_PROCESSOR_TYPE[type]);
   if (standardOutputType) {
     message = `Wrote ${standardOutputType} logs to ${processor.getTarget()}. (${processor.getSpentTime()}ms)`;
   } else {
@@ -148,7 +159,10 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
     throw new CtrError(`Missing outputRoot configuration.`);
   }
 
-  const createProcessorFromType = (file: string, type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback) => {
+  const createProcessorFromType = (
+    file: string,
+    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
+  ) => {
     if (typeof type === 'string') {
       return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
     }
@@ -174,9 +188,14 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
       const parts = file.split('|');
       const root = parts[0];
       const ext = parts[1];
-      outputProcessors.push(new NestedOutputProcessorDecorator(root, options.specRoot || '', ext, (nestedFile: string) => 
-        createProcessorFromType(nestedFile, type)
-      ));
+      outputProcessors.push(
+        new NestedOutputProcessorDecorator(
+          root,
+          options.specRoot || '',
+          ext,
+          (nestedFile: string) => createProcessorFromType(nestedFile, type)
+        )
+      );
     } else {
       outputProcessors.push(createProcessorFromType(file, type));
     }
@@ -185,14 +204,11 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
   outputProcessors.forEach((processor) => processor.initialize());
 }
 
-function compactLogs(
-  logs: Log[],
-  keepAroundCount: number,
-  logDebug: (message: string) => void,
-) {
-  logDebug(`Compacting ${logs.length} logs.`)
+function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
+  logDebug(`Compacting ${logs.length} logs.`);
 
-  const failingIndexes = logs.filter((log) => log.severity === CONSTANTS.SEVERITY.ERROR)
+  const failingIndexes = logs
+    .filter((log) => log.severity === CONSTANTS.SEVERITY.ERROR)
     .map((log) => logs.indexOf(log));
 
   const includeIndexes = new Array(logs.length);
@@ -206,11 +222,12 @@ function compactLogs(
   });
 
   const compactedLogs = [];
-  const addOmittedLog = (count: number) => compactedLogs.push({
-    type: CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
-    message: `[ ... ${count} omitted logs ... ]`,
-    severity: CONSTANTS.SEVERITY.SUCCESS
-  });
+  const addOmittedLog = (count: number) =>
+    compactedLogs.push({
+      type: CONSTANTS.LOG_TYPES.PLUGIN_LOG_TYPE,
+      message: `[ ... ${count} omitted logs ... ]`,
+      severity: CONSTANTS.SEVERITY.SUCCESS,
+    });
 
   let excludeCount = 0;
   for (let i = 0; i < includeIndexes.length; i++) {
@@ -235,7 +252,7 @@ function compactLogs(
 
 // Ensures backwards compatibility type imports.
 declare namespace installLogsPrinter {
-  export {LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback}
+  export {LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback};
 }
 
 export = installLogsPrinter;
