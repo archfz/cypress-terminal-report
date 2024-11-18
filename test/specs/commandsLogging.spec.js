@@ -241,8 +241,12 @@ describe('Commands logging.', () => {
   }).timeout(60000);
 
   it('Should apply chalk markdown to console', async () => {
-    await runTest(
-      commandBase(['printLogsToConsoleAlways=1'], ['logMarkdown.spec.js']),
+    // runTestContinuous to use spawn instead of exec, in order to get unicode stdout
+    await runTestContinuous(
+      commandBase(
+        ['printLogsToConsoleAlways=1', 'enableContinuousLogging=1'],
+        ['logMarkdown.spec.js']
+      ),
       (error, stdout, stderr) => {
         const lines = stdout.split('\n');
         [
