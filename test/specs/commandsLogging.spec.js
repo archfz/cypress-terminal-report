@@ -1,5 +1,6 @@
-import {PADDING, ICONS, clean, runTest, commandBase, logLastRun} from '../utils';
+import {PADDING, ICONS, clean, runTest, commandBase, logLastRun, runTestContinuous} from '../utils';
 import {expect} from 'chai';
+import chalk from 'chalk';
 
 describe('Commands logging.', () => {
   afterEach(function () {
@@ -237,5 +238,36 @@ describe('Commands logging.', () => {
                     Expected: \t{}`
       );
     });
+  }).timeout(60000);
+
+  it('Should apply chalk markdown to console', async () => {
+    await runTestContinuous(
+      commandBase(
+        ['enableContinuousLogging=1', 'printLogsToConsoleAlways=1'],
+        ['logMarkdown.spec.js']
+      ),
+      (error, stdout, stderr) => {
+        const lines = stdout.split('\n');
+        [
+          chalk.italic('This is an_italic* log.'),
+          chalk.italic('This is an_italic* log.'),
+          chalk.bold('This is a__bold* log.'),
+          chalk.bold('This is a__bold* log.'),
+          chalk.bold(chalk.italic('This is a_bold and italic* log.')),
+          chalk.bold(chalk.italic('This is a_bold and italic* log.')),
+          '_This is a normal log',
+          'This is a normal log_',
+          '__This is a normal log',
+          'This is a normal log__',
+          '*This is a normal log',
+          'This is a normal log*',
+          '**This is a normal log',
+          'This is a normal log**',
+        ].forEach((msg, index) => {
+          console.log(lines[index + 4]);
+          expect(lines[index + 4]).to.equal(`          cy:log ${ICONS.info}  ${msg}`);
+        });
+      }
+    );
   }).timeout(60000);
 });
