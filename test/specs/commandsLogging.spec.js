@@ -265,7 +265,6 @@ describe('Commands logging.', () => {
           '**This is a normal log',
           'This is a normal log**',
         ].forEach((msg, index) => {
-          console.log(lines[index + 4]);
           expect(lines[index + 4]).to.equal(`          cy:log ${ICONS.info}  ${msg}`);
         });
       }
