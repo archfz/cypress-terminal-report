@@ -241,9 +241,9 @@ describe('Commands logging.', () => {
   }).timeout(60000);
 
   it('Should apply chalk markdown to console', async () => {
-    await runTestContinuous(
+    await runTest(
       commandBase(
-        ['enableContinuousLogging=1', 'printLogsToConsoleAlways=1'],
+        ['printLogsToConsoleAlways=1'],
         ['logMarkdown.spec.js']
       ),
       (error, stdout, stderr) => {
