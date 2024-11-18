@@ -242,10 +242,7 @@ describe('Commands logging.', () => {
 
   it('Should apply chalk markdown to console', async () => {
     await runTest(
-      commandBase(
-        ['printLogsToConsoleAlways=1'],
-        ['logMarkdown.spec.js']
-      ),
+      commandBase(['printLogsToConsoleAlways=1'], ['logMarkdown.spec.js']),
       (error, stdout, stderr) => {
         const lines = stdout.split('\n');
         [
