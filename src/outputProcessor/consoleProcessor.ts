@@ -1,8 +1,8 @@
-import CONSTANTS from "../constants";
-import type {Colors, Log, LogSymbols, LogType, MessageData} from "../types";
-import utils from "../utils";
-import type {PluginOptions} from "../installLogsPrinter.types";
-import chalk from "chalk";
+import CONSTANTS from '../constants';
+import type {Colors, Log, LogSymbols, LogType, MessageData} from '../types';
+import utils from '../utils';
+import type {PluginOptions} from '../installLogsPrinter.types';
+import chalk from 'chalk';
 
 const {LOG_TYPES, COLORS} = CONSTANTS;
 const KNOWN_LOG_TYPES = Object.values(LOG_TYPES);
@@ -121,17 +121,17 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
       icon = LOG_SYMBOLS.WARNING;
     }
 
-    const maybeTrimLength = (msg: string) => msg.length > trim ?
-        (msg.substring(0, trim) + ' ...') : msg
+    const maybeTrimLength = (msg: string) =>
+      msg.length > trim ? msg.substring(0, trim) + ' ...' : msg;
 
-    if (type == "cy:log") {
+    if (type == 'cy:log') {
       processedMessage = utils.applyMessageMarkdown(processedMessage, {
         bold: chalk.bold,
         italic: chalk.italic,
-        processContents: maybeTrimLength
-      })
+        processContents: maybeTrimLength,
+      });
     } else {
-      processedMessage = maybeTrimLength(processedMessage)
+      processedMessage = maybeTrimLength(processedMessage);
     }
 
     if (timeString) {
