@@ -16,7 +16,7 @@ const CONSTANTS = {
     CYPRESS_INTERCEPT: 'cy:intercept',
     CYPRESS_COMMAND: 'cy:command',
 
-    PLUGIN_LOG_TYPE: 'ctr:info'
+    PLUGIN_LOG_TYPE: 'ctr:info',
   },
 
   SEVERITY: {
@@ -34,7 +34,7 @@ const CONSTANTS = {
     SUCCESS: '✔',
     INFO: '✱',
     DEBUG: '⚈',
-    ROUTE: '➟'
+    ROUTE: '➟',
   },
   /**
    * Non-unicode log symbols
@@ -45,13 +45,13 @@ const CONSTANTS = {
     SUCCESS: '+',
     INFO: 'i',
     DEBUG: '%',
-    ROUTE: '~'
+    ROUTE: '~',
   },
 
   LOG_OCCURRENCE: {
     ON_FAIL: 'onFail',
     ALWAYS: 'always',
-    NEVER: 'never'
+    NEVER: 'never',
   },
 
   COLORS: {
@@ -81,6 +81,7 @@ const CONSTANTS = {
   DEBUG_LOG_PREFIX: 'CTR-DEBUG: ',
 
   // HTTP methods defined by the `node:http` module
+  // prettier-ignore
   HTTP_METHODS: [
     'ACL',         'BIND',       'CHECKOUT',
     'CONNECT',     'COPY',       'DELETE',
@@ -98,9 +99,8 @@ const CONSTANTS = {
 
   COMMAND_TIMINGS: {
     TIMESTAMP: 'timestamp',
-    SECONDS: 'seconds'
-  }
-} as const
-
+    SECONDS: 'seconds',
+  },
+} as const;
 
 export default CONSTANTS;

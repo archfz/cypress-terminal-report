@@ -1,21 +1,20 @@
 import CONSTANTS from '../constants';
 import utils from '../utils';
-import type {LogType, Severity} from "../types";
-import LogCollectBase from "./LogCollectBase";
+import type {LogType, Severity} from '../types';
+import LogCollectBase from './LogCollectBase';
 
 type Methods = 'warn' | 'error' | 'debug' | 'info' | 'log';
 
 export default class LogCollectBrowserConsole extends LogCollectBase {
   register() {
-    const oldConsoleMethods: { [k in Methods]?: Console[k] } = {};
-    const event = Cypress.testingType === 'component'
-      ? 'test:before:run'
-      : 'window:before:load';
+    const oldConsoleMethods: {[k in Methods]?: Console[k]} = {};
+    const event = Cypress.testingType === 'component' ? 'test:before:run' : 'window:before:load';
 
     Cypress.on(event, () => {
       const docIframe = (window.parent.document.querySelector("[id*='Your project: ']") ||
         window.parent.document.querySelector("[id*='Your App']")) as HTMLIFrameElement;
-      const appWindow = docIframe.contentWindow as Window & typeof globalThis & {_ctr_registered: boolean};
+      const appWindow = docIframe.contentWindow as Window &
+        typeof globalThis & {_ctr_registered: boolean};
 
       // In case of component tests the even will be called multiple times. Prevent registering multiple times.
       if (!appWindow || appWindow._ctr_registered) {

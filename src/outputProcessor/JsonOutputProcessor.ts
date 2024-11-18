@@ -1,10 +1,10 @@
 import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
-import type {AllMessages} from "../installLogsPrinter.types";
-import type {Log} from "../types";
+import type {AllMessages} from '../installLogsPrinter.types';
+import type {Log} from '../types';
 
 export default class JsonOutputProcessor extends BaseOutputProcessor implements IOutputProcecessor {
   chunkSeparator: string = ',\n';
-  initialContent: string = "{\n\n}";
+  initialContent: string = '{\n\n}';
 
   write(allMessages: AllMessages) {
     Object.entries(allMessages).forEach(([spec, tests]) => {

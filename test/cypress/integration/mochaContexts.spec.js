@@ -5,12 +5,12 @@ context('main context', () => {
     } else {
       cy.log('Test');
     }
-  })
+  });
 
   context('second context', () => {
     it('second level test', () => {
       cy.get('.breaking-get 2', {timeout: 1});
-    })
+    });
 
     context('third context', () => {
       it('third level test', () => {
@@ -19,10 +19,10 @@ context('main context', () => {
         } else {
           cy.log('Test');
         }
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
 
 describe('unnested before with nested context', () => {
   before(() => {

@@ -1,15 +1,15 @@
 import CONSTANTS from '../constants';
-import type {ExtendedSupportOptions} from "../installLogsCollector.types";
-import type {Log, Severity} from "../types";
+import type {ExtendedSupportOptions} from '../installLogsCollector.types';
+import type {Log, Severity} from '../types';
 
-type LogArray = [Log['type'], Log['message'], Log['severity']]
+type LogArray = [Log['type'], Log['message'], Log['severity']];
 
 interface StackLog extends Log {
   timeString?: string;
   chainId?: string;
 }
 
-export type StackLogArray = StackLog[] & { _ctr_before_each?: number }
+export type StackLogArray = StackLog[] & {_ctr_before_each?: number};
 
 export default class LogCollectorState extends EventTarget {
   afterHookIndexes: number[];
@@ -34,10 +34,12 @@ export default class LogCollectorState extends EventTarget {
     this.suiteStartTime = null;
 
     if (this.config.commandTimings == 'timestamp') {
-      this.logProcessors.push((log) => { log.timeString = Date.now() + ""});
+      this.logProcessors.push((log) => {
+        log.timeString = Date.now() + '';
+      });
     } else if (this.config.commandTimings == 'seconds') {
       this.logProcessors.push((log) => {
-        log.timeString = (Date.now() - (this.suiteStartTime?.getTime() || 0)) / 1000 + "s"
+        log.timeString = (Date.now() - (this.suiteStartTime?.getTime() || 0)) / 1000 + 's';
       });
     }
   }
@@ -48,7 +50,9 @@ export default class LogCollectorState extends EventTarget {
 
   addNewLogStack() {
     if (this.config.debug) {
-      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'adding new log stack, new size ' + (this.logStacks.length + 1));
+      console.log(
+        CONSTANTS.DEBUG_LOG_PREFIX + 'adding new log stack, new size ' + (this.logStacks.length + 1)
+      );
     }
     this.logStacks.push([]);
   }
@@ -82,7 +86,7 @@ export default class LogCollectorState extends EventTarget {
   }
 
   hasLogsInCurrentStack() {
-    return this.getCurrentLogStack() && !!(this.getCurrentLogStack()?.length);
+    return this.getCurrentLogStack() && !!this.getCurrentLogStack()?.length;
   }
 
   getCurrentTest() {
@@ -94,7 +98,9 @@ export default class LogCollectorState extends EventTarget {
 
     if (!currentStack) {
       if (this.isStrict) {
-        console.warn('cypress-terminal-report: Attempted to collect logs while no stack was defined.');
+        console.warn(
+          'cypress-terminal-report: Attempted to collect logs while no stack was defined.'
+        );
       }
       return;
     }
@@ -138,7 +144,7 @@ export default class LogCollectorState extends EventTarget {
       if (logStack) {
         for (let j = logStack.length - 1; j >= 0; j--) {
           if (logStack[j].chainId === id) {
-            return logStack[j]
+            return logStack[j];
           }
         }
       }
@@ -148,7 +154,11 @@ export default class LogCollectorState extends EventTarget {
 
   markCurrentStackFromBeforeEach() {
     if (this.config.debug) {
-      console.log(CONSTANTS.DEBUG_LOG_PREFIX + 'current log stack is before each at ' + this.getCurrentLogStackIndex());
+      console.log(
+        CONSTANTS.DEBUG_LOG_PREFIX +
+          'current log stack is before each at ' +
+          this.getCurrentLogStackIndex()
+      );
     }
     let stack = this.getCurrentLogStack();
     if (stack) {
@@ -165,13 +175,11 @@ export default class LogCollectorState extends EventTarget {
   }
 
   getBeforeHookTestTile() {
-    return CONSTANTS.HOOK_TITLES.BEFORE
-      .replace('{index}', `#${this.beforeHookIndexes[0]}`);
+    return CONSTANTS.HOOK_TITLES.BEFORE.replace('{index}', `#${this.beforeHookIndexes[0]}`);
   }
 
   getAfterHookTestTile() {
-    return CONSTANTS.HOOK_TITLES.AFTER
-      .replace('{index}', `#${this.afterHookIndexes[0]}`);
+    return CONSTANTS.HOOK_TITLES.AFTER.replace('{index}', `#${this.afterHookIndexes[0]}`);
   }
 
   startSuite() {
@@ -204,7 +212,9 @@ export default class LogCollectorState extends EventTarget {
 
     // Merge together before each log.
     if (this.logStacks[currentIndex]?._ctr_before_each && this.logStacks[previousIndex]) {
-      this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(this.logStacks[currentIndex]);
+      this.logStacks[currentIndex] = this.logStacks[previousIndex].concat(
+        this.logStacks[currentIndex]
+      );
     }
   }
 }

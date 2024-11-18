@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import {expect} from 'chai';
 
 describe('Always red test', function () {
   before(function () {

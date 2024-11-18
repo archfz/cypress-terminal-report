@@ -36,7 +36,7 @@ describe('nested before fails', () => {
 
   it('not nested', () => {
     cy.log('not nested');
-  })
+  });
 
   describe('nested context', () => {
     before(() => {
@@ -49,11 +49,11 @@ describe('nested before fails', () => {
     });
 
     after(() => {
-      cy.log('after nested')
+      cy.log('after nested');
     });
   });
 
   after(() => {
-    cy.log('after not nested')
+    cy.log('after not nested');
   });
 });

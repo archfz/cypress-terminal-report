@@ -1,14 +1,17 @@
 /// <reference types="cypress" />
-import type CustomOutputProcessor from "./outputProcessor/CustomOutputProcessor";
-import type {BuiltinOutputProcessorsTypes, Log, LogOccurrence, State} from "./types";
+import type CustomOutputProcessor from './outputProcessor/CustomOutputProcessor';
+import type {BuiltinOutputProcessorsTypes, Log, LogOccurrence, State} from './types';
 
 export type AllMessages = {
   [specPath: string]: {
-    [testTitle: string]: Log[]
-  }
-}
+    [testTitle: string]: Log[];
+  };
+};
 
-export type CustomOutputProcessorCallback = (this: CustomOutputProcessor, allMessages: AllMessages) => void;
+export type CustomOutputProcessorCallback = (
+  this: CustomOutputProcessor,
+  allMessages: AllMessages
+) => void;
 
 export interface PluginOptions {
   /**
@@ -54,11 +57,7 @@ export interface PluginOptions {
    * Output logs to files. [More details](https://github.com/archfz/cypress-terminal-report#logging-to-files).
    * @default null
    */
-  outputTarget?: Record<
-    string,
-    | BuiltinOutputProcessorsTypes
-    | CustomOutputProcessorCallback
-    >;
+  outputTarget?: Record<string, BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback>;
 
   /**
    * Toggles verbose output.
@@ -108,5 +107,5 @@ export interface PluginOptions {
    * Callback to collect each test case's logs after its run.
    * @default undefined
    */
-  collectTestLogs?: (context: {spec: string, test: string, state: State}, messages: Log[]) => void;
+  collectTestLogs?: (context: {spec: string; test: string; state: State}, messages: Log[]) => void;
 }

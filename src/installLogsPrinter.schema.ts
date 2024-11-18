@@ -1,7 +1,18 @@
-import CONSTANTS from "./constants";
-import {boolean, enums, func, min, number, object, optional, record, string, union} from "superstruct";
+import CONSTANTS from './constants';
+import {
+  boolean,
+  enums,
+  func,
+  min,
+  number,
+  object,
+  optional,
+  record,
+  string,
+  union,
+} from 'superstruct';
 
-const LOG_OCCURRENCE = Object.values(CONSTANTS.LOG_OCCURRENCE)
+const LOG_OCCURRENCE = Object.values(CONSTANTS.LOG_OCCURRENCE);
 
 const InstallLogsPrinterSchema = object({
   printLogsToConsole: optional(enums(LOG_OCCURRENCE)),

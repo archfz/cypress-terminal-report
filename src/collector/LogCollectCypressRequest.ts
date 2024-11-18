@@ -1,13 +1,16 @@
 import CONSTANTS from '../constants';
-import LogCollectBase from "./LogCollectBase";
+import LogCollectBase from './LogCollectBase';
 
 export default class LogCollectCypressRequest extends LogCollectBase {
   register() {
-    const isValidHttpMethod = (str: any) => typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
+    const isValidHttpMethod = (str: any) =>
+      typeof str === 'string' && CONSTANTS.HTTP_METHODS.some((s) => str.toUpperCase().includes(s));
 
-    const isNetworkError = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed trying to load:');
+    const isNetworkError = (e: Error) =>
+      e.message && e.message.startsWith('`cy.request()` failed trying to load:');
 
-    const isStatusCodeFailure = (e: Error) => e.message && e.message.startsWith('`cy.request()` failed on:');
+    const isStatusCodeFailure = (e: Error) =>
+      e.message && e.message.startsWith('`cy.request()` failed on:');
 
     const RESPONSE_START = '\n\nThe response we got was:\n\n';
     const STATUS_START = 'Status: ';
@@ -76,15 +79,15 @@ export default class LogCollectCypressRequest extends LogCollectBase {
 
       return Promise.all([
         this.format.formatXhrData(requestHeaders),
-        this.format.formatXhrData(requestBody)
-      ])
-        .then(([formattedRequestHeaders, formattedRequestBody]) => {
-          const requestData = {
-            headers: formattedRequestHeaders,
-            body: formattedRequestBody,
-          };
-          
-          return originalFn(...args).catch(async (e: Error) => {
+        this.format.formatXhrData(requestBody),
+      ]).then(([formattedRequestHeaders, formattedRequestBody]) => {
+        const requestData = {
+          headers: formattedRequestHeaders,
+          body: formattedRequestBody,
+        };
+
+        return originalFn(...args)
+          .catch(async (e: Error) => {
             if (isNetworkError(e)) {
               log +=
                 `\n` +
@@ -110,30 +113,38 @@ export default class LogCollectCypressRequest extends LogCollectBase {
               log += `\n` + 'Cannot parse cy.request error content!';
             }
 
-            this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.ERROR]);
+            this.collectorState.addLog([
+              CONSTANTS.LOG_TYPES.CYPRESS_REQUEST,
+              log,
+              CONSTANTS.SEVERITY.ERROR,
+            ]);
             throw e;
-          }).then((response) => {
+          })
+          .then((response) => {
             return Promise.all([
               this.format.formatXhrData(response.headers),
-              this.format.formatXhrData(response.body)
-            ])
-              .then(([formattedResponseHeaders, formattedResponseBody]) => {
-                log +=
-                  `\n` +
-                  this.format.formatXhrLog({
-                    request: requestData,
-                    response: {
-                      status: response.status,
-                      headers: formattedResponseHeaders,
-                      body: formattedResponseBody,
-                    },
-                  });
+              this.format.formatXhrData(response.body),
+            ]).then(([formattedResponseHeaders, formattedResponseBody]) => {
+              log +=
+                `\n` +
+                this.format.formatXhrLog({
+                  request: requestData,
+                  response: {
+                    status: response.status,
+                    headers: formattedResponseHeaders,
+                    body: formattedResponseBody,
+                  },
+                });
 
-                this.collectorState.addLog([CONSTANTS.LOG_TYPES.CYPRESS_REQUEST, log, CONSTANTS.SEVERITY.SUCCESS]);
-                return response;
-              });
+              this.collectorState.addLog([
+                CONSTANTS.LOG_TYPES.CYPRESS_REQUEST,
+                log,
+                CONSTANTS.SEVERITY.SUCCESS,
+              ]);
+              return response;
+            });
           });
-        }) as any as ReturnType<typeof originalFn>;
+      }) as any as ReturnType<typeof originalFn>;
     });
   }
 }
