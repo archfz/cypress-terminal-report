@@ -2,6 +2,21 @@ import jsonPrune from './jsonPrune';
 import {compare} from 'compare-versions';
 import type {Failure} from 'superstruct';
 
+// Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
+function getMarkdownRegex(numWrapperChars: number) {
+  const asteriskWrapper = `(?:\\*){${numWrapperChars}}`;
+  const underscoreWrapper = `(?:_){${numWrapperChars}}`;
+  return new RegExp(
+    `^${asteriskWrapper}(.+?)${asteriskWrapper}$|^${underscoreWrapper}(.+?)${underscoreWrapper}$`
+  );
+}
+
+const MARKDOWN_REGEX = {
+  BOLD_AND_ITALIC: getMarkdownRegex(3),
+  BOLD: getMarkdownRegex(2),
+  ITALIC: getMarkdownRegex(1),
+};
+
 const utils = {
   nonQueueTask: async (name: string, data: Record<string, any>) => {
     if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {
@@ -97,6 +112,47 @@ const utils = {
     '\n' +
     errorList.map((error) => ` => ${error.path.join('.')}: ${error.message}`).join('\n') +
     '\n',
+
+  /**
+   * The Cypress GUI runner allows markdown in `cy.log` messages. We can take this
+   * into account for our loggers as well.
+   */
+  applyMessageMarkdown(
+    message: string,
+    {
+      bold,
+      italic,
+      processContents,
+    }: {
+      bold: (str: string) => string;
+      italic: (str: string) => string;
+      processContents?: (str: string) => string;
+    }
+  ) {
+    let contentsHaveBeenProcessed = false;
+    const maybeProcessContents = (str: string) => {
+      if (contentsHaveBeenProcessed || !processContents) return str;
+      contentsHaveBeenProcessed = true;
+      return processContents(str);
+    };
+
+    // bold and italic, i.e. ***text*** or ___text___
+    message = message.replace(MARKDOWN_REGEX.BOLD_AND_ITALIC, (str, group1, group2) =>
+      bold(italic(maybeProcessContents(group1 || group2)))
+    );
+
+    // bold, i.e. **text** or __text__
+    message = message.replace(MARKDOWN_REGEX.BOLD, (str, group1, group2) =>
+      bold(maybeProcessContents(group1 || group2))
+    );
+
+    // italic, i.e. *text* or _text_
+    message = message.replace(MARKDOWN_REGEX.ITALIC, (str, group1, group2) =>
+      italic(maybeProcessContents(group1 || group2))
+    );
+
+    return maybeProcessContents(message);
+  },
 };
 
 export default utils;

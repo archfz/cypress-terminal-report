@@ -1,5 +1,6 @@
 import CONSTANTS from '../constants';
 import type {Colors, Log, LogSymbols, LogType, MessageData} from '../types';
+import utils from '../utils';
 import type {PluginOptions} from '../installLogsPrinter.types';
 import chalk from 'chalk';
 
@@ -110,9 +111,7 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
 
   messages.forEach(({type, message, severity, timeString}) => {
     let processedMessage = message;
-
-    let {color, icon, trim} = TYPE_COMPUTE[type](options);
-    trim = trim || options.defaultTrimLength || 800;
+    let {color, icon, trim = options.defaultTrimLength || 800} = TYPE_COMPUTE[type](options);
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
       color = COLORS.RED;
@@ -122,8 +121,17 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
       icon = LOG_SYMBOLS.WARNING;
     }
 
-    if (message.length > trim) {
-      processedMessage = message.substring(0, trim) + ' ...';
+    const maybeTrimLength = (msg: string) =>
+      msg.length > trim ? msg.substring(0, trim) + ' ...' : msg;
+
+    if (type == 'cy:log') {
+      processedMessage = utils.applyMessageMarkdown(processedMessage, {
+        bold: chalk.bold,
+        italic: chalk.italic,
+        processContents: maybeTrimLength,
+      });
+    } else {
+      processedMessage = maybeTrimLength(processedMessage);
     }
 
     if (timeString) {
