@@ -177,8 +177,8 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
 
   const createProcessorFromType = (
     file: string,
-    options: PluginOptions,
-    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
+    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback,
+    options: PluginOptions
   ) => {
     const filepath = path.join(options.outputRoot || '', file);
 
@@ -212,11 +212,11 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
           root,
           options.specRoot || '',
           ext,
-          (nestedFile: string) => createProcessorFromType(nestedFile, options, type)
+          (nestedFile: string) => createProcessorFromType(nestedFile, type, options)
         )
       );
     } else {
-      outputProcessors.push(createProcessorFromType(file, options, type));
+      outputProcessors.push(createProcessorFromType(file, type, options));
     }
   });
 
