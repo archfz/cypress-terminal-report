@@ -56,9 +56,10 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
     printLogsToFile,
     printLogsToConsole,
     outputCompactLogs,
-    outputTarget,logToFilesOnAfterRun,
+    outputTarget,
+    logToFilesOnAfterRun,
     includeSuccessfulHookLogs,
-    compactLogs: compactLogsOption,
+    compactLogs,
     collectTestLogs,
   } = resolvedOptions;
 
@@ -80,8 +81,8 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       let messages = data.messages;
 
       const terminalMessages =
-        typeof compactLogsOption === 'number' && compactLogsOption >= 0
-          ? compactLogs(messages, compactLogsOption, logDebug)
+        typeof compactLogs === 'number' && compactLogs >= 0
+          ? getCompactLogs(messages, compactLogs, logDebug)
           : messages;
 
       const isHookAndShouldLog =
@@ -91,7 +92,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
         if (data.state === 'failed' || printLogsToFile === 'always' || isHookAndShouldLog) {
           let outputFileMessages =
             typeof outputCompactLogs === 'number'
-              ? compactLogs(messages, outputCompactLogs, logDebug)
+              ? getCompactLogs(messages, outputCompactLogs, logDebug)
               : outputCompactLogs === false
                 ? messages
                 : terminalMessages;
@@ -222,7 +223,7 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
   outputProcessors.forEach((processor) => processor.initialize());
 }
 
-function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
+function getCompactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
   logDebug(`Compacting ${logs.length} logs.`);
 
   const failingIndexes = logs
