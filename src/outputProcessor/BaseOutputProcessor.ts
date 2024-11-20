@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import CtrError from '../CtrError';
-import type {AllMessages} from '../installLogsPrinter.types';
+import type {AllMessages, PluginOptions} from '../installLogsPrinter.types';
 
 export interface IOutputProcecessor {
   initialize(): void;
@@ -18,7 +18,10 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
   protected specChunksWritten: Record<string, [number, number]> = {};
   protected writeSpendTime: number = 0;
 
-  constructor(protected file: string) {}
+  constructor(
+    protected file: string,
+    protected options: PluginOptions
+  ) {}
 
   getTarget() {
     return this.file;

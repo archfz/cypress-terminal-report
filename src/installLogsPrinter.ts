@@ -19,7 +19,7 @@ import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
 
 const OUTPUT_PROCESSOR_TYPE: Record<
   BuiltinOutputProcessorsTypes,
-  {new (file: string): IOutputProcecessor}
+  {new (file: string, options: PluginOptions): IOutputProcecessor}
 > = {
   json: JsonOutputProcessor,
   txt: TextOutputProcessor,
@@ -42,9 +42,28 @@ const createLogger = (enabled?: boolean) =>
  * @type {import('./installLogsPrinter')}
  */
 function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {}) {
-  options.printLogsToFile = options.printLogsToFile || 'onFail';
-  options.printLogsToConsole = options.printLogsToConsole || 'onFail';
-  const [error] = validate(options, InstallLogsPrinterSchema);
+  const resolvedOptions: PluginOptions = {
+    printLogsToFile: 'onFail',
+    printLogsToConsole: 'onFail',
+    routeTrimLength: 5000,
+    defaultTrimLength: 800,
+    commandTrimLength: 800,
+    outputVerbose: true,
+    ...options,
+  };
+
+  const {
+    printLogsToFile,
+    printLogsToConsole,
+    outputCompactLogs,
+    outputTarget,
+    logToFilesOnAfterRun,
+    includeSuccessfulHookLogs,
+    compactLogs,
+    collectTestLogs,
+  } = resolvedOptions;
+
+  const [error] = validate(resolvedOptions, InstallLogsPrinterSchema);
 
   if (error) {
     throw new CtrError(
@@ -52,7 +71,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
     );
   }
 
-  const logDebug = createLogger(options.debug);
+  const logDebug = createLogger(resolvedOptions.debug);
 
   on('task', {
     [CONSTANTS.TASK_NAME]: function (data: MessageData) {
@@ -62,19 +81,19 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       let messages = data.messages;
 
       const terminalMessages =
-        typeof options.compactLogs === 'number' && options.compactLogs >= 0
-          ? compactLogs(messages, options.compactLogs, logDebug)
+        typeof compactLogs === 'number' && compactLogs >= 0
+          ? getCompactLogs(messages, compactLogs, logDebug)
           : messages;
 
       const isHookAndShouldLog =
-        data.isHook && (options.includeSuccessfulHookLogs || data.state === 'failed');
+        data.isHook && (includeSuccessfulHookLogs || data.state === 'failed');
 
-      if (options.outputTarget && options.printLogsToFile !== 'never') {
-        if (data.state === 'failed' || options.printLogsToFile === 'always' || isHookAndShouldLog) {
+      if (outputTarget && printLogsToFile !== 'never') {
+        if (data.state === 'failed' || printLogsToFile === 'always' || isHookAndShouldLog) {
           let outputFileMessages =
-            typeof options.outputCompactLogs === 'number'
-              ? compactLogs(messages, options.outputCompactLogs, logDebug)
-              : options.outputCompactLogs === false
+            typeof outputCompactLogs === 'number'
+              ? getCompactLogs(messages, outputCompactLogs, logDebug)
+              : outputCompactLogs === false
                 ? messages
                 : terminalMessages;
 
@@ -88,42 +107,39 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       }
 
       if (
-        options.printLogsToConsole !== 'never' &&
-        (options.printLogsToConsole === 'always' ||
-          (options.printLogsToConsole === 'onFail' && data.state !== 'passed') ||
+        printLogsToConsole !== 'never' &&
+        (printLogsToConsole === 'always' ||
+          (printLogsToConsole === 'onFail' && data.state !== 'passed') ||
           isHookAndShouldLog)
       ) {
         logDebug(
           `Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
-        consoleProcessor(terminalMessages, options, data);
+        consoleProcessor(terminalMessages, resolvedOptions, data);
       }
 
-      if (options.collectTestLogs) {
+      if (collectTestLogs) {
         logDebug(
           `Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
-        options.collectTestLogs(
-          {spec: data.spec, test: data.test, state: data.state},
-          terminalMessages
-        );
+        collectTestLogs({spec: data.spec, test: data.test, state: data.state}, terminalMessages);
       }
 
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       logDebug(`${CONSTANTS.TASK_NAME_OUTPUT}: Triggered.`);
-      logToFiles(options);
+      logToFiles(resolvedOptions);
       return null;
     },
   });
 
-  installOutputProcessors(on, options);
+  installOutputProcessors(on, resolvedOptions);
 
-  if (options.logToFilesOnAfterRun) {
+  if (logToFilesOnAfterRun) {
     on('after:run', () => {
       logDebug(`after:run: Attempting file logging on after run.`);
-      logToFiles(options);
+      logToFiles(resolvedOptions);
     });
   }
 }
@@ -161,14 +177,17 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
 
   const createProcessorFromType = (
     file: string,
-    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
+    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback,
+    options: PluginOptions
   ) => {
+    const filepath = path.join(options.outputRoot || '', file);
+
     if (typeof type === 'string') {
-      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
+      return new OUTPUT_PROCESSOR_TYPE[type](filepath, options);
     }
 
     if (typeof type === 'function') {
-      return new CustomOutputProcessor(path.join(options.outputRoot || '', file), type);
+      return new CustomOutputProcessor(filepath, options, type);
     }
 
     throw new Error('Unexpected type case.');
@@ -193,18 +212,18 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
           root,
           options.specRoot || '',
           ext,
-          (nestedFile: string) => createProcessorFromType(nestedFile, type)
+          (nestedFile: string) => createProcessorFromType(nestedFile, type, options)
         )
       );
     } else {
-      outputProcessors.push(createProcessorFromType(file, type));
+      outputProcessors.push(createProcessorFromType(file, type, options));
     }
   });
 
   outputProcessors.forEach((processor) => processor.initialize());
 }
 
-function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
+function getCompactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
   logDebug(`Compacting ${logs.length} logs.`);
 
   const failingIndexes = logs

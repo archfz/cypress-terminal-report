@@ -357,7 +357,7 @@ Inside the function you will have access to the following API:
 // ...
 const options = {
   outputTarget: {
-    'custom.output': function (allMessages) {
+    'custom.output': function (allMessages, options) {
       // allMessages= {[specPath: string]: {[testTitle: string]: [type: string, message: string, severity: string][]}}
 
       Object.entries(allMessages).forEach(([spec, tests]) => {
