@@ -10,16 +10,16 @@ import type {
   PluginOptions,
   AllMessages,
 } from './installLogsPrinter.types';
-import type { BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity } from './types';
-import type { IOutputProcecessor } from './outputProcessor/BaseOutputProcessor';
+import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from './types';
+import type {IOutputProcecessor} from './outputProcessor/BaseOutputProcessor';
 import utils from './utils';
 import consoleProcessor from './outputProcessor/consoleProcessor';
-import { validate } from 'superstruct';
-import { InstallLogsPrinterSchema } from './installLogsPrinter.schema';
+import {validate} from 'superstruct';
+import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
 
 const OUTPUT_PROCESSOR_TYPE: Record<
   BuiltinOutputProcessorsTypes,
-  { new(file: string, options: PluginOptions): IOutputProcecessor }
+  {new (file: string, options: PluginOptions): IOutputProcecessor}
 > = {
   json: JsonOutputProcessor,
   txt: TextOutputProcessor,
@@ -31,7 +31,7 @@ let outputProcessors: IOutputProcecessor[] = [];
 const createLogger = (enabled?: boolean) =>
   enabled
     ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
-    : () => { };
+    : () => {};
 
 /**
  * Installs the cypress plugin for printing logs to terminal.
@@ -104,7 +104,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
           `Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
         options.collectTestLogs(
-          { spec: data.spec, test: data.test, state: data.state },
+          {spec: data.spec, test: data.test, state: data.state},
           terminalMessages
         );
       }
@@ -253,7 +253,7 @@ function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: s
 
 // Ensures backwards compatibility type imports.
 declare namespace installLogsPrinter {
-  export { LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback };
+  export {LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback};
 }
 
 export = installLogsPrinter;

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import CtrError from '../CtrError';
-import type { AllMessages, PluginOptions } from '../installLogsPrinter.types';
+import type {AllMessages, PluginOptions} from '../installLogsPrinter.types';
 
 export interface IOutputProcecessor {
   initialize(): void;
@@ -18,7 +18,10 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
   protected specChunksWritten: Record<string, [number, number]> = {};
   protected writeSpendTime: number = 0;
 
-  constructor(protected file: string, protected options: PluginOptions) { }
+  constructor(
+    protected file: string,
+    protected options: PluginOptions
+  ) {}
 
   getTarget() {
     return this.file;
@@ -45,7 +48,7 @@ export default abstract class BaseOutputProcessor implements IOutputProcecessor 
 
     const basePath = path.dirname(this.file);
     if (!fs.existsSync(basePath)) {
-      fs.mkdirSync(basePath, { recursive: true });
+      fs.mkdirSync(basePath, {recursive: true});
     }
 
     fs.writeFileSync(this.file, this.initialContent);
