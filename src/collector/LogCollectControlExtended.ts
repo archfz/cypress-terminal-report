@@ -115,7 +115,10 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
       self.prependBeforeAllHookInAllSuites(
         this.mocha.getRootSuite().suites,
         function ctrAfterAllPerSuite(this: Mocha.Context) {
-          const suiteHasTestAsChild = (suite: Mocha.Suite | undefined, test: Mocha.Test): boolean => {
+          const suiteHasTestAsChild = (
+            suite: Mocha.Suite | undefined,
+            test: Mocha.Test
+          ): boolean => {
             if (suite?.tests.includes(test)) {
               return true;
             }
@@ -123,7 +126,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
           };
 
           if (
-            this.currentTest?.hookName === "before all" &&
+            this.currentTest?.hookName === 'before all' &&
             this.currentTest?.failedFromHookId && // This is how we know a hook failed the suite.
             suiteHasTestAsChild(this.test?.parent, this.currentTest) && // Since we have after all in each suite we need this for nested suites case.
             !testBeforeAllSent.includes(this.currentTest.id) &&

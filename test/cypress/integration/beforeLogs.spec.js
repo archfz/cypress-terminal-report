@@ -58,17 +58,16 @@ describe('nested before fails', () => {
   });
 });
 
-describe("Describe 1", () => {
+describe('Describe 1', () => {
   before(() => {
-    cy.log("Log 1")
-      .then(() => {
-        expect(false, "Expect 1").to.be.true;
-      });
+    cy.log('Log 1').then(() => {
+      expect(false, 'Expect 1').to.be.true;
+    });
   });
 
-  describe("Nested Describe", () => {
-    it("it 1", () => {
-      cy.log("Log 2");
+  describe('Nested Describe', () => {
+    it('it 1', () => {
+      cy.log('Log 2');
     });
   });
 });
