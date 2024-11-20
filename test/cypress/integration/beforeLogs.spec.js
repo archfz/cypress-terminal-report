@@ -57,3 +57,18 @@ describe('nested before fails', () => {
     cy.log('after not nested');
   });
 });
+
+describe("Describe 1", () => {
+  before(() => {
+    cy.log("Log 1")
+      .then(() => {
+        expect(false, "Expect 1").to.be.true;
+      });
+  });
+
+  describe("Nested Describe", () => {
+    it("it 1", () => {
+      cy.log("Log 2");
+    });
+  });
+});
