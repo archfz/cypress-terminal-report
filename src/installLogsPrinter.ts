@@ -42,9 +42,27 @@ const createLogger = (enabled?: boolean) =>
  * @type {import('./installLogsPrinter')}
  */
 function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {}) {
-  options.printLogsToFile = options.printLogsToFile || 'onFail';
-  options.printLogsToConsole = options.printLogsToConsole || 'onFail';
-  const [error] = validate(options, InstallLogsPrinterSchema);
+  const resolvedOptions: PluginOptions = {
+    printLogsToFile: 'onFail',
+    printLogsToConsole: 'onFail',
+    routeTrimLength: 5000,
+    defaultTrimLength: 800,
+    commandTrimLength: 800,
+    outputVerbose: true,
+    ...options,
+  };
+
+  const {
+    printLogsToFile,
+    printLogsToConsole,
+    outputCompactLogs,
+    outputTarget,logToFilesOnAfterRun,
+    includeSuccessfulHookLogs,
+    compactLogs: compactLogsOption,
+    collectTestLogs,
+  } = resolvedOptions;
+
+  const [error] = validate(resolvedOptions, InstallLogsPrinterSchema);
 
   if (error) {
     throw new CtrError(
@@ -52,7 +70,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
     );
   }
 
-  const logDebug = createLogger(options.debug);
+  const logDebug = createLogger(resolvedOptions.debug);
 
   on('task', {
     [CONSTANTS.TASK_NAME]: function (data: MessageData) {
@@ -62,19 +80,19 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       let messages = data.messages;
 
       const terminalMessages =
-        typeof options.compactLogs === 'number' && options.compactLogs >= 0
-          ? compactLogs(messages, options.compactLogs, logDebug)
+        typeof compactLogsOption === 'number' && compactLogsOption >= 0
+          ? compactLogs(messages, compactLogsOption, logDebug)
           : messages;
 
       const isHookAndShouldLog =
-        data.isHook && (options.includeSuccessfulHookLogs || data.state === 'failed');
+        data.isHook && (includeSuccessfulHookLogs || data.state === 'failed');
 
-      if (options.outputTarget && options.printLogsToFile !== 'never') {
-        if (data.state === 'failed' || options.printLogsToFile === 'always' || isHookAndShouldLog) {
+      if (outputTarget && printLogsToFile !== 'never') {
+        if (data.state === 'failed' || printLogsToFile === 'always' || isHookAndShouldLog) {
           let outputFileMessages =
-            typeof options.outputCompactLogs === 'number'
-              ? compactLogs(messages, options.outputCompactLogs, logDebug)
-              : options.outputCompactLogs === false
+            typeof outputCompactLogs === 'number'
+              ? compactLogs(messages, outputCompactLogs, logDebug)
+              : outputCompactLogs === false
                 ? messages
                 : terminalMessages;
 
@@ -88,42 +106,39 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       }
 
       if (
-        options.printLogsToConsole !== 'never' &&
-        (options.printLogsToConsole === 'always' ||
-          (options.printLogsToConsole === 'onFail' && data.state !== 'passed') ||
+        printLogsToConsole !== 'never' &&
+        (printLogsToConsole === 'always' ||
+          (printLogsToConsole === 'onFail' && data.state !== 'passed') ||
           isHookAndShouldLog)
       ) {
         logDebug(
           `Logging to console ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
-        consoleProcessor(terminalMessages, options, data);
+        consoleProcessor(terminalMessages, resolvedOptions, data);
       }
 
-      if (options.collectTestLogs) {
+      if (collectTestLogs) {
         logDebug(
           `Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
-        options.collectTestLogs(
-          {spec: data.spec, test: data.test, state: data.state},
-          terminalMessages
-        );
+        collectTestLogs({spec: data.spec, test: data.test, state: data.state}, terminalMessages);
       }
 
       return null;
     },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       logDebug(`${CONSTANTS.TASK_NAME_OUTPUT}: Triggered.`);
-      logToFiles(options);
+      logToFiles(resolvedOptions);
       return null;
     },
   });
 
-  installOutputProcessors(on, options);
+  installOutputProcessors(on, resolvedOptions);
 
-  if (options.logToFilesOnAfterRun) {
+  if (logToFilesOnAfterRun) {
     on('after:run', () => {
       logDebug(`after:run: Attempting file logging on after run.`);
-      logToFiles(options);
+      logToFiles(resolvedOptions);
     });
   }
 }

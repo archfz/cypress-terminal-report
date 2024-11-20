@@ -24,8 +24,8 @@ function installLogsCollector(config: SupportOptions = {}) {
   validateConfig(config);
 
   const extendedConfig: ExtendedSupportOptions = {
+    collectTypes: Object.values(CONSTANTS.LOG_TYPES),
     ...config,
-    collectTypes: config.collectTypes || Object.values(CONSTANTS.LOG_TYPES),
     collectBody: config.xhr?.printBody ?? true,
     collectRequestData: config.xhr?.printRequestData,
     collectHeaderData: config.xhr?.printHeaderData,

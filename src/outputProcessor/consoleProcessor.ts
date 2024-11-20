@@ -53,27 +53,27 @@ const TYPE_COMPUTE: Record<
   [LOG_TYPES.CYPRESS_XHR]: (options) => ({
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
-    trim: options.routeTrimLength || 5000,
+    trim: options.routeTrimLength,
   }),
   [LOG_TYPES.CYPRESS_FETCH]: (options) => ({
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
-    trim: options.routeTrimLength || 5000,
+    trim: options.routeTrimLength,
   }),
   [LOG_TYPES.CYPRESS_INTERCEPT]: (options) => ({
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
-    trim: options.routeTrimLength || 5000,
+    trim: options.routeTrimLength,
   }),
   [LOG_TYPES.CYPRESS_REQUEST]: (options) => ({
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
-    trim: options.routeTrimLength || 5000,
+    trim: options.routeTrimLength,
   }),
   [LOG_TYPES.CYPRESS_COMMAND]: (options) => ({
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
-    trim: options.routeTrimLength || 5000,
+    trim: options.routeTrimLength,
   }),
 };
 
@@ -111,7 +111,7 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
 
   messages.forEach(({type, message, severity, timeString}) => {
     let processedMessage = message;
-    let {color, icon, trim = options.defaultTrimLength || 800} = TYPE_COMPUTE[type](options);
+    let {color, icon, trim = options.defaultTrimLength} = TYPE_COMPUTE[type](options);
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
       color = COLORS.RED;
@@ -122,7 +122,7 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
     }
 
     const maybeTrimLength = (msg: string) =>
-      msg.length > trim ? msg.substring(0, trim) + ' ...' : msg;
+      trim && msg.length > trim ? msg.substring(0, trim) + ' ...' : msg;
 
     if (type == 'cy:log') {
       processedMessage = utils.applyMessageMarkdown(processedMessage, {
