@@ -1,13 +1,13 @@
 import BaseOutputProcessor, {IOutputProcecessor} from './BaseOutputProcessor';
 import logsTxtFormatter from './logsTxtFormatter';
 import {EOL} from 'os';
-import type {AllMessages} from '../installLogsPrinter.types';
+import type {AllMessages, PluginOptions} from '../installLogsPrinter.types';
 
 const PADDING = '    ';
 
 export default class TextOutputProcessor extends BaseOutputProcessor implements IOutputProcecessor {
-  constructor(file: string) {
-    super(file);
+  constructor(file: string, options: PluginOptions) {
+    super(file, options);
     this.chunkSeparator = EOL + EOL;
   }
 

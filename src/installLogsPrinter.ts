@@ -10,16 +10,16 @@ import type {
   PluginOptions,
   AllMessages,
 } from './installLogsPrinter.types';
-import type {BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity} from './types';
-import type {IOutputProcecessor} from './outputProcessor/BaseOutputProcessor';
+import type { BuiltinOutputProcessorsTypes, Log, LogType, MessageData, Severity } from './types';
+import type { IOutputProcecessor } from './outputProcessor/BaseOutputProcessor';
 import utils from './utils';
 import consoleProcessor from './outputProcessor/consoleProcessor';
-import {validate} from 'superstruct';
-import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
+import { validate } from 'superstruct';
+import { InstallLogsPrinterSchema } from './installLogsPrinter.schema';
 
 const OUTPUT_PROCESSOR_TYPE: Record<
   BuiltinOutputProcessorsTypes,
-  {new (file: string): IOutputProcecessor}
+  { new(file: string, options: PluginOptions): IOutputProcecessor }
 > = {
   json: JsonOutputProcessor,
   txt: TextOutputProcessor,
@@ -31,7 +31,7 @@ let outputProcessors: IOutputProcecessor[] = [];
 const createLogger = (enabled?: boolean) =>
   enabled
     ? (message: string) => console.log(`[cypress-terminal-report:debug] ${message}`)
-    : () => {};
+    : () => { };
 
 /**
  * Installs the cypress plugin for printing logs to terminal.
@@ -104,7 +104,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
           `Running \`collectTestLogs\` on ${terminalMessages.length} messages, for ${data.spec}:${data.test}.`
         );
         options.collectTestLogs(
-          {spec: data.spec, test: data.test, state: data.state},
+          { spec: data.spec, test: data.test, state: data.state },
           terminalMessages
         );
       }
@@ -161,14 +161,15 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
 
   const createProcessorFromType = (
     file: string,
+    options: PluginOptions,
     type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
   ) => {
     if (typeof type === 'string') {
-      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file));
+      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file), options);
     }
 
     if (typeof type === 'function') {
-      return new CustomOutputProcessor(path.join(options.outputRoot || '', file), type);
+      return new CustomOutputProcessor(path.join(options.outputRoot || '', file), options, type);
     }
 
     throw new Error('Unexpected type case.');
@@ -193,11 +194,11 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
           root,
           options.specRoot || '',
           ext,
-          (nestedFile: string) => createProcessorFromType(nestedFile, type)
+          (nestedFile: string) => createProcessorFromType(nestedFile, options, type)
         )
       );
     } else {
-      outputProcessors.push(createProcessorFromType(file, type));
+      outputProcessors.push(createProcessorFromType(file, options, type));
     }
   });
 
@@ -252,7 +253,7 @@ function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: s
 
 // Ensures backwards compatibility type imports.
 declare namespace installLogsPrinter {
-  export {LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback};
+  export { LogType, Log, Severity, PluginOptions, AllMessages, CustomOutputProcessorCallback };
 }
 
 export = installLogsPrinter;
