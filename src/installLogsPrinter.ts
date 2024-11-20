@@ -164,12 +164,14 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
     options: PluginOptions,
     type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
   ) => {
+    const filepath = path.join(options.outputRoot || '', file);
+
     if (typeof type === 'string') {
-      return new OUTPUT_PROCESSOR_TYPE[type](path.join(options.outputRoot || '', file), options);
+      return new OUTPUT_PROCESSOR_TYPE[type](filepath, options);
     }
 
     if (typeof type === 'function') {
-      return new CustomOutputProcessor(path.join(options.outputRoot || '', file), options, type);
+      return new CustomOutputProcessor(filepath, options, type);
     }
 
     throw new Error('Unexpected type case.');
