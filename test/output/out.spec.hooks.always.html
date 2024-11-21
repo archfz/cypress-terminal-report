@@ -106,6 +106,10 @@
 <h2>nested before fails -&gt; [[ after all #1 ]]</h2>
 <p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after not nested</pre></p>
 <br>
+<h2>Describe 1 -&gt; Nested Describe -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>Log 1</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>assert	Expect 1: expected **false** to be true</pre></p>
+<br>
 
 <h1>cypress/integration/mochaContexts.spec.js</h1>
 <h2>main context -&gt; first level test</h2>
@@ -131,6 +135,9 @@
 <br>
 <h2>unnested before and test with nested context -&gt; nested context -&gt; the test nested</h2>
 <p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log</pre></p>
+<br>
+<h2>unnested failing before with nested context -&gt; nested context -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	before should display before nested context title</pre></p>
 <br>
 
 </body>

@@ -133,25 +133,6 @@ export function formatMessage({type, message, severity}: Log, options: PluginOpt
   return `<p>${typeString} ${processedMessage}</p>\n`;
 }
 
-/**
- *  Custom html output processor intended to be used with
- * `cypress-terminal-report`. Generates detailed html log files that log
- *  every Cypress message in a test-- in other words, log exactly what is
- *  in the messages window when running `cypress open`)
- *
- *  Example usage in config file:
- *  ```
- * import installTerminalReporter from
- *    'cypress-terminal-report/src/installLogsPrinter'
- *
- * installTerminalReporter(on, {
-      printLogsToFile: 'always',
-      outputRoot: config.reporterOptions.resultsDir,
-      specRoot: config.reporterOptions.testsDir,
-      outputTarget:()=>({ 'logs|html': detailedLogHtmlOutputProcessor }),
-    })
-    ```
- */
 export default class HtmlOutputProcessor extends BaseOutputProcessor {
   private closingContent = `
 </body>
