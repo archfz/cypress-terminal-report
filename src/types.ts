@@ -29,7 +29,7 @@ export type State = ValueOf<typeof CONSTANTS.STATE>;
 
 export type CommandTimings = ValueOf<typeof CONSTANTS.COMMAND_TIMINGS>;
 
-export type BuiltinOutputProcessorsTypes = 'txt' | 'json';
+export type BuiltinOutputProcessorsTypes = 'txt' | 'json' | 'html';
 
 // *****************************************************************************
 // Objects

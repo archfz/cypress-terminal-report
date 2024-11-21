@@ -294,6 +294,7 @@ setupNodeEvents(on, config) {
     outputTarget: {
       'out.txt': 'txt',
       'out.json': 'json',
+      'out.html': 'html',
     }
   };
 
@@ -305,7 +306,7 @@ setupNodeEvents(on, config) {
 The `outputTarget` needs to be an object where the key is the relative path of the
 file from `outputRoot` and the value is the **type** of format to output.
 
-Supported types: `txt`, `json`.
+Supported types: `txt`, `json`, `html`.
 
 ### Log specs in separate files
 

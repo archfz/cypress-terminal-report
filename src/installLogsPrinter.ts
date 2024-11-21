@@ -16,6 +16,7 @@ import utils from './utils';
 import consoleProcessor from './outputProcessor/consoleProcessor';
 import {validate} from 'superstruct';
 import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
+import HtmlOutputProcessor from './outputProcessor/HtmlOutputProcessor';
 
 const OUTPUT_PROCESSOR_TYPE: Record<
   BuiltinOutputProcessorsTypes,
@@ -23,6 +24,7 @@ const OUTPUT_PROCESSOR_TYPE: Record<
 > = {
   json: JsonOutputProcessor,
   txt: TextOutputProcessor,
+  html: HtmlOutputProcessor,
 };
 
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};
@@ -56,9 +58,10 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
     printLogsToFile,
     printLogsToConsole,
     outputCompactLogs,
-    outputTarget,logToFilesOnAfterRun,
+    outputTarget,
+    logToFilesOnAfterRun,
     includeSuccessfulHookLogs,
-    compactLogs: compactLogsOption,
+    compactLogs,
     collectTestLogs,
   } = resolvedOptions;
 
@@ -80,8 +83,8 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       let messages = data.messages;
 
       const terminalMessages =
-        typeof compactLogsOption === 'number' && compactLogsOption >= 0
-          ? compactLogs(messages, compactLogsOption, logDebug)
+        typeof compactLogs === 'number' && compactLogs >= 0
+          ? getCompactLogs(messages, compactLogs, logDebug)
           : messages;
 
       const isHookAndShouldLog =
@@ -91,7 +94,7 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
         if (data.state === 'failed' || printLogsToFile === 'always' || isHookAndShouldLog) {
           let outputFileMessages =
             typeof outputCompactLogs === 'number'
-              ? compactLogs(messages, outputCompactLogs, logDebug)
+              ? getCompactLogs(messages, outputCompactLogs, logDebug)
               : outputCompactLogs === false
                 ? messages
                 : terminalMessages;
@@ -176,8 +179,8 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
 
   const createProcessorFromType = (
     file: string,
-    options: PluginOptions,
-    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback
+    type: BuiltinOutputProcessorsTypes | CustomOutputProcessorCallback,
+    options: PluginOptions
   ) => {
     const filepath = path.join(options.outputRoot || '', file);
 
@@ -211,18 +214,18 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
           root,
           options.specRoot || '',
           ext,
-          (nestedFile: string) => createProcessorFromType(nestedFile, options, type)
+          (nestedFile: string) => createProcessorFromType(nestedFile, type, options)
         )
       );
     } else {
-      outputProcessors.push(createProcessorFromType(file, options, type));
+      outputProcessors.push(createProcessorFromType(file, type, options));
     }
   });
 
   outputProcessors.forEach((processor) => processor.initialize());
 }
 
-function compactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
+function getCompactLogs(logs: Log[], keepAroundCount: number, logDebug: (message: string) => void) {
   logDebug(`Compacting ${logs.length} logs.`);
 
   const failingIndexes = logs

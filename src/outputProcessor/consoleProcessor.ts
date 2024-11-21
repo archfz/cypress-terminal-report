@@ -89,14 +89,15 @@ const getTypeString = (type: LogType, icon: LogSymbols, color: Colors, padding: 
     return TYPE_STRING_CACHE[key];
   }
 
-  const typeString = padType(KNOWN_LOG_TYPES.includes(type) ? type : '[unknown]', padding);
-  const fullString = typeString + icon + ' ';
-  const coloredTypeString = BOLD_COLORS.includes(color)
-    ? chalk[color].bold(fullString)
-    : chalk[color](fullString);
+  let typeString = padType(KNOWN_LOG_TYPES.includes(type) ? type : '[unknown]', padding);
+  typeString += icon + ' ';
+  typeString = chalk[color](typeString);
+  if (BOLD_COLORS.includes(color)) {
+    typeString = chalk.bold(typeString);
+  }
 
-  TYPE_STRING_CACHE[key] = coloredTypeString;
-  return coloredTypeString;
+  TYPE_STRING_CACHE[key] = typeString;
+  return typeString;
 };
 
 function consoleProcessor(messages: Log[], options: PluginOptions, data: MessageData) {

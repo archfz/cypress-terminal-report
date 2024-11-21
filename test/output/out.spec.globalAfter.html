@@ -1,0 +1,38 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/allHooks.spec.js</h1>
+<h2>All hooks. -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from before</pre></p>
+<br>
+<h2>All hooks. -&gt; passed it</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from beforeEach</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from it</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from afterEach</pre></p>
+<br>
+<h2>All hooks. -&gt; passed it 2</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from beforeEach</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from it 2</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from afterEach</pre></p>
+<br>
+<h2>All hooks. -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from after</pre></p>
+<br>
+<h2>All hooks. -&gt; [[ after all #2 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from after 2</pre></p>
+<br>
+<h2>[[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>global after</pre></p>
+<br>
+
+</body>
+</html>

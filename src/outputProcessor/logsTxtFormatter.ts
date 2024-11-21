@@ -2,7 +2,7 @@ import CONSTANTS from '../constants';
 import type {Log, Severity} from '../types';
 
 const PADDING = '    ';
-const PADDING_LOGS = `${PADDING}`.repeat(6);
+const PADDING_LOGS = PADDING.repeat(6);
 const SEVERITY_ICON = {
   [CONSTANTS.SEVERITY.ERROR]: 'X',
   [CONSTANTS.SEVERITY.WARNING]: '!',

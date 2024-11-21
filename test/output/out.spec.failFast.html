@@ -1,0 +1,46 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/requests.spec.js</h1>
+<h2>Requests. -&gt; GET 200</h2>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">https://jsonplaceholder.cypress.io/todos/1
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 1,
+                  &quot;title&quot;: &quot;delectus aut autem&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">GET https://jsonplaceholder.cypress.io/todos/2
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 2,
+                  &quot;title&quot;: &quot;quis ut nam facilis et officia qui&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">GET https://jsonplaceholder.cypress.io/todos/3
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 3,
+                  &quot;title&quot;: &quot;fugiat veniam minus&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>task	failFastLog, Failed tests: 1/1</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>task	failFastLog, Enabling skip mode</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>task	failFastShouldSkip, true</pre></p>
+<br>
+
+</body>
+</html>

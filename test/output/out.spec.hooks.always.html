@@ -1,0 +1,137 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/afterLogs.spec.js</h1>
+<h2>after fails -&gt; the test 1</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 1</pre></p>
+<br>
+<h2>after fails -&gt; the test 11</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 11</pre></p>
+<br>
+<h2>after fails -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after log simple</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	after simple</pre></p>
+<br>
+<h2>after succeeds -&gt; the test 2</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 2</pre></p>
+<br>
+<h2>after succeeds -&gt; the test 22</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 22</pre></p>
+<br>
+<h2>after succeeds -&gt; the test 222</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 222</pre></p>
+<br>
+<h2>after succeeds -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after 1</pre></p>
+<br>
+<h2>after succeeds -&gt; [[ after all #2 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after 2</pre></p>
+<br>
+<h2>nested after fails -&gt; nested context -&gt; the test 3</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log test 3 nested</pre></p>
+<br>
+<h2>nested after fails -&gt; nested context -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	after nested</pre></p>
+<br>
+<h2>nested after fails -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log after root</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	after root</pre></p>
+<br>
+
+<h1>cypress/integration/allHooks.spec.js</h1>
+<h2>All hooks. -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from before</pre></p>
+<br>
+<h2>All hooks. -&gt; passed it</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from beforeEach</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from it</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from afterEach</pre></p>
+<br>
+<h2>All hooks. -&gt; passed it 2</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from beforeEach</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from it 2</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from afterEach</pre></p>
+<br>
+<h2>All hooks. -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from after</pre></p>
+<br>
+<h2>All hooks. -&gt; [[ after all #2 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>from after 2</pre></p>
+<br>
+
+<h1>cypress/integration/beforeLogs.spec.js</h1>
+<h2>before fails -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some before command</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking.get</pre></p>
+<br>
+<h2>before fails -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after</pre></p>
+<br>
+<h2>before succeeds -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some before command</pre></p>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some other before command</pre></p>
+<br>
+<h2>before succeeds -&gt; [[ before all #2 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some before command from second before hook</pre></p>
+<br>
+<h2>before succeeds -&gt; the test fails</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking.get</pre></p>
+<br>
+<h2>before succeeds -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after before succeeds</pre></p>
+<br>
+<h2>nested before fails -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some before command not in nested</pre></p>
+<br>
+<h2>nested before fails -&gt; not nested</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>not nested</pre></p>
+<br>
+<h2>nested before fails -&gt; nested context -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>some before command in nested</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking.get</pre></p>
+<br>
+<h2>nested before fails -&gt; nested context -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after nested</pre></p>
+<br>
+<h2>nested before fails -&gt; [[ after all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>after not nested</pre></p>
+<br>
+
+<h1>cypress/integration/mochaContexts.spec.js</h1>
+<h2>main context -&gt; first level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 1</pre></p>
+<br>
+<h2>main context -&gt; second context -&gt; second level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 2</pre></p>
+<br>
+<h2>main context -&gt; second context -&gt; third context -&gt; third level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 3</pre></p>
+<br>
+<h2>unnested before with nested context -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>before should display before nested context title</pre></p>
+<br>
+<h2>unnested before with nested context -&gt; nested context -&gt; the test nested</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log</pre></p>
+<br>
+<h2>unnested before and test with nested context -&gt; [[ before all #1 ]]</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>before should display before nested context title</pre></p>
+<br>
+<h2>unnested before and test with nested context -&gt; not nested</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log</pre></p>
+<br>
+<h2>unnested before and test with nested context -&gt; nested context -&gt; the test nested</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>log</pre></p>
+<br>
+
+</body>
+</html>
