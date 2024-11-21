@@ -157,6 +157,25 @@ describe('Extended controller.', () => {
     );
   }).timeout(60000);
 
+  it('Should display logs from outer before all hooks that failed in scope of nested suites.', async function () {
+    this.retries(3);
+
+    await runTest(
+      commandBase(
+        ['printSuccessfulHookLogs=1', 'enableExtendedCollector=1'],
+        ['beforeLogs.spec.js']
+      ),
+      (error, stdout, stderr) => {
+        expect(clean(stdout, true)).to.contain(
+          clean(`  Describe 1
+    4) "before all" hook for "it 1"
+            cy:log ${ICONS.info}  Log 1
+        cy:command ${ICONS.error}  assert\tExpect 1: expected **false** to be true`)
+        );
+      }
+    );
+  }).timeout(60000);
+
   it('Should not display logs from before all hooks when printing to console is never.', async function () {
     await runTest(
       commandBase(

@@ -111,14 +111,28 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
 
     // Logs commands from before all hooks that failed.
     Cypress.on('before:mocha:hooks:seal', function (this: Cypress.Cypress) {
+      const testBeforeAllSent: string[] = [];
       self.prependBeforeAllHookInAllSuites(
         this.mocha.getRootSuite().suites,
         function ctrAfterAllPerSuite(this: Mocha.Context) {
+          const suiteHasTestAsChild = (
+            suite: Mocha.Suite | undefined,
+            test: Mocha.Test
+          ): boolean => {
+            if (suite?.tests.includes(test)) {
+              return true;
+            }
+            return suite?.suites.some((s) => suiteHasTestAsChild(s, test)) || false;
+          };
+
           if (
-            this.test?.parent === this.currentTest?.parent && // Since we have after all in each suite we need this for nested suites case.
+            this.currentTest?.hookName === 'before all' &&
             this.currentTest?.failedFromHookId && // This is how we know a hook failed the suite.
+            suiteHasTestAsChild(this.test?.parent, this.currentTest) && // Since we have after all in each suite we need this for nested suites case.
+            !testBeforeAllSent.includes(this.currentTest.id) &&
             self.collectorState.hasLogsInCurrentStack()
           ) {
+            testBeforeAllSent.push(this.currentTest.id);
             self.debugLog('extended: sending logs of failed before all hook');
             self.sendLogsToPrinter(
               self.collectorState.getCurrentLogStackIndex(),

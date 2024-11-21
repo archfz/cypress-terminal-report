@@ -242,6 +242,18 @@
         "message": "after not nested",
         "severity": "success"
       }
+    ],
+    "Describe 1 -> Nested Describe -> [[ before all #1 ]]": [
+      {
+        "type": "cy:log",
+        "message": "Log 1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\tExpect 1: expected **false** to be true",
+        "severity": "error"
+      }
     ]
   },
   "cypress/integration/mochaContexts.spec.js": {
@@ -299,6 +311,13 @@
         "type": "cy:log",
         "message": "log",
         "severity": "success"
+      }
+    ],
+    "unnested failing before with nested context -> nested context -> [[ before all #1 ]]": [
+      {
+        "type": "cy:command",
+        "message": "get\tbefore should display before nested context title",
+        "severity": "error"
       }
     ]
   }

@@ -25,6 +25,10 @@ cypress/integration/beforeLogs.spec.js:
             cy:log (K): some before command in nested
         cy:command (X): get	.breaking.get
 
+    Describe 1 -> Nested Describe -> [[ before all #1 ]]
+            cy:log (K): Log 1
+        cy:command (X): assert	Expect 1: expected **false** to be true
+
 
 
 cypress/integration/mochaContexts.spec.js:
@@ -36,4 +40,7 @@ cypress/integration/mochaContexts.spec.js:
 
     main context -> second context -> third context -> third level test
         cy:command (X): get	.breaking-get 3
+
+    unnested failing before with nested context -> nested context -> [[ before all #1 ]]
+        cy:command (X): get	before should display before nested context title
 

@@ -96,6 +96,10 @@ cypress/integration/beforeLogs.spec.js:
     nested before fails -> [[ after all #1 ]]
             cy:log (K): after not nested
 
+    Describe 1 -> Nested Describe -> [[ before all #1 ]]
+            cy:log (K): Log 1
+        cy:command (X): assert	Expect 1: expected **false** to be true
+
 
 
 cypress/integration/mochaContexts.spec.js:
@@ -122,4 +126,7 @@ cypress/integration/mochaContexts.spec.js:
 
     unnested before and test with nested context -> nested context -> the test nested
             cy:log (K): log
+
+    unnested failing before with nested context -> nested context -> [[ before all #1 ]]
+        cy:command (X): get	before should display before nested context title
 
