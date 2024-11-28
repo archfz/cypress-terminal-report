@@ -95,7 +95,7 @@ export const runTestContinuous = async (command, afterOutput, callback) => {
 
 export const outputCleanUpAndInitialization = (testOutputs, outRoot) => {
   outRoot.value = path.join(__dirname, 'output');
-  testOutputs.value = ['out.txt', 'out.json', 'out.cst'];
+  testOutputs.value = ['out.txt', 'out.json', 'out.html', 'out.cst'];
   testOutputs.value.forEach((out) => {
     if (fs.existsSync(path.join(outRoot.value, out))) {
       fs.unlinkSync(path.join(outRoot.value, out));
@@ -150,7 +150,7 @@ export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specExtName) 
 export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
   fileNames.forEach((fileName) => {
     let ext = path.extname(fileName).substring(1);
-    if (!['json', 'txt'].includes(ext)) {
+    if (!['json', 'txt', 'html'].includes(ext)) {
       ext = 'custom';
     }
     let logString =

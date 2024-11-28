@@ -40,6 +40,7 @@ describe('Misc.', () => {
       (error, stdout) => {
         expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to txt.`);
         expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to json.`);
+        expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to html.`);
         expect(stdout).to.not.contain(`cypress-terminal-report: Wrote custom logs to custom.`);
       }
     );

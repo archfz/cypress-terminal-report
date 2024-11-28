@@ -16,6 +16,7 @@ import utils from './utils';
 import consoleProcessor from './outputProcessor/consoleProcessor';
 import {validate} from 'superstruct';
 import {InstallLogsPrinterSchema} from './installLogsPrinter.schema';
+import HtmlOutputProcessor from './outputProcessor/HtmlOutputProcessor';
 
 const OUTPUT_PROCESSOR_TYPE: Record<
   BuiltinOutputProcessorsTypes,
@@ -23,6 +24,7 @@ const OUTPUT_PROCESSOR_TYPE: Record<
 > = {
   json: JsonOutputProcessor,
   txt: TextOutputProcessor,
+  html: HtmlOutputProcessor,
 };
 
 let writeToFileMessages: Record<string, Record<string, Log[]>> = {};

@@ -1,0 +1,26 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/callsSuiteInAnotherFile.spec.js</h1>
+<h2>Calls function in another file that creates a sub-suite. -&gt; the test 2</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>assert	expected **1** to equal **2**
+                Actual: 	1
+                Expected: 	2</pre></p>
+<br>
+<h2>Calls function in another file that creates a sub-suite. -&gt; sub-suite in different file -&gt; subsuite test 2</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>assert	expected **1** to equal **2**
+                Actual: 	1
+                Expected: 	2</pre></p>
+<br>
+
+</body>
+</html>

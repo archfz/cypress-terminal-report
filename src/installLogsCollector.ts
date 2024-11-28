@@ -11,7 +11,7 @@ import LogCollectControlSimple from './collector/LogCollectControlSimple';
 import logsTxtFormatter from './outputProcessor/logsTxtFormatter';
 import CONSTANTS from './constants';
 import type {ExtendedSupportOptions, SupportOptions} from './installLogsCollector.types';
-import type {LogType, Log, Severity, BuiltinOutputProcessorsTypes} from './types';
+import type {LogType, Log, Severity} from './types';
 import utils from './utils';
 import {validate} from 'superstruct';
 import {InstallLogsCollectorSchema} from './installLogsCollector.schema';
@@ -75,7 +75,7 @@ function registerLogCollectorTypes(
 function registerGlobalApi(logCollectorState: LogCollectorState) {
   Cypress.TerminalReport = {
     //@ts-ignore there is no error, this works correctly.
-    getLogs: (format: BuiltinOutputProcessorsTypes | 'none' = 'none') => {
+    getLogs: (format: 'txt' | 'json' | 'none' = 'none') => {
       const logs = logCollectorState.getCurrentLogStack();
 
       if (!logs) {

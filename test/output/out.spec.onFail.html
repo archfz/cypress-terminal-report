@@ -1,0 +1,163 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/happyFlow.spec.js</h1>
+<h2>Happy flow. -&gt; Happy flow</h2>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>visit	/commands/network-requests</pre></p>
+<p><pre style="color:green;">  cy:intercept➟</pre> <pre style="color:grey;">Method: GET
+                Matcher: &quot;comments/*&quot;</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>get	.network-btn</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>click	</pre></p>
+<p><pre style="color:lightgrey;">        cy:xhr➟</pre> <pre style="color:lightgrey;">(getComment) GET https://jsonplaceholder.cypress.io/comments/1
+                Status: 200</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>wait	@getComment</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>its	.response.statusCode</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>assert	expected **200** to equal **200**
+                Actual: 	200
+                Expected: 	200</pre></p>
+<p><pre style="color:green;">  cy:intercept➟</pre> <pre style="color:grey;">Method: POST
+                Matcher: &quot;/comments&quot;</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>get	.network-post</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>click	</pre></p>
+<p><pre style="color:lightgrey;">        cy:xhr➟</pre> <pre style="color:lightgrey;">(postComment) POST https://jsonplaceholder.cypress.io/comments
+                Status: 201</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>wait	@postComment</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>assert	expected **name=Using+POST+in+cy.intercept()&amp;email=hello%40cypress.io&amp;body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **email**</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>assert	expected **{ Object (host, connection, ...) }** to have property **content-type**</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>assert	expected **name=Using+POST+in+cy.intercept()&amp;email=hello%40cypress.io&amp;body=You+can+change+the+method+used+for+cy.intercept()+to+be+GET%2C+POST%2C+PUT%2C+PATCH%2C+or+DELETE** to include **name=Using+POST+in+cy.intercept()**</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:red;">    cons:error✘</pre> <pre>null,
+                undefined,
+                ,
+                false,
+                function () {}</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:darkcyan;">      cons:log✱</pre> <pre>{
+                  &quot;a&quot;: &quot;b&quot;
+                },
+                {
+                  &quot;c&quot;: &quot;d&quot;
+                },
+                10,
+                string</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:yellow;">     cons:warn❖</pre> <pre>This is a warning message</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:red;">    cons:error✘</pre> <pre>This is an error message</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:red;">    cons:error✘</pre> <pre>Error: This is an error message with stack.
+                    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:50:43)</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:darkcyan;">      cons:log✱</pre> <pre>This should console.log appear.</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:darkcyan;">      cons:log✱</pre> <pre>{
+                  &quot;this&quot;: &quot;Is an object&quot;,
+                  &quot;with&quot;: {
+                    &quot;keys&quot;: 12512
+                  }
+                }</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:darkcyan;">     cons:info✱</pre> <pre>This should console.info appear.</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
+<p><pre style="color:blue;">    cons:debug⚈</pre> <pre>This should console.debug appear.</pre></p>
+<p><pre style="color:green;">  cy:intercept➟</pre> <pre style="color:grey;">Matcher: {&quot;method&quot;:&quot;PUT&quot;,&quot;url&quot;:&quot;comments/*&quot;}
+                Mocked Response: {&quot;statusCode&quot;:404,&quot;body&quot;:{&quot;error&quot;:&quot;whoa, this comment does not exist&quot;},&quot;delayMs&quot;:500}</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>get	.network-put</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>click	</pre></p>
+<p><pre style="color:yellow;">        cy:xhr❖</pre> <pre style="color:lightgrey;">(putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1
+                Status: 404
+                Response body: {
+                  &quot;error&quot;: &quot;whoa, this comment does not exist&quot;
+                }</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>wait	@putComment</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>get	.network-put-comment</pre></p>
+<p><pre style="color:green;">    cy:command✔</pre> <pre>assert	expected **&lt;div.network-put-comment&gt;** to contain **whoa, this comment does not exist**</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get</pre></p>
+<br>
+
+<h1>cypress/integration/mochaContexts.spec.js</h1>
+<h2>main context -&gt; first level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 1</pre></p>
+<br>
+<h2>main context -&gt; second context -&gt; second level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 2</pre></p>
+<br>
+<h2>main context -&gt; second context -&gt; third context -&gt; third level test</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get 3</pre></p>
+<br>
+
+<h1>cypress/integration/requests.spec.js</h1>
+<h2>Requests. -&gt; GET 200</h2>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">https://jsonplaceholder.cypress.io/todos/1
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 1,
+                  &quot;title&quot;: &quot;delectus aut autem&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">GET https://jsonplaceholder.cypress.io/todos/2
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 2,
+                  &quot;title&quot;: &quot;quis ut nam facilis et officia qui&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">GET https://jsonplaceholder.cypress.io/todos/3
+                Status: 200
+                Response body: {
+                  &quot;userId&quot;: 1,
+                  &quot;id&quot;: 3,
+                  &quot;title&quot;: &quot;fugiat veniam minus&quot;,
+                  &quot;completed&quot;: false
+                }</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get</pre></p>
+<br>
+<h2>Requests. -&gt; POST 200</h2>
+<p><pre style="color:green;">    cy:request✔</pre> <pre style="color:grey;">POST https://jsonplaceholder.cypress.io/comments
+                Status: 201
+                Response body: {
+                  &quot;id&quot;: 501
+                }</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get</pre></p>
+<br>
+<h2>Requests. -&gt; GET should give 500 response status</h2>
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">GET http://localhost:3015/v3/4b2d23ec-4516-4a94-967e-995596d01a32
+                Status: 500 - Internal Server Error
+                Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.</pre></p>
+<br>
+<h2>Requests. -&gt; POST should give 400 response status</h2>
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431
+                Status: 400 - Bad Request
+                Response body: {
+                  &quot;status&quot;: &quot;Wrong!&quot;,
+                  &quot;data&quot;: {
+                    &quot;corpo&quot;: &quot;corpo da resposta&quot;,
+                    &quot;titulo&quot;: &quot;titulo da resposta&quot;
+                  }
+                }</pre></p>
+<br>
+<h2>Requests. -&gt; PUT should fail</h2>
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">PUT https://jsonplaceholder.cypress.io/comments
+                Status: 404 - Not Found
+                Response body: {}</pre></p>
+<br>
+<h2>Requests. -&gt; cypress logging is disabled in the request</h2>
+<br>
+<h2>Requests. -&gt; Network error</h2>
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">POST http://this.does.not.exist
+                Network error: getaddrinfo ENOTFOUND this.does.not.exist</pre></p>
+<br>
+
+</body>
+</html>

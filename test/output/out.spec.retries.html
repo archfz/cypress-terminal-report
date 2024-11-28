@@ -1,0 +1,33 @@
+<html>
+<head>
+  <style>
+    body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }
+  </style>
+</head>
+
+<body>
+
+<h1>cypress/integration/retries.spec.js</h1>
+<h2>fail but win (Attempt 1)</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>Hello. currentRetry: 0</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>contains	Foobar</pre></p>
+<br>
+<h2>fail but win (Attempt 2)</h2>
+<p><pre style="color:darkcyan;">        cy:log✱</pre> <pre>Hello. currentRetry: 1</pre></p>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>contains	Foobar</pre></p>
+<br>
+<h2>Retries -&gt; fails (Attempt 1)</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	breaking</pre></p>
+<br>
+<h2>Retries -&gt; fails (Attempt 2)</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	breaking</pre></p>
+<br>
+<h2>Retries -&gt; fails (Attempt 3)</h2>
+<p><pre style="color:red;">    cy:command✘</pre> <pre>get	breaking</pre></p>
+<br>
+
+</body>
+</html>

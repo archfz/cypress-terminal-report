@@ -4,8 +4,9 @@ test/cypress/screenshots
 test/cypress/videos
 test/output/out.json
 test/output/out.txt
-test/output/not/existing/path/out.txt
+test/output/out.html
 test/output/out.cst
+test/output/not/existing/path/out.txt
 test/output_nested
 test/cypress/reports
 .idea

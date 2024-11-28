@@ -25,6 +25,7 @@ module.exports = defineConfig({
           'not/existing/path/out.txt': 'txt',
           'out.txt': 'txt',
           'out.json': 'json',
+          'out.html': 'html',
           'out.cst': function (allMessages) {
             this.initialContent = 'Specs:\n';
             this.chunkSeparator = '\n';
@@ -40,6 +41,7 @@ module.exports = defineConfig({
         options.outputTarget = {
           'txt|txt': 'txt',
           'json|json': 'json',
+          'html|html': 'html',
           'custom|cst': function (allMessages) {
             this.initialContent = 'Specs:\n';
             this.chunkSeparator = '\n';
