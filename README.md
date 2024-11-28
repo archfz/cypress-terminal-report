@@ -400,7 +400,12 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+#### 7.1.0
+
+- Support for md formatting in terminal output from `cy:log`. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/263) by [bvandercar-vt](https://github.com/bvandercar-vt)
+- Support for `html` file output. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/269) by [bvandercar-vt](https://github.com/bvandercar-vt)
 - Fix nested suite tests not printing failed before all hooks. [issue](https://github.com/archfz/cypress-terminal-report/issues/268)
+- Refactors and additional types thanks to [bvandercar-vt](https://github.com/bvandercar-vt).
 
 #### 7.0.4
 
