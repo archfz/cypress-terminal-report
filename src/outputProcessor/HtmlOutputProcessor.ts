@@ -141,16 +141,29 @@ export default class HtmlOutputProcessor extends BaseOutputProcessor {
 
   constructor(
     protected file: string,
-    protected options: PluginOptions
+    protected options: PluginOptions,
+    /**
+     * Style CSS, gets placed within the `<style>` tag of the html document.
+     * 
+     * @default
+        body { font-family: monospace; }
+        p { margin: 0; padding: 0; }
+        pre { display: inline; margin: 0; }
+        h2 { margin: 0; font-size: 1.2em; }
+     */
+    protected style: string = `body { font-family: monospace; }
+    p { margin: 0; padding: 0; }
+    pre { display: inline; margin: 0; }
+    h2 { margin: 0; font-size: 1.2em; }`
   ) {
     super(file, options);
     this.initialContent = `<html>
 <head>
   <style>
-    body { font-family: monospace; }
-    p { margin: 0; padding: 0; }
-    pre { display: inline; margin: 0; }
-    h2 { margin: 0; font-size: 1.2em; }
+${style
+  .split('\n')
+  .map((line) => '    ' + line.trim())
+  .join('\n')}
   </style>
 </head>
 
