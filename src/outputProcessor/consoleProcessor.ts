@@ -14,68 +14,70 @@ const LOG_SYMBOLS = (() =>
 
 const BOLD_COLORS: Colors[] = [COLORS.RED, COLORS.YELLOW];
 
-const TYPE_COMPUTE: Record<
+const getTypeConfigMap = (
+  options: PluginOptions
+): Record<
   LogType,
-  (options: PluginOptions) => {
+  {
     icon: LogSymbols;
     color: Colors;
     trim?: number;
   }
-> = {
-  [LOG_TYPES.PLUGIN_LOG_TYPE]: () => ({
+> => ({
+  [LOG_TYPES.PLUGIN_LOG_TYPE]: {
     color: COLORS.WHITE,
     icon: '-',
-  }),
-  [LOG_TYPES.BROWSER_CONSOLE_WARN]: () => ({
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_WARN]: {
     color: COLORS.YELLOW,
     icon: LOG_SYMBOLS.WARNING,
-  }),
-  [LOG_TYPES.BROWSER_CONSOLE_ERROR]: () => ({
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_ERROR]: {
     color: COLORS.RED,
     icon: LOG_SYMBOLS.WARNING,
-  }),
-  [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: () => ({
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: {
     color: COLORS.BLUE,
     icon: LOG_SYMBOLS.DEBUG,
-  }),
-  [LOG_TYPES.BROWSER_CONSOLE_LOG]: () => ({
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_LOG]: {
     color: COLORS.WHITE,
     icon: LOG_SYMBOLS.INFO,
-  }),
-  [LOG_TYPES.BROWSER_CONSOLE_INFO]: () => ({
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_INFO]: {
     color: COLORS.WHITE,
     icon: LOG_SYMBOLS.INFO,
-  }),
-  [LOG_TYPES.CYPRESS_LOG]: () => ({
+  },
+  [LOG_TYPES.CYPRESS_LOG]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.INFO,
-  }),
-  [LOG_TYPES.CYPRESS_XHR]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_XHR]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_FETCH]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_FETCH]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_INTERCEPT]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_INTERCEPT]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_REQUEST]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_REQUEST]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_COMMAND]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_COMMAND]: {
     color: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
     trim: options.routeTrimLength,
-  }),
-};
+  },
+});
 
 const TYPE_STRING_CACHE: Record<string, string> = {};
 
@@ -112,7 +114,7 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
 
   messages.forEach(({type, message, severity, timeString}) => {
     let processedMessage = message;
-    let {color, icon, trim = options.defaultTrimLength} = TYPE_COMPUTE[type](options);
+    let {color, icon, trim = options.defaultTrimLength} = getTypeConfigMap(options)[type];
 
     if (severity === CONSTANTS.SEVERITY.ERROR) {
       color = COLORS.RED;

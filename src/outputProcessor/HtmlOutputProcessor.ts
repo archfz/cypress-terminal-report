@@ -16,9 +16,11 @@ const COLORS = {
 
 type Colors = ValueOf<typeof COLORS>;
 
-const MessageConfigMap: Record<
+const getMessageConfigMap = (
+  options: PluginOptions
+): Record<
   LogType,
-  (options: PluginOptions) => {
+  {
     typeColor: Colors;
     icon: LogSymbols;
     /**
@@ -30,43 +32,64 @@ const MessageConfigMap: Record<
      */
     trim?: number;
   }
-> = {
-  [LOG_TYPES.PLUGIN_LOG_TYPE]: () => ({typeColor: COLORS.DARK_CYAN, icon: LOG_SYMBOLS.INFO}),
-  [LOG_TYPES.BROWSER_CONSOLE_WARN]: () => ({typeColor: COLORS.YELLOW, icon: LOG_SYMBOLS.WARNING}),
-  [LOG_TYPES.BROWSER_CONSOLE_ERROR]: () => ({typeColor: COLORS.RED, icon: LOG_SYMBOLS.ERROR}),
-  [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: () => ({typeColor: COLORS.BLUE, icon: LOG_SYMBOLS.DEBUG}),
-  [LOG_TYPES.BROWSER_CONSOLE_INFO]: () => ({typeColor: COLORS.DARK_CYAN, icon: LOG_SYMBOLS.INFO}),
-  [LOG_TYPES.BROWSER_CONSOLE_LOG]: () => ({typeColor: COLORS.DARK_CYAN, icon: LOG_SYMBOLS.INFO}),
-  [LOG_TYPES.CYPRESS_LOG]: () => ({typeColor: COLORS.DARK_CYAN, icon: LOG_SYMBOLS.INFO}),
-  [LOG_TYPES.CYPRESS_XHR]: (options) => ({
+> => ({
+  [LOG_TYPES.PLUGIN_LOG_TYPE]: {
+    typeColor: COLORS.DARK_CYAN,
+    icon: LOG_SYMBOLS.INFO,
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_WARN]: {
+    typeColor: COLORS.YELLOW,
+    icon: LOG_SYMBOLS.WARNING,
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_ERROR]: {
+    typeColor: COLORS.RED,
+    icon: LOG_SYMBOLS.ERROR,
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_DEBUG]: {
+    typeColor: COLORS.BLUE,
+    icon: LOG_SYMBOLS.DEBUG,
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_INFO]: {
+    typeColor: COLORS.DARK_CYAN,
+    icon: LOG_SYMBOLS.INFO,
+  },
+  [LOG_TYPES.BROWSER_CONSOLE_LOG]: {
+    typeColor: COLORS.DARK_CYAN,
+    icon: LOG_SYMBOLS.INFO,
+  },
+  [LOG_TYPES.CYPRESS_LOG]: {
+    typeColor: COLORS.DARK_CYAN,
+    icon: LOG_SYMBOLS.INFO,
+  },
+  [LOG_TYPES.CYPRESS_XHR]: {
     typeColor: COLORS.LIGHT_GREY,
     icon: LOG_SYMBOLS.ROUTE,
     messageColor: COLORS.LIGHT_GREY,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_FETCH]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_FETCH]: {
     typeColor: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
     trim: options.routeTrimLength,
     messageColor: COLORS.GREY,
-  }),
-  [LOG_TYPES.CYPRESS_INTERCEPT]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_INTERCEPT]: {
     typeColor: COLORS.GREEN,
     icon: LOG_SYMBOLS.ROUTE,
     messageColor: COLORS.GREY,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_REQUEST]: (options) => ({
+  },
+  [LOG_TYPES.CYPRESS_REQUEST]: {
     typeColor: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
     messageColor: COLORS.GREY,
     trim: options.routeTrimLength,
-  }),
-  [LOG_TYPES.CYPRESS_COMMAND]: () => ({
+  },
+  [LOG_TYPES.CYPRESS_COMMAND]: {
     typeColor: COLORS.GREEN,
     icon: LOG_SYMBOLS.SUCCESS,
-  }),
-};
+  },
+});
 
 // https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
 export function escapeHtml(html: string) {
@@ -86,10 +109,13 @@ export function escapeHtml(html: string) {
  * - Apply proper spacing, newlines, and HTML syntax.
  */
 export function formatMessage({type, message, severity}: Log, options: PluginOptions) {
-  const messageConfig = MessageConfigMap[type](options);
-
+  let {
+    typeColor,
+    icon,
+    messageColor,
+    trim = options.defaultTrimLength,
+  } = getMessageConfigMap(options)[type];
   let processedMessage = message;
-  let {typeColor, icon, messageColor, trim = options.defaultTrimLength} = messageConfig;
 
   if (severity === 'error') {
     typeColor = COLORS.RED;
