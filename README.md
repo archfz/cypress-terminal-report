@@ -391,10 +391,21 @@ alternation.
 The HTML output processor has default styles:
 
 ```css
-body { font-family: monospace; }
-p { margin: 0; padding: 0; }
-pre { display: inline; margin: 0; }
-h2 { margin: 0; font-size: 1.2em; }
+body {
+  font-family: monospace;
+}
+p {
+  margin: 0;
+  padding: 0;
+}
+pre {
+  display: inline;
+  margin: 0;
+}
+h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
 ```
 
 To pass custom CSS styles:
