@@ -386,6 +386,50 @@ See [JsonOutputProcessor](./src/outputProcessor/JsonOutputProcessor.js) implemen
 good example demonstrating both conversion of data into string and chunk write position
 alternation.
 
+### HTML output log processor
+
+The HTML output processor has default styles:
+
+```css
+body {
+  font-family: monospace;
+}
+p {
+  margin: 0;
+  padding: 0;
+}
+pre {
+  display: inline;
+  margin: 0;
+}
+h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+```
+
+To pass custom CSS styles:
+
+```js
+const HtmlOutputProcessor = require('cypress-terminal-report/src/outputProcessor/HtmlOutputProcessor')
+// ...
+setupNodeEvents(on, config) {
+  const options = {
+    // ...
+    outputTarget: {
+      'html': function (this) {
+        return new HtmlOutputProcessor(
+          this.file,
+          this.options,
+          `
+          /* Custom CSS */
+          `
+        )
+      },
+  };
+}
+```
+
 ## Development
 
 ### Testing
