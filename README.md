@@ -406,7 +406,7 @@ setupNodeEvents(on, config) {
   const options = {
     // ...
     outputTarget: {
-      'logs|html': function (this) {
+      'html': function (this) {
         return new HtmlOutputProcessor(
           this.file,
           this.options,
