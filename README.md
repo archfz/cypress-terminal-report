@@ -444,6 +444,8 @@ directory. You should add `it.only` to the test case you are working on to speed
 
 ## Release Notes
 
+- Custom css support for `html` file output. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/273) by [bvandercar-vt](https://github.com/bvandercar-vt)
+
 #### 7.1.0
 
 - Support for md formatting in terminal output from `cy:log`. [merge-request](https://github.com/archfz/cypress-terminal-report/pull/263) by [bvandercar-vt](https://github.com/bvandercar-vt)
