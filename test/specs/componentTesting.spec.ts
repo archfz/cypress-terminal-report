@@ -1,5 +1,6 @@
 import {ICONS, runTest, commandBase, logLastRun} from '../utils';
-import {expect} from 'chai';
+
+const {expect} = require('chai');
 
 describe('Component testing support.', () => {
   afterEach(function () {

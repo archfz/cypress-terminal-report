@@ -7,7 +7,8 @@ import {
   outputCleanUpAndInitialization,
   logLastRun,
 } from '../utils';
-import {expect} from 'chai';
+
+const {expect} = require('chai');
 require('chai').config.truncateThreshold = 0;
 
 describe('Extended controller.', () => {

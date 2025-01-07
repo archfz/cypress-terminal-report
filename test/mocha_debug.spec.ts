@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+const {expect} = require('chai');
 
 describe('Always red test', function () {
   before(function () {

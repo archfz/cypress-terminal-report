@@ -7,8 +7,9 @@ import {
   logLastRun,
   runTestColoredConsole,
 } from '../utils';
-import {expect} from 'chai';
 import chalk from 'chalk';
+
+const {expect} = require('chai');
 
 describe('Commands logging.', () => {
   afterEach(function () {

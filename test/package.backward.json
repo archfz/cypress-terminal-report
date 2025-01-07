@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "mocha --require mocha-backwards.env --require ts-node/register specs/*.spec.ts",
-    "test-ci": "mocha --require mocha-backwards.env --require ts-node/register $(./bin/split_matrix_specs.sh)",
+    "test": "mocha --require mocha-backward.env.ts --require ts-node/register specs/*.spec.ts",
+    "test-ci": "mocha --require mocha-backward.env.ts --require ts-node/register $(./bin/split_matrix_specs.sh)",
     "test-backwards-ci": "npm run test-ci -- --fgrep '[backward-compatibility-skip]' -i",
-    "swap-to-main": "mv package.json package.backwards.json && mv package.back.json package.json && git checkout package-lock.json"
+    "swap-to-main": "mv package.json package.backward.json && mv package.back.json package.json && git checkout package-lock.json"
   },
   "author": "Fodor Zoltan",
   "license": "MIT",

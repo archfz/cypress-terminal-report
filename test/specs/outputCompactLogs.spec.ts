@@ -1,7 +1,8 @@
 import {runTest, commandBase, logLastRun, clean} from '../utils';
-import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
+
+const {expect} = require('chai');
 
 function getOutputFileContents() {
   const outputFile = path.join(__dirname, '../output/out.txt');

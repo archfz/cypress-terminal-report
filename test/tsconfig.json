@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "types": ["node", "mocha", "chai"],
-    "lib": ["ESNext"]
+    "lib": ["ESNext"],
+    "esModuleInterop": true
   }
 }

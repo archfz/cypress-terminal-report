@@ -7,11 +7,12 @@ import {
   outputCleanUpAndInitialization,
   logLastRun,
 } from '../utils';
-import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
 import * as fsExtra from 'fs-extra';
+
+const {expect} = require('chai');
 
 describe('Output to files.', () => {
   afterEach(function () {

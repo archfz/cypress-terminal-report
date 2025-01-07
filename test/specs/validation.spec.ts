@@ -1,5 +1,6 @@
 import {runTest, commandBase, logLastRun} from '../utils';
-import {expect} from 'chai';
+
+const {expect} = require('chai');
 
 describe('Validation.', () => {
   afterEach(function () {
