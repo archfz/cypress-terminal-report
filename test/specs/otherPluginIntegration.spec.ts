@@ -1,8 +1,7 @@
 import {ICONS, runTest, commandBase, expectOutFilesMatch, logLastRun} from '../utils';
+import {expect} from 'chai';
 import * as fs from 'fs';
 import * as glob from 'glob';
-
-const {expect} = require('chai');
 
 describe('Other plugin integrations.', () => {
   afterEach(function () {

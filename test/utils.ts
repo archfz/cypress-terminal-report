@@ -1,10 +1,9 @@
-import {exec, ExecException, spawn} from 'child_process';
+import {exec, type ExecException, spawn} from 'child_process';
+import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import chalk from 'chalk';
-
-const {expect} = require('chai');
 
 let commandPrefix = 'node ./node_modules/.bin/cypress';
 

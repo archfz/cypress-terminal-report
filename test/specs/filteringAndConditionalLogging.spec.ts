@@ -1,6 +1,5 @@
 import {ICONS, runTest, commandBase, logLastRun} from '../utils';
-
-const {expect} = require('chai');
+import {expect} from 'chai';
 
 describe('Filtering and conditional logging.', () => {
   afterEach(function () {

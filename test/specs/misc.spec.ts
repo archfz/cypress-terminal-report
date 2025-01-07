@@ -8,8 +8,7 @@ import {
   outputCleanUpAndInitialization,
   expectOutputFilesToBeCorrect,
 } from '../utils';
-
-const {expect} = require('chai');
+import {expect} from 'chai';
 
 describe('Misc.', () => {
   afterEach(function () {

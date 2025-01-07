@@ -1,6 +1,5 @@
 import utils from '../../src/utils';
-
-const {expect} = require('chai');
+import {expect} from 'chai';
 
 const {applyMessageMarkdown} = utils;
 
