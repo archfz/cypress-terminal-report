@@ -3,9 +3,9 @@ import {
   ICONS,
   clean,
   runTest,
+  runTestColoredConsole,
   commandBase,
   logLastRun,
-  runTestColoredConsole,
 } from '../utils';
 import chalk from 'chalk';
 

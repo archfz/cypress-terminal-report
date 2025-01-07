@@ -1,3 +1,4 @@
+// https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping#node-12
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
