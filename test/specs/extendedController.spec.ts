@@ -12,15 +12,13 @@ require('chai').config.truncateThreshold = 0;
 
 describe('Extended controller.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });
 
   it('Should generate proper log output files for after and before hooks when logging is on fail.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = [
       'afterLogs.spec.js',
@@ -31,7 +29,7 @@ describe('Extended controller.', () => {
     await runTest(
       commandBase(['generateOutput=1', 'enableExtendedCollector=1'], specFiles),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'hooks.onFail');
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'hooks.onFail');
       }
     );
   }).timeout(90000);
@@ -39,9 +37,7 @@ describe('Extended controller.', () => {
   it('Should print all tests to output files when configured so with hooks and contexts.', async function () {
     this.retries(1);
 
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = [
       'afterLogs.spec.js',
@@ -55,7 +51,7 @@ describe('Extended controller.', () => {
         specFiles
       ),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'hooks.always');
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'hooks.always');
       }
     );
   }).timeout(90000);

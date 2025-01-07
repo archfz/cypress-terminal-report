@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Calculate specs to run.
-allSpecs=$(find specs/ -name "*.spec.js" | sort -n)
+allSpecs=$(find specs/ -name "*.spec.ts" | sort -n)
 specCount=$(echo "$allSpecs" | wc -l)
 
 CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL

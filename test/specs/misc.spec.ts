@@ -12,7 +12,7 @@ import {expect} from 'chai';
 
 describe('Misc.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });
@@ -90,9 +90,7 @@ describe('Misc.', () => {
   }).timeout(30000);
 
   it('Should print logs for all cypress retries.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     await runTest(
       commandBase(['breaking=1', 'generateOutput=1'], ['retries.spec.js']),
@@ -119,7 +117,7 @@ describe('Misc.', () => {
 
   ✓ fail but win`);
 
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'retries');
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'retries');
       }
     );
   }).timeout(30000);

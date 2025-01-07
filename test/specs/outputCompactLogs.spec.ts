@@ -12,7 +12,7 @@ function getOutputFileContents() {
 
 describe('Output compact logs.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });

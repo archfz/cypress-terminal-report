@@ -1,10 +1,18 @@
-import {PADDING, ICONS, clean, runTest, commandBase, logLastRun, runTestContinuous} from '../utils';
+import {
+  PADDING,
+  ICONS,
+  clean,
+  runTest,
+  commandBase,
+  logLastRun,
+  runTestColoredConsole,
+} from '../utils';
 import {expect} from 'chai';
 import chalk from 'chalk';
 
 describe('Commands logging.', () => {
   afterEach(function () {
-    if (this.currentTest.state === 'failed') {
+    if (this.currentTest?.state === 'failed') {
       logLastRun();
     }
   });
@@ -241,14 +249,10 @@ describe('Commands logging.', () => {
   }).timeout(60000);
 
   it('Should apply chalk markdown to console', async () => {
-    // runTestContinuous to use spawn instead of exec, in order to get unicode stdout
-    await runTestContinuous(
-      commandBase(
-        ['printLogsToConsoleAlways=1', 'enableContinuousLogging=1'],
-        ['logMarkdown.spec.js']
-      ),
-      (error, stdout, stderr) => {
-        const lines = stdout.split('\n');
+    await runTestColoredConsole(
+      commandBase(['printLogsToConsoleAlways=1'], ['logMarkdown.spec.js']),
+      (stdout) => {
+        const lines = clean(stdout).split('\n');
         [
           chalk.italic('This is an_italic* log.'),
           chalk.italic('This is an_italic* log.'),
@@ -265,7 +269,9 @@ describe('Commands logging.', () => {
           '**This is a normal log',
           'This is a normal log**',
         ].forEach((msg, index) => {
-          expect(lines[index + 4]).to.equal(`          cy:log ${ICONS.info}  ${msg}`);
+          expect(JSON.stringify(lines[index + 4])).to.equal(
+            JSON.stringify(chalk.green(`          cy:log ${ICONS.info} `) + ' ' + msg)
+          );
         });
       }
     );
