@@ -1,4 +1,4 @@
-import {exec, spawn} from 'child_process';
+import {exec, type ExecException, spawn} from 'child_process';
 import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -21,7 +21,7 @@ export const ICONS = (() => {
 
 export const PADDING = '                    ';
 
-export const commandBase = (env = [], specs = [], component = false) =>
+export const commandBase = (env: string[] = [], specs: string[] = [], component: boolean = false) =>
   `${commandPrefix} run --env "${env.join(',')}" --headless ${component ? '--component' : ''} --config video=false -s ${specs.map((s) => (component ? `cypress/component/${s}` : `cypress/integration/${s}`))}`;
 
 let lastRunOutput = '';
@@ -34,11 +34,22 @@ export const logLastRun = () => {
   console.log(lastRunCommand);
 };
 
-export const runTest = async (command, callback) => {
+const splitCommandForSpawn = (command: string) => {
+  const mainCommand = command.split(' ')[0];
+  const args = command.split(' ').map((arg) => arg.replace(/^"/, '').replace(/"$/, ''));
+  args.shift();
+
+  return {mainCommand, args};
+};
+
+export const runTest = async (
+  command: string,
+  callback: (error: ExecException | null, stdout: string, stderr: string) => void
+) => {
   await new Promise((resolve) => {
     exec(
       command,
-      {encoding: 'UTF-8', env: {...process.env, NO_COLOR: 1}},
+      {encoding: 'utf-8', env: {...process.env, NO_COLOR: '1'}},
       (error, stdout, stderr) => {
         if (stderr) {
           console.error(stderr);
@@ -57,25 +68,57 @@ export const runTest = async (command, callback) => {
         callback(error, normalizedStdout, stderr);
         expect(normalizedStdout).to.not.contain("CypressError: `cy.task('ctrLogMessages')` failed");
 
-        resolve();
+        resolve(null);
       }
     );
   });
 };
 
-export const runTestContinuous = async (command, afterOutput, callback) => {
+export const runTestColoredConsole = async (
+  command: string,
+  callback: (stdout: string) => void
+) => {
   await new Promise((resolve) => {
-    let allData = '';
-    let startTime;
-    const mainCommand = command.split(' ')[0];
-    const args = command.split(' ').map((arg) => arg.replace(/^"/, '').replace(/"$/, ''));
-    args.shift();
+    const {mainCommand, args} = splitCommandForSpawn(command);
 
-    const child = spawn(mainCommand, args, {encoding: 'UTF-8', env: {...process.env, NO_COLOR: 1}});
+    const child = spawn(mainCommand, args, {
+      env: {...process.env, FORCE_COLOR: '1'},
+      shell: process.platform == 'win32',
+    });
 
-    child.on('close', resolve);
+    let allData: string = '';
+    const dataCallback = (data: Buffer) => {
+      allData += data.toString();
+    };
 
-    const dataCallback = (data) => {
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', dataCallback);
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', dataCallback);
+
+    child.on('close', () => {
+      callback(allData.split('Running:  ')[1]);
+      resolve(null);
+    });
+  });
+};
+
+export const runTestContinuous = async (
+  command: string,
+  afterOutput: string,
+  callback: (data: string, startTime: number) => void
+) => {
+  await new Promise((resolve) => {
+    const {mainCommand, args} = splitCommandForSpawn(command);
+
+    const child = spawn(mainCommand, args, {
+      env: {...process.env, NO_COLOR: '1'},
+      shell: process.platform == 'win32',
+    });
+
+    let allData: string = '';
+    let startTime: number;
+    const dataCallback = (data: Buffer) => {
       if (data.toString().includes(afterOutput)) {
         startTime = new Date().getTime();
       }
@@ -90,24 +133,28 @@ export const runTestContinuous = async (command, afterOutput, callback) => {
     child.stdout.on('data', dataCallback);
     child.stderr.setEncoding('utf8');
     child.stderr.on('data', dataCallback);
+
+    child.on('close', resolve);
   });
 };
 
-export const outputCleanUpAndInitialization = (testOutputs, outRoot) => {
-  outRoot.value = path.join(__dirname, 'output');
-  testOutputs.value = ['out.txt', 'out.json', 'out.html', 'out.cst'];
-  testOutputs.value.forEach((out) => {
-    if (fs.existsSync(path.join(outRoot.value, out))) {
-      fs.unlinkSync(path.join(outRoot.value, out));
+export const outputCleanUpAndInitialization = () => {
+  const outRoot = path.join(__dirname, 'output');
+  const outFiles = ['out.txt', 'out.json', 'out.html', 'out.cst'];
+  outFiles.forEach((outFile) => {
+    const outFilepath = path.join(outRoot, outFile);
+    if (fs.existsSync(outFilepath)) {
+      fs.unlinkSync(outFilepath);
     }
   });
+  return {outRoot, outFiles};
 };
 
-const osSpecificEol = (str) =>
+const osSpecificEol = (str: string) =>
   // Change line endings to win32 if needed
   os.EOL === '\r\n' ? str.replace(/\n/g, '\r\n') : str;
 
-export const clean = (str, removeSlow = false) =>
+export const clean = (str: string, removeSlow: boolean = false) =>
   // Clean error trace as it changes from test to test.
   str
     .replace(/at [^(]+ \([^)]+\)/g, '')
@@ -118,7 +165,7 @@ export const clean = (str, removeSlow = false) =>
     // Normalize line endings across os.
     .replace(/\r\n/g, '\n');
 
-export const expectOutFilesMatch = (outputPath, specPath) => {
+export const expectOutFilesMatch = (outputPath: string, specPath: string) => {
   const expectedBuffer = fs.readFileSync(specPath);
   const valueBuffer = fs.readFileSync(outputPath);
   let value = clean(valueBuffer.toString());
@@ -138,23 +185,32 @@ export const expectOutFilesMatch = (outputPath, specPath) => {
   expect(clean(value), `Check ${outputPath} matched ${specPath}.`).to.eq(clean(expected));
 };
 
-export const expectOutputFilesToBeCorrect = (testOutputs, outRoot, specExtName) => {
-  testOutputs.value.forEach((out) => {
+export const expectOutputFilesToBeCorrect = (
+  outFiles: string[],
+  outRoot: string,
+  specExtName: string
+) => {
+  outFiles.forEach((outFile) => {
     expectOutFilesMatch(
-      path.join(outRoot.value, out),
-      path.join(outRoot.value, out.replace(/\.([a-z]+)$/, '.spec.' + specExtName + '.$1'))
+      path.join(outRoot, outFile),
+      path.join(outRoot, outFile.replace(/\.([a-z]+)$/, '.spec.' + specExtName + '.$1'))
     );
   });
 };
 
-export const expectConsoleLogForOutput = (stdout, outRoot, fileNames = [''], toNot = false) => {
+export const expectConsoleLogForOutput = (
+  stdout: string,
+  outRoot: string,
+  fileNames: string[] = [''],
+  toNot: boolean = false
+) => {
   fileNames.forEach((fileName) => {
     let ext = path.extname(fileName).substring(1);
     if (!['json', 'txt', 'html'].includes(ext)) {
       ext = 'custom';
     }
     let logString =
-      'cypress-terminal-report: Wrote ' + ext + ' logs to ' + path.join(outRoot.value, fileName);
+      'cypress-terminal-report: Wrote ' + ext + ' logs to ' + path.join(outRoot, fileName);
 
     if (toNot) {
       expect(stdout).to.not.contain(logString);

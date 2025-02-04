@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require @babel/register specs/*.spec.js",
-    "test-ci": "mocha --require @babel/register $(./bin/split_matrix_specs.sh)",
+    "test": "mocha --require mocha-backward.env.ts --require ts-node/register specs/*.spec.ts",
+    "test-ci": "mocha --require mocha-backward.env.ts --require ts-node/register $(./bin/split_matrix_specs.sh)",
     "test-backwards-ci": "npm run test-ci -- --fgrep '[backward-compatibility-skip]' -i",
-    "swap-to-main": "mv package.json package.backwards.json && mv package.back.json package.json && git checkout package-lock.json"
+    "swap-to-main": "mv package.json package.backward.json && mv package.back.json package.json && git checkout package-lock.json"
   },
   "author": "Fodor Zoltan",
   "license": "MIT",
@@ -19,10 +19,14 @@
     "@babel/plugin-transform-runtime": "7.2.0",
     "@babel/preset-env": "7.4.5",
     "@babel/preset-react": "^7.22.15",
-    "@babel/register": "7.13.16",
     "@badeball/cypress-cucumber-preprocessor": "^4.1.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
     "@cypress/grep": "^4.0.1",
+    "@types/chai": "^4.2.0",
+    "@types/fs-extra": "^9.0.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^5.2.0",
+    "@types/node": "^12.0.0",
     "babel-loader": "^8.3.0",
     "chai": "^4.2.0",
     "cors": "^2.8.5",
@@ -36,6 +40,8 @@
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.0",
     "webpack": "^5.89.0"
   },
   "devDependencies": {

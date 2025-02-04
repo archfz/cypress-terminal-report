@@ -1,6 +1,6 @@
 import type {AllMessages, PluginOptions} from '../installLogsPrinter.types';
 import BaseOutputProcessor from './BaseOutputProcessor';
-import {Log, LogSymbols, LogType, ValueOf} from '../types';
+import type {Log, LogSymbols, LogType, ValueOf} from '../types';
 import CONSTANTS from '../constants';
 import utils from '../utils';
 

@@ -3,7 +3,7 @@ import {expect} from 'chai';
 
 describe('Filtering and conditional logging.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });

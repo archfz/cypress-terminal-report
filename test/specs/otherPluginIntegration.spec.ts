@@ -5,7 +5,7 @@ import * as glob from 'glob';
 
 describe('Other plugin integrations.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });

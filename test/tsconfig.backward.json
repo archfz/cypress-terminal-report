@@ -1,0 +1,8 @@
+// https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping#node-12
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2019"],
+    "module": "node16"
+  }
+}

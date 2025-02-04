@@ -1,2 +1,2 @@
-tsconfig.json
+/tsconfig.json
 test/output*/**/*.html

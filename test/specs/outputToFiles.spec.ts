@@ -11,11 +11,11 @@ import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import fsExtra from 'fs-extra';
+import * as fsExtra from 'fs-extra';
 
 describe('Output to files.', () => {
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest?.state == 'failed') {
       logLastRun();
     }
   });
@@ -24,12 +24,11 @@ describe('Output to files.', () => {
   it('Should generate proper log output files, and print only failing ones if config is on default.', async function () {
     this.retries(2);
 
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
-    if (fs.existsSync(path.join(outRoot.value, 'not'))) {
-      fsExtra.removeSync(path.join(outRoot.value, 'not'));
+    const not = path.join(outRoot, 'not');
+    if (fs.existsSync(not)) {
+      fsExtra.removeSync(not);
     }
 
     const specFiles = [
@@ -39,16 +38,14 @@ describe('Output to files.', () => {
       'printLogsSuccess.spec.js',
     ];
     await runTest(commandBase(['generateOutput=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'onFail');
-      testOutputs.value.push(path.join('not', 'existing', 'path', 'out.txt'));
-      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
+      expectOutputFilesToBeCorrect(outFiles, outRoot, 'onFail');
+      outFiles.push(path.join('not', 'existing', 'path', 'out.txt'));
+      expectConsoleLogForOutput(stdout, outRoot, outFiles);
     });
   }).timeout(90000);
 
   it('Should print all tests to output files when configured so.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = [
       'happyFlow.spec.js',
@@ -59,25 +56,23 @@ describe('Output to files.', () => {
     await runTest(
       commandBase(['generateOutput=1', 'printLogsToFileAlways=1'], specFiles),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'always');
-        expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'always');
+        expectConsoleLogForOutput(stdout, outRoot, outFiles);
       }
     );
   }).timeout(90000);
 
   it('Should not generate and print to output files when configured so.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = ['requests.spec.js', 'happyFlow.spec.js', 'printLogsSuccess.spec.js'];
     await runTest(
       commandBase(['generateOutput=1', 'printLogsToFileNever=1'], specFiles),
       (error, stdout, stderr) => {
-        testOutputs.value.forEach((out) => {
-          expect(fs.existsSync(path.join(outRoot.value, out))).false;
+        outFiles.forEach((out) => {
+          expect(fs.existsSync(path.join(outRoot, out))).false;
         });
-        expectConsoleLogForOutput(stdout, outRoot, testOutputs.value, true);
+        expectConsoleLogForOutput(stdout, outRoot, outFiles, true);
       }
     );
   }).timeout(90000);
@@ -107,34 +102,30 @@ describe('Output to files.', () => {
   }).timeout(90000);
 
   it('Should generate output only for failing tests if set to onFail.', async () => {
-    const outRoot = {value: path.join(__dirname, '../output')};
-    const testOutputs = {value: ['out.txt']};
+    const outRoot = path.join(__dirname, '../output');
+    const outFiles = ['out.txt'];
 
     const specFiles = ['printLogsOnFail.spec.js'];
     await runTest(commandBase(['generateSimpleOutput=1'], specFiles), (error, stdout, stderr) => {
-      expectOutputFilesToBeCorrect(testOutputs, outRoot, 'onFailCheck');
-      expectConsoleLogForOutput(stdout, outRoot, testOutputs.value);
+      expectOutputFilesToBeCorrect(outFiles, outRoot, 'onFailCheck');
+      expectConsoleLogForOutput(stdout, outRoot, outFiles);
     });
   }).timeout(90000);
 
   it('Should still output to files when fail fast is installed and log to files on after run enabled.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = ['requests.spec.js'];
     await runTest(
       commandBase(['failFast=1', 'generateOutput=1', 'logToFilesOnAfterRun=1'], specFiles),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'failFast');
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'failFast');
       }
     );
   }).timeout(90000);
 
   it('Should generate correct output with extended collector and additional logging pass.', async () => {
-    const outRoot = {};
-    const testOutputs = {};
-    outputCleanUpAndInitialization(testOutputs, outRoot);
+    const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = ['allHooks.spec.js'];
     await runTest(
@@ -149,7 +140,7 @@ describe('Output to files.', () => {
         specFiles
       ),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(testOutputs, outRoot, 'globalAfter');
+        expectOutputFilesToBeCorrect(outFiles, outRoot, 'globalAfter');
       }
     );
   }).timeout(90000);
