@@ -128,7 +128,7 @@
       },
       {
         "type": "cons:error",
-        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)",
+        "message": "Error: This is an error message with stack.\n    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:49:43)\n    at getRet (https://example.cypress.io/__cypress/runner/cypress_runner.js:119616:20)\n    at tryCatcher (https://example.cypress.io/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (https://example.cypress.io/__cypress/runner/cypress_runner.js:4285:29)\n    at Context.thenFn (https://example.cypress.io/__cypress/runner/cypress_runner.js:119627:66)\n    at Context.then (https://example.cypress.io/__cypress/runner/cypress_runner.js:119878:21)\n    at wrapped (https://example.cypress.io/__cypress/runner/cypress_runner.js:140173:19)\n    at __stackReplacementMarker (https://example.cypress.io/__cypress/runner/cypress_runner.js:145891:10)\n    at https://example.cypress.io/__cypress/runner/cypress_runner.js:146118:15\n    at tryCatcher (https://example.cypress.io/__cypress/runner/cypress_runner.js:1777:23)",
         "severity": "error"
       },
       {

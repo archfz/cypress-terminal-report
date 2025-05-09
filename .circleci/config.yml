@@ -45,7 +45,7 @@ jobs:
 
   test:
     executor: cypress-v20
-    parallelism: 3
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace: {at: src}
@@ -58,7 +58,7 @@ jobs:
 
   backwards-compatibility:
     executor: cypress-v12
-    parallelism: 3
+    parallelism: 4
     steps:
       - checkout
       - run:

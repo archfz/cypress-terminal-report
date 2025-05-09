@@ -153,6 +153,24 @@ describe('Extended controller.', () => {
     );
   }).timeout(60000);
 
+  it('Should display logs from global before all hooks when failing. [backward-compatibility-skip]', async function () {
+    this.retries(3);
+
+    await runTest(
+      commandBase(['enableExtendedCollector=1'], ['beforeLogsGlobal.spec.js']),
+      (error, stdout, stderr) => {
+        expect(clean(stdout, true)).to.contain(
+          clean(`  1) "before all" hook for "passes"
+      cy:command ${ICONS.success}  visit\thttps://www.example.com
+      cy:command ${ICONS.success}  location\torigin
+      cy:command ${ICONS.error}  assert\texpected **https://www.example.com** to equal **https://someothersite.example.com**
+                    Actual: \t"https://www.example.com"
+                    Expected: \t"https://someothersite.example.com"`)
+        );
+      }
+    );
+  }).timeout(60000);
+
   it('Should display logs from outer before all hooks that failed in scope of nested suites.', async function () {
     this.retries(3);
 

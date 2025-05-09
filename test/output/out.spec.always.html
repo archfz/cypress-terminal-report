@@ -55,7 +55,17 @@
 <p><pre style="color:red;">    cons:error✘</pre> <pre>This is an error message</pre></p>
 <p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
 <p><pre style="color:red;">    cons:error✘</pre> <pre>Error: This is an error message with stack.
-                    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:50:43)</pre></p>
+                    at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:49:43)
+                    at getRet (https://example.cypress.io/__cypress/runner/cypress_runner.js:119616:20)
+                    at tryCatcher (https://example.cypress.io/__cypress/runner/cypress_runner.js:1777:23)
+                    at Promise.attempt.Promise.try (https://example.cypress.io/__cypress/runner/cypress_runner.js:4285:29)
+                    at Context.thenFn (https://example.cypress.io/__cypress/runner/cypress_runner.js:119627:66)
+                    at Context.then (https://example.cypress.io/__cypress/runner/cypress_runner.js:119878:21)
+                    at wrapped (https://example.cypress.io/__cypress/runner/cypress_runner.js:140173:19)
+                    at __stackReplacementMarker (https://example.cypress.io/__cypress/runner/cypr ...
+
+                ... remainder of log omitted ...
+                </pre></p>
 <p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>
 <p><pre style="color:darkcyan;">      cons:log✱</pre> <pre>This should console.log appear.</pre></p>
 <p><pre style="color:green;">    cy:command✔</pre> <pre>window	</pre></p>

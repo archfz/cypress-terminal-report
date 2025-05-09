@@ -21,7 +21,7 @@ describe('Output to files.', () => {
   });
 
   // Tests in general the log formatting in files.
-  it('Should generate proper log output files, and print only failing ones if config is on default.', async function () {
+  it('Should generate proper log output files, and print only failing ones if config is on default. [backward-compatibility-skip]', async function () {
     this.retries(2);
 
     const {outRoot, outFiles} = outputCleanUpAndInitialization();
@@ -44,7 +44,7 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
-  it('Should print all tests to output files when configured so.', async () => {
+  it('Should print all tests to output files when configured so. [backward-compatibility-skip]', async () => {
     const {outRoot, outFiles} = outputCleanUpAndInitialization();
 
     const specFiles = [
@@ -77,7 +77,7 @@ describe('Output to files.', () => {
     );
   }).timeout(90000);
 
-  it('Should generate proper nested log output files.', async () => {
+  it('Should generate proper nested log output files. [backward-compatibility-skip]', async () => {
     const specFiles = [
       'requests.spec.js',
       'happyFlow.spec.js',
