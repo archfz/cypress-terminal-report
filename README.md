@@ -441,4 +441,3 @@ is used to emulate the usage of the plugin, and a mocha suite to assert on those
 To add tests you need to first add a case to existing cypress spec or create a new one and then
 add the case as well in the `/test/test.js`. To run the tests you can use `npm test` in the test \
 directory. You should add `it.only` to the test case you are working on to speed up development.
-

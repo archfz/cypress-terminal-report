@@ -70,8 +70,8 @@
 
 - Add new option [`commandTimings`](#optionscommandtimings) to display the time of the logs. [issue](https://github.com/archfz/cypress-terminal-report/issues/207)
 - ! Breaking change: Refactored the log type: `[type, message, severity]` is now `{type, message, severity}`.
-    - If you have used any of the following options, you will have to make changes in the integration:
-      `collectTestLogs`, `filterLog`, `processLog`, custom file output processor.
+  - If you have used any of the following options, you will have to make changes in the integration:
+    `collectTestLogs`, `filterLog`, `processLog`, custom file output processor.
 
 #### 5.3.12
 
@@ -163,9 +163,9 @@
 
 - Updated support for cypress 12.x.x.
 - ! Breaking change: `cy.route` removed from supported `options.collectTypes`, as cypress 12.x.x removed deprecated `cy.route`.
-    - Duration display is not supported anymore for XHR logs.
-    - Status message display is not supported anymore for XHR logs (status code is still displayed).
-    - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
+  - Duration display is not supported anymore for XHR logs.
+  - Status message display is not supported anymore for XHR logs (status code is still displayed).
+  - Response body is not logged in certain cases anymore for XHR logs due to cypress not providing the information.
 
 #### 4.1.3
 
