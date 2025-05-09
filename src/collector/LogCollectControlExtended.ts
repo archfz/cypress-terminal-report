@@ -113,7 +113,7 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
     Cypress.on('before:mocha:hooks:seal', function (this: Cypress.Cypress) {
       const testBeforeAllSent: string[] = [];
       self.prependBeforeAllHookInAllSuites(
-        this.mocha.getRootSuite().suites,
+        [this.mocha.getRootSuite()],
         function ctrAfterAllPerSuite(this: Mocha.Context) {
           const suiteHasTestAsChild = (
             suite: Mocha.Suite | undefined,

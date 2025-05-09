@@ -4,10 +4,8 @@ cypress/integration/cucumber/Happy.feature:
                         Matcher: "comments/*"
         cy:command (K): Before
         cy:command (K): assert	expected **0** to be below **2**
-        cy:command (K): then	function(){}
         cy:command (K): Given 	**I open Happy page**
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): then	function(){}
         cy:command (K): Then 	**I can load comments**
         cy:command (K): get	.network-btn
         cy:command (K): click
@@ -24,10 +22,8 @@ cypress/integration/cucumber/Happy.feature:
         cy:command (K): assert	expected **1** to be below **2**
                         Actual: 	1
                         Expected: 	2
-        cy:command (K): then	function(){}
         cy:command (K): Given 	**I open Happy page**
         cy:command (K): visit	/commands/network-requests
-        cy:command (K): then	function(){}
         cy:command (K): Then 	**I can post comment**
       cy:intercept (K): Method: POST
                         Matcher: "/comments"

@@ -43,7 +43,16 @@ cypress/integration/happyFlow.spec.js:
         cons:error (X): This is an error message
         cy:command (K): window
         cons:error (X): Error: This is an error message with stack.
-                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:140:43)
+                            at Context.eval (https://example.cypress.io/__cypress/tests?p=cypress/integration/happyFlow.spec.js:49:43)
+                            at getRet (https://example.cypress.io/__cypress/runner/cypress_runner.js:119616:20)
+                            at tryCatcher (https://example.cypress.io/__cypress/runner/cypress_runner.js:1777:23)
+                            at Promise.attempt.Promise.try (https://example.cypress.io/__cypress/runner/cypress_runner.js:4285:29)
+                            at Context.thenFn (https://example.cypress.io/__cypress/runner/cypress_runner.js:119627:66)
+                            at Context.then (https://example.cypress.io/__cypress/runner/cypress_runner.js:119878:21)
+                            at wrapped (https://example.cypress.io/__cypress/runner/cypress_runner.js:140173:19)
+                            at __stackReplacementMarker (https://example.cypress.io/__cypress/runner/cypress_runner.js:145891:10)
+                            at https://example.cypress.io/__cypress/runner/cypress_runner.js:146118:15
+                            at tryCatcher (https://example.cypress.io/__cypress/runner/cypress_runner.js:1777:23)
         cy:command (K): window
           cons:log (K): This should console.log appear.
         cy:command (K): window

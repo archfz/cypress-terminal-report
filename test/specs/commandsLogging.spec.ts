@@ -22,7 +22,7 @@ describe('Commands logging.', () => {
       // cy.command logs.
       expect(stdout).to.contain(`cy:command ${ICONS.success}  visit\t/commands/network-requests\n`);
       expect(stdout).to.contain(`cy:command ${ICONS.success}  get\t.network-post\n`);
-      expect(clean(stdout)).to.contain(
+      expect(stdout).to.contain(
         `cy:xhr ${ICONS.warning}  (putComment) STUBBED PUT https://jsonplaceholder.cypress.io/comments/1\n${PADDING}Status: 404\n`
       );
       // cy.intercept logs.
@@ -144,10 +144,10 @@ describe('Commands logging.', () => {
       commandBase(['printHeaderData=1', 'printRequestData=1'], [`xhrTypes.spec.js`]),
       (error, stdout, stderr) => {
         expect(stdout).to.contain(
-          `Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua": "\\"Not=A?Brand\\";v=\\"99\\"`
+          `Status: 403\n${PADDING}Request headers: {\n${PADDING}  "sec-ch-ua-platform": `
         );
         expect(stdout).to.contain(
-          `\n${PADDING}  "Keep-Alive": "timeout=5"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`
+          `\n${PADDING}  "Test-Header": "data"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`
         );
         expect(stdout).to.contain(
           `POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "x-powered-by": "Express",\n${PADDING}  "access-control-allow-origin": "*",\n`
