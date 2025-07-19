@@ -136,6 +136,12 @@ if (env.disabled != '1') {
   require('../../../src/installLogsCollector')(config);
 }
 
+if (env.globalBefore == '1') {
+  before(() => {
+    cy.visit('https://www.example.com');
+  });
+}
+
 enableFetchWorkaround();
 function enableFetchWorkaround() {
   let polyfill;

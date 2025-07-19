@@ -90,7 +90,10 @@ export default class LogCollectorState extends EventTarget {
   }
 
   getCurrentTest() {
-    return this.currentTest;
+    // @TODO: The alternative is to prevent issues with multi domain tests.
+    // This is probably not a final and proof solution. All context is lost as cypress
+    // reloads the whole window and all state data is lost.
+    return this.currentTest || Cypress.mocha.getRunner().currentRunnable;
   }
 
   addLog(entry: LogArray, chainId?: string) {
