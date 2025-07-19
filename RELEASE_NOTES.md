@@ -1,5 +1,7 @@
 ## Release Notes
 
+- Fix one issue with changing origins loosing state data and breaking tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/289)
+
 #### 7.2.0
 
 - Fix global before hooks not logged when failing. [issue](https://github.com/archfz/cypress-terminal-report/issues/282)

@@ -48,6 +48,8 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
   registerState() {
     const self = this;
 
+    this.debugLog('Registering state.');
+
     Cypress.on('log:changed', (options) => {
       if (options.state === 'failed') {
         this.collectorState.updateLogStatus(options.id);
