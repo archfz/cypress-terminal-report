@@ -1,6 +1,10 @@
 ## Release Notes
 
+#### 7.2.1
+
 - Fix one issue with changing origins loosing state data and breaking tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/289)
+- Security: updated `cross-spawn`.
+- Upgrade cypress to 14.5.2 in tests to confirm support.
 
 #### 7.2.0
 
