@@ -25,11 +25,20 @@ export const commandBase = (env: string[] = [], specs: string[] = [], component:
   `${commandPrefix} run --env "${env.join(',')}" --headless ${component ? '--component' : ''} --config video=false -s ${specs.map((s) => (component ? `cypress/component/${s}` : `cypress/integration/${s}`))}`;
 
 let lastRunOutput = '';
+let lastRunAllOutput = '';
 let lastRunCommand = '';
 export const logLastRun = () => {
   console.log(chalk.yellow('-- Cypress output start --\n\n'));
-  console.log(lastRunOutput);
+  console.log(lastRunOutput || lastRunAllOutput);
   console.log(chalk.yellow('-- Cypress output end --'));
+  console.log(`Command: ${lastRunCommand}`);
+  console.log(lastRunCommand);
+};
+
+export const logLastRunFull = () => {
+  console.log(chalk.yellow('-- Cypress full output start --\n\n'));
+  console.log(lastRunAllOutput || lastRunOutput);
+  console.log(chalk.yellow('-- Cypress full output end --'));
   console.log(`Command: ${lastRunCommand}`);
   console.log(lastRunCommand);
 };
@@ -47,7 +56,11 @@ export const runTest = async (
   callback: (error: ExecException | null, stdout: string, stderr: string) => void
 ) => {
   await new Promise((resolve) => {
-    exec(
+    lastRunAllOutput = '';
+    lastRunOutput = '';
+    lastRunCommand = command;
+
+    const child = exec(
       command,
       {encoding: 'utf-8', env: {...process.env, NO_COLOR: '1'}},
       (error, stdout, stderr) => {
@@ -62,7 +75,6 @@ export const runTest = async (
         }
 
         lastRunOutput = stdout;
-        lastRunCommand = command;
         // Normalize line endings for unix.
         const normalizedStdout = stdout.replace(/\r\n/g, '\n');
         callback(error, normalizedStdout, stderr);
@@ -71,6 +83,16 @@ export const runTest = async (
         resolve(null);
       }
     );
+
+    // Capture live output so we can dump it on timeouts/hangs.
+    child.stdout?.setEncoding('utf8');
+    child.stderr?.setEncoding('utf8');
+    child.stdout?.on('data', (data: string) => {
+      lastRunAllOutput += data;
+    });
+    child.stderr?.on('data', (data: string) => {
+      lastRunAllOutput += data;
+    });
   });
 };
 

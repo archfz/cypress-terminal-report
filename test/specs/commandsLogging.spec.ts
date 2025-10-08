@@ -118,11 +118,11 @@ describe('Commands logging.', () => {
         );
 
         expect(stdout).to.contain(
-          `cy:request ${ICONS.error}  GET http://localhost:3015/v3/4b2d23ec-4516-4a94-967e-995596d01a32\n${PADDING}Status: 500 - Internal Server Error\n${PADDING}Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
+          `cy:request ${ICONS.error}  GET http://localhost:6521/v3/4b2d23ec-4516-4a94-967e-995596d01a32\n${PADDING}Status: 500 - Internal Server Error\n${PADDING}Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.\n`
         );
 
         expect(stdout).to.contain(
-          `cy:request ${ICONS.error}  POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
+          `cy:request ${ICONS.error}  POST http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
         );
         expect(stdout).to.contain(
           `cy:request ${ICONS.error}  POST http://this.does.not.exist\n${PADDING}Network error: getaddrinfo ENOTFOUND this.does.not.exist\n`
@@ -150,7 +150,7 @@ describe('Commands logging.', () => {
           `\n${PADDING}  "Test-Header": "data"\n${PADDING}}\n${PADDING}Response body: {\n${PADDING}  "key": "data"\n${PADDING}}\n`
         );
         expect(stdout).to.contain(
-          `POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "x-powered-by": "Express",\n${PADDING}  "access-control-allow-origin": "*",\n`
+          `POST http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Request headers: {\n${PADDING}  "token": "test"\n${PADDING}}\n${PADDING}Request body: {\n${PADDING}  "testitem": "ha"\n${PADDING}}\n${PADDING}Response headers: {\n${PADDING}  "x-powered-by": "Express",\n${PADDING}  "access-control-allow-origin": "*",\n`
         );
         expect(stdout).to.contain(
           `${PADDING}Response body: {\n${PADDING}  "status": "Wrong!",\n${PADDING}  "data": {\n${PADDING}    "corpo": "corpo da resposta",\n${PADDING}    "titulo": "titulo da resposta"\n${PADDING}  }\n${PADDING}}\n`
@@ -192,7 +192,7 @@ describe('Commands logging.', () => {
 
       // @TODO: Response body not logged since cypress 13?
       // expect(cleanStdout).to.contain(
-      //   `cy:fetch ${ICONS.warning}  GET http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}  Status: 400\n${PADDING}  Response body: {\n${PADDING}    "status": "Wrong!",\n${PADDING}    "data": {\n${PADDING}      "corpo": "corpo da resposta",\n${PADDING}      "titulo": "titulo da resposta"\n${PADDING}    }\n${PADDING}  }\n`,
+      //   `cy:fetch ${ICONS.warning}  GET http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}  Status: 400\n${PADDING}  Response body: {\n${PADDING}    "status": "Wrong!",\n${PADDING}    "data": {\n${PADDING}      "corpo": "corpo da resposta",\n${PADDING}      "titulo": "titulo da resposta"\n${PADDING}    }\n${PADDING}  }\n`,
       //   'intercepted non-success fetch contains url, status and a response body'
       // );
     });
@@ -207,8 +207,8 @@ describe('Commands logging.', () => {
       );
       expect(cleanStdout).to.contain(
         // @TODO: Test broken. But cypress is not returning the response data here for some reason.
-        // `cy:xhr ${ICONS.warning}  GET http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: { "status": "Wrong!","data" : {"corpo" : "corpo da resposta","titulo" : "titulo da resposta"\n${PADDING}}\n${PADDING}}\n`,
-        `cy:xhr ${ICONS.route}  GET http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431`,
+        // `cy:xhr ${ICONS.warning}  GET http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431\n${PADDING}Status: 400 - Bad Request\n${PADDING}Response body: { "status": "Wrong!","data" : {"corpo" : "corpo da resposta","titulo" : "titulo da resposta"\n${PADDING}}\n${PADDING}}\n`,
+        `cy:xhr ${ICONS.route}  GET http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431`,
         'non-stubbed non-success XHR log should contain response body'
       );
       expect(cleanStdout).to.not.contain(

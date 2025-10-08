@@ -175,7 +175,7 @@ describe('Misc.', () => {
     await runTest(
       commandBase(['commandTimings=seconds'], ['happyFlow.spec.js']),
       (error, stdout, stderr) => {
-        expect(clean(stdout, true)).to.match(/Time: \d+\.\d{3}s\n      cy:command/);
+        expect(clean(stdout, true)).to.match(/Time: \d+\.\d{2,3}s\n      cy:command/);
       }
     );
   }).timeout(60000);

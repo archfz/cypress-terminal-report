@@ -3,16 +3,16 @@
 version: 2.1
 
 executors:
-  cypress-v20:
+  cypress-v22:
     docker:
-      - image: cypress/base:20.5.0
+      - image: cypress/base:22.20.0
   cypress-v12:
     docker:
       - image: cypress/base:12
 
 jobs:
   install-deps:
-    executor: cypress-v20
+    executor: cypress-v22
     steps:
       - checkout
       - run:
@@ -23,7 +23,7 @@ jobs:
           paths: [node_modules]
 
   lint:
-    executor: cypress-v20
+    executor: cypress-v22
     steps:
       - checkout
       - attach_workspace: {at: '.'}
@@ -32,7 +32,7 @@ jobs:
           command: npm run format:check
 
   build:
-    executor: cypress-v20
+    executor: cypress-v22
     steps:
       - checkout
       - attach_workspace: {at: '.'}
@@ -44,7 +44,7 @@ jobs:
           paths: [.]
 
   test:
-    executor: cypress-v20
+    executor: cypress-v22
     parallelism: 4
     steps:
       - checkout
