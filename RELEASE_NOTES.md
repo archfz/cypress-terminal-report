@@ -1,7 +1,10 @@
 ## Release Notes
 
+#### 7.2.2
+
 - Add theoretical and confirmed memory leak hotfixes. [issue](https://github.com/archfz/cypress-terminal-report/issues/296)
 - Update cypress to 15.4.0 to confirm support.
+- Update dependencies to remove critical security issues.
 
 #### 7.2.1
 
