@@ -1,8 +1,8 @@
 ## Release Notes
 
-#### Next
+#### 7.3.0
 
-- Add new support install option `maxLogLength` (default 15000). Long messages are trimmed at collection time and suffixed with a short indicator (e.g. "... [1234 chars trimmed]").
+- Add new support install option `maxLogLength` (default 15000).
 
 #### 7.2.2
 
