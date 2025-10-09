@@ -128,7 +128,6 @@ export default class LogCollectorState extends EventTarget {
       return;
     }
 
-
     const structuredEntry: StackLog = {
       type: entry[0],
       message: this.trimMessage(entry[1]),
