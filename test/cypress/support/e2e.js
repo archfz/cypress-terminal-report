@@ -113,6 +113,9 @@ if (env.enableContinuousLogging == '1') {
 if (env.commandTimings) {
   config.commandTimings = env.commandTimings;
 }
+if (env.maxLogLength) {
+  config.maxLogLength = Number(env.maxLogLength);
+}
 
 if (env.mochawesome == '1') {
   require('cypress-mochawesome-reporter/register');

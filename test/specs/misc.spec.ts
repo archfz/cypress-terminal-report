@@ -189,6 +189,17 @@ describe('Misc.', () => {
     );
   }).timeout(60000);
 
+  it('Should trim very long cy.log at collection time and show suffix in console', async () => {
+    await runTest(
+      commandBase(['maxLogLength=300'], ['maxLogLength.spec.js']),
+      (error, stdout) => {
+        expect(stdout).to.contain(`cy:log ${ICONS.info}  `);
+        expect(stdout).to.match(/\[\d+ chars trimmed\]/);
+        expect(stdout).to.contain(`cy:command ${ICONS.error}  get\t.this-element-does-not-exist`);
+      }
+    );
+  }).timeout(60000);
+
   it('Should output debug logs when enabled.', async () => {
     await runTest(
       commandBase(

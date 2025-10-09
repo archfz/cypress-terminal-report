@@ -104,6 +104,18 @@ export default class LogCollectorState extends EventTarget {
     return this.currentTest || Cypress.mocha.getRunner().currentRunnable;
   }
 
+  private trimMessage(msg: string): string {
+    const maxLen = this.config.maxLogLength ?? 15000;
+    if (typeof msg !== 'string') return msg as any;
+    if (maxLen > 0 && msg.length > maxLen) {
+      const trimmedCount = msg.length - maxLen;
+      const suffix = ` ... [${trimmedCount} chars trimmed]`;
+      const sliceLen = Math.max(0, maxLen - suffix.length);
+      return msg.substring(0, sliceLen) + suffix;
+    }
+    return msg;
+  }
+
   addLog(entry: LogArray, chainId?: string) {
     const currentStack = this.getCurrentLogStack();
 
@@ -116,9 +128,10 @@ export default class LogCollectorState extends EventTarget {
       return;
     }
 
+
     const structuredEntry: StackLog = {
       type: entry[0],
-      message: entry[1],
+      message: this.trimMessage(entry[1]),
       severity: entry[2] || CONSTANTS.SEVERITY.SUCCESS,
       chainId,
     };
@@ -132,7 +145,7 @@ export default class LogCollectorState extends EventTarget {
   updateLog(log: string, severity: Severity, id: string) {
     const entry = this.findReversed(id);
     if (entry) {
-      entry.message = log;
+      entry.message = this.trimMessage(log);
       entry.severity = severity;
     }
     this.dispatchEvent(new Event('log'));

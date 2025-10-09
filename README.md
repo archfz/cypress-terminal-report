@@ -159,6 +159,10 @@ hook. This option can only be used with cypress 6.2.0 onwards, and with the addi
 
 > require('cypress-terminal-report/src/installLogsCollector')(options);
 
+#### `options.maxLogLength`
+
+integer; default: 15000; Maximum length of a single collected log message. Messages longer than this will be trimmed at collection time and a short suffix will be appended to indicate trimming (for example: "... [1234 chars trimmed]"). This protects memory usage and prevents excessively large logs from impacting the test run.
+
 #### `options.collectTypes`
 
 array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']

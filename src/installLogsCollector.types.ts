@@ -71,6 +71,13 @@ export interface SupportOptions {
   commandTimings?: null | CommandTimings;
 
   /**
+   * Maximum length of a single collected log message. Messages longer than this will be trimmed at collection time,
+   * and a short suffix will be appended to indicate trimming.
+   * @default 15000
+   */
+  maxLogLength?: number;
+
+  /**
    * Enabled debug logging.
    * @default false
    */
@@ -82,4 +89,5 @@ export interface ExtendedSupportOptions extends SupportOptions {
   collectBody?: boolean;
   collectRequestData?: boolean;
   collectHeaderData?: boolean;
+  maxLogLength: number;
 }

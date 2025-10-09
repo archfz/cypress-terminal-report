@@ -1,5 +1,5 @@
 import CONSTANTS from './constants';
-import {array, boolean, enums, func, object, optional} from 'superstruct';
+import {array, boolean, enums, func, number, object, optional} from 'superstruct';
 
 const InstallLogsCollectorSchema = object({
   collectTypes: optional(
@@ -22,6 +22,7 @@ const InstallLogsCollectorSchema = object({
   enableExtendedCollector: optional(boolean()),
   enableContinuousLogging: optional(boolean()),
   commandTimings: optional(enums(Object.values(CONSTANTS.COMMAND_TIMINGS))),
+  maxLogLength: optional(number()),
   debug: optional(boolean()),
 });
 

@@ -29,6 +29,7 @@ function installLogsCollector(config: SupportOptions = {}) {
     collectBody: config.xhr?.printBody ?? true,
     collectRequestData: config.xhr?.printRequestData,
     collectHeaderData: config.xhr?.printHeaderData,
+    maxLogLength: typeof config.maxLogLength === 'number' ? config.maxLogLength : 15000,
   };
 
   let logCollectorState = new LogCollectorState(extendedConfig);

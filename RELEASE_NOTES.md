@@ -1,5 +1,9 @@
 ## Release Notes
 
+#### Next
+
+- Add new support install option `maxLogLength` (default 15000). Long messages are trimmed at collection time and suffixed with a short indicator (e.g. "... [1234 chars trimmed]").
+
 #### 7.2.2
 
 - Add theoretical and confirmed memory leak hotfixes. [issue](https://github.com/archfz/cypress-terminal-report/issues/296)
