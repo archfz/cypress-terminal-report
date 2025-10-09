@@ -42,6 +42,14 @@ export default class LogCollectorState extends EventTarget {
         log.timeString = (Date.now() - (this.suiteStartTime?.getTime() || 0)) / 1000 + 's';
       });
     }
+
+    if (Cypress.config('isInteractive')) {
+      Cypress.mocha.getRunner().on('suite end', () => {
+        setTimeout(() => {
+          this.cleanup();
+        }, 500);
+      });
+    }
   }
 
   setStrict() {
@@ -219,5 +227,18 @@ export default class LogCollectorState extends EventTarget {
         this.logStacks[currentIndex]
       );
     }
+  }
+
+  cleanup() {
+    // @ts-ignore
+    this.logStacks = null;
+    // @ts-ignore
+    this.currentTest = null;
+    // @ts-ignore
+    this.beforeHookIndexes = null;
+    // @ts-ignore
+    this.afterHookIndexes = null;
+    // @ts-ignore
+    this.suiteStartTime = null;
   }
 }

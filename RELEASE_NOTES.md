@@ -1,5 +1,8 @@
 ## Release Notes
 
+- Add theoretical and confirmed memory leak hotfixes. [issue](https://github.com/archfz/cypress-terminal-report/issues/296)
+- Update cypress to 15.4.0 to confirm support.
+
 #### 7.2.1
 
 - Fix one issue with changing origins loosing state data and breaking tests. [issue](https://github.com/archfz/cypress-terminal-report/issues/289)

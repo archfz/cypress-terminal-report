@@ -1,10 +1,18 @@
-import {ICONS, runTest, commandBase, logLastRun} from '../utils';
+import {ICONS, runTest, commandBase, logLastRun, logLastRunFull} from '../utils';
 import {expect} from 'chai';
 
 describe('Component testing support.', () => {
   afterEach(function () {
     if (this.currentTest?.state === 'failed') {
-      logLastRun();
+      const errMsg =
+        (this.currentTest as any)?.err?.message || (this.currentTest as any)?.err?.stack || '';
+      const isTimeout =
+        typeof errMsg === 'string' && /timed? out|timeout of \d+ms exceeded/i.test(errMsg);
+      if (isTimeout) {
+        logLastRunFull();
+      } else {
+        logLastRun();
+      }
     }
   });
 

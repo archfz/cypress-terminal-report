@@ -47,12 +47,12 @@
 <p><pre style="color:red;">    cy:command✘</pre> <pre>get	.breaking-get</pre></p>
 <br>
 <h2>Requests. -&gt; GET should give 500 response status</h2>
-<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">GET http://localhost:3015/v3/4b2d23ec-4516-4a94-967e-995596d01a32
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">GET http://localhost:6521/v3/4b2d23ec-4516-4a94-967e-995596d01a32
                 Status: 500 - Internal Server Error
                 Response body: Hey ya! Great to see you here. Btw, nothing is configured for this request path. Create a rule and start building a mock API.</pre></p>
 <br>
 <h2>Requests. -&gt; POST should give 400 response status</h2>
-<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">POST http://localhost:3015/v3/57a00707-bccf-4653-ac50-ba1c00cad431
+<p><pre style="color:red;">    cy:request✘</pre> <pre style="color:grey;">POST http://localhost:6521/v3/57a00707-bccf-4653-ac50-ba1c00cad431
                 Status: 400 - Bad Request
                 Response body: {
                   &quot;status&quot;: &quot;Wrong!&quot;,

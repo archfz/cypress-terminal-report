@@ -49,6 +49,8 @@ export default class NestedOutputProcessorDecorator implements IOutputProcecesso
     Object.entries(allMessages).forEach(([spec, messages]) => {
       this.getProcessor(spec).write({[spec]: messages});
     });
+    // Clear cache.
+    this.processors = {};
   }
 
   getTarget() {
