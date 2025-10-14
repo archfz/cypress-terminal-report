@@ -1,5 +1,9 @@
 ## Release Notes
 
+#### 7.3.1
+
+- Experimental fix for too early cleanup in log collector state. [issue](https://github.com/archfz/cypress-terminal-report/issues/299)
+
 #### 7.3.0
 
 - Add new support install option `maxLogLength` (default 15000).

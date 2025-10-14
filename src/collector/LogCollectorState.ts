@@ -47,7 +47,7 @@ export default class LogCollectorState extends EventTarget {
       Cypress.mocha.getRunner().on('suite end', () => {
         setTimeout(() => {
           this.cleanup();
-        }, 500);
+        }, 30 * 1000);
       });
     }
   }
