@@ -45,9 +45,10 @@ export default class LogCollectorState extends EventTarget {
 
     if (Cypress.config('isInteractive')) {
       Cypress.mocha.getRunner().on('suite end', () => {
+        const currentLength = this.logStacks.length;
         setTimeout(() => {
-          this.cleanup();
-        }, 30 * 1000);
+          this.cleanup(currentLength);
+        }, 10000);
       });
     }
   }
@@ -241,16 +242,9 @@ export default class LogCollectorState extends EventTarget {
     }
   }
 
-  cleanup() {
-    // @ts-ignore
-    this.logStacks = null;
-    // @ts-ignore
-    this.currentTest = null;
-    // @ts-ignore
-    this.beforeHookIndexes = null;
-    // @ts-ignore
-    this.afterHookIndexes = null;
-    // @ts-ignore
-    this.suiteStartTime = null;
+  cleanup(beforeIndex: number) {
+    for (let i = 0; i < beforeIndex && i < this.logStacks.length; i++) {
+      this.logStacks[i] = null;
+    }
   }
 }

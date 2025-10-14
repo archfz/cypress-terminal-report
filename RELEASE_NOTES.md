@@ -1,5 +1,9 @@
 ## Release Notes
 
+#### 7.3.2
+
+- Fix still occurring incorrect memory cleanup. Smarter memory protection. [issue](https://github.com/archfz/cypress-terminal-report/issues/299)
+
 #### 7.3.1
 
 - Experimental fix for too early cleanup in log collector state. [issue](https://github.com/archfz/cypress-terminal-report/issues/299)
