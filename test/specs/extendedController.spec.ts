@@ -329,4 +329,13 @@ describe('Extended controller.', () => {
       }
     );
   }).timeout(60000);
+
+  it('Should properly display custom error with extended collector enabled.', async function () {
+    await runTest(
+      commandBase(['customErrorHandler=1', 'enableExtendedCollector=1'], ['waitFail.spec.js']),
+      (error, stdout, stderr) => {
+        expect(clean(stdout, true)).to.contain(`Test "Wait fail." failed:`);
+      }
+    );
+  }).timeout(60000);
 });

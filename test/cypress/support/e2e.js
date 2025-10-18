@@ -135,6 +135,21 @@ if (env.globalAfter == '1') {
   });
 }
 
+if (env.customErrorHandler == '1') {
+  function createCustomErrorMessage(err, runnable) {
+    return `Test "${runnable.title}" failed: ${err.message}`;
+  }
+
+  Cypress.on('fail', (err, runnable) => {
+    const customErrorMessage = createCustomErrorMessage(err, runnable);
+    
+    const customError = err;
+    customError.message = customErrorMessage;
+    
+    throw customError;
+  });
+}
+
 if (env.disabled != '1') {
   require('../../../src/installLogsCollector')(config);
 }

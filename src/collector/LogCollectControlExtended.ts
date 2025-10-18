@@ -197,8 +197,15 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         });
       }
 
-      Cypress.state('error', error);
-      throw error;
+      // Check if there are other fail listeners registered.
+      // If yes, let them handle the error; if no, we throw.
+      const failListeners = (Cypress as any).listeners('fail');
+      const hasOtherListeners = failListeners && failListeners.length > 1;
+
+      if (!hasOtherListeners) {
+        Cypress.state('error', error);
+        throw error;
+      }
     });
   }
 
