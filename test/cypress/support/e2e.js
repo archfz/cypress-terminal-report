@@ -142,10 +142,10 @@ if (env.customErrorHandler == '1') {
 
   Cypress.on('fail', (err, runnable) => {
     const customErrorMessage = createCustomErrorMessage(err, runnable);
-    
+
     const customError = err;
     customError.message = customErrorMessage;
-    
+
     throw customError;
   });
 }

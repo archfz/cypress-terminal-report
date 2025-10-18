@@ -1,5 +1,9 @@
 ## Release Notes
 
+#### 7.3.3
+
+- Fix on fail overriding when extended collector enabled. [issue](https://github.com/archfz/cypress-terminal-report/issues/300)
+
 #### 7.3.2
 
 - Fix still occurring incorrect memory cleanup. Smarter memory protection. [issue](https://github.com/archfz/cypress-terminal-report/issues/299)
