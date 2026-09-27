@@ -23,11 +23,6 @@
       },
       {
         "type": "cy:command",
-        "message": "task\tfailFastLog, Test \"Requests. GET 200\" has failed",
-        "severity": "success"
-      },
-      {
-        "type": "cy:command",
         "message": "task\tfailFastLog, Failed tests: 1/1",
         "severity": "success"
       },
@@ -38,7 +33,7 @@
       },
       {
         "type": "cy:command",
-        "message": "task\tfailFastTrigger, {test: {name: GET 200, fulltitle: Requests. GET 200}, skipscopetitlepath: undefined}",
+        "message": "task\tfailFastShouldSkip, true",
         "severity": "success"
       }
     ]

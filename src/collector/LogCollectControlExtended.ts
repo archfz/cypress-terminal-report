@@ -269,6 +269,11 @@ export default class LogCollectControlExtended extends LogCollectControlBase {
         sendLogsToPrinterForATest(self.collectorState.getCurrentTest());
       }
     });
+    // Handle retries to be logged to file.
+    Cypress.mocha.getRunner().on('retry', function (test) {
+      self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {noQueue: true});
+      self.collectorState.addNewLogStack();
+    });
     // Logs commands if test was manually skipped.
     Cypress.mocha.getRunner().on('pending', function (test) {
       if (self.collectorState.getCurrentTest() === test) {
