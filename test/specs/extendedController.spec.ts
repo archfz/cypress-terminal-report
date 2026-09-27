@@ -11,6 +11,7 @@ import {expect} from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 require('chai').config.truncateThreshold = 0;
+const cypressMajor = Number(require('cypress/package.json').version.split('.')[0]);
 
 describe('Extended controller.', () => {
   afterEach(function () {
@@ -381,12 +382,24 @@ describe('Extended controller.', () => {
         expect(output).to.contain(`  (Attempt 1 of 3) fail but win
           cy:log ${ICONS.info}  Hello. currentRetry: 0
       cy:command ${ICONS.error}  contains\tFoobar`);
-        expect(output).to.contain(`  (Attempt 2 of 3) fail but win
-          cy:log ${ICONS.info}  Hello. currentRetry: 1
-      cy:command ${ICONS.error}  contains\tFoobar`);
-        expect(output).to.contain(`  ✓ fail but win
-          cy:log ${ICONS.info}  Hello. currentRetry: 2
-          cy:log ${ICONS.info}  Done.`);
+        const retryTwoLogs = `          cy:log ${ICONS.info}  Hello. currentRetry: 1
+      cy:command ${ICONS.error}  contains\tFoobar`;
+        if (cypressMajor < 11) {
+          expect(output).to.contain(`  (Attempt 2 of 3) fail but win`);
+          expect(output).to.contain(retryTwoLogs);
+        } else {
+          expect(output).to.contain(`  (Attempt 2 of 3) fail but win
+${retryTwoLogs}`);
+        }
+        const successfulRetryLogs = `          cy:log ${ICONS.info}  Hello. currentRetry: 2
+          cy:log ${ICONS.info}  Done.`;
+        if (cypressMajor < 11) {
+          expect(output).to.contain(`  ✓ fail but win`);
+          expect(output).to.contain(successfulRetryLogs);
+        } else {
+          expect(output).to.contain(`  ✓ fail but win
+${successfulRetryLogs}`);
+        }
         expect(output).to.contain(`  Retries
     (Attempt 1 of 3) fails
       cy:command ${ICONS.error}  get\tbreaking

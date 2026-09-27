@@ -26,7 +26,6 @@
     "@babel/preset-react": "^7.22.15",
     "@badeball/cypress-cucumber-preprocessor": "^28.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.6",
-    "@cypress/grep": "^4.0.1",
     "@types/chai": "^4.2.0",
     "@types/fs-extra": "^9.0.0",
     "@types/glob": "^8.0.0",
@@ -49,7 +48,8 @@
     "webpack": "^5.89.0"
   },
   "devDependencies": {
-    "cypress-fail-fast": "^7.0.3",
+    "@cypress/grep": "^6.0.3",
+    "cypress-fail-fast": "^8.2.0",
     "cypress-mochawesome-reporter": "^3.6.1",
     "tsx": "^4.19.4"
   }

@@ -119,7 +119,12 @@ describe('Output to files.', () => {
     await runTest(
       commandBase(['failFast=1', 'generateOutput=1', 'logToFilesOnAfterRun=1'], specFiles),
       (error, stdout, stderr) => {
-        expectOutputFilesToBeCorrect(outFiles, outRoot, 'failFast');
+        const cypressMajor = Number(require('cypress/package.json').version.split('.')[0]);
+        expectOutputFilesToBeCorrect(
+          outFiles,
+          outRoot,
+          cypressMajor >= 15 ? 'failFast' : 'failFast.backward'
+        );
       }
     );
   }).timeout(90000);
