@@ -206,15 +206,9 @@ function installOutputProcessors(on: Cypress.PluginEvents, options: PluginOption
     }
 
     if (requiresNested) {
-      const parts = file.split('|');
-      const root = parts[0];
-      const ext = parts[1];
       outputProcessors.push(
-        new NestedOutputProcessorDecorator(
-          root,
-          options.specRoot || '',
-          ext,
-          (nestedFile: string) => createProcessorFromType(nestedFile, type, options)
+        new NestedOutputProcessorDecorator(file, options.specRoot || '', (nestedFile: string) =>
+          createProcessorFromType(nestedFile, type, options)
         )
       );
     } else {

@@ -8,6 +8,7 @@ test/output/out.html
 test/output/out.cst
 test/output/not/existing/path/out.txt
 test/output_nested
+test/output_nested_pattern
 test/cypress/reports
 .idea
 .vscode
