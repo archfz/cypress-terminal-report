@@ -1,5 +1,12 @@
 ## Release Notes
 
+#### 7.4.0
+
+- Add support for [custom output path patterns](README.md#custom-output-path-patterns), including date patterns in generated file names or paths. [issue](https://github.com/archfz/cypress-terminal-report/issues/291)
+- Fix retries not being logged to console or files with extended collector enabled. [issue](https://github.com/archfz/cypress-terminal-report/issues/339)
+- Fix retry titles with custom reporters. [issue](https://github.com/archfz/cypress-terminal-report/issues/317)
+- Update cypress to 16.1.0 in tests to confirm support.
+
 #### 7.3.3
 
 - Fix on fail overriding when extended collector enabled. [issue](https://github.com/archfz/cypress-terminal-report/issues/300)
