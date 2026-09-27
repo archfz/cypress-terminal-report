@@ -333,6 +333,30 @@ setupNodeEvents(on, config) {
 }
 ```
 
+### Custom output path patterns
+
+For custom file names, use a pattern beginning with `*|`. It is resolved
+relative to `outputRoot` and supports `[relpath]`, `[basename]`, and these
+date/time tokens:
+
+`[H]`/`[HH]`, `[M]`/`[MM]`, `[S]`/`[SS]`, `[d]`/`[dd]`,
+`[m]`/`[mm]`, and `[yy]`/`[yyyy]`. The doubled form is zero-padded.
+
+For example:
+
+```js
+const options = {
+  outputRoot: config.projectRoot + '/logs/',
+  specRoot: 'cypress/e2e',
+  outputTarget: {
+    '*|[relpath]/[basename]-[yyyy][mm][dd]-[HH][MM][SS].txt': 'txt'
+  }
+}
+```
+
+The legacy `{directory}|{extension}` format remains supported. Unknown pattern
+tokens are replaced with `-`.
+
 ### Custom output log processor
 
 If you need to output in a custom format you can pass a function instead of a string

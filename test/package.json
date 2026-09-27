@@ -50,7 +50,7 @@
   "devDependencies": {
     "@cypress/grep": "^6.0.3",
     "cypress-fail-fast": "^8.2.0",
-    "cypress-mochawesome-reporter": "^3.6.1",
+    "cypress-mochawesome-reporter": "^5.0.0",
     "tsx": "^4.19.4"
   }
 }
