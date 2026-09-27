@@ -3,6 +3,24 @@ import type {ExtendedSupportOptions} from '../installLogsCollector.types';
 import LogCollectorState from './LogCollectorState';
 import type {MessageData, SetOptional, State, TestData} from '../types';
 
+const getRetryTitles = (
+  testState: State | undefined,
+  mochaRunnable: Mocha.Runnable,
+  testTitle: string
+) => {
+  if (testState !== 'failed' || mochaRunnable['_retries'] <= 0) {
+    return {testTitle, consoleTitle: undefined};
+  }
+
+  const attempt = mochaRunnable['_currentRetry'] + 1;
+  const attemptTitle = `(Attempt ${attempt} of ${mochaRunnable['_retries'] + 1}) ${testTitle}`;
+
+  return {
+    testTitle: `${testTitle} (Attempt ${attempt})`,
+    consoleTitle: Cypress.config('reporter') === 'spec' ? undefined : attemptTitle,
+  };
+};
+
 export default abstract class LogCollectControlBase {
   protected abstract collectorState: LogCollectorState;
   protected abstract config: ExtendedSupportOptions;
@@ -38,9 +56,8 @@ export default abstract class LogCollectControlBase {
       }
     }
 
-    if (testState === 'failed' && mochaRunnable && mochaRunnable['_retries'] > 0) {
-      testTitle += ` (Attempt ${mochaRunnable && mochaRunnable['_currentRetry'] + 1})`;
-    }
+    const retryTitles = getRetryTitles(testState, mochaRunnable, testTitle);
+    testTitle = retryTitles.testTitle;
 
     const prepareLogs = () =>
       this.prepareLogs(logStackIndex, {mochaRunnable, testState, testTitle, testLevel});
@@ -51,7 +68,7 @@ export default abstract class LogCollectControlBase {
       messages: prepareLogs(),
       state: testState,
       level: testLevel,
-      consoleTitle: options.consoleTitle,
+      consoleTitle: options.consoleTitle ?? retryTitles.consoleTitle,
       isHook: options.isHook,
       continuous: options.continuous,
     });
