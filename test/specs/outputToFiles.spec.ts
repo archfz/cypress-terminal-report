@@ -101,6 +101,33 @@ describe('Output to files.', () => {
     });
   }).timeout(90000);
 
+  it('Should generate nested log output files from a path pattern.', async () => {
+    const outRoot = path.join(__dirname, '../output_nested_pattern');
+    fsExtra.removeSync(outRoot);
+
+    const specFiles = [
+      'requests.spec.js',
+      'happyFlow.spec.js',
+      'multiple.dots.in.spec.js',
+      'callsSuiteInAnotherFile.spec.js',
+    ];
+    try {
+      await runTest(commandBase(['generateNestedPatternOutput=1'], specFiles), (error, stdout) => {
+        const outputFiles = glob.sync(`${outRoot}/**/*.txt`, {nodir: true});
+        const outputNames = outputFiles.map((file) => path.basename(file)).sort();
+        expect(outputNames).to.have.length(4);
+
+        outputNames.forEach((file) => {
+          expect(file, `Expected ${file} to contain a YYYYMMDD date token.`).to.match(
+            /^.+-\d{8}\.txt$/
+          );
+        });
+      });
+    } finally {
+      fsExtra.removeSync(outRoot);
+    }
+  }).timeout(90000);
+
   it('Should generate output only for failing tests if set to onFail.', async () => {
     const outRoot = path.join(__dirname, '../output');
     const outFiles = ['out.txt'];

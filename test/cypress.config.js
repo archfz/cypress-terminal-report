@@ -55,6 +55,13 @@ module.exports = defineConfig({
           },
         };
       }
+      if (config.env.generateNestedPatternOutput == '1') {
+        options.outputRoot = config.projectRoot + '/output_nested_pattern/';
+        options.specRoot = 'cypress/integration';
+        options.outputTarget = {
+          '*|[relpath]/[basename]-[yyyy][mm][dd].txt': 'txt',
+        };
+      }
       if (config.env.disableVerbose == '1') {
         options.outputVerbose = false;
       }
