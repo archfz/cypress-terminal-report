@@ -83,4 +83,14 @@ describe('Other plugin integrations.', () => {
                             cy:command (X): get\tbreaking`);
     });
   }).timeout(90000);
+
+  it('Should include retry titles when using mochawesome.', async () => {
+    await runTest(
+      commandBase(['breaking=1', 'mochawesome=1'], ['retries.spec.js']),
+      (error, stdout) => {
+        expect(stdout).to.contain(`(Attempt 1 of 3) fail but win
+          cy:log ${ICONS.info}  Hello. currentRetry: 0`);
+      }
+    );
+  }).timeout(60000);
 });
