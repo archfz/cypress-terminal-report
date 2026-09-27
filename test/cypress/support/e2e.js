@@ -1,8 +1,9 @@
 import './commands';
 import registerCypressGrep from '@cypress/grep';
 import utils from '../../../src/utils';
+const getCypressEnv = require('./getCypressEnv');
 
-const env = Cypress.env();
+const env = getCypressEnv();
 let config = {};
 
 if (env.failFast == '1') {

@@ -8,6 +8,8 @@ import {
   logLastRun,
 } from '../utils';
 import {expect} from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
 require('chai').config.truncateThreshold = 0;
 
 describe('Extended controller.', () => {
@@ -335,6 +337,63 @@ describe('Extended controller.', () => {
       commandBase(['customErrorHandler=1', 'enableExtendedCollector=1'], ['waitFail.spec.js']),
       (error, stdout, stderr) => {
         expect(clean(stdout, true)).to.contain(`Test "Wait fail." failed:`);
+      }
+    );
+  }).timeout(60000);
+
+  it('Should print logs for every retry with extended collector and nested output.', async function () {
+    const outputPath = path.join(__dirname, '../output_nested/json/retries.spec.json');
+
+    await runTest(
+      commandBase(
+        [
+          'breaking=1',
+          'enableExtendedCollector=1',
+          'generateNestedOutput=1',
+          'logToFilesOnAfterRun=1',
+        ],
+        ['retries.spec.js']
+      ),
+      (error, stdout, stderr) => {
+        const output = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+        const retryLogs = output['cypress/integration/retries.spec.js'];
+
+        expect(retryLogs).to.have.all.keys(
+          'Retries -> fails (Attempt 1)',
+          'Retries -> fails (Attempt 2)',
+          'Retries -> fails (Attempt 3)',
+          'fail but win (Attempt 1)',
+          'fail but win (Attempt 2)'
+        );
+      }
+    );
+  }).timeout(60000);
+
+  it('Should print each retry once to the console with extended collector.', async function () {
+    await runTest(
+      commandBase(
+        ['breaking=1', 'enableExtendedCollector=1', 'printLogsToConsoleAlways=1'],
+        ['retries.spec.js']
+      ),
+      (error, stdout) => {
+        const output = clean(stdout, true).replace(/\n{2,}/g, '\n');
+
+        expect(output).to.contain(`  (Attempt 1 of 3) fail but win
+          cy:log ${ICONS.info}  Hello. currentRetry: 0
+      cy:command ${ICONS.error}  contains\tFoobar`);
+        expect(output).to.contain(`  (Attempt 2 of 3) fail but win
+          cy:log ${ICONS.info}  Hello. currentRetry: 1
+      cy:command ${ICONS.error}  contains\tFoobar`);
+        expect(output).to.contain(`  ✓ fail but win
+          cy:log ${ICONS.info}  Hello. currentRetry: 2
+          cy:log ${ICONS.info}  Done.`);
+        expect(output).to.contain(`  Retries
+    (Attempt 1 of 3) fails
+      cy:command ${ICONS.error}  get\tbreaking
+    (Attempt 2 of 3) fails
+      cy:command ${ICONS.error}  get\tbreaking
+    1) fails
+      cy:command ${ICONS.error}  get\tbreaking`);
       }
     );
   }).timeout(60000);

@@ -9,6 +9,10 @@ module.exports = defineConfig({
     baseUrl: 'https://example.cypress.io',
     specPattern: 'cypress/integration/**/*.spec.{js,jsx,ts,tsx}',
     async setupNodeEvents(on, config) {
+      if (Number(require('cypress/package.json').version.split('.')[0]) >= 16) {
+        config.expose = config.env;
+      }
+
       let options = {
         defaultTrimLength: 800,
       };
