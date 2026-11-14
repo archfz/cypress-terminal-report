@@ -43,38 +43,36 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     } else {
       // Queued in the afterEach hook so the logs reach the printer before the
       // next test starts and stay grouped with their test in the terminal. The
-      // send itself runs outside the queue: a failing `cy.task` would fail the
-      // hook and skip the rest of the suite.
-      cy.then({timeout: wait + Cypress.config('taskTimeout') + 1000}, () =>
-        this.sendBestEffort(buildDataMessage, wait)
+      // wait is a queued command rather than a timer because reading the logs
+      // any sooner can miss a pending command log update, such as a stubbed
+      // request's alias and status. The send itself runs outside the queue: a
+      // failing `cy.task` would fail the hook and skip the rest of the suite.
+      cy.wait(wait, {log: false}).then({timeout: Cypress.config('taskTimeout') + 1000}, () =>
+        this.sendBestEffort(buildDataMessage)
       );
     }
   }
 
-  sendBestEffort(buildDataMessage: () => MessageData, wait: number): Promise<null> {
-    // Lets the command log flush its debounced updates, such as a command
-    // switching to failed, before the logs are read.
-    return new Promise((resolve) => setTimeout(resolve, wait)).then(() => {
-      const message = buildDataMessage();
-      const taskTimeout = Cypress.config('taskTimeout');
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      const timeout = new Promise((resolve, reject) => {
-        timer = setTimeout(
-          () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
-          taskTimeout
-        );
-      });
-
-      return Promise.race([
-        utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, taskTimeout),
-        timeout,
-      ])
-        .catch((error) => this.warnDeliveryFailure(message, error, taskTimeout))
-        .then(() => {
-          clearTimeout(timer);
-          return null;
-        });
+  sendBestEffort(buildDataMessage: () => MessageData): Promise<null> {
+    const message = buildDataMessage();
+    const taskTimeout = Cypress.config('taskTimeout');
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise((resolve, reject) => {
+      timer = setTimeout(
+        () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
+        taskTimeout
+      );
     });
+
+    return Promise.race([
+      utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, taskTimeout),
+      timeout,
+    ])
+      .catch((error) => this.warnDeliveryFailure(message, error, taskTimeout))
+      .then(() => {
+        clearTimeout(timer);
+        return null;
+      });
   }
 
   warnDeliveryFailure(message: MessageData, error: unknown, taskTimeout: number) {
