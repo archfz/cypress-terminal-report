@@ -1,5 +1,9 @@
 ## Release Notes
 
+#### Unreleased
+
+- Fix log delivery failing or skipping tests with the default collector. When the `ctrLogMessages` task throws or takes longer than `taskTimeout`, the test no longer fails in the `after each` hook and the remaining tests still run. The logs for that test are dropped, or after a timeout may print late under a later test, and a warning is shown once per spec in the browser console and in the printer's `debug` output.
+
 #### 7.4.0
 
 - Add support for [custom output path patterns](README.md#custom-output-path-patterns), including date patterns in generated file names or paths. [issue](https://github.com/archfz/cypress-terminal-report/issues/291)

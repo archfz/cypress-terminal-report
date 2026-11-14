@@ -1,6 +1,7 @@
 const CONSTANTS = {
   TASK_NAME: 'ctrLogMessages',
   TASK_NAME_OUTPUT: 'ctrLogFiles',
+  TASK_NAME_DELIVERY_WARNING: 'ctrLogDeliveryWarning',
 
   LOG_TYPES: {
     BROWSER_CONSOLE_LOG: 'cons:log',

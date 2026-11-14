@@ -18,7 +18,22 @@ const MARKDOWN_REGEX = {
 };
 
 const utils = {
-  nonQueueTask: async (name: string, data: Record<string, any>) => {
+  /**
+   * Runs a task outside the command queue, ignoring any error. Without a
+   * timeout the server reports one as soon as the task goes async, even though
+   * the task still runs, so a rejection here says nothing about delivery.
+   */
+  nonQueueTask: (name: string, data: Record<string, any>) =>
+    utils.nonQueueTaskOrThrow(name, data).catch(() => {
+      /* noop */
+    }),
+
+  /**
+   * Runs a task outside the command queue, so a failure cannot fail the current
+   * test. Pass `timeout` to get real task errors: the server needs it to tell a
+   * slow task from a failed one.
+   */
+  nonQueueTaskOrThrow: async (name: string, data: Record<string, any>, timeout?: number) => {
     if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {
       // In component tests task commands don't need to be verified for some reason.
       await new Promise((resolve) => setTimeout(resolve, 5));
@@ -29,11 +44,9 @@ const utils = {
         options: {
           task: name,
           arg: data,
+          timeout,
         },
-      }) // For some reason cypress throws empty error although the task indeed works.
-        .catch(() => {
-          /* noop */
-        });
+      });
     }
 
     if (compare(Cypress.version, '12.17.0', '>=')) {
@@ -50,11 +63,9 @@ const utils = {
         options: {
           task: name,
           arg: data,
+          timeout,
         },
-      }) // For some reason cypress throws empty error although the task indeed works.
-        .catch(() => {
-          /* noop */
-        });
+      });
     }
 
     if (compare(Cypress.version, '12.15.0', '>=')) {
@@ -67,21 +78,17 @@ const utils = {
         options: {
           task: name,
           arg: data,
+          timeout,
         },
-      }) // For some reason cypress throws empty error although the task indeed works.
-        .catch(() => {
-          /* noop */
-        });
+      });
     }
 
     // @ts-ignore
     return await Cypress.backend('task', {
       task: name,
       arg: data,
-    }) // For some reason cypress throws empty error although the task indeed works.
-      .catch(() => {
-        /* noop */
-      });
+      timeout,
+    });
   },
 
   jsonStringify(value: any, format = true) {

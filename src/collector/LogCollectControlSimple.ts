@@ -9,6 +9,9 @@ import type {MessageData, State} from '../types';
  * Collects and dispatches all logs from all tests and hooks.
  */
 export default class LogCollectControlSimple extends LogCollectControlBase {
+  // The support file is evaluated again for every spec, so this resets per spec.
+  private deliveryFailureWarned = false;
+
   constructor(
     protected collectorState: LogCollectorState,
     protected config: ExtendedSupportOptions
@@ -38,11 +41,68 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     if (noQueue) {
       utils.nonQueueTask(CONSTANTS.TASK_NAME, buildDataMessage()).catch(console.error);
     } else {
-      // Need to wait for command log update debounce.
-      cy.wait(wait, {log: false}).then(() =>
-        cy.task(CONSTANTS.TASK_NAME, buildDataMessage(), {log: false})
+      // Queued in the afterEach hook so the logs reach the printer before the
+      // next test starts and stay grouped with their test in the terminal. The
+      // wait is a queued command rather than a timer because reading the logs
+      // any sooner can miss a pending command log update, such as a stubbed
+      // request's alias and status. The send itself runs outside the queue: a
+      // failing `cy.task` would fail the hook and skip the rest of the suite.
+      cy.wait(wait, {log: false}).then({timeout: Cypress.config('taskTimeout') + 1000}, () =>
+        this.sendBestEffort(buildDataMessage)
       );
     }
+  }
+
+  sendBestEffort(buildDataMessage: () => MessageData): Promise<null> {
+    const message = buildDataMessage();
+    const taskTimeout = Cypress.config('taskTimeout');
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise((resolve, reject) => {
+      timer = setTimeout(
+        () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
+        taskTimeout
+      );
+    });
+
+    return Promise.race([
+      utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, taskTimeout),
+      timeout,
+    ])
+      .catch((error) => this.warnDeliveryFailure(message, error, taskTimeout))
+      .then(() => {
+        clearTimeout(timer);
+        return null;
+      });
+  }
+
+  warnDeliveryFailure(message: MessageData, error: unknown, taskTimeout: number) {
+    if (this.deliveryFailureWarned) {
+      return;
+    }
+    this.deliveryFailureWarned = true;
+
+    // A timed-out task keeps running on the server, so its logs can still print
+    // later, under whichever test is running by then. The server's timeout error
+    // also carries the task handler's source as its message, so it isn't shown.
+    const timedOut =
+      typeof error === 'object' && error !== null && 'timedOut' in error && error.timedOut;
+    const reason = timedOut
+      ? `timed out after ${taskTimeout}ms`
+      : error instanceof Error
+        ? error.message
+        : String(error);
+    const outcome = timedOut
+      ? 'they may print late, under a later test, or not at all'
+      : 'they were not printed';
+    console.warn(
+      `cypress-terminal-report: Failed to send logs for test "${message.test}", so ${outcome}: ${reason}\n` +
+        `Further log delivery failures in this spec are not reported.`
+    );
+    utils.nonQueueTask(CONSTANTS.TASK_NAME_DELIVERY_WARNING, {
+      spec: message.spec,
+      test: message.test,
+      error: reason,
+    });
   }
 
   registerState() {
