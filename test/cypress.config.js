@@ -159,6 +159,32 @@ module.exports = defineConfig({
         config.reporter = 'cypress-mochawesome-reporter';
       }
 
+      if (config.env.ctrLogDeliveryFailure) {
+        // Simulates a broken printer for tests tagged [ctr-delivery-fails]:
+        // 'throw' makes the task throw, 'hang' makes it never resolve.
+        config.taskTimeout = 10000;
+        const mode = config.env.ctrLogDeliveryFailure;
+        const realOn = on;
+        on = (event, handler) => {
+          if (event === 'task' && handler.ctrLogMessages) {
+            const ctrLogMessages = handler.ctrLogMessages;
+            handler = {
+              ...handler,
+              ctrLogMessages(data) {
+                if (data.test.includes('[ctr-delivery-fails]')) {
+                  if (mode === 'hang') {
+                    return new Promise(() => {});
+                  }
+                  throw new Error('Simulated printer failure.');
+                }
+                return ctrLogMessages(data);
+              },
+            };
+          }
+          return realOn(event, handler);
+        };
+      }
+
       if (config.env.disabled != '1') {
         require('../src/installLogsPrinter')(on, options);
       }
