@@ -59,7 +59,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       let timer: ReturnType<typeof setTimeout> | undefined;
       const timeout = new Promise((resolve, reject) => {
         timer = setTimeout(
-          () => reject(new Error(`timed out after ${CONSTANTS.LOG_DELIVERY_TIMEOUT}ms`)),
+          () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
           CONSTANTS.LOG_DELIVERY_TIMEOUT
         );
       });
@@ -82,7 +82,9 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     }
     this.deliveryFailureWarned = true;
 
-    // The server's timeout error carries the task handler's source as its message.
+    // A timed-out task keeps running on the server, so its logs can still print
+    // later, under whichever test is running by then. The server's timeout error
+    // also carries the task handler's source as its message, so it isn't shown.
     const timedOut =
       typeof error === 'object' && error !== null && 'timedOut' in error && error.timedOut;
     const reason = timedOut
@@ -90,8 +92,11 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       : error instanceof Error
         ? error.message
         : String(error);
+    const outcome = timedOut
+      ? 'they may print late, under a later test, or not at all'
+      : 'they were not printed';
     console.warn(
-      `cypress-terminal-report: Failed to send logs for test "${message.test}", so they were not printed: ${reason}\n` +
+      `cypress-terminal-report: Failed to send logs for test "${message.test}", so ${outcome}: ${reason}\n` +
         `Further log delivery failures in this spec are not reported.`
     );
     utils.nonQueueTask(CONSTANTS.TASK_NAME_DELIVERY_WARNING, {

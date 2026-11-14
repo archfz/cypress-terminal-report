@@ -2,7 +2,7 @@
 
 #### Unreleased
 
-- Fix log delivery failing or skipping tests with the default collector. When the `ctrLogMessages` task throws or takes longer than 5 seconds, the test no longer fails in the `after each` hook and the remaining tests still run. The logs for that test are dropped and a warning is shown once per spec in the browser console and in the printer's `debug` output.
+- Fix log delivery failing or skipping tests with the default collector. When the `ctrLogMessages` task throws or takes longer than 5 seconds, the test no longer fails in the `after each` hook and the remaining tests still run. The logs for that test are dropped, or after a timeout may print late under a later test, and a warning is shown once per spec in the browser console and in the printer's `debug` output.
 
 #### 7.4.0
 
