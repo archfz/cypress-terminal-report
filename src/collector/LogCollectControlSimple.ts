@@ -83,7 +83,9 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     this.deliveryFailureWarned = true;
 
     // The server's timeout error carries the task handler's source as its message.
-    const reason = (error as {timedOut?: boolean})?.timedOut
+    const timedOut =
+      typeof error === 'object' && error !== null && 'timedOut' in error && error.timedOut;
+    const reason = timedOut
       ? `timed out after ${CONSTANTS.LOG_DELIVERY_TIMEOUT}ms`
       : error instanceof Error
         ? error.message

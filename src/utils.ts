@@ -19,7 +19,9 @@ const MARKDOWN_REGEX = {
 
 const utils = {
   /**
-   * Runs a task outside the command queue, ignoring any error.
+   * Runs a task outside the command queue, ignoring any error. Without a
+   * timeout the server reports one as soon as the task goes async, even though
+   * the task still runs, so a rejection here says nothing about delivery.
    */
   nonQueueTask: (name: string, data: Record<string, any>) =>
     utils.nonQueueTaskOrThrow(name, data).catch(() => {
@@ -27,8 +29,9 @@ const utils = {
     }),
 
   /**
-   * Runs a task outside the command queue. Unlike `cy.task` it cannot fail the
-   * current test, and unlike `nonQueueTask` it rejects when the task fails.
+   * Runs a task outside the command queue, so a failure cannot fail the current
+   * test. Pass `timeout` to get real task errors: the server needs it to tell a
+   * slow task from a failed one.
    */
   nonQueueTaskOrThrow: async (name: string, data: Record<string, any>, timeout?: number) => {
     if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {

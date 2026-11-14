@@ -161,7 +161,8 @@ module.exports = defineConfig({
 
       if (config.env.ctrLogDeliveryFailure) {
         // Simulates a broken printer for tests tagged [ctr-delivery-fails]:
-        // 'throw' makes the task throw, 'hang' makes it never resolve.
+        // 'throw' makes the task throw, 'hang' makes it never resolve. The lower
+        // taskTimeout keeps a run without the fix from waiting the default minute.
         config.taskTimeout = 10000;
         const mode = config.env.ctrLogDeliveryFailure;
         const realOn = on;
