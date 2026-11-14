@@ -45,7 +45,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       // next test starts and stay grouped with their test in the terminal. The
       // send itself runs outside the queue: a failing `cy.task` would fail the
       // hook and skip the rest of the suite.
-      cy.then({timeout: wait + CONSTANTS.LOG_DELIVERY_TIMEOUT + 1000}, () =>
+      cy.then({timeout: wait + Cypress.config('taskTimeout') + 1000}, () =>
         this.sendBestEffort(buildDataMessage, wait)
       );
     }
@@ -56,19 +56,20 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     // switching to failed, before the logs are read.
     return new Promise((resolve) => setTimeout(resolve, wait)).then(() => {
       const message = buildDataMessage();
+      const taskTimeout = Cypress.config('taskTimeout');
       let timer: ReturnType<typeof setTimeout> | undefined;
       const timeout = new Promise((resolve, reject) => {
         timer = setTimeout(
           () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
-          CONSTANTS.LOG_DELIVERY_TIMEOUT
+          taskTimeout
         );
       });
 
       return Promise.race([
-        utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, CONSTANTS.LOG_DELIVERY_TIMEOUT),
+        utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, taskTimeout),
         timeout,
       ])
-        .catch((error) => this.warnDeliveryFailure(message, error))
+        .catch((error) => this.warnDeliveryFailure(message, error, taskTimeout))
         .then(() => {
           clearTimeout(timer);
           return null;
@@ -76,7 +77,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     });
   }
 
-  warnDeliveryFailure(message: MessageData, error: unknown) {
+  warnDeliveryFailure(message: MessageData, error: unknown, taskTimeout: number) {
     if (this.deliveryFailureWarned) {
       return;
     }
@@ -88,7 +89,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     const timedOut =
       typeof error === 'object' && error !== null && 'timedOut' in error && error.timedOut;
     const reason = timedOut
-      ? `timed out after ${CONSTANTS.LOG_DELIVERY_TIMEOUT}ms`
+      ? `timed out after ${taskTimeout}ms`
       : error instanceof Error
         ? error.message
         : String(error);

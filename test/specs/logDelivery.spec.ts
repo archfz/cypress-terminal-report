@@ -56,7 +56,7 @@ describe('Log delivery.', () => {
       (error, stdout) => {
         expectLaterTestsToRunAndPrintInOrder(stdout);
         expect(stdout).to.contain(
-          '[cypress-terminal-report:debug] ctrLogMessages: Failed to receive messages, for cypress/integration/logDeliveryFailure.spec.js:Log delivery failure. -> first test [ctr-delivery-fails]: timed out after 5000ms'
+          '[cypress-terminal-report:debug] ctrLogMessages: Failed to receive messages, for cypress/integration/logDeliveryFailure.spec.js:Log delivery failure. -> first test [ctr-delivery-fails]: timed out after 10000ms'
         );
       }
     );
