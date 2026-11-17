@@ -2,7 +2,7 @@
 
 #### Unreleased
 
-- Fix log delivery failing or skipping tests with the default collector. When the `ctrLogMessages` task throws or takes longer than `taskTimeout`, the test no longer fails in the `after each` hook and the remaining tests still run. The logs for that test are dropped, or after a timeout may print late under a later test, and a warning is shown once per spec in the browser console and in the printer's `debug` output.
+- Fix failed or slow log delivery failing the test and skipping the rest of the suite. Add new support install option `logDeliveryTimeout` (default 5000). [merge-request](https://github.com/archfz/cypress-terminal-report/pull/354) by [jennifer-shehane](https://github.com/jennifer-shehane)
 
 #### 7.4.0
 

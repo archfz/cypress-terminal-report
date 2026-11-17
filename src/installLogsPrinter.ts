@@ -134,8 +134,9 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
       test: string;
       error: string;
     }) {
-      logDebug(
-        `${CONSTANTS.TASK_NAME}: Failed to receive messages, for ${data.spec}:${data.test}: ${data.error}`
+      console.log(
+        'cypress-terminal-report:',
+        `Failed to receive logs for ${data.spec}:${data.test}: ${data.error}`
       );
       return null;
     },

@@ -47,7 +47,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
       // any sooner can miss a pending command log update, such as a stubbed
       // request's alias and status. The send itself runs outside the queue: a
       // failing `cy.task` would fail the hook and skip the rest of the suite.
-      cy.wait(wait, {log: false}).then({timeout: Cypress.config('taskTimeout') + 1000}, () =>
+      cy.wait(wait, {log: false}).then({timeout: this.config.logDeliveryTimeout + 1000}, () =>
         this.sendBestEffort(buildDataMessage)
       );
     }
@@ -55,27 +55,27 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
 
   sendBestEffort(buildDataMessage: () => MessageData): Promise<null> {
     const message = buildDataMessage();
-    const taskTimeout = Cypress.config('taskTimeout');
+    const deliveryTimeout = this.config.logDeliveryTimeout;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise((resolve, reject) => {
       timer = setTimeout(
         () => reject(Object.assign(new Error('Log delivery timed out.'), {timedOut: true})),
-        taskTimeout
+        deliveryTimeout
       );
     });
 
     return Promise.race([
-      utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, taskTimeout),
+      utils.nonQueueTaskOrThrow(CONSTANTS.TASK_NAME, message, deliveryTimeout),
       timeout,
     ])
-      .catch((error) => this.warnDeliveryFailure(message, error, taskTimeout))
+      .catch((error) => this.warnDeliveryFailure(message, error, deliveryTimeout))
       .then(() => {
         clearTimeout(timer);
         return null;
       });
   }
 
-  warnDeliveryFailure(message: MessageData, error: unknown, taskTimeout: number) {
+  warnDeliveryFailure(message: MessageData, error: unknown, deliveryTimeout: number) {
     if (this.deliveryFailureWarned) {
       return;
     }
@@ -87,7 +87,7 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     const timedOut =
       typeof error === 'object' && error !== null && 'timedOut' in error && error.timedOut;
     const reason = timedOut
-      ? `timed out after ${taskTimeout}ms`
+      ? `timed out after ${deliveryTimeout}ms`
       : error instanceof Error
         ? error.message
         : String(error);

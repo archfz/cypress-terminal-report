@@ -115,6 +115,9 @@ if (env.enableContinuousLogging == '1') {
 if (env.commandTimings) {
   config.commandTimings = env.commandTimings;
 }
+if (env.logDeliveryTimeout) {
+  config.logDeliveryTimeout = Number(env.logDeliveryTimeout);
+}
 if (env.maxLogLength) {
   config.maxLogLength = Number(env.maxLogLength);
 }

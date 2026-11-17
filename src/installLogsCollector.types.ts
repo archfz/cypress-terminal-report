@@ -78,6 +78,13 @@ export interface SupportOptions {
   maxLogLength?: number;
 
   /**
+   * How long to wait, in milliseconds, for the printer to receive a test's logs. When it takes
+   * longer, the test continues without them and a warning is printed.
+   * @default 5000
+   */
+  logDeliveryTimeout?: number;
+
+  /**
    * Enabled debug logging.
    * @default false
    */
@@ -90,4 +97,5 @@ export interface ExtendedSupportOptions extends SupportOptions {
   collectRequestData?: boolean;
   collectHeaderData?: boolean;
   maxLogLength: number;
+  logDeliveryTimeout: number;
 }

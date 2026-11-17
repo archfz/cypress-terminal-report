@@ -30,6 +30,8 @@ function installLogsCollector(config: SupportOptions = {}) {
     collectRequestData: config.xhr?.printRequestData,
     collectHeaderData: config.xhr?.printHeaderData,
     maxLogLength: typeof config.maxLogLength === 'number' ? config.maxLogLength : 15000,
+    logDeliveryTimeout:
+      typeof config.logDeliveryTimeout === 'number' ? config.logDeliveryTimeout : 5000,
   };
 
   let logCollectorState = new LogCollectorState(extendedConfig);
