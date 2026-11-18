@@ -4,6 +4,7 @@
 
 - Improve console readability by attaching successful test logs to their test title in the default collector.
 - Fix failed or slow log delivery failing the test and skipping the rest of the suite. Add new support install option `logDeliveryTimeout` (default 5000). [merge-request](https://github.com/archfz/cypress-terminal-report/pull/354) by [jennifer-shehane](https://github.com/jennifer-shehane)
+- Added support for cypress 16.3.0, update in tests to ensure compatibility.
 
 #### 7.4.0
 

@@ -1,5 +1,6 @@
 import jsonPrune from './jsonPrune';
 import {compare} from 'compare-versions';
+import {stringify as flattedStringify} from 'flatted';
 import type {Failure} from 'superstruct';
 
 // Markdown regex: https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
@@ -34,18 +35,44 @@ const utils = {
    * slow task from a failed one.
    */
   nonQueueTaskOrThrow: async (name: string, data: Record<string, any>, timeout?: number) => {
+    const options = {
+      task: name,
+      arg: data,
+      timeout,
+    };
+
     if (Cypress.testingType === 'component' && compare(Cypress.version, '12.15.0', '>=')) {
       // In component tests task commands don't need to be verified for some reason.
       await new Promise((resolve) => setTimeout(resolve, 5));
+      // Cypress 16.3 removed the userArgs field from the privileged command.
       // @ts-ignore
-      return await Cypress.backend('run:privileged', {
+      return await Cypress.backend(
+        'run:privileged',
+        compare(Cypress.version, '16.3.0', '>=')
+          ? {commandName: 'task', options}
+          : {
+              commandName: 'task',
+              userArgs: [name, data],
+              options,
+            }
+      );
+    }
+
+    if (compare(Cypress.version, '16.3.0', '>=')) {
+      // Cypress 16.3 replaced the command invocation {args, promise} with a
+      // {verify} function that hashes the encoded options before the server
+      // accepts the privileged command. 16.2 and earlier still use the old
+      // shape handled below.
+      const invocation: any = (Cypress as any).emitMap('command:invocation', {
+        name: 'task',
+        args: [name, data],
+      })[0];
+      // Socket.IO event packet type 2 followed by the flatted payload is what
+      // Cypress hashes for verification.
+      await invocation.verify('2' + flattedStringify(options), []);
+      return await (Cypress as any).backend('run:privileged', {
         commandName: 'task',
-        userArgs: [name, data],
-        options: {
-          task: name,
-          arg: data,
-          timeout,
-        },
+        options,
       });
     }
 
