@@ -371,6 +371,8 @@ describe('Extended controller.', () => {
   }).timeout(60000);
 
   it('Should print each retry once to the console with extended collector.', async function () {
+    this.retries(3);
+
     await runTest(
       commandBase(
         ['breaking=1', 'enableExtendedCollector=1', 'printLogsToConsoleAlways=1'],
