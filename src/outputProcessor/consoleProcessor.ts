@@ -149,7 +149,13 @@ function consoleProcessor(messages: Log[], options: PluginOptions, data: Message
   });
 
   if (messages.length !== 0 && !data.continuous) {
-    console.log(output + '\n');
+    if (data.consoleLogPosition === 'beforeTitle') {
+      // The test title is printed after these logs. Move the separation above
+      // the log block so it stays visually attached to the title below it.
+      console.log('\n\n' + output.replace(/\n+$/, ''));
+    } else {
+      console.log(output + '\n');
+    }
   } else if (output !== '') {
     console.log(output.substring(-1));
   }

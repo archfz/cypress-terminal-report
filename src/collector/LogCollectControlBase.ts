@@ -33,6 +33,7 @@ export default abstract class LogCollectControlBase {
       title?: string;
       noQueue?: boolean;
       consoleTitle?: string;
+      consoleLogPosition?: 'beforeTitle' | 'afterTitle';
       isHook?: boolean;
       wait?: number;
       continuous?: boolean;
@@ -69,6 +70,7 @@ export default abstract class LogCollectControlBase {
       state: testState,
       level: testLevel,
       consoleTitle: options.consoleTitle ?? retryTitles.consoleTitle,
+      consoleLogPosition: options.consoleLogPosition,
       isHook: options.isHook,
       continuous: options.continuous,
     });

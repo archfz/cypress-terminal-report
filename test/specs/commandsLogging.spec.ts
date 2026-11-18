@@ -253,6 +253,8 @@ describe('Commands logging.', () => {
       commandBase(['printLogsToConsoleAlways=1'], ['logMarkdown.spec.js']),
       (stdout) => {
         const lines = clean(stdout).split('\n');
+        const firstLogLine = lines.findIndex((line) => line.includes('cy:log'));
+        expect(firstLogLine).to.be.greaterThan(-1);
         [
           chalk.italic('This is an_italic* log.'),
           chalk.italic('This is an_italic* log.'),
@@ -269,7 +271,7 @@ describe('Commands logging.', () => {
           '**This is a normal log',
           'This is a normal log**',
         ].forEach((msg, index) => {
-          expect(JSON.stringify(lines[index + 4])).to.equal(
+          expect(JSON.stringify(lines[firstLogLine + index])).to.equal(
             JSON.stringify(chalk.green(`          cy:log ${ICONS.info} `) + ' ' + msg)
           );
         });

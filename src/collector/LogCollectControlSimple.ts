@@ -129,10 +129,11 @@ export default class LogCollectControlSimple extends LogCollectControlBase {
     const self = this;
 
     afterEach(function () {
-      self.sendLogsToPrinter(
-        self.collectorState.getCurrentLogStackIndex(),
-        self.collectorState.getCurrentTest()
-      );
+      const test = self.collectorState.getCurrentTest();
+      self.sendLogsToPrinter(self.collectorState.getCurrentLogStackIndex(), test, {
+        // Passing logs are delivered before Cypress prints the test title.
+        consoleLogPosition: test?.state === 'passed' ? 'beforeTitle' : 'afterTitle',
+      });
     });
 
     // Logs commands if test was manually skipped.

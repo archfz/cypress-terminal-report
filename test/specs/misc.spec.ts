@@ -241,6 +241,18 @@ describe('Misc.', () => {
     );
   }).timeout(60000);
 
+  it('Should attach passing test logs to the test title below them.', async () => {
+    await runTest(
+      commandBase(['printLogsToConsoleAlways=1'], ['allHooks.spec.js']),
+      (error, stdout) => {
+        // The separator moves above the log block, so the last log is directly
+        // followed by the result title instead of a blank line.
+        expect(stdout).to.match(/from afterEach\n {4}[✓√+] passed it/);
+        expect(stdout).to.not.contain(`from afterEach\n\n`);
+      }
+    );
+  }).timeout(60000);
+
   it('Should not fail or skip tests when the printer task throws.', async () => {
     await runTest(
       commandBase(

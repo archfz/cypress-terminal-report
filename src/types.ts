@@ -48,6 +48,7 @@ export type MessageData = {
   state: State;
   messages: Log[];
   consoleTitle?: string;
+  consoleLogPosition?: 'beforeTitle' | 'afterTitle';
   level?: number;
   isHook?: boolean;
   continuous?: boolean;

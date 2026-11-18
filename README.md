@@ -37,6 +37,8 @@ Try it out by cloning [cypress-terminal-report-demo](https://github.com/archfz/c
 - `console.log` usage was never meant to be used in the cypress test code. Using it will
   not log anything with this plugin. Using it also goes against the queue nature of
   cypress. Use `cy.log` instead. [See here for more details](https://github.com/archfz/cypress-terminal-report/issues/67).
+- In the default (simple) collector, when `printLogsToConsole` is set to `always`, logs from successful tests are printed
+  before the test result title.
 
 ## Install
 
