@@ -129,6 +129,17 @@ function installLogsPrinter(on: Cypress.PluginEvents, options: PluginOptions = {
 
       return null;
     },
+    [CONSTANTS.TASK_NAME_DELIVERY_WARNING]: function (data: {
+      spec: string;
+      test: string;
+      error: string;
+    }) {
+      console.log(
+        'cypress-terminal-report:',
+        `Failed to receive logs for ${data.spec}:${data.test}: ${data.error}`
+      );
+      return null;
+    },
     [CONSTANTS.TASK_NAME_OUTPUT]: () => {
       logDebug(`${CONSTANTS.TASK_NAME_OUTPUT}: Triggered.`);
       logToFiles(resolvedOptions);

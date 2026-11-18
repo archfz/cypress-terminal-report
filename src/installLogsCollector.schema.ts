@@ -23,6 +23,7 @@ const InstallLogsCollectorSchema = object({
   enableContinuousLogging: optional(boolean()),
   commandTimings: optional(enums(Object.values(CONSTANTS.COMMAND_TIMINGS))),
   maxLogLength: optional(number()),
+  logDeliveryTimeout: optional(number()),
   debug: optional(boolean()),
 });
 

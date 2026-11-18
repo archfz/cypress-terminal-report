@@ -163,6 +163,12 @@ hook. This option can only be used with cypress 6.2.0 onwards, and with the addi
 
 integer; default: 15000; Maximum length of a single collected log message. Messages longer than this will be trimmed at collection time and a short suffix will be appended to indicate trimming (for example: "... [1234 chars trimmed]"). This protects memory usage and prevents excessively large logs from impacting the test run.
 
+#### `options.logDeliveryTimeout`
+
+integer; default: 5000; How long to wait, in milliseconds, for the printer to receive each test's logs. When it takes longer, or the
+printer fails, the test continues without its logs and a warning is printed once per spec. Raise it if the printer side does heavy
+work for each test, such as a slow `collectTestLogs`.
+
 #### `options.collectTypes`
 
 array; default: ['cons:log','cons:info', 'cons:warn', 'cons:error', 'cy:log', 'cy:xhr', 'cy:request', 'cy:intercept', 'cy:command']
